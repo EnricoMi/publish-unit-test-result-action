@@ -153,6 +153,10 @@ def main(token: str, repo: str, repo_owner: str, commit: str, ref: str, files_gl
     publish(token, repo, repo_owner, commit, ref, stats)
 
 
+def get_repo_name(repo: str) -> str:
+    return repo.split('/', 1)[1]
+
+
 if __name__ == "__main__":
     log_level = os.environ.get('LOG_LEVEL') or 'INFO'
     logger = logging.getLogger()
@@ -162,7 +166,7 @@ if __name__ == "__main__":
         return os.environ.get('INPUT_{}'.format(name)) or os.environ.get(name)
 
     token = get_var('GITHUB_TOKEN')
-    repo = get_var('GITHUB_REPOSITORY')
+    repo = get_repo_name(get_var('GITHUB_REPOSITORY'))
     repo_owner = get_var('GITHUB_REPOSITORY_OWNER')
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     ref = get_var('REF') or os.environ.get('GITHUB_REF')
