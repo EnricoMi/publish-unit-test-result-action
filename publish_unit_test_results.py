@@ -7,6 +7,9 @@ import re
 from junitparser import *
 
 
+logger = logging.getLogger('publish-unit-test-results')
+
+
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     junits = [JUnitXml.fromfile(file) for file in files]
 
@@ -81,7 +84,7 @@ def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[A
             text=text,
         )
 
-        logging.info('creating check')
+        logger.info('creating check')
         check = repo.create_check_run(name='unit-test-result', head_sha=commit_sha, status='completed', conclusion='success', output=output)
         return check.html_url
 
@@ -97,40 +100,40 @@ def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[A
             failed=stats['suite_failures'],
             errors=stats['suite_errors']
         )
-        logging.info('creating status')
+        logger.info('creating status')
         commit.create_status(state='success', description=desc, context='action/unit-test-results')
 
     def publish_comment(status) -> None:
         pull = get_pull(head=head, commit=commit_sha)
         if pull is not None:
-            logging.info('creating comment')
+            logger.info('creating comment')
             pull.create_issue_comment("comment")
 
     def get_pull(head: str, commit: str) -> PullRequest:
         # get all pulls that have a head that matches 'head'
         pulls = repo.get_pulls(state='all', head=head)
-        logging.info('found {} pull requests matching head ''{}'' (ref={})'.format(pulls.totalCount, head, ref))
+        logger.info('found {} pull requests matching head ''{}'' (ref={})'.format(pulls.totalCount, head, ref))
 
         if pulls.totalCount == 0:
-            logging.info('Could not find pull request for ref {}'.format(ref))
+            logger.info('Could not find pull request for ref {}'.format(ref))
             return
 
         # find the pull that exactly references 'head'
         pulls = list([pull for pull in pulls if pull.head.ref == head])
         if len(pulls) > 1:
             for pull in pulls:
-                logging.info(pull.head.ref)
+                logger.info(pull.head.ref)
             raise RuntimeError('Found multiple pull requests for ref {}'.format(ref))
         pull = pulls[0]
 
         # double check this pull still contains our commit
         commits = pull.get_commits().get_page(0)
-        logging.info('first page of commits:')
+        logger.info('first page of commits:')
         for commit in commits:
-            logging.info(commit)
+            logger.info(commit)
 
         if len([commit for commit in commits if commit.sha == commit_sha]) == 0:
-            logging.info('Could not find commit {} in first page of pull request''s commits'.format(commit_sha))
+            logger.info('Could not find commit {} in first page of pull request''s commits'.format(commit_sha))
             return
 
         return pull
@@ -142,24 +145,25 @@ def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[A
 
 def main(token: str, repo: str, commit: str, ref: str, files_glob: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
-    logging.info('{}: {}'.format(files_glob, list(files)))
+    logger.info('{}: {}'.format(files_glob, list(files)))
 
     if len(files) == 0:
         return
 
     stats = parse_junit_xml_files(files)
-    logging.info(stats)
+    logger.info(stats)
 
     publish(token, repo, commit, ref, stats)
 
 
 if __name__ == "__main__":
-    log_level = os.environ.get('LOG_LEVEL') or 'INFO'
-    logger = logging.getLogger()
-    logger.level = logging.getLevelName(log_level)
-
     def get_var(name: str) -> str:
         return os.environ.get('INPUT_{}'.format(name)) or os.environ.get(name)
+
+    logging.root.level = logging.INFO
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+    log_level = get_var('LOG_LEVEL') or 'INFO'
+    logger.level = logging.getLevelName(log_level)
 
     token = get_var('GITHUB_TOKEN')
     repo = get_var('GITHUB_REPOSITORY')
