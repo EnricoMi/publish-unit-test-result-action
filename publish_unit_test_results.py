@@ -112,7 +112,7 @@ def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[A
     def get_pull(head: str, commit: str) -> PullRequest:
         # get all pulls that have a head that matches 'head'
         pulls = repo.get_pulls(state='all', head=head)
-        logger.info('found {} pull requests matching head ''{}'' (ref={})'.format(pulls.totalCount, head, ref))
+        logger.debug('found {} pull requests matching head ''{}'' (ref={})'.format(pulls.totalCount, head, ref))
 
         if pulls.totalCount == 0:
             logger.info('Could not find pull request for ref {}'.format(ref))
@@ -128,9 +128,9 @@ def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[A
 
         # double check this pull still contains our commit
         commits = pull.get_commits().get_page(0)
-        logger.info('first page of commits:')
+        logger.debug('first page of commits:')
         for commit in commits:
-            logger.info(commit)
+            logger.debug(commit)
 
         if len([commit for commit in commits if commit.sha == commit_sha]) == 0:
             logger.info('Could not find commit {} in first page of pull request''s commits'.format(commit_sha))
@@ -161,7 +161,7 @@ if __name__ == "__main__":
         return os.environ.get('INPUT_{}'.format(name)) or os.environ.get(name)
 
     logging.root.level = logging.INFO
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
     log_level = get_var('LOG_LEVEL') or 'INFO'
     logger.level = logging.getLevelName(log_level)
 
