@@ -41,11 +41,11 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     )
 
 
-def publish(token: str, repo_name: str, repo_owner: str, commit_sha: str, ref: str, stats: Dict[Any, Any]):
-    from github import Github, PullRequest
+def publish(token: str, repo_name: str, commit_sha: str, ref: str, stats: Dict[Any, Any]):
+    from github import Github, PullRequest, Commit
 
     gh = Github(token)
-    repo = gh.get_user(repo_owner).get_repo(repo_name)
+    repo = gh.get_repo(repo_name)
     head = re.sub('.*/', '', ref)
 
     def publish_check() -> None:
@@ -109,7 +109,7 @@ def publish(token: str, repo_name: str, repo_owner: str, commit_sha: str, ref: s
     def get_pull(head: str, commit: str) -> PullRequest:
         # get all pulls that have a head that matches 'head'
         pulls = repo.get_pulls(state='all', head=head)
-        logging.info('found {} pull requests for head {} (ref={})'.format(pulls.totalCount, head, ref))
+        logging.info('found {} pull requests matching head ''{}'' (ref={})'.format(pulls.totalCount, head, ref))
 
         if pulls.totalCount == 0:
             logging.info('Could not find pull request for ref {}'.format(ref))
@@ -140,7 +140,7 @@ def publish(token: str, repo_name: str, repo_owner: str, commit_sha: str, ref: s
     publish_comment(check)
 
 
-def main(token: str, repo: str, repo_owner: str, commit: str, ref: str, files_glob: str) -> None:
+def main(token: str, repo: str, commit: str, ref: str, files_glob: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logging.info('{}: {}'.format(files_glob, list(files)))
 
@@ -150,11 +150,7 @@ def main(token: str, repo: str, repo_owner: str, commit: str, ref: str, files_gl
     stats = parse_junit_xml_files(files)
     logging.info(stats)
 
-    publish(token, repo, repo_owner, commit, ref, stats)
-
-
-def get_repo_name(repo: str) -> str:
-    return repo.split('/', 1)[1]
+    publish(token, repo, commit, ref, stats)
 
 
 if __name__ == "__main__":
@@ -166,8 +162,7 @@ if __name__ == "__main__":
         return os.environ.get('INPUT_{}'.format(name)) or os.environ.get(name)
 
     token = get_var('GITHUB_TOKEN')
-    repo = get_repo_name(get_var('GITHUB_REPOSITORY'))
-    repo_owner = get_var('GITHUB_REPOSITORY_OWNER')
+    repo = get_var('GITHUB_REPOSITORY')
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     ref = get_var('REF') or os.environ.get('GITHUB_REF')
     files = get_var('FILES')
@@ -178,9 +173,8 @@ if __name__ == "__main__":
 
     check_var(token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
-    check_var(repo_owner, 'GITHUB_REPOSITORY_OWNER', 'GitHub repository owner')
     check_var(commit, 'COMMIT', 'Commit')
     check_var(ref, 'REF', 'Git ref')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, repo, repo_owner, commit, ref, files)
+    main(token, repo, commit, ref, files)
