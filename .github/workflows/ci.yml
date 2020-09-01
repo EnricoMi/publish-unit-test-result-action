@@ -8,13 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+    - name: Setup Ubuntu
+      run: sudo apt-get install language-pack-de
 
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.6
+
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Install Python dependencies
       run: |
