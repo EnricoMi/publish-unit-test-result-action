@@ -88,15 +88,15 @@ def get_formatted_digits(*numbers: Union[dict, Optional[int]]) -> Tuple[int, int
 
 def get_stats(test_results: Dict[str, Any]) -> Dict[str, Any]:
     """Provides stats for the given test results dict."""
-    tests_succ = test_results['tests'] if test_results.get('tests') else None
+    tests_succ = test_results['tests'] if 'tests' in test_results else None
     if tests_succ is not None:
         for key in ['tests_skipped', 'tests_failures', 'tests_errors']:
-            if key in test_results and test_results[key]:
+            if test_results.get(key):
                 tests_succ -= test_results[key]
 
-    runs_succ = test_results['suite_tests'] if test_results.get('suite_tests') else None
+    runs_succ = test_results['suite_tests'] if 'suite_tests' in test_results else None
     for key in ['suite_skipped', 'suite_failures', 'suite_errors']:
-        if key in test_results and test_results[key]:
+        if test_results.get(key):
             runs_succ -= test_results[key]
 
     return dict(
@@ -115,6 +115,8 @@ def get_stats(test_results: Dict[str, Any]) -> Dict[str, Any]:
         runs_skip=test_results.get('suite_skipped'),
         runs_fail=test_results.get('suite_failures'),
         runs_error=test_results.get('suite_errors'),
+
+        commit=test_results.get('commit')
     )
 
 
@@ -124,6 +126,7 @@ def get_stats_with_delta(stats: Dict[str, Any],
     """Given two stats dicts provides a stats dict with deltas."""
     reference_commit = reference_stats.get('commit')
     delta = dict(
+        commit=stats.get('commit'),
         reference_type=reference_type,
         reference_commit=reference_commit
     )

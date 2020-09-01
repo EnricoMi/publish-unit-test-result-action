@@ -137,7 +137,51 @@ class Test(unittest.TestCase):
             runs_succ=None,
             runs_skip=None,
             runs_fail=None,
-            runs_error=None
+            runs_error=None,
+
+            commit=None
+        ))
+
+        self.assertEqual(get_stats(dict(
+            files=0,
+
+            suites=0,
+            suite_tests=0,
+            suite_skipped=0,
+            suite_failures=0,
+            suite_errors=0,
+            suite_time=0,
+
+            cases=0,
+            cases_skipped=0,
+            cases_failures=0,
+            cases_errors=0,
+            cases_time=0,
+
+            tests=0,
+            tests_skipped=0,
+            tests_failures=0,
+            tests_errors=0,
+
+            commit=''
+        )), dict(
+            files=0,
+            suites=0,
+            duration=0,
+
+            tests=0,
+            tests_succ=0,
+            tests_skip=0,
+            tests_fail=0,
+            tests_error=0,
+
+            runs=0,
+            runs_succ=0,
+            runs_skip=0,
+            runs_fail=0,
+            runs_error=0,
+
+            commit=''
         ))
 
         self.assertEqual(get_stats(dict(
@@ -163,7 +207,9 @@ class Test(unittest.TestCase):
             runs_succ=15,
             runs_skip=5,
             runs_fail=None,
-            runs_error=None
+            runs_error=None,
+
+            commit=None
         ))
 
         self.assertEqual(get_stats(dict(
@@ -179,7 +225,9 @@ class Test(unittest.TestCase):
             tests=30,
             tests_skipped=8,
             tests_failures=9,
-            tests_errors=10
+            tests_errors=10,
+
+            commit='commit'
         )), dict(
             files=1,
             suites=2,
@@ -195,11 +243,14 @@ class Test(unittest.TestCase):
             runs_succ=2,
             runs_skip=5,
             runs_fail=6,
-            runs_error=7
+            runs_error=7,
+
+            commit='commit'
         ))
 
     def test_get_stats_with_delta(self):
         self.assertEqual(get_stats_with_delta(dict(), dict(), 'type'), dict(
+            commit=None,
             reference_commit=None,
             reference_type='type'
         ))
@@ -238,6 +289,7 @@ class Test(unittest.TestCase):
             runs_fail=dict(number=9),
             runs_error=dict(number=10),
 
+            commit='commit',
             reference_commit=None,
             reference_type='missing'
         ))
@@ -295,6 +347,7 @@ class Test(unittest.TestCase):
             runs_fail=n(9, 10),
             runs_error=n(10, 11),
 
+            commit='commit',
             reference_commit='ref',
             reference_type='type'
         ))
@@ -441,6 +494,17 @@ class Test(unittest.TestCase):
                               ' 10 files  10 suites 39m 1s :stopwatch:\n'
                               '217 tests 208 :heavy_check_mark:  9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'))
+
+    def test_empty_file(self):
+        parsed = parse_junit_xml_files(['files/empty.xml'])
+        parsed['commit'] = 'a commit sha'
+        results = get_test_results(parsed)
+        stats = get_stats(results)
+        md = get_long_summary_md(stats)
+        self.assertEqual(md, ('## Unit Test Results\n'
+                              '1 files  1 suites 0s :stopwatch:\n'
+                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
+                              '0 runs  0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'))
 
 
 if __name__ == '__main__':
