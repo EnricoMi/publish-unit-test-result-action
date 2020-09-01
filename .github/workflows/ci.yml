@@ -32,6 +32,9 @@ jobs:
         cd test
         python -m pytest --junit-xml ../test-results/pytest.xml
 
+    - name: Debug Action
+      uses: hmarr/debug-action@v1.0.0
+
     - name: Unit Test Results
       if: always()
       uses: EnricoMi/publish-unit-test-result-action@master
