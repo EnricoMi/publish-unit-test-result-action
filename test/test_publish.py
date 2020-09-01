@@ -32,12 +32,12 @@ def d(duration, delta=None):
     return dict(duration=duration, delta=delta)
 
 
-class Test(unittest.TestCase):
+class PublishTest(unittest.TestCase):
     old_locale = None
 
     @classmethod
     def setUpClass(cls) -> None:
-        super(Test, cls).setUpClass()
+        super(PublishTest, cls).setUpClass()
         cls.old_locale = locale.getlocale()
         logging.info('initial test locale: {}'.format(cls.old_locale))
         locale.setlocale(locale.LC_ALL, (None, None))
@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         locale.setlocale(locale.LC_ALL, cls.old_locale)
-        super(Test, cls).tearDownClass()
+        super(PublishTest, cls).tearDownClass()
 
     def test_get_formatted_digits(self):
         self.assertEqual(get_formatted_digits(None), (3, 0))
