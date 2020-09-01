@@ -1,5 +1,6 @@
 import contextlib
 import locale
+import logging
 import unittest
 from typing import Any
 
@@ -32,6 +33,20 @@ def d(duration, delta=None):
 
 
 class Test(unittest.TestCase):
+    old_locale = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super(Test, cls).setUpClass()
+        cls.old_locale = locale.getlocale()
+        logging.info('initial test locale: {}'.format(cls.old_locale))
+        locale.setlocale(locale.LC_ALL, (None, None))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        locale.setlocale(locale.LC_ALL, cls.old_locale)
+        super(Test, cls).tearDownClass()
+
     def test_get_formatted_digits(self):
         self.assertEqual(get_formatted_digits(None), (3, 0))
         self.assertEqual(get_formatted_digits(None, 1), (3, 0))

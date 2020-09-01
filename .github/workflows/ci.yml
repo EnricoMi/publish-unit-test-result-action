@@ -23,10 +23,9 @@ jobs:
         pip install pytest
 
     - name: PyTest
-      env:
-        PYTHONPATH: test
       run: |
-        python -m pytest test --junit-xml test-results/pytest.xml
+        cd test
+        python -m pytest --junit-xml ../test-results/pytest.xml
 
     - name: Upload Test Results
       if: failure()
