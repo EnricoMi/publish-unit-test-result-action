@@ -19,22 +19,33 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     suite_skipped = sum([suite.skipped for junit in junits for suite in junit])
     suite_failures = sum([suite.failures for junit in junits for suite in junit])
     suite_errors = sum([suite.errors for junit in junits for suite in junit])
-    suite_time = sum([suite.time for junit in junits for suite in junit])
+    suite_time = int(sum([suite.time for junit in junits for suite in junit]))
 
-    cases = len([case for junit in junits for suite in junit for case in suite])
-    cases_skipped = len([case for junit in junits for suite in junit for case in suite if isinstance(case.result, Skipped)])
-    cases_failures = len([case for junit in junits for suite in junit for case in suite if isinstance(case.result, Failure)])
-    cases_errors = len([case for junit in junits for suite in junit for case in suite if isinstance(case.result, Error)])
-    cases_time = sum([case.time for junit in junits for suite in junit for case in suite])
+    cases = [(case.classname, case.name, case.result._tag if case.result is not None else 'success', case.time)
+             for junit in junits for suite in junit for case in suite]
+
+    return dict(files=len(files),
+                # test states and counts from suites
+                suites=suites,
+                suite_tests=suite_tests,
+                suite_skipped=suite_skipped,
+                suite_failures=suite_failures,
+                suite_errors=suite_errors,
+                suite_time=suite_time,
+                cases=cases)
+
+
+def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
+    cases = parsed_results['cases']
+    cases_skipped = [(classname, name) for classname, name, result, time in cases if result == 'skipped']
+    cases_failures = [(classname, name) for classname, name, result, time in cases if result == 'failure']
+    cases_errors = [(classname, name) for classname, name, result, time in cases if result == 'error']
+    cases_time = sum([time for classname, name, result, time in cases])
 
     cases_results = defaultdict(Counter)
-    for junit in junits:
-        for suite in junit:
-            for case in suite:
-                key = '{}::{}'.format(case.classname, case.name)
-                counts = cases_results[key]
-                result = case.result._tag if case.result is not None else 'success'
-                counts[result] += 1
+    for classname, name, result, time in cases:
+        key = '{}::{}'.format(classname, name)
+        cases_results[key][result] += 1
 
     test_results = dict()
     for case, counter in cases_results.items():
@@ -49,22 +60,13 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     tests_failures = len([case for case, state in test_results.items() if state == 'failure'])
     tests_errors = len([case for case, state in test_results.items() if state == 'error'])
 
-    return dict(
-        files=len(files),
-
-        suites=suites,
-        # test states from suites
-        suite_tests=suite_tests,
-        suite_skipped=suite_skipped,
-        suite_failures=suite_failures,
-        suite_errors=suite_errors,
-        suite_time=int(suite_time),
-
-        cases=cases,
-        # same test states but from cases
-        cases_skipped=cases_skipped,
-        cases_failures=cases_failures,
-        cases_errors=cases_errors,
+    results = parsed_results.copy()
+    results.update(
+        cases=len(cases),
+        # test states and counts from cases
+        cases_skipped=len(cases_skipped),
+        cases_failures=len(cases_failures),
+        cases_errors=len(cases_errors),
         cases_time=cases_time,
 
         tests=tests,
@@ -73,6 +75,7 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
         tests_failures=tests_failures,
         tests_errors=tests_errors,
     )
+    return results
 
 
 def get_formatted_digits(*numbers: Union[dict, Optional[int]]) -> Tuple[int, int]:
@@ -184,6 +187,8 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> s
         if label:
             return 'N/A {}'.format(label)
         return 'N/A'
+    if isinstance(duration, float):
+        duration = int(duration)
     if isinstance(duration, int):
         duration = abs(duration)
         string = '{}s'.format(duration % 60)
@@ -349,7 +354,7 @@ def main(token: str, repo: str, commit: str, files_glob: str, check_name: str) -
         return
 
     # get the unit test results
-    results = parse_junit_xml_files(files)
+    results = get_test_results(parse_junit_xml_files(files))
     results['commit'] = commit
     logger.info('results: {}'.format(results))
 

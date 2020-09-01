@@ -5,7 +5,7 @@ from typing import Any
 
 from publish_unit_test_results import as_delta, as_stat_number, as_stat_duration, \
     get_formatted_digits, get_short_summary_md, get_long_summary_md, get_stats, \
-    get_stats_with_delta, parse_junit_xml_files
+    get_stats_with_delta, parse_junit_xml_files, get_test_results
 
 
 @contextlib.contextmanager
@@ -66,6 +66,45 @@ class Test(unittest.TestCase):
             self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
         with temp_locale('de_DE.utf8'):
             self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
+
+    def test_get_test_results(self):
+        self.assertEqual(get_test_results(dict(cases=[])), dict(
+            cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0,
+            tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
+        ))
+        self.assertEqual(get_test_results(dict(cases=[
+            ('class1', 'test1', 'success', 1),
+            ('class1', 'test2', 'skipped', 2),
+            ('class1', 'test3', 'failure', 3),
+            ('class2', 'test1', 'error', 4),
+            ('class2', 'test2', 'skipped', 5),
+            ('class2', 'test3', 'failure', 6),
+            ('class2', 'test4', 'failure', 7),
+        ])), dict(
+            cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
+            tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
+        ))
+        self.assertEqual(get_test_results(dict(cases=[
+            ('class1', 'test1', 'success', 2),
+            ('class1', 'test1', 'success', 2),
+
+            # success state has precedence over skipped
+            ('class1', 'test2', 'success', 2),
+            ('class1', 'test2', 'skipped', 2),
+
+            # only when all runs are skipped, test has state skipped
+            ('class1', 'test3', 'skipped', 2),
+            ('class1', 'test3', 'skipped', 2),
+
+            ('class1', 'test4', 'success', 2),
+            ('class1', 'test4', 'failure', 2),
+
+            ('class1', 'test5', 'success', 2),
+            ('class1', 'test5', 'error', 2),
+        ])), dict(
+            cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=20,
+            tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
+        ))
 
     def test_get_stats(self):
         self.assertEqual(get_stats(dict()), dict(
@@ -367,22 +406,26 @@ class Test(unittest.TestCase):
             '4 tests [- 5]  5 :heavy_check_mark: [+ 6]  6 :zzz: [- 7]  7 :heavy_multiplication_x: [+ 8]  8 :fire: [- 9]\n'
             '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
             '\n'
-            '[±] comparison w.r.t. type commit 01234567'))
+            '[±] comparison against type commit 01234567'))
 
     def test_files(self):
-        results = parse_junit_xml_files(['../buildkite-horovod/cd4330fe-2af5-44f3-9972-c61690526c55/artifacts/junit.gloo.elastic.spark.torch.xml',
-                                         '../buildkite-horovod/c215122a-9851-4aa8-92f9-7cce46730b43/artifacts/junit.mpi.integration.xml',
-                                         '../buildkite-horovod/f57caa6c-98d4-4b27-bfb7-9872a8d72b0e/artifacts/junit.gloo.standalone.xml',
-                                         '../buildkite-horovod/172135eb-00f6-4c9b-ab3f-77e3bf690378/artifacts/junit.spark.integration.xml',
-                                         '../buildkite-horovod/cce56ac0-9aa2-4fdf-a0a9-0a80fabf424e/artifacts/junit.mpi.static.xml',
-                                         '../buildkite-horovod/03c86385-4d41-4c22-8283-6bcb3c3b8e43/artifacts/junit.mpi.standalone.xml',
-                                         '../buildkite-horovod/5d697bab-6fdc-4771-a8e8-33f82ed5a1b1/artifacts/junit.gloo.elastic.spark.tf.xml',
-                                         '../buildkite-horovod/7eedfefc-8ceb-4e5e-8841-1a38dda72767/artifacts/junit.spark.integration.xml',
-                                         '../buildkite-horovod/0eb07c0e-3bd8-48ab-8cf2-93b0cae943f0/artifacts/junit.gloo.elastic.xml',
-                                         '../buildkite-horovod/ed277c72-31ba-4deb-9890-980293b3e3f6/artifacts/junit.gloo.static.xml'])
+        parsed = parse_junit_xml_files(['../buildkite-horovod/cd4330fe-2af5-44f3-9972-c61690526c55/artifacts/junit.gloo.elastic.spark.torch.xml',
+                                        '../buildkite-horovod/c215122a-9851-4aa8-92f9-7cce46730b43/artifacts/junit.mpi.integration.xml',
+                                        '../buildkite-horovod/f57caa6c-98d4-4b27-bfb7-9872a8d72b0e/artifacts/junit.gloo.standalone.xml',
+                                        '../buildkite-horovod/172135eb-00f6-4c9b-ab3f-77e3bf690378/artifacts/junit.spark.integration.xml',
+                                        '../buildkite-horovod/cce56ac0-9aa2-4fdf-a0a9-0a80fabf424e/artifacts/junit.mpi.static.xml',
+                                        '../buildkite-horovod/03c86385-4d41-4c22-8283-6bcb3c3b8e43/artifacts/junit.mpi.standalone.xml',
+                                        '../buildkite-horovod/5d697bab-6fdc-4771-a8e8-33f82ed5a1b1/artifacts/junit.gloo.elastic.spark.tf.xml',
+                                        '../buildkite-horovod/7eedfefc-8ceb-4e5e-8841-1a38dda72767/artifacts/junit.spark.integration.xml',
+                                        '../buildkite-horovod/0eb07c0e-3bd8-48ab-8cf2-93b0cae943f0/artifacts/junit.gloo.elastic.xml',
+                                        '../buildkite-horovod/ed277c72-31ba-4deb-9890-980293b3e3f6/artifacts/junit.gloo.static.xml'])
+        results = get_test_results(parsed)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        print(md)
+        self.assertEqual(md, ('## Unit Test Results\n'
+                              ' 10 files  10 suites 39m 1s :stopwatch:\n'
+                              '217 tests 208 :heavy_check_mark:  9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
+                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'))
 
 
 if __name__ == '__main__':
