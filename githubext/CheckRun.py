@@ -14,7 +14,7 @@
 
 import github.GithubObject
 
-
+import githubext
 
 
 class CheckRunOutput(github.GithubObject.CompletableGithubObject):

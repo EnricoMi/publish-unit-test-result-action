@@ -364,8 +364,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
         )
 
         logger.info('creating check')
-        check = repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
-        return check.html_url
+        repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
 
     def publish_status() -> None:
         # publish_check creates a check that will create a status
@@ -427,7 +426,6 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     # get the unit test results
     parsed = parse_junit_xml_files(files)
     parsed['commit'] = commit
-    logger.debug('parsed: {}'.format(parsed))
 
     # publish the delta stats
     publish(token, event, repo, commit, parsed, check_name)

@@ -13,11 +13,12 @@
 #  limitations under the License.
 
 import datetime
+from typing import Dict
 
 import github.GithubObject
 from github.Repository import Repository
+
 from githubext.CheckRun import CheckRun
-from typing import Dict
 
 
 def create_check_run(self: Repository,
@@ -75,7 +76,7 @@ def create_check_run(self: Repository,
         self.url + "/check-runs",
         input=post_parameters,
         headers={'Accept': 'application/vnd.github.antiope-preview+json'},
-        )
+    )
     return CheckRun(self._requester, headers, data, completed=True)
 
 

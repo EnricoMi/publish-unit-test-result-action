@@ -13,8 +13,10 @@
 #  limitations under the License.
 
 import github.GithubObject
-from github.PaginatedList import PaginatedList
 from github.Commit import Commit
+from github.PaginatedList import PaginatedList
+
+import githubext
 from githubext.CheckRun import CheckRun
 
 
