@@ -256,13 +256,12 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     reference_type = stats.get('reference_type')
     reference_commit = stats.get('reference_commit')
 
-    md = ('## Unit Test Results\n'
-          '{files} {suites} {duration}\n'
+    md = ('{files} {suites} {duration}\n'
           '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'
           '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'
           '{compare}'.format(
             files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
-            suites=as_stat_number(suites, 0, 0, 'suites'),
+            suites=as_stat_number(suites, 0, 0, 'suites '),
             duration=as_stat_duration(duration, ':stopwatch:'),
 
             tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
@@ -317,8 +316,7 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
 
         output = dict(
             title='Unit Test Results',
-            summary='',
-            text=get_long_summary_md(stats),
+            summary=get_long_summary_md(stats),
         )
 
         logger.info('creating check')
@@ -345,7 +343,7 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
         pull = get_pull(commit_sha)
         if pull is not None:
             logger.info('creating comment')
-            pull.create_issue_comment(get_long_summary_md(stats))
+            pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
 
     publish_check()
     #publish_status()

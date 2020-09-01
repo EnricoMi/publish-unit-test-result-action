@@ -492,8 +492,7 @@ class Test(unittest.TestCase):
 
     def test_get_long_summary_md(self):
         self.do_test_get_long_summary_md(dict(
-        ), ('## Unit Test Results\n'
-            'N/A files  N/A suites N/A :stopwatch:\n'
+        ), ('N/A files  N/A suites  N/A :stopwatch:\n'
             'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
             'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'))
 
@@ -501,8 +500,7 @@ class Test(unittest.TestCase):
             files=1, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
-        ), ('## Unit Test Results\n'
-            '1 files  2 suites 3s :stopwatch:\n'
+        ), ('1 files  2 suites  3s :stopwatch:\n'
             '4 tests  5 :heavy_check_mark:  6 :zzz:  7 :heavy_multiplication_x:  8 :fire:\n'
             '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'))
 
@@ -511,8 +509,7 @@ class Test(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             reference_type='type', reference_commit='0123456789abcdef'
-        ), ('## Unit Test Results\n'
-            '1 files  [+ 2] 2 suites [-3] 3s :stopwatch: [+ 4s]\n'
+        ), ('1 files  [+ 2] 2 suites  [-3] 3s :stopwatch: [+ 4s]\n'
             '4 tests [- 5]  5 :heavy_check_mark: [+ 6]  6 :zzz: [- 7]  7 :heavy_multiplication_x: [+ 8]  8 :fire: [- 9]\n'
             '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
             '\n'
@@ -532,8 +529,7 @@ class Test(unittest.TestCase):
         results = get_test_results(parsed)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('## Unit Test Results\n'
-                              ' 10 files  10 suites 39m 1s :stopwatch:\n'
+        self.assertEqual(md, (' 10 files  10 suites  39m 1s :stopwatch:\n'
                               '217 tests 208 :heavy_check_mark:  9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'))
 
@@ -543,8 +539,7 @@ class Test(unittest.TestCase):
         results = get_test_results(parsed)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('## Unit Test Results\n'
-                              '1 files  1 suites 0s :stopwatch:\n'
+        self.assertEqual(md, ('1 files  1 suites  0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '0 runs  0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'))
 
