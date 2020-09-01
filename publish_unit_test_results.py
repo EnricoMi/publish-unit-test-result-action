@@ -292,12 +292,12 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
     def get_pull(commit: str) -> PullRequest:
         pulls = gh.search_issues('type:pr {}'.format(commit))
         logger.debug('found {} pull requests for commit {}'.format(pulls.totalCount, commit))
-        for pr in pulls:
-            logger.debug(pr)
 
         if pulls.totalCount == 0:
-            raise RuntimeError('Could not find pull request for commit {}'.format(commit))
+            return None
         if pulls.totalCount > 1:
+            for pr in pulls:
+                logger.debug(pr)
             raise RuntimeError('Found multiple pull requests for commit {}'.format(commit))
 
         return pulls[0].as_pull_request()
@@ -336,7 +336,6 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
 
     def publish_comment() -> None:
         pull = get_pull(commit_sha)
-        print(pull)
         if pull is not None:
             logger.info('creating comment')
             pull.create_issue_comment(get_long_summary_md(stats))
