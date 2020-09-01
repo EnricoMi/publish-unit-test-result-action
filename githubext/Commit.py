@@ -28,9 +28,10 @@ def get_check_runs(self):
     return github.PaginatedList.PaginatedList(
         githubext.CheckRun.CheckRun,
         self._requester,
-        self.url + "/pulls",
+        self.url + "/check-runs",
         None,
-        headers={"Accept": "application/vnd.github.groot-preview+json"},
+        headers={"Accept": "application/vnd.github.antiope-preview+json"},
+        list_item='check_runs'
     )
 
 

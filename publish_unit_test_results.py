@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Union, Optional, Tuple
 from junitparser import *
 
 logger = logging.getLogger('publish-unit-test-results')
+digest_prefix = '[ref]:data:application/gzip;base64,'
 
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
@@ -145,7 +146,7 @@ def get_stats_with_delta(stats: Dict[str, Any],
             else:
                 val = dict(number=stats[key])
             if key in reference_stats and reference_stats[key] is not None:
-                val['delta'] = reference_stats[key] - stats[key]
+                val['delta'] = stats[key] - reference_stats[key]
             delta[key] = val
 
     return delta
@@ -293,7 +294,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
             runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
 
-            compare='\n[±] comparison against {reference_type} commit {reference_commit}'.format(
+            compare='\n[±] comparison against {reference_type} commit {reference_commit}\n'.format(
                 reference_type=reference_type,
                 reference_commit=as_short_commit(reference_commit)
             ) if reference_type and reference_commit else ''
@@ -304,7 +305,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
 def get_long_summary_with_digest_md(stats: Dict[str, Any]) -> str:
     summary = get_long_summary_md(stats)
     digest = get_digest_from_stats(stats)
-    return '{}\n[ref]:data:application/gzip;base64,{}'.format(summary, digest)
+    return '{}\n{}{}'.format(summary, digest_prefix, digest)
 
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Dict[Any, Any], check_name: str):
@@ -349,10 +350,19 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
         if len(runs) != 1:
             return None
 
-        summary = runs[0].output.summary
+        summary = runs[0].output.get('summary')
         logger.debug('summary: {}'.format(summary))
+        if summary is None:
+            return None
+
+        pos = summary.index(digest_prefix) if digest_prefix in summary else None
+        if pos:
+            digest = summary[pos + len(digest_prefix):]
+            return get_stats_from_digest(digest)
 
     def publish_check(stats: Dict[Any, Any]) -> None:
+        logger.debug(get_long_summary_with_digest_md(stats))
+
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
             logger.warning('action not running on GitHub, skipping publishing the check')
@@ -386,6 +396,11 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
             logger.info('creating comment')
             logger.debug(get_long_summary_md(stats))
 
+            # we don't want to actually do this when not run by GitHub Actions GitHub App
+            if os.environ.get('GITHUB_ACTIONS') is None:
+                logger.warning('action not running on GitHub, skipping creating comment')
+                return
+
             pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
 
     # process the parsed results
@@ -395,14 +410,12 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
     stats = get_stats(results)
 
     # get stats earlier commits
-    #before_commit_sha = event.get('before')
-    #before_stats = get_stats_from_commit(before_commit_sha)
-    before_stats = None
+    before_commit_sha = event.get('before')
+    before_stats = get_stats_from_commit(before_commit_sha)
 
     pull = get_pull(commit_sha)
-    #base_commit_sha = pull.base.sha if pull else None
-    #base_stats = get_stats_from_commit(base_commit_sha)
-    base_stats = None
+    base_commit_sha = pull.base.sha if pull else None
+    base_stats = get_stats_from_commit(base_commit_sha)
 
     # compare them with earlier stats
     before_stats = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats

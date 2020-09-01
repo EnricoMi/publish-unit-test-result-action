@@ -371,21 +371,21 @@ class PublishTest(unittest.TestCase):
 
             commit='ref'
         ), 'type'), dict(
-            files=n(1, 2),
-            suites=n(2, 3),
-            duration=d(3, 4),
+            files=n(1, -2),
+            suites=n(2, -3),
+            duration=d(3, -4),
 
-            tests=n(20, 21),
-            tests_succ=n(2, 3),
-            tests_skip=n(5, 6),
-            tests_fail=n(6, 7),
-            tests_error=n(7, 8),
+            tests=n(20, -21),
+            tests_succ=n(2, -3),
+            tests_skip=n(5, -6),
+            tests_fail=n(6, -7),
+            tests_error=n(7, -8),
 
-            runs=n(40, 41),
-            runs_succ=n(12, 13),
-            runs_skip=n(8, 9),
-            runs_fail=n(9, 10),
-            runs_error=n(10, 11),
+            runs=n(40, -41),
+            runs_succ=n(12, -13),
+            runs_skip=n(8, -9),
+            runs_fail=n(9, -10),
+            runs_error=n(10, -11),
 
             commit='commit',
             reference_commit='ref',
@@ -546,7 +546,7 @@ class PublishTest(unittest.TestCase):
             '4 tests [- 5]  5 :heavy_check_mark: [+ 6]  6 :zzz: [- 7]  7 :heavy_multiplication_x: [+ 8]  8 :fire: [- 9]\n'
             '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
             '\n'
-            '[±] comparison against type commit 01234567'))
+            '[±] comparison against type commit 01234567\n'))
 
     def test_get_long_summary_with_digest_md(self):
         self.assertTrue(get_long_summary_with_digest_md(dict(
@@ -575,7 +575,7 @@ class PublishTest(unittest.TestCase):
                       '4 tests [- 5]  5 :heavy_check_mark: [+ 6]  6 :zzz: [- 7]  7 :heavy_multiplication_x: [+ 8]  8 :fire: [- 9]\n'
                       '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
                       '\n'
-                      '[±] comparison against type commit 01234567'
+                      '[±] comparison against type commit 01234567\n'
                       '\n'
                       '[ref]:data:application/gzip;base64,'))
 

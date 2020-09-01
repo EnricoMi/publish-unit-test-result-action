@@ -14,76 +14,6 @@
 
 import github.GithubObject
 
-import githubext
-
-
-class CheckRunOutput(github.GithubObject.CompletableGithubObject):
-    """
-    This class represents the output of a CheckRun. The reference can be found here http://developer.github.com/v3/checks/runs/
-    """
-
-    def __repr__(self):
-        return self.get__repr__({"title": self._title.value})
-
-    @property
-    def title(self):
-        """
-        :type: string
-        """
-        self._completeIfNotSet(self.title)
-        return self._title.value
-
-    @property
-    def summary(self):
-        """
-        :type: string
-        """
-        self._completeIfNotSet(self._summary)
-        return self._summary.value
-
-    @property
-    def text(self):
-        """
-        :type: string
-        """
-        self._completeIfNotSet(self._text)
-        return self._text.value
-
-    @property
-    def annotations_count(self):
-        """
-        :type: integer
-        """
-        self._completeIfNotSet(self._annotations_count)
-        return self._annotations_count.value
-
-    @property
-    def annotations_url(self):
-        """
-        :type: string
-        """
-        self._completeIfNotSet(self._annotations_url)
-        return self._annotations_url.value
-
-    def _initAttributes(self):
-        self._title = github.GithubObject.NotSet
-        self._summary = github.GithubObject.NotSet
-        self._text = github.GithubObject.NotSet
-        self._annotations_count = github.GithubObject.NotSet
-        self._annotations_url = github.GithubObject.NotSet
-
-    def _useAttributes(self, attributes):
-        if "title" in attributes:  # pragma no branch
-            self._title = self._makeStringAttribute(attributes["title"])
-        if "name" in attributes:  # pragma no branch
-            self._name = self._makeStringAttribute(attributes["summary"])
-        if "status" in attributes:  # pragma no branch
-            self._status = self._makeStringAttribute(attributes["text"])
-        if "annotations_count" in attributes:  # pragma no branch
-            self._annotations_count = self._makeIntAttribute(attributes["annotations_count"])
-        if "annotations_url" in attributes:  # pragma no branch
-            self._annotations_url = self._makeStringAttribute(attributes["annotations_url"])
-
 
 class CheckRun(github.GithubObject.CompletableGithubObject):
     """
@@ -126,6 +56,14 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
         return self._conclusion.value
 
     @property
+    def output(self):
+        """
+        :type: dict
+        """
+        self._completeIfNotSet(self._output)
+        return self._output.value
+
+    @property
     def details_url(self):
         """
         :type: string
@@ -154,6 +92,7 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
         self._name = github.GithubObject.NotSet
         self._status = github.GithubObject.NotSet
         self._conclusion = github.GithubObject.NotSet
+        self._output = github.GithubObject.NotSet
         self._details_url = github.GithubObject.NotSet
         self._html_url = github.GithubObject.NotSet
         self._url = github.GithubObject.NotSet
@@ -168,9 +107,7 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
         if "conclusion" in attributes:  # pragma no branch
             self._conclusion = self._makeStringAttribute(attributes["conclusion"])
         if "output" in attributes:  # pragma no branch
-            self._output = self._makeClassAttribute(
-                githubext.CheckRun.CheckRunOutput, attributes["output"]
-            )
+            self._output = self._makeDictAttribute(attributes["output"])
         if "details_url" in attributes:  # pragma no branch
             self._details_url = self._makeStringAttribute(attributes["details_url"])
         if "html_url" in attributes:  # pragma no branch
