@@ -82,40 +82,82 @@ class Test(unittest.TestCase):
         with temp_locale('de_DE.utf8'):
             self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
 
+    def test_parse_junit_xml_files(self):
+        self.assertEqual(parse_junit_xml_files([]),
+                         dict(files=0,
+                              suites=0,
+                              suite_tests=0,
+                              suite_skipped=0,
+                              suite_failures=0,
+                              suite_errors=0,
+                              suite_time=0,
+                              cases=[]))
+        self.assertEqual(parse_junit_xml_files(['files/junit.mpi.integration.xml']),
+                         dict(files=1,
+                              suites=1,
+                              suite_tests=3,
+                              suite_skipped=0,
+                              suite_failures=0,
+                              suite_errors=0,
+                              suite_time=15,
+                              cases=[
+                                  dict(
+                                      file='files/junit.mpi.integration.xml',
+                                      class_name='test.test_interactiverun.InteractiveRunTests',
+                                      test_name='test_failed_run',
+                                      result='success',
+                                      time=9.386
+                                  ),
+                                  dict(
+                                      file='files/junit.mpi.integration.xml',
+                                      class_name='test.test_interactiverun.InteractiveRunTests',
+                                      test_name='test_happy_run',
+                                      result='success',
+                                      time=4.012
+                                  ),
+                                  dict(
+                                      file='files/junit.mpi.integration.xml',
+                                      class_name='test.test_interactiverun.InteractiveRunTests',
+                                      test_name='test_happy_run_elastic',
+                                      result='success',
+                                      time=1.898
+                                  )
+                              ]))
+
     def test_get_test_results(self):
         self.assertEqual(get_test_results(dict(cases=[])), dict(
             cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0,
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
         ))
         self.assertEqual(get_test_results(dict(cases=[
-            ('class1', 'test1', 'success', 1),
-            ('class1', 'test2', 'skipped', 2),
-            ('class1', 'test3', 'failure', 3),
-            ('class2', 'test1', 'error', 4),
-            ('class2', 'test2', 'skipped', 5),
-            ('class2', 'test3', 'failure', 6),
-            ('class2', 'test4', 'failure', 7),
+            dict(file='test', class_name='class1', test_name='test1', result='success', time=1),
+            dict(file='test', class_name='class1', test_name='test2', result='skipped', time=2),
+            dict(file='test', class_name='class1', test_name='test3', result='failure', time=3),
+            dict(file='test', class_name='class2', test_name='test1', result='error', time=4),
+            dict(file='test', class_name='class2', test_name='test2', result='skipped', time=5),
+            dict(file='test', class_name='class2', test_name='test3', result='failure', time=6),
+            dict(file='test', class_name='class2', test_name='test4', result='failure', time=7),
         ])), dict(
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
             tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
         ))
         self.assertEqual(get_test_results(dict(cases=[
-            ('class1', 'test1', 'success', 2),
-            ('class1', 'test1', 'success', 2),
+            dict(file='test', class_name='class1', test_name='test1', result='success', time=2),
+            dict(file='test', class_name='class1', test_name='test1', result='success', time=2),
 
             # success state has precedence over skipped
-            ('class1', 'test2', 'success', 2),
-            ('class1', 'test2', 'skipped', 2),
+            dict(file='test', class_name='class1', test_name='test2', result='success', time=2),
+            dict(file='test', class_name='class1', test_name='test2', result='skipped', time=2),
 
             # only when all runs are skipped, test has state skipped
-            ('class1', 'test3', 'skipped', 2),
-            ('class1', 'test3', 'skipped', 2),
+            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=2),
+            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=2),
 
-            ('class1', 'test4', 'success', 2),
-            ('class1', 'test4', 'failure', 2),
+            dict(file='test', class_name='class1', test_name='test4', result='success', time=2),
+            dict(file='test', class_name='class1', test_name='test4', result='failure', time=2),
 
-            ('class1', 'test5', 'success', 2),
-            ('class1', 'test5', 'error', 2),
+            dict(file='test', class_name='class1', test_name='test5', result='success', time=2),
+            dict(file='test', class_name='class1', test_name='test5', result='error', time=2),
         ])), dict(
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=20,
             tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,

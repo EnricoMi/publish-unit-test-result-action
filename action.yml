@@ -1,0 +1,30 @@
+name: 'Publish Unit Test Results'
+author: 'EnricoMi'
+description: 'A GitHub Action that publishes unit test results on GitHub'
+inputs:
+  github_token:
+    description: 'GitHub API Access Token'
+    required: true
+  check_name:
+    description: 'Name of the created check run'
+    required: false
+    default: 'Unit Test Results'
+  files:
+    description: 'File pattern of test result files'
+    required: true
+  artifact_name:
+    description: 'Name of artifact that stores earlier test result artifacts'
+    required: false
+  artifact_file_name:
+    description: 'Path to store the test results artifact of this run'
+    required: false
+  log_level:
+    description: 'Action logging level'
+    required: false
+    default: 'INFO'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+branding:
+  icon: 'check-circle'
+  color: 'green'

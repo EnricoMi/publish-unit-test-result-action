@@ -3,6 +3,7 @@ import os
 import pathlib
 from typing import List, Dict, Any, Union, Optional, Tuple
 from collections import defaultdict, Counter
+import json
 
 from junitparser import *
 
@@ -12,17 +13,17 @@ logger = logging.getLogger('publish-unit-test-results')
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     """Parses junit xml files and returns aggregated statistics as a dict."""
-    junits = [JUnitXml.fromfile(file) for file in files]
+    junits = [(file, JUnitXml.fromfile(file)) for file in files]
 
-    suites = sum([len(junit) for junit in junits])
-    suite_tests = sum([suite.tests for junit in junits for suite in junit])
-    suite_skipped = sum([suite.skipped for junit in junits for suite in junit])
-    suite_failures = sum([suite.failures for junit in junits for suite in junit])
-    suite_errors = sum([suite.errors for junit in junits for suite in junit])
-    suite_time = int(sum([suite.time for junit in junits for suite in junit]))
+    suites = sum([len(junit) for file, junit in junits])
+    suite_tests = sum([suite.tests for file, junit in junits for suite in junit])
+    suite_skipped = sum([suite.skipped for file, junit in junits for suite in junit])
+    suite_failures = sum([suite.failures for file, junit in junits for suite in junit])
+    suite_errors = sum([suite.errors for file, junit in junits for suite in junit])
+    suite_time = int(sum([suite.time for file, junit in junits for suite in junit]))
 
-    cases = [(case.classname, case.name, case.result._tag if case.result is not None else 'success', case.time)
-             for junit in junits for suite in junit for case in suite]
+    cases = [dict(file=file, class_name=case.classname, test_name=case.name, result=case.result._tag if case.result is not None else 'success', time=case.time)
+             for file, junit in junits for suite in junit for case in suite]
 
     return dict(files=len(files),
                 # test states and counts from suites
@@ -37,15 +38,18 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
 
 def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
     cases = parsed_results['cases']
-    cases_skipped = [(classname, name) for classname, name, result, time in cases if result == 'skipped']
-    cases_failures = [(classname, name) for classname, name, result, time in cases if result == 'failure']
-    cases_errors = [(classname, name) for classname, name, result, time in cases if result == 'error']
-    cases_time = sum([time for classname, name, result, time in cases])
+    cases_skipped = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
+                     for case in cases if case.get('result') == 'skipped']
+    cases_failures = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
+                      for case in cases if case.get('result') == 'failure']
+    cases_errors = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
+                    for case in cases if case.get('result') == 'error']
+    cases_time = sum([case.get('time') for case in cases])
 
     cases_results = defaultdict(Counter)
-    for classname, name, result, time in cases:
-        key = '{}::{}'.format(classname, name)
-        cases_results[key][result] += 1
+    for case in cases:
+        key = '{}::{}'.format(case.get('class_name'), case.get('test_name'))
+        cases_results[key][case.get('result')] += 1
 
     test_results = dict()
     for case, counter in cases_results.items():
@@ -313,7 +317,7 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
 
         output = dict(
             title='Unit Test Results',
-            summary=get_short_summary_md(stats),
+            summary='',
             text=get_long_summary_md(stats),
         )
 
@@ -348,28 +352,44 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
     publish_comment()
 
 
-def main(token: str, repo: str, commit: str, files_glob: str, check_name: str) -> None:
+def write_stats_file(stats, filename) -> None:
+    logger.debug('writing stats to {}'.format(filename))
+    with open(filename, 'w') as f:
+        f.write(json.dumps(stats))
+
+
+def main(token: str, repo: str, commit: str, files_glob: str, check_name: str, artifact: str, artifact_file: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('{}: {}'.format(files_glob, list(files)))
 
-    if len(files) == 0:
-        return
-
     # get the unit test results
-    results = get_test_results(parse_junit_xml_files(files))
-    results['commit'] = commit
-    logger.info('results: {}'.format(results))
+    parsed = parse_junit_xml_files(files)
+    parsed['commit'] = commit
+    logger.debug('parsed: {}'.format(parsed))
+
+    # write parsed results to artifact file
+    if artifact_file:
+        write_stats_file(parsed, artifact_file)
+
+    # process the parsed results
+    results = get_test_results(parsed)
+    logger.debug('results: {}'.format(results))
 
     # turn them into stats
     stats = get_stats(results)
-    logger.info('stats: {}'.format(stats))
+    logger.debug('stats: {}'.format(stats))
+
+    # download artifact from earlier commit
+    #get ref_commit and ref_type
+    # ref = download_artifact(ref_commit, artifact)
 
     # compare them with earlier stats
-    delta = get_stats_with_delta(stats, stats, 'self')
-    logger.info('delta: {}'.format(delta))
+    #if ref is not None:
+    #    stats = get_stats_with_delta(stats, ref, ref_type)
+    #    logger.debug('delta: {}'.format(stats))
 
     # publish the delta stats
-    publish(token, repo, commit, delta, check_name)
+    #publish(token, repo, commit, stats, check_name)
 
 
 def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
@@ -403,6 +423,8 @@ if __name__ == "__main__":
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     files = get_var('FILES')
+    artifact = get_var('ARTIFACT_NAME')
+    artifact_file = get_var('ARTIFACT_FILE_NAME')
 
     def check_var(var: str, name: str, label: str) -> None:
         if var is None:
@@ -413,4 +435,4 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT', 'Commit')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, repo, commit, files, check_name)
+    main(token, repo, commit, files, check_name, artifact, artifact_file)
