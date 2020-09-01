@@ -16,7 +16,7 @@ import datetime
 
 import github.GithubObject
 from github.Repository import Repository
-from githubext.CheckRuns import CheckRun
+from githubext.CheckRun import CheckRun
 from typing import Dict
 
 
