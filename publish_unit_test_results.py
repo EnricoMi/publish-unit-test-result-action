@@ -389,7 +389,7 @@ def main(token: str, repo: str, commit: str, files_glob: str, check_name: str, a
     #    logger.debug('delta: {}'.format(stats))
 
     # publish the delta stats
-    #publish(token, repo, commit, stats, check_name)
+    publish(token, repo, commit, stats, check_name)
 
 
 def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
