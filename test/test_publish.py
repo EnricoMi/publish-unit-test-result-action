@@ -4,9 +4,7 @@ import logging
 import unittest
 from typing import Any
 
-from publish_unit_test_results import as_delta, as_stat_number, as_stat_duration, \
-    get_formatted_digits, get_short_summary_md, get_long_summary_md, get_stats, \
-    get_stats_with_delta, parse_junit_xml_files, get_test_results
+from publish_unit_test_results import *
 
 
 @contextlib.contextmanager
@@ -467,6 +465,41 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_stat_duration(d(3754, -123), label), '1h 2m 34s time [- 2m 3s]')
         self.assertEqual(as_stat_duration(dict(delta=123), label), 'N/A time [+ 2m 3s]')
 
+    def test_get_stats_digest_undigest(self):
+        digest = get_digest_from_stats(dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_success=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
+            commit='commit'
+        ))
+        self.assertTrue(isinstance(digest, str))
+        self.assertTrue(len(digest) > 100)
+        stats = get_stats_from_digest(digest)
+        self.assertEqual(stats, dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_success=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
+            commit='commit'
+        ))
+
+    def test_digest_ungest_string(self):
+        digest = digest_string('abc')
+        self.assertTrue(isinstance(digest, str))
+        self.assertTrue(len(digest) > 10)
+        string = ungest_string(digest)
+        self.assertEqual(string, 'abc')
+
+    def test_get_stats_from_digest(self):
+        self.assertEqual(get_stats_from_digest('H4sIALSWTl8C/03OzQ6DIBAE4FcxnD10tf8v0xDEZFOVZoGT6b'
+                                               't3qC7tbebbMGE1I08+mntDbWNi5vQtHcqQxSYOC2qPikMqp6Pm'
+                                               'R8zO+Vjs9LMnvwDnCqPlCXCp4EWCQK4QyUt5ftvj3yIdqm2LRA'
+                                               'r7InUKukjlmy7MMyc0Te8PumEONuMAAAA='), dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_success=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
+            commit='commit'
+        ))
+
     def do_test_get_short_summary_md(self, stats, expected_md):
         self.assertEqual(get_short_summary_md(stats), expected_md)
 
@@ -514,6 +547,37 @@ class PublishTest(unittest.TestCase):
             '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
             '\n'
             '[±] comparison against type commit 01234567'))
+
+    def test_get_long_summary_with_digest_md(self):
+        self.assertTrue(get_long_summary_with_digest_md(dict(
+        )).startswith('N/A files  N/A suites  N/A :stopwatch:\n'
+                      'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+                      'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+                      '\n'
+                      '[ref]:data:application/gzip;base64,'))
+
+        self.assertTrue(get_long_summary_with_digest_md(dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
+        )).startswith('1 files  2 suites  3s :stopwatch:\n'
+                      '4 tests  5 :heavy_check_mark:  6 :zzz:  7 :heavy_multiplication_x:  8 :fire:\n'
+                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
+                      '\n'
+                      '[ref]:data:application/gzip;base64,'))
+
+        self.assertTrue(get_long_summary_with_digest_md(dict(
+            files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+            reference_type='type', reference_commit='0123456789abcdef'
+        )).startswith('1 files  [+ 2] 2 suites  [-3] 3s :stopwatch: [+ 4s]\n'
+                      '4 tests [- 5]  5 :heavy_check_mark: [+ 6]  6 :zzz: [- 7]  7 :heavy_multiplication_x: [+ 8]  8 :fire: [- 9]\n'
+                      '9 runs  [+10] 10 :heavy_check_mark: [-11] 11 :zzz: [+12] 12 :heavy_multiplication_x: [-13] 13 :fire: [+14]\n'
+                      '\n'
+                      '[±] comparison against type commit 01234567'
+                      '\n'
+                      '[ref]:data:application/gzip;base64,'))
 
     def test_files(self):
         parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',

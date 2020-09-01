@@ -1,12 +1,13 @@
+import base64
+import gzip
+import json
 import logging
 import os
 import pathlib
-from typing import List, Dict, Any, Union, Optional, Tuple
 from collections import defaultdict, Counter
-import json
+from typing import List, Dict, Any, Union, Optional, Tuple
 
 from junitparser import *
-
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -217,6 +218,22 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> s
         return 'N/A'
 
 
+def digest_string(string: str) -> str:
+    return str(base64.encodebytes(gzip.compress(bytes(string, 'utf8'), compresslevel=9)), 'utf8').replace('\n', '')
+
+
+def ungest_string(string: str) -> str:
+    return str(gzip.decompress(base64.decodebytes(bytes(string, 'utf8'))), 'utf8')
+
+
+def get_digest_from_stats(stats: Dict[Any, Any]) -> str:
+    return digest_string(json.dumps(stats))
+
+
+def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
+    return json.loads(ungest_string(digest))
+
+
 def get_short_summary_md(stats: Dict[str, Any]) -> str:
     """Provides a single-line summary for the given stats."""
     md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
@@ -284,13 +301,21 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     return md
 
 
-def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], check_name: str):
+def get_long_summary_with_digest_md(stats: Dict[str, Any]) -> str:
+    summary = get_long_summary_md(stats)
+    digest = get_digest_from_stats(stats)
+    return '{}\n[ref]:data:application/gzip;base64,{}'.format(summary, digest)
+
+
+def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Dict[Any, Any], check_name: str):
     from github import Github, PullRequest
-    from githubext import Repository
+    from githubext import Repository, Commit
 
     # to prevent githubext import to be auto-removed
     if getattr(Repository, 'create_check_run') is None:
         raise RuntimeError('patching github Repository failed')
+    if getattr(Commit, 'get_check_runs') is None:
+        raise RuntimeError('patching github Commit failed')
 
     gh = Github(token)
     repo = gh.get_repo(repo_name)
@@ -308,7 +333,26 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
 
         return pulls[0].as_pull_request()
 
-    def publish_check() -> None:
+    def get_stats_from_commit(commit_sha: str) -> Optional[Dict[Any, Any]]:
+        if commit_sha is None:
+            return None
+
+        commit = repo.get_commit(commit_sha)
+        if commit is None:
+            logger.error('could not find commit {}'.format(commit_sha))
+            return None
+
+        runs = commit.get_check_runs()
+        logger.debug('found {} check runs for commit {}'.format(runs.totalCount, commit))
+        runs = list([run for run in runs if run.name == check_name])
+        logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit, check_name))
+        if len(runs) != 1:
+            return None
+
+        summary = runs[0].output.summary
+        logger.debug('summary: {}'.format(summary))
+
+    def publish_check(stats: Dict[Any, Any]) -> None:
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
             logger.warning('action not running on GitHub, skipping publishing the check')
@@ -316,13 +360,12 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
 
         output = dict(
             title='Unit Test Results',
-            summary=get_long_summary_md(stats),
+            summary=get_long_summary_with_digest_md(stats),
         )
 
         logger.info('creating check')
         check = repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
         return check.html_url
-
 
     def publish_status() -> None:
         # publish_check creates a check that will create a status
@@ -339,15 +382,36 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], 
         logger.info('creating status')
         commit.create_status(state='success', description=desc, context='action/unit-test-results')
 
-    def publish_comment() -> None:
-        pull = get_pull(commit_sha)
+    def publish_comment(stats: Dict[Any, Any], pull: PullRequest) -> None:
         if pull is not None:
             logger.info('creating comment')
+            logger.debug(get_long_summary_md(stats))
+
             pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
 
-    publish_check()
+    # process the parsed results
+    results = get_test_results(parsed)
+
+    # turn them into stats
+    stats = get_stats(results)
+
+    # get stats earlier commits
+    #before_commit_sha = event.get('before')
+    #before_stats = get_stats_from_commit(before_commit_sha)
+    before_stats = None
+
+    pull = get_pull(commit_sha)
+    #base_commit_sha = pull.base.sha if pull else None
+    #base_stats = get_stats_from_commit(base_commit_sha)
+    base_stats = None
+
+    # compare them with earlier stats
+    before_stats = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats
+    base_stats = get_stats_with_delta(stats, base_stats, 'base') if base_stats is not None else stats
+
+    publish_check(before_stats)
     #publish_status()
-    publish_comment()
+    publish_comment(base_stats, pull)
 
 
 def write_stats_file(stats, filename) -> None:
@@ -356,7 +420,7 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, repo: str, commit: str, files_glob: str, check_name: str, artifact: str, artifact_file: str) -> None:
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('{}: {}'.format(files_glob, list(files)))
 
@@ -365,29 +429,8 @@ def main(token: str, repo: str, commit: str, files_glob: str, check_name: str, a
     parsed['commit'] = commit
     logger.debug('parsed: {}'.format(parsed))
 
-    # write parsed results to artifact file
-    if artifact_file:
-        write_stats_file(parsed, artifact_file)
-
-    # process the parsed results
-    results = get_test_results(parsed)
-    logger.debug('results: {}'.format(results))
-
-    # turn them into stats
-    stats = get_stats(results)
-    logger.debug('stats: {}'.format(stats))
-
-    # download artifact from earlier commit
-    #get ref_commit and ref_type
-    # ref = download_artifact(ref_commit, artifact)
-
-    # compare them with earlier stats
-    #if ref is not None:
-    #    stats = get_stats_with_delta(stats, ref, ref_type)
-    #    logger.debug('delta: {}'.format(stats))
-
     # publish the delta stats
-    publish(token, repo, commit, stats, check_name)
+    publish(token, event, repo, commit, parsed, check_name)
 
 
 def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
@@ -417,20 +460,23 @@ if __name__ == "__main__":
     check_event_name()
 
     token = get_var('GITHUB_TOKEN')
+    event = get_var('GITHUB_EVENT_PATH')
     repo = get_var('GITHUB_REPOSITORY')
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     files = get_var('FILES')
-    artifact = get_var('ARTIFACT_NAME')
-    artifact_file = get_var('ARTIFACT_FILE_NAME')
 
     def check_var(var: str, name: str, label: str) -> None:
         if var is None:
             raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
 
     check_var(token, 'GITHUB_TOKEN', 'GitHub token')
+    check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
     check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(commit, 'COMMIT', 'Commit')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, repo, commit, files, check_name, artifact, artifact_file)
+    with open(event, 'r') as f:
+        event = json.load(f)
+
+    main(token, event, repo, commit, files, check_name)
