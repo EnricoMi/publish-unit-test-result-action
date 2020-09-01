@@ -41,8 +41,8 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
         test_results[case] = \
             'error' if counter['error'] else \
             'failure' if counter['failure'] else \
-            'skipped' if counter['skipped'] else \
-            'success'
+            'success' if counter['success'] else \
+            'skipped'
 
     tests = len(test_results)
     tests_skipped = len([case for case, state in test_results.items() if state == 'skipped'])
@@ -265,7 +265,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
             runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
 
-            compare='\n[±] comparison w.r.t. {reference_type} commit {reference_commit}'.format(
+            compare='\n[±] comparison against {reference_type} commit {reference_commit}'.format(
                 reference_type=reference_type,
                 reference_commit=as_short_commit(reference_commit)
             ) if reference_type and reference_commit else ''
@@ -273,7 +273,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     return md
 
 
-def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any]):
+def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any], check_name: str):
     from github import Github, PullRequest
     from githubext import Repository
 
@@ -310,7 +310,7 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any]):
         )
 
         logger.info('creating check')
-        check = repo.create_check_run(name='unit-test-result', head_sha=commit_sha, status='completed', conclusion='success', output=output)
+        check = repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
         return check.html_url
 
 
@@ -341,7 +341,7 @@ def publish(token: str, repo_name: str, commit_sha: str, stats: Dict[Any, Any]):
     publish_comment()
 
 
-def main(token: str, repo: str, commit: str, files_glob: str) -> None:
+def main(token: str, repo: str, commit: str, files_glob: str, check_name: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('{}: {}'.format(files_glob, list(files)))
 
@@ -362,7 +362,7 @@ def main(token: str, repo: str, commit: str, files_glob: str) -> None:
     logger.info('delta: {}'.format(delta))
 
     # publish the delta stats
-    publish(token, repo, commit, delta)
+    publish(token, repo, commit, delta, check_name)
 
 
 def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
@@ -393,6 +393,7 @@ if __name__ == "__main__":
 
     token = get_var('GITHUB_TOKEN')
     repo = get_var('GITHUB_REPOSITORY')
+    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     files = get_var('FILES')
 
@@ -405,4 +406,4 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT', 'Commit')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, repo, commit, files)
+    main(token, repo, commit, files, check_name)
