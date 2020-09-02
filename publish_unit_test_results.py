@@ -266,7 +266,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     runs_error = stats.get('runs_error')
 
     files_digits, files_delta_digits = get_formatted_digits(files, tests, runs)
-    success_digits, success_delta_digits = get_formatted_digits(tests_succ, runs_succ)
+    success_digits, success_delta_digits = get_formatted_digits(suites, tests_succ, runs_succ)
     skip_digits, skip_delta_digits = get_formatted_digits(tests_skip, runs_skip)
     fail_digits, fail_delta_digits = get_formatted_digits(tests_fail, runs_fail)
     error_digits, error_delta_digits = get_formatted_digits(tests_error, runs_error)
@@ -281,7 +281,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
           '\n'
           'results for commit {commit}{compare}\n'.format(
             files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
-            suites=as_stat_number(suites, 0, 0, 'suites '),
+            suites=as_stat_number(suites, success_digits, 0, 'suites '),
             duration=as_stat_duration(duration, ':stopwatch:'),
 
             tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
