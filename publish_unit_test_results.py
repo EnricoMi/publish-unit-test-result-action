@@ -205,7 +205,7 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
 
         return ''.join([
             as_stat_number(number['number'], number_digits, delta_digits, label) if 'number' in number else 'N/A',
-            ' {}'.format(extra) if extra != '' else ''
+            ' {} '.format(extra) if extra != '' else ''
         ])
     else:
         logger.warning('unsupported stats number type {}: {}'.format(type(number), number))
