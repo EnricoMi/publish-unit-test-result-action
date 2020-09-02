@@ -56,6 +56,14 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
         return self._conclusion.value
 
     @property
+    def output(self):
+        """
+        :type: dict
+        """
+        self._completeIfNotSet(self._output)
+        return self._output.value
+
+    @property
     def details_url(self):
         """
         :type: string
@@ -84,6 +92,7 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
         self._name = github.GithubObject.NotSet
         self._status = github.GithubObject.NotSet
         self._conclusion = github.GithubObject.NotSet
+        self._output = github.GithubObject.NotSet
         self._details_url = github.GithubObject.NotSet
         self._html_url = github.GithubObject.NotSet
         self._url = github.GithubObject.NotSet
@@ -97,6 +106,8 @@ class CheckRun(github.GithubObject.CompletableGithubObject):
             self._status = self._makeStringAttribute(attributes["status"])
         if "conclusion" in attributes:  # pragma no branch
             self._conclusion = self._makeStringAttribute(attributes["conclusion"])
+        if "output" in attributes:  # pragma no branch
+            self._output = self._makeDictAttribute(attributes["output"])
         if "details_url" in attributes:  # pragma no branch
             self._details_url = self._makeStringAttribute(attributes["details_url"])
         if "html_url" in attributes:  # pragma no branch
