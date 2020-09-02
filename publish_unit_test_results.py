@@ -302,9 +302,9 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     return md
 
 
-def get_long_summary_with_digest_md(stats: Dict[str, Any]) -> str:
+def get_long_summary_with_digest_md(stats: Dict[str, Any], digest_stats: Optional[Dict[str, Any]] = None) -> str:
     summary = get_long_summary_md(stats)
-    digest = get_digest_from_stats(stats)
+    digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
     return '{}\n{}{}'.format(summary, digest_prefix, digest)
 
 
@@ -361,7 +361,12 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
             return get_stats_from_digest(digest)
 
     def publish_check(stats: Dict[Any, Any]) -> None:
-        logger.debug(get_long_summary_with_digest_md(stats))
+        # get stats from earlier commits
+        before_commit_sha = event.get('before')
+        logger.debug('comparing against before={}'.format(before_commit_sha))
+        before_stats = get_stats_from_commit(before_commit_sha)
+        stats_with_delta = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats
+        logger.debug(get_long_summary_with_digest_md(stats_with_delta, stats))
 
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -370,7 +375,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
 
         output = dict(
             title='Unit Test Results',
-            summary=get_long_summary_with_digest_md(stats),
+            summary=get_long_summary_with_digest_md(stats_with_delta, stats),
         )
 
         logger.info('creating check')
@@ -391,17 +396,25 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
         logger.info('creating status')
         commit.create_status(state='success', description=desc, context='action/unit-test-results')
 
-    def publish_comment(stats: Dict[Any, Any], pull: PullRequest) -> None:
-        if pull is not None:
-            logger.info('creating comment')
-            logger.debug(get_long_summary_md(stats))
+    def publish_comment(stats: Dict[Any, Any]) -> None:
+        pull = get_pull(commit_sha)
+        if pull is None:
+            return
 
-            # we don't want to actually do this when not run by GitHub Actions GitHub App
-            if os.environ.get('GITHUB_ACTIONS') is None:
-                logger.warning('action not running on GitHub, skipping creating comment')
-                return
+        # compare them with earlier stats
+        base_commit_sha = pull.base.sha if pull else None
+        logger.debug('comparing against parent={}'.format(base_commit_sha))
+        base_stats = get_stats_from_commit(base_commit_sha)
+        stats_with_delta = get_stats_with_delta(stats, base_stats, 'base') if base_stats is not None else stats
 
-            pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
+        # we don't want to actually do this when not run by GitHub Actions GitHub App
+        if os.environ.get('GITHUB_ACTIONS') is None:
+            logger.warning('action not running on GitHub, skipping creating comment')
+            return
+
+        logger.info('creating comment')
+        logger.debug(get_long_summary_md(stats_with_delta))
+        pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
 
     # process the parsed results
     results = get_test_results(parsed)
@@ -409,21 +422,9 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
     # turn them into stats
     stats = get_stats(results)
 
-    # get stats earlier commits
-    before_commit_sha = event.get('before')
-    before_stats = get_stats_from_commit(before_commit_sha)
-
-    pull = get_pull(commit_sha)
-    base_commit_sha = pull.base.sha if pull else None
-    base_stats = get_stats_from_commit(base_commit_sha)
-
-    # compare them with earlier stats
-    before_stats = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats
-    base_stats = get_stats_with_delta(stats, base_stats, 'base') if base_stats is not None else stats
-
-    publish_check(before_stats)
+    publish_check(stats)
     #publish_status()
-    publish_comment(base_stats, pull)
+    publish_comment(stats)
 
 
 def write_stats_file(stats, filename) -> None:
