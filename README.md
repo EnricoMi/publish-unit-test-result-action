@@ -6,19 +6,21 @@ publishes the results on GitHub. It supports the JUnit XML file format.
 Unit test results are published in the GitHub Actions section of the respective commit:
 
 ![...](github-checks-comment.png)
+***Note:** This action does not fail if unit tests failed. The action that executed the unit tests should*
+fail on test failure.
 
 A comment is posted on the pull request page of that commit, if one exists:
 
 ![...](github-pull-request-comment.png)
 
-The checks section of the pull request also lists a short summary (here `All 19 tests pass in 0s`),
+The checks section of the pull request also lists a short summary (here `1 fail, 1 skipped, 17 pass in 12s`),
 and a link to the GitHub Actions section (here `Details`):
 
 ![...](github-pull-request-checks.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
-e.g. in different environments or setups. Displaying the number of runs allows to spot unexpected changes
-in the runs as well.
+e.g. in different environments or setups. Displaying the number of runs allows spotting unexpected
+changes in the number of runs as well.
 
 The symbols have the following meaning:
 
