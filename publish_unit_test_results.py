@@ -258,7 +258,7 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
 
 def get_short_summary(stats: Dict[str, Any]) -> str:
     """Provides a single-line summary for the given stats."""
-    default = 'unit test results'
+    default = 'Unit Test Results'
     if stats is None:
         return default
 
@@ -273,13 +273,13 @@ def get_short_summary(stats: Dict[str, Any]) -> str:
         if tests is None:
             return default
         if tests == 0:
-            return 'no tests found'
+            return 'No tests found'
         if tests > 0:
             if (failure is None or failure == 0) and (error is None or error == 0):
                 if skipped == 0 and success == tests:
-                    return 'all {} pass'.format(as_stat_number(tests, 0, 0, 'tests'))
+                    return 'All {} pass'.format(as_stat_number(tests, 0, 0, 'tests'))
                 if skipped > 0 and success == tests - skipped:
-                    return 'all {} pass, {}'.format(
+                    return 'All {} pass, {}'.format(
                         as_stat_number(success, 0, 0, 'tests'),
                         as_stat_number(skipped, 0, 0, 'skipped')
                     )

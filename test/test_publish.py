@@ -529,12 +529,12 @@ class PublishTest(unittest.TestCase):
         ))
 
     def test_get_short_summary(self):
-        self.assertEqual('unit test results', get_short_summary(None))
-        self.assertEqual('unit test results', get_short_summary(dict()))
-        self.assertEqual('no tests found', get_short_summary(dict(tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('Unit Test Results', get_short_summary(None))
+        self.assertEqual('Unit Test Results', get_short_summary(dict()))
+        self.assertEqual('No tests found', get_short_summary(dict(tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
         self.assertEqual('10 tests found in 2m 3s', get_short_summary(dict(tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
-        self.assertEqual('all 10 tests pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
-        self.assertEqual('all 9 tests pass, 1 skipped in 2m 3s', get_short_summary(dict(tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(dict(tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, duration=123)))
         self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, duration=123)))
         self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, duration=123)))
         self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, duration=123)))
