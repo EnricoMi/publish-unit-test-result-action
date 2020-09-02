@@ -4,13 +4,16 @@ This [GitHub Action](https://github.com/actions) analyses Unit Test result files
 publishes the results on GitHub. It supports the JUnit XML file format.
 
 Unit test results are published in the GitHub Actions section of the respective commit:
+
 ![...](github-checks-comment.png)
 
 A comment is posted on the pull request page of that commit, if one exists:
+
 ![...](github-pull-request-comment.png)
 
 The checks section of the pull request also lists a short summary (here `All 19 tests pass in 0s`),
 and a link to the GitHub Actions section (here `Details`):
+
 ![...](github-pull-request-checks.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
@@ -27,9 +30,10 @@ The symbols have the following meaning:
 |![🔥](https://github.githubassets.com/images/icons/emoji/unicode/1f525.png)|An erroneous test or run|
 |![⏱](https://github.githubassets.com/images/icons/emoji/unicode/23f1.png)|The duration of all tests or runs|
 
-When this action has been run on the master branch, or an earlier commit in the same branch, then this action
-also compares unit test results. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request:
-![...](github-checks-comment-delta.png)
+When this action has been run on master, or earlier commits in the same branch, then this action
+also compares unit test results across commits. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request:
+
+![...](github-pull-request-comment-delta.png)
 
 ## Using this action
 
