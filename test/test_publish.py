@@ -392,6 +392,34 @@ class PublishTest(unittest.TestCase):
             reference_type='type'
         ))
 
+    def test_get_magnitude(self):
+        self.assertEqual(None, get_magnitude(None))
+        self.assertEqual(+0, get_magnitude(+0))
+        self.assertEqual(-1, get_magnitude(-1))
+        self.assertEqual(+2, get_magnitude(+2))
+        self.assertEqual(None, get_magnitude(dict()))
+        self.assertEqual(+0, get_magnitude(dict(number=+0)))
+        self.assertEqual(+1, get_magnitude(dict(number=+1)))
+        self.assertEqual(-2, get_magnitude(dict(number=-2)))
+        self.assertEqual(3, get_magnitude(dict(number=3, delta=5)))
+        self.assertEqual(3, get_magnitude(dict(duration=3)))
+        self.assertEqual(3, get_magnitude(dict(duration=3, delta=5)))
+        self.assertEqual(None, get_magnitude(dict(delta=5)))
+
+    def test_get_delta(self):
+        self.assertEqual(None, get_delta(None))
+        self.assertEqual(None, get_delta(+0))
+        self.assertEqual(None, get_delta(-1))
+        self.assertEqual(None, get_delta(+2))
+        self.assertEqual(None, get_delta(dict()))
+        self.assertEqual(None, get_delta(dict(number=+0)))
+        self.assertEqual(None, get_delta(dict(number=+1)))
+        self.assertEqual(None, get_delta(dict(number=-2)))
+        self.assertEqual(5, get_delta(dict(number=3, delta=5)))
+        self.assertEqual(None, get_delta(dict(duration=3)))
+        self.assertEqual(5, get_delta(dict(duration=3, delta=5)))
+        self.assertEqual(5, get_delta(dict(delta=5)))
+
     def test_as_delta(self):
         self.assertEqual(as_delta(0, 1), '±0')
         self.assertEqual(as_delta(+1, 1), '+1')
@@ -499,6 +527,19 @@ class PublishTest(unittest.TestCase):
             runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ))
+
+    def test_get_short_summary(self):
+        self.assertEqual('Unit Test Results', get_short_summary(None))
+        self.assertEqual('Unit Test Results', get_short_summary(dict()))
+        self.assertEqual('No tests found', get_short_summary(dict(tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('10 tests found in 2m 3s', get_short_summary(dict(tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(dict(tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, duration=123)))
+        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, duration=123)))
+        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, duration=123)))
+        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, duration=123)))
+        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(dict(tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, duration=123)))
+        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass', get_short_summary(dict(tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3)))
 
     def do_test_get_short_summary_md(self, stats, expected_md):
         self.assertEqual(get_short_summary_md(stats), expected_md)
