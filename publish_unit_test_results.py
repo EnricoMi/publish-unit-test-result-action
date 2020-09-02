@@ -472,7 +472,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
             return
 
         logger.info('creating comment')
-        pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
+        pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats_with_delta)))
 
     logger.info('publishing results for commit {}'.format(commit_sha))
     publish_check(stats)
