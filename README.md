@@ -3,21 +3,50 @@
 This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
 publishes the results on GitHub. It supports the JUnit XML file format.
 
+Unit test results are published in the GitHub Actions section of the respective commit:
+![...](github-checks-comment.png)
+
+A comment is posted on the pull request page of that commit, if one exists:
+![...](github-pull-request-comment.png)
+
+The checks section of the pull request also lists a short summary (here `All 19 tests pass in 0s`),
+and a link to the GitHub Actions section (here `Details`):
+![...](github-pull-request-checks.png)
+
+The result distinguishes between tests and runs. In some situations, tests run multiple times,
+e.g. in different environments or setups. Displaying the number of runs allows to spot unexpected changes
+in the runs as well.
+
+The symbols have the following meaning:
+
+|symbol|meaning|
+|:----:|-------|
+|![✔](https://github.githubassets.com/images/icons/emoji/unicode/2714.png)|A successful test or run|
+|![💤](https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png)|A skipped test or run|
+|![✖](https://github.githubassets.com/images/icons/emoji/unicode/2716.png)|A failed test or run|
+|![🔥](https://github.githubassets.com/images/icons/emoji/unicode/1f525.png)|An erroneous test or run|
+|![⏱](https://github.githubassets.com/images/icons/emoji/unicode/23f1.png)|The duration of all tests or runs|
+
+
+## Using this action
+
 You can add this action to your GitHub workflow and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
   uses: EnricoMi/publish-unit-test-result-action@master
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     check_name: Unit Test Results
+    github_token: ${{ secrets.GITHUB_TOKEN }}
     files: test-results/**/*.xml
     log_level: DEBUG
 ```
 
-**Note:** The action can only be used on `push` events.
+**Note:** This action can only be used on `push` events.
 
-The `log_level` variable is optional. The default value is `INFO`. The Python logging module defines the [available log levels](https://docs.python.org/3/library/logging.html#logging-levels).
+The job name in the GitHub Actions section that provides the test results can be configured via the
+`check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
+
 Files can be selected with wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
 
-Test results can be found in GitHub at multiple positions:
+The `log_level` variable is also optional. The default value is `INFO`. The Python logging module defines the [available log levels](https://docs.python.org/3/library/logging.html#logging-levels).
