@@ -338,7 +338,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
         return pulls[0].as_pull_request()
 
     def get_stats_from_commit(commit_sha: str) -> Optional[Dict[Any, Any]]:
-        if commit_sha is None:
+        if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
         commit = repo.get_commit(commit_sha)
