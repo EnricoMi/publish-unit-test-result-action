@@ -152,6 +152,27 @@ def get_stats_with_delta(stats: Dict[str, Any],
     return delta
 
 
+def get_magnitude(value: Union[int, dict]) -> Optional[int]:
+    if value is None:
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, dict):
+        if 'number' in value:
+            return value.get('number')
+        if 'duration' in value:
+            return value.get('duration')
+    return None
+
+
+def get_delta(value: Union[int, dict]) -> Optional[int]:
+    if isinstance(value, int):
+        return None
+    if isinstance(value, dict):
+        return value.get('delta')
+    return None
+
+
 def as_short_commit(commit: str) -> str:
     return commit[0:8] if commit else None
 
@@ -235,15 +256,59 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
     return json.loads(ungest_string(digest))
 
 
-def get_short_summary_md(stats: Dict[str, Any]) -> str:
+def get_short_summary(stats: Dict[str, Any]) -> str:
     """Provides a single-line summary for the given stats."""
+    default = 'unit test results'
+    if stats is None:
+        return default
+
+    tests = get_magnitude(stats.get('tests'))
+    success = get_magnitude(stats.get('tests_succ'))
+    skipped = get_magnitude(stats.get('tests_skip'))
+    failure = get_magnitude(stats.get('tests_fail'))
+    error = get_magnitude(stats.get('tests_error'))
+    duration = get_magnitude(stats.get('duration'))
+
+    def get_test_summary():
+        if tests is None:
+            return default
+        if tests == 0:
+            return 'no tests found'
+        if tests > 0:
+            if (failure is None or failure == 0) and (error is None or error == 0):
+                if skipped == 0 and success == tests:
+                    return 'all {} pass'.format(as_stat_number(tests, 0, 0, 'tests'))
+                if skipped > 0 and success == tests - skipped:
+                    return 'all {} pass, {}'.format(
+                        as_stat_number(success, 0, 0, 'tests'),
+                        as_stat_number(skipped, 0, 0, 'skipped')
+                    )
+
+            summary = ['{}'.format(as_stat_number(number, 0, 0, label))
+                       for number, label in [(error, 'errors'), (failure, 'fail'), (skipped, 'skipped'), (success, 'pass')]
+                       if number > 0]
+            summary = ', '.join(summary)
+
+            # when all except tests are None or 0
+            if len(summary) == 0:
+                return '{} found'.format(as_stat_number(tests, 0, 0, 'tests'))
+            return summary
+
+    if tests is None or tests == 0 or duration is None:
+        return get_test_summary()
+
+    return '{} in {}'.format(get_test_summary(), as_stat_duration(duration, '').rstrip())
+
+
+def get_short_summary_md(stats: Dict[str, Any]) -> str:
+    """Provides a single-line summary with markdown for the given stats."""
     md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
-                tests=as_stat_number(stats.get('tests'), 0, 0, 'tests'),
-                tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, ':heavy_check_mark:'),
-                tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, ':zzz:'),
-                tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':heavy_multiplication_x:'),
-                tests_error=as_stat_number(stats.get('tests_error'), 0, 0, ':fire:'),
-            ))
+        tests=as_stat_number(stats.get('tests'), 0, 0, 'tests'),
+        tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, ':heavy_check_mark:'),
+        tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, ':zzz:'),
+        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':heavy_multiplication_x:'),
+        tests_error=as_stat_number(stats.get('tests_error'), 0, 0, ':fire:'),
+    ))
     return md
 
 
@@ -381,7 +446,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
             return
 
         output = dict(
-            title='Unit Test Results',
+            title=get_short_summary(stats),
             summary=get_long_summary_with_digest_md(stats_with_delta, stats),
         )
 
