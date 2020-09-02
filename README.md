@@ -28,7 +28,8 @@ The symbols have the following meaning:
 |![⏱](https://github.githubassets.com/images/icons/emoji/unicode/23f1.png)|The duration of all tests or runs|
 
 When this action has been run on the master branch, or an earlier commit in the same branch, then this action
-also compares unit test results. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request.
+also compares unit test results. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request:
+![...](github-checks-comment-delta.png)
 
 ## Using this action
 
