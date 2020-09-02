@@ -271,13 +271,15 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     fail_digits, fail_delta_digits = get_formatted_digits(tests_fail, runs_fail)
     error_digits, error_delta_digits = get_formatted_digits(tests_error, runs_error)
 
+    commit = stats.get('commit')
     reference_type = stats.get('reference_type')
     reference_commit = stats.get('reference_commit')
 
     md = ('{files} {suites} {duration}\n'
           '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'
           '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'
-          '{compare}'.format(
+          '\n'
+          'results for commit {commit}{compare}\n'.format(
             files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
             suites=as_stat_number(suites, 0, 0, 'suites '),
             duration=as_stat_duration(duration, ':stopwatch:'),
@@ -294,7 +296,8 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
             runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
 
-            compare='\n[±] comparison against {reference_type} commit {reference_commit}\n'.format(
+            commit=as_short_commit(commit),
+            compare=' [±] comparison against {reference_type} commit {reference_commit}'.format(
                 reference_type=reference_type,
                 reference_commit=as_short_commit(reference_commit)
             ) if reference_type and reference_commit else ''
@@ -369,7 +372,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
         before_commit_sha = event.get('before')
         logger.debug('comparing against before={}'.format(before_commit_sha))
         before_stats = get_stats_from_commit(before_commit_sha)
-        stats_with_delta = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats
+        stats_with_delta = get_stats_with_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         # only works when run by GitHub Actions GitHub App
