@@ -308,7 +308,7 @@ def get_long_summary_with_digest_md(stats: Dict[str, Any], digest_stats: Optiona
     return '{}\n{}{}'.format(summary, digest_prefix, digest)
 
 
-def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Dict[Any, Any], check_name: str):
+def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dict[Any, Any], check_name: str):
     from github import Github, PullRequest
     from githubext import Repository, Commit
 
@@ -344,21 +344,25 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
             return None
 
         runs = commit.get_check_runs()
-        logger.debug('found {} check runs for commit {}'.format(runs.totalCount, commit))
+        logger.debug('found {} check runs for commit {}'.format(runs.totalCount, commit_sha))
         runs = list([run for run in runs if run.name == check_name])
-        logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit, check_name))
+        logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit_sha, check_name))
         if len(runs) != 1:
             return None
 
         summary = runs[0].output.get('summary')
-        logger.debug('summary: {}'.format(summary))
         if summary is None:
             return None
+        for line in summary.split('\n'):
+            logger.debug('summary: {}'.format(line))
 
         pos = summary.index(digest_prefix) if digest_prefix in summary else None
         if pos:
             digest = summary[pos + len(digest_prefix):]
-            return get_stats_from_digest(digest)
+            logger.debug('digest: {}'.format(digest))
+            stats = get_stats_from_digest(digest)
+            logger.debug('stats: {}'.format(stats))
+            return stats
 
     def publish_check(stats: Dict[Any, Any]) -> None:
         # get stats from earlier commits
@@ -366,7 +370,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
         logger.debug('comparing against before={}'.format(before_commit_sha))
         before_stats = get_stats_from_commit(before_commit_sha)
         stats_with_delta = get_stats_with_delta(stats, before_stats, 'parent') if before_stats is not None else stats
-        logger.debug(get_long_summary_with_digest_md(stats_with_delta, stats))
+        logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -381,31 +385,18 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
         logger.info('creating check')
         repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
 
-    def publish_status() -> None:
-        # publish_check creates a check that will create a status
-        commit = repo.get_commit(commit_sha)
-        if commit is None:
-            raise RuntimeError('Could not find commit {}'.format(commit_sha))
-
-        desc = '{tests} tests, {skipped} skipped, {failed} failed, {errors} errors'.format(
-            tests=stats['suite_tests'],
-            skipped=stats['suite_skipped'],
-            failed=stats['suite_failures'],
-            errors=stats['suite_errors']
-        )
-        logger.info('creating status')
-        commit.create_status(state='success', description=desc, context='action/unit-test-results')
-
     def publish_comment(stats: Dict[Any, Any]) -> None:
         pull = get_pull(commit_sha)
         if pull is None:
+            logger.debug('there is no pull request for commit {}'.format(commit_sha))
             return
 
         # compare them with earlier stats
         base_commit_sha = pull.base.sha if pull else None
-        logger.debug('comparing against parent={}'.format(base_commit_sha))
+        logger.debug('comparing against base={}'.format(base_commit_sha))
         base_stats = get_stats_from_commit(base_commit_sha)
         stats_with_delta = get_stats_with_delta(stats, base_stats, 'base') if base_stats is not None else stats
+        logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         # we don't want to actually do this when not run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -413,17 +404,10 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, parsed: Di
             return
 
         logger.info('creating comment')
-        logger.debug(get_long_summary_md(stats_with_delta))
         pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats)))
 
-    # process the parsed results
-    results = get_test_results(parsed)
-
-    # turn them into stats
-    stats = get_stats(results)
-
+    logger.info('publishing results for commit {}'.format(commit_sha))
     publish_check(stats)
-    #publish_status()
     publish_comment(stats)
 
 
@@ -435,14 +419,20 @@ def write_stats_file(stats, filename) -> None:
 
 def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
-    logger.info('{}: {}'.format(files_glob, list(files)))
+    logger.info('reading {}: {}'.format(files_glob, list(files)))
 
     # get the unit test results
     parsed = parse_junit_xml_files(files)
     parsed['commit'] = commit
 
+    # process the parsed results
+    results = get_test_results(parsed)
+
+    # turn them into stats
+    stats = get_stats(results)
+
     # publish the delta stats
-    publish(token, event, repo, commit, parsed, check_name)
+    publish(token, event, repo, commit, stats, check_name)
 
 
 def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
@@ -454,7 +444,7 @@ def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
     if event is None:
         raise RuntimeError('No event name provided trough GITHUB_EVENT_NAME')
 
-    logger.debug('action triggered by ''{}'' event'.format(event))
+    logger.debug("action triggered by '{}' event".format(event))
     if event != 'push':
         raise RuntimeError('Unsupported event, only ''push'' is supported: {}'.format(event))
 
