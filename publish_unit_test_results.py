@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Union, Optional, Tuple
 from junitparser import *
 
 logger = logging.getLogger('publish-unit-test-results')
-digest_prefix = '[ref]:data:application/gzip;base64,'
+digest_prefix = '[test-results]:data:application/gzip;base64,'
 
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:

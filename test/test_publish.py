@@ -560,7 +560,7 @@ class PublishTest(unittest.TestCase):
                       '\n'
                       'results for commit None\n'
                       '\n'
-                      '[ref]:data:application/gzip;base64,'))
+                      '[test-results]:data:application/gzip;base64,'))
 
         self.assertTrue(get_long_summary_with_digest_md(dict(
             files=1, suites=2, duration=3,
@@ -572,7 +572,7 @@ class PublishTest(unittest.TestCase):
                       '\n'
                       'results for commit None\n'
                       '\n'
-                      '[ref]:data:application/gzip;base64,'))
+                      '[test-results]:data:application/gzip;base64,'))
 
         self.assertTrue(get_long_summary_with_digest_md(dict(
             files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
@@ -585,7 +585,7 @@ class PublishTest(unittest.TestCase):
                       '\n'
                       'results for commit 12345678 [±] comparison against type commit 01234567\n'
                       '\n'
-                      '[ref]:data:application/gzip;base64,'))
+                      '[test-results]:data:application/gzip;base64,'))
 
     def test_files(self):
         parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
