@@ -205,7 +205,7 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
 
         return ''.join([
             as_stat_number(number['number'], number_digits, delta_digits, label) if 'number' in number else 'N/A',
-            ' [{}]'.format(extra) if extra != '' else ''
+            ' {}'.format(extra) if extra != '' else ''
         ])
     else:
         logger.warning('unsupported stats number type {}: {}'.format(type(number), number))
@@ -221,12 +221,12 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> s
         duration = int(duration)
     if isinstance(duration, int):
         duration = abs(duration)
-        string = '{}s'.format(duration % 60)
-        duration //= 60
-        for unit in ['m', 'h']:
-            if duration:
-                string = '{}{} '.format(duration % 60, unit) + string
+        strings = []
+        for unit in ['s', 'm', 'h']:
+            if unit == 's' or duration:
+                strings.insert(0, '{}{}'.format(duration % 60, unit))
                 duration //= 60
+        string = ' '.join(strings)
         if label:
             return '{} {}'.format(string, label)
         return string
@@ -234,7 +234,9 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> s
         delta = duration.get('delta')
         duration = duration.get('duration')
         sign = '' if delta is None else '±' if delta == 0 else '+' if delta > 1 else '-'
-        return as_stat_duration(duration, label) + (' [{} {}]'.format(sign, as_stat_duration(delta, label=None)) if delta is not None else '')
+        if delta and abs(delta) >= 60:
+            sign += ' '
+        return as_stat_duration(duration, label) + (' {}{}'.format(sign, as_stat_duration(delta, label=None)) if delta is not None else '')
     else:
         logger.warning('unsupported stats duration type {}: {}'.format(type(duration), duration))
         return 'N/A'
@@ -362,7 +364,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
 
             commit=as_short_commit(commit),
-            compare=' [±] comparison against {reference_type} commit {reference_commit}'.format(
+            compare=' ± comparison against {reference_type} commit {reference_commit}'.format(
                 reference_type=reference_type,
                 reference_commit=as_short_commit(reference_commit)
             ) if reference_type and reference_commit else ''
