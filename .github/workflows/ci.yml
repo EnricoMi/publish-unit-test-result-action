@@ -33,7 +33,7 @@ jobs:
         python -m pytest --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@master
+      uses: EnricoMi/publish-unit-test-result-action@v1.0
       if: github.event_name == 'push'
       with:
         check_name: Unit Test Results
