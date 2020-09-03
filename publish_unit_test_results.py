@@ -358,19 +358,27 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
         suites=as_stat_number(suites, success_digits, 0, 'suites '),
         duration=as_stat_duration(duration, ':stopwatch:')
     )
-    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'.format(
+
+    tests_error_part = ' {tests_error}'.format(
+        tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:')
+    ) if get_magnitude(tests_error) else ''
+    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
         tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
         tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
         tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
         tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
-        tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:')
+        tests_error_part=tests_error_part
     )
-    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'.format(
+
+    runs_error_part = ' {runs_error}'.format(
+        runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:')
+    ) if get_magnitude(runs_error) else ''
+    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
         runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
         runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
         runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
-        runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
+        runs_error_part=runs_error_part,
     )
 
     commit_line = '\nresults for commit {commit}{compare}\n'.format(
