@@ -57,7 +57,7 @@ If you want to run the action in a workflow that is triggered by events other th
 you can skip this action on non-`push` actions with this `if`-clause:
 
 ```yaml
-  if: github.event_name == "push"
+  if: github.event_name == 'push'
 ```
 
 The job name in the GitHub Actions section that provides the test results can be configured via the

@@ -34,7 +34,7 @@ jobs:
 
     - name: Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@master
-      if: github.event_name == "push"
+      if: github.event_name == 'push'
       with:
         check_name: Unit Test Results
         github_token: ${{ secrets.GITHUB_TOKEN }}
