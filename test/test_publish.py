@@ -1,8 +1,6 @@
 import contextlib
 import locale
-import logging
 import unittest
-from typing import Any
 
 from publish_unit_test_results import *
 
@@ -32,18 +30,6 @@ def d(duration, delta=None):
 
 class PublishTest(unittest.TestCase):
     old_locale = None
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        super(PublishTest, cls).setUpClass()
-        cls.old_locale = locale.getlocale()
-        logging.info('initial test locale: {}'.format(cls.old_locale))
-        locale.setlocale(locale.LC_ALL, (None, None))
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        locale.setlocale(locale.LC_ALL, cls.old_locale)
-        super(PublishTest, cls).tearDownClass()
 
     def test_get_formatted_digits(self):
         self.assertEqual(get_formatted_digits(None), (3, 0))
@@ -425,51 +411,59 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_delta(+1, 1), '+1')
         self.assertEqual(as_delta(-2, 1), '-2')
 
-        self.assertEqual(as_delta(0, 2), '± 0')
-        self.assertEqual(as_delta(+1, 2), '+ 1')
-        self.assertEqual(as_delta(-2, 2), '- 2')
+        self.assertEqual(as_delta(0, 2), '±  0')
+        self.assertEqual(as_delta(+1, 2), '+  1')
+        self.assertEqual(as_delta(-2, 2), '-  2')
 
-        self.assertEqual(as_delta(1, 5), '+    1')
-        self.assertEqual(as_delta(12, 5), '+   12')
-        self.assertEqual(as_delta(123, 5), '+  123')
-        self.assertEqual(as_delta(1234, 5), '+ 1234')
+        self.assertEqual(as_delta(1, 5), '+        1')
+        self.assertEqual(as_delta(12, 5), '+      12')
+        self.assertEqual(as_delta(123, 5), '+    123')
+        self.assertEqual(as_delta(1234, 5), '+1 234')
+        self.assertEqual(as_delta(1234, 6), '+  1 234')
+        self.assertEqual(as_delta(123, 6), '+      123')
 
         with temp_locale('en_US.utf8'):
-            self.assertEqual(as_delta(1234, 5), '+1,234')
+            self.assertEqual(as_delta(1234, 5), '+1 234')
+            self.assertEqual(as_delta(1234, 6), '+  1 234')
+            self.assertEqual(as_delta(123, 6), '+      123')
         with temp_locale('de_DE.utf8'):
-            self.assertEqual(as_delta(1234, 5), '+1.234')
+            self.assertEqual(as_delta(1234, 5), '+1 234')
+            self.assertEqual(as_delta(1234, 6), '+  1 234')
+            self.assertEqual(as_delta(123, 6), '+      123')
 
     def test_as_stat_number(self):
         label = 'unit'
         self.assertEqual(as_stat_number(None, 1, 0, label), 'N/A unit')
 
         self.assertEqual(as_stat_number(1, 1, 0, label), '1 unit')
-        self.assertEqual(as_stat_number(1234, 5, 0, label), ' 1234 unit')
-        self.assertEqual(as_stat_number(12345, 5, 0, label), '12345 unit')
+        self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+        self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+        self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
         with temp_locale('en_US.utf8'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '   123 unit')
-            self.assertEqual(as_stat_number(1234, 6, 0, label), ' 1,234 unit')
-            self.assertEqual(as_stat_number(12345, 6, 0, label), '12,345 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+            self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+            self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
         with temp_locale('de_DE.utf8'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '   123 unit')
-            self.assertEqual(as_stat_number(1234, 6, 0, label), ' 1.234 unit')
-            self.assertEqual(as_stat_number(12345, 6, 0, label), '12.345 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+            self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+            self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
         self.assertEqual(as_stat_number(dict(number=1), 1, 0, label), '1 unit')
 
         self.assertEqual(as_stat_number(dict(number=1, delta=-1), 1, 1, label), '1 unit -1 ')
         self.assertEqual(as_stat_number(dict(number=2, delta=+0), 1, 1, label), '2 unit ±0 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 1, label), '3 unit +1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 2, label), '3 unit + 1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 2, 2, label), ' 3 unit + 1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1234 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 2, label), '3 unit +  1 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 2, 2, label), '  3 unit +  1 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
         with temp_locale('en_US.utf8'):
-            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit + 1,234 ')
-            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12,345 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
         with temp_locale('de_DE.utf8'):
-            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit + 1.234 ')
-            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12.345 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
 
         self.assertEqual(as_stat_number(dict(delta=-1), 3, 1, label), 'N/A -1 ')
 
@@ -576,8 +570,8 @@ class PublishTest(unittest.TestCase):
             files=1, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
-        ), ('1 files   2 suites  3s :stopwatch:\n'
-            '4 tests  5 :heavy_check_mark:  6 :zzz:  7 :heavy_multiplication_x:  8 :fire:\n'
+        ), ('1 files    2 suites  3s :stopwatch:\n'
+            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
             '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
             '\n'
             'results for commit None\n'))
@@ -587,8 +581,8 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        ), ('1 files  + 2   2 suites  -3  3s :stopwatch: +4s\n'
-            '4 tests - 5   5 :heavy_check_mark: + 6   6 :zzz: - 7   7 :heavy_multiplication_x: + 8   8 :fire: - 9 \n'
+        ), ('1 files  +  2    2 suites  -3  3s :stopwatch: +4s\n'
+            '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
             '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
             '\n'
             'results for commit 12345678 ± comparison against type commit 01234567\n'))
@@ -607,8 +601,8 @@ class PublishTest(unittest.TestCase):
             files=1, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
-        )).startswith('1 files   2 suites  3s :stopwatch:\n'
-                      '4 tests  5 :heavy_check_mark:  6 :zzz:  7 :heavy_multiplication_x:  8 :fire:\n'
+        )).startswith('1 files    2 suites  3s :stopwatch:\n'
+                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
                       '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
                       '\n'
                       'results for commit None\n'
@@ -620,8 +614,8 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        )).startswith('1 files  + 2   2 suites  -3  3s :stopwatch: +4s\n'
-                      '4 tests - 5   5 :heavy_check_mark: + 6   6 :zzz: - 7   7 :heavy_multiplication_x: + 8   8 :fire: - 9 \n'
+        )).startswith('1 files  +  2    2 suites  -3  3s :stopwatch: +4s\n'
+                      '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
                       '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
                       '\n'
                       'results for commit 12345678 ± comparison against type commit 01234567\n'
@@ -643,8 +637,8 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (' 10 files   10 suites  39m 1s :stopwatch:\n'
-                              '217 tests 208 :heavy_check_mark:  9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
+        self.assertEqual(md, ('  10 files    10 suites  39m 1s :stopwatch:\n'
+                              '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '\n'
                               'results for commit example\n'))

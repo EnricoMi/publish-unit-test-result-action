@@ -178,7 +178,7 @@ def as_short_commit(commit: str) -> str:
 
 
 def as_delta(number: int, digits: int) -> str:
-    string = '{number:{c}>{n}n}'.format(number=abs(number), c=' ', n=digits)
+    string = '{number:{c}>{n},}'.format(number=abs(number), c='#', n=digits).replace(',', ' ').replace('#', '  ')
     if number == 0:
         sign = '±'
     elif number > 0:
@@ -194,12 +194,12 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
             return 'N/A {}'.format(label)
         return 'N/A'
     if isinstance(number, int):
-        return '{number:{c}>{n}n} {label}'.format(number=number, c=' ', n=number_digits, label=label)
+        return '{number:{c}>{n},} {label}'.format(number=number, c='#', n=number_digits, label=label).replace(',', ' ').replace('#', '  ')
     elif isinstance(number, dict):
         extra_fields = [
             as_delta(number['delta'], delta_digits) if 'delta' in number else '',
-            '{0:n} new'.format(number['new']) if 'new' in number else '',
-            '{0:n} gone'.format(number['gone']) if 'gone' in number else '',
+            as_stat_number(number['new'], 0, 0, 'new') if 'new' in number else '',
+            as_stat_number(number['gone'], 0, 0, 'gone') if 'gone' in number else '',
         ]
         extra = ', '.join([field for field in extra_fields if field != ''])
 
