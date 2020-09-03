@@ -63,6 +63,7 @@ you can skip this action on non-`push` actions with this `if`-clause:
 The job name in the GitHub Actions section that provides the test results can be configured via the
 `check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
 
-Files can be selected with wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
+Files can be selected with wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
+[directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
 
 The `log_level` variable is also optional. The default value is `INFO`. The Python logging module defines the [available log levels](https://docs.python.org/3/library/logging.html#logging-levels).
