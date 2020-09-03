@@ -341,6 +341,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     runs_skip = stats.get('runs_skip')
     runs_fail = stats.get('runs_fail')
     runs_error = stats.get('runs_error')
+    hide_runs = runs == tests and runs_succ == tests_succ and runs_skip == tests_skip and runs_fail == tests_fail and runs_error == tests_error
 
     files_digits, files_delta_digits = get_formatted_digits(files, tests, runs)
     success_digits, success_delta_digits = get_formatted_digits(suites, tests_succ, runs_succ)
@@ -352,32 +353,42 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     reference_type = stats.get('reference_type')
     reference_commit = stats.get('reference_commit')
 
-    md = ('{files} {suites}  {duration}\n'
-          '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'
-          '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'
-          '\n'
-          'results for commit {commit}{compare}\n'.format(
-            files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
-            suites=as_stat_number(suites, success_digits, 0, 'suites '),
-            duration=as_stat_duration(duration, ':stopwatch:'),
+    misc_line = '{files} {suites}  {duration}\n'.format(
+        files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
+        suites=as_stat_number(suites, success_digits, 0, 'suites '),
+        duration=as_stat_duration(duration, ':stopwatch:')
+    )
+    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'.format(
+        tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
+        tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
+        tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
+        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:')
+    )
+    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'.format(
+        runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
+        runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
+        runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
+        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
+    )
 
-            tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
-            tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-            tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
-            tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
-            tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:'),
+    commit_line = '\nresults for commit {commit}{compare}\n'.format(
+        commit=as_short_commit(commit),
+        compare=' ± comparison against {reference_type} commit {reference_commit}'.format(
+            reference_type=reference_type,
+            reference_commit=as_short_commit(reference_commit)
+        ) if reference_type and reference_commit else ''
+    )
 
-            runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
-            runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-            runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
-            runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
-            runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:'),
-
-            commit=as_short_commit(commit),
-            compare=' ± comparison against {reference_type} commit {reference_commit}'.format(
-                reference_type=reference_type,
-                reference_commit=as_short_commit(reference_commit)
-            ) if reference_type and reference_commit else ''
+    md = ('{misc}'
+          '{tests}'
+          '{runs}'
+          '{commit}'.format(
+            misc=misc_line,
+            tests=tests_line,
+            runs=runs_line if not hide_runs else '',
+            commit=commit_line
           ))
     return md
 

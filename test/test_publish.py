@@ -562,7 +562,15 @@ class PublishTest(unittest.TestCase):
         self.do_test_get_long_summary_md(dict(
         ), ('N/A files  N/A suites   N/A :stopwatch:\n'
             'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
-            'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+            '\n'
+            'results for commit None\n'))
+
+        self.do_test_get_long_summary_md(dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :heavy_multiplication_x: 8 :fire:\n'
             '\n'
             'results for commit None\n'))
 
@@ -591,7 +599,17 @@ class PublishTest(unittest.TestCase):
         self.assertTrue(get_long_summary_with_digest_md(dict(
         )).startswith('N/A files  N/A suites   N/A :stopwatch:\n'
                       'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
-                      'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+                      '\n'
+                      'results for commit None\n'
+                      '\n'
+                      '[test-results]:data:application/gzip;base64,'))
+
+        self.assertTrue(get_long_summary_with_digest_md(dict(
+            files=1, suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8
+        )).startswith('1 files  2 suites   3s :stopwatch:\n'
+                      '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :heavy_multiplication_x: 8 :fire:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -651,9 +669,9 @@ class PublishTest(unittest.TestCase):
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
-                              '0 runs  0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '\n'
                               'results for commit a commit\n'))
+
 
 if __name__ == '__main__':
     unittest.main()
