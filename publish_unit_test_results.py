@@ -3,6 +3,7 @@ import gzip
 import json
 import logging
 import os
+import re
 import pathlib
 from collections import defaultdict, Counter
 from typing import List, Dict, Any, Union, Optional, Tuple
@@ -11,6 +12,8 @@ from junitparser import *
 
 logger = logging.getLogger('publish-unit-test-results')
 digest_prefix = '[test-results]:data:application/gzip;base64,'
+digit_space = '  '
+punctuation_space = ' '
 
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
@@ -86,10 +89,10 @@ def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
 
 def get_formatted_digits(*numbers: Union[dict, Optional[int]]) -> Tuple[int, int]:
     if isinstance(numbers[0], dict):
-        number_digits = max([len('{0:n}'.format(abs(number.get('number'))) if number.get('number') is not None else 'N/A') for number in numbers])
-        delta_digits = max([len('{0:n}'.format(abs(number.get('delta'))) if number.get('delta') is not None else 'N/A') for number in numbers])
+        number_digits = max([len(as_stat_number(abs(number.get('number')) if number.get('number') is not None else None)) for number in numbers])
+        delta_digits = max([len(as_stat_number(abs(number.get('delta')) if number.get('delta') is not None else None)) for number in numbers])
         return number_digits, delta_digits
-    return max([len('{0:n}'.format(abs(number)) if number is not None else 'N/A') for number in numbers]), 0
+    return max([len(as_stat_number(abs(number) if number is not None else None)) for number in numbers]), 0
 
 
 def get_stats(test_results: Dict[str, Any]) -> Dict[str, Any]:
@@ -178,7 +181,7 @@ def as_short_commit(commit: str) -> str:
 
 
 def as_delta(number: int, digits: int) -> str:
-    string = '{number:{c}>{n}n}'.format(number=abs(number), c=' ', n=digits)
+    string = as_stat_number(abs(number), digits)
     if number == 0:
         sign = '±'
     elif number > 0:
@@ -188,23 +191,30 @@ def as_delta(number: int, digits: int) -> str:
     return '{}{}'.format(sign, string)
 
 
-def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: int, delta_digits: int, label: str) -> str:
+def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: int = 0, delta_digits: int = 0, label: str = None) -> str:
     if number is None:
         if label:
             return 'N/A {}'.format(label)
         return 'N/A'
     if isinstance(number, int):
-        return '{number:{c}>{n}n} {label}'.format(number=number, c=' ', n=number_digits, label=label)
+        formatted = '{number:0{digits},}'.format(number=number, digits=number_digits)
+        res = re.search('[^0,]', formatted)
+        pos = res.start() if res else len(formatted)-1
+        formatted = '{}{}'.format(formatted[:pos].replace('0', digit_space), formatted[pos:])
+        formatted = formatted.replace(',', punctuation_space)
+        if label:
+            return '{} {}'.format(formatted, label)
+        return formatted
     elif isinstance(number, dict):
         extra_fields = [
             as_delta(number['delta'], delta_digits) if 'delta' in number else '',
-            '{0:n} new'.format(number['new']) if 'new' in number else '',
-            '{0:n} gone'.format(number['gone']) if 'gone' in number else '',
+            as_stat_number(number['new'], 0, 0, 'new') if 'new' in number else '',
+            as_stat_number(number['gone'], 0, 0, 'gone') if 'gone' in number else '',
         ]
         extra = ', '.join([field for field in extra_fields if field != ''])
 
         return ''.join([
-            as_stat_number(number['number'], number_digits, delta_digits, label) if 'number' in number else 'N/A',
+            as_stat_number(number.get('number'), number_digits, delta_digits, label),
             ' {} '.format(extra) if extra != '' else ''
         ])
     else:
@@ -212,7 +222,7 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
         return 'N/A'
 
 
-def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> str:
+def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label=None) -> str:
     if duration is None:
         if label:
             return 'N/A {}'.format(label)
@@ -236,7 +246,7 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label) -> s
         sign = '' if delta is None else '±' if delta == 0 else '+' if delta > 1 else '-'
         if delta and abs(delta) >= 60:
             sign += ' '
-        return as_stat_duration(duration, label) + (' {}{}'.format(sign, as_stat_duration(delta, label=None)) if delta is not None else '')
+        return as_stat_duration(duration, label) + (' {}{}'.format(sign, as_stat_duration(delta)) if delta is not None else '')
     else:
         logger.warning('unsupported stats duration type {}: {}'.format(type(duration), duration))
         return 'N/A'
@@ -299,7 +309,7 @@ def get_short_summary(stats: Dict[str, Any]) -> str:
     if tests is None or tests == 0 or duration is None:
         return get_test_summary()
 
-    return '{} in {}'.format(get_test_summary(), as_stat_duration(duration, '').rstrip())
+    return '{} in {}'.format(get_test_summary(), as_stat_duration(duration))
 
 
 def get_short_summary_md(stats: Dict[str, Any]) -> str:
@@ -342,7 +352,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     reference_type = stats.get('reference_type')
     reference_commit = stats.get('reference_commit')
 
-    md = ('{files} {suites} {duration}\n'
+    md = ('{files} {suites}  {duration}\n'
           '{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}\n'
           '{runs} {runs_succ} {runs_skip} {runs_fail} {runs_error}\n'
           '\n'
@@ -357,7 +367,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
             tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:'),
 
-            runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
+            runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
             runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
             runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
             runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
