@@ -12,12 +12,6 @@ inputs:
   files:
     description: 'File pattern of test result files'
     required: true
-  artifact_name:
-    description: 'Name of artifact that stores earlier test result artifacts'
-    required: false
-  artifact_file_name:
-    description: 'Path to store the test results artifact of this run'
-    required: false
   log_level:
     description: 'Action logging level'
     required: false
