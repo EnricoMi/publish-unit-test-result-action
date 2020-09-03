@@ -3,6 +3,7 @@ import gzip
 import json
 import logging
 import os
+import re
 import pathlib
 from collections import defaultdict, Counter
 from typing import List, Dict, Any, Union, Optional, Tuple
@@ -11,6 +12,8 @@ from junitparser import *
 
 logger = logging.getLogger('publish-unit-test-results')
 digest_prefix = '[test-results]:data:application/gzip;base64,'
+digit_space = '  '
+punctuation_space = ' '
 
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
@@ -178,7 +181,7 @@ def as_short_commit(commit: str) -> str:
 
 
 def as_delta(number: int, digits: int) -> str:
-    string = '{number:{c}>{n},}'.format(number=abs(number), c='#', n=digits).replace(',', ' ').replace('#', '  ')
+    string = as_stat_number(abs(number), digits, 0, '').rstrip()
     if number == 0:
         sign = '±'
     elif number > 0:
@@ -194,7 +197,11 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
             return 'N/A {}'.format(label)
         return 'N/A'
     if isinstance(number, int):
-        return '{number:{c}>{n},} {label}'.format(number=number, c='#', n=number_digits, label=label).replace(',', ' ').replace('#', '  ')
+        formatted = '{number:0{digits},}'.format(number=number, digits=number_digits)
+        res = re.search('[^0,]', formatted)
+        pos = res.start() if res else len(formatted)-1
+        formatted = '{}{}'.format(formatted[:pos].replace('0', digit_space), formatted[pos:])
+        return '{} {}'.format(formatted.replace(',', punctuation_space), label)
     elif isinstance(number, dict):
         extra_fields = [
             as_delta(number['delta'], delta_digits) if 'delta' in number else '',
@@ -357,7 +364,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
             tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
             tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:'),
 
-            runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
+            runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
             runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
             runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
             runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),

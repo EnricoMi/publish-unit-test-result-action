@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Setup Ubuntu
-      run: sudo apt-get install language-pack-de
+      run: sudo apt-get install language-pack-en language-pack-de
 
     - name: Setup Python
       uses: actions/setup-python@v2

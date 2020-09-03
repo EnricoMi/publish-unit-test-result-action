@@ -415,37 +415,37 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_delta(+1, 2), '+  1')
         self.assertEqual(as_delta(-2, 2), '-  2')
 
-        self.assertEqual(as_delta(1, 5), '+        1')
-        self.assertEqual(as_delta(12, 5), '+      12')
-        self.assertEqual(as_delta(123, 5), '+    123')
+        self.assertEqual(as_delta(1, 5), '+       1')
+        self.assertEqual(as_delta(12, 5), '+     12')
+        self.assertEqual(as_delta(123, 5), '+   123')
         self.assertEqual(as_delta(1234, 5), '+1 234')
         self.assertEqual(as_delta(1234, 6), '+  1 234')
-        self.assertEqual(as_delta(123, 6), '+      123')
+        self.assertEqual(as_delta(123, 6), '+     123')
 
         with temp_locale('en_US.utf8'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
             self.assertEqual(as_delta(1234, 6), '+  1 234')
-            self.assertEqual(as_delta(123, 6), '+      123')
+            self.assertEqual(as_delta(123, 6), '+     123')
         with temp_locale('de_DE.utf8'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
             self.assertEqual(as_delta(1234, 6), '+  1 234')
-            self.assertEqual(as_delta(123, 6), '+      123')
+            self.assertEqual(as_delta(123, 6), '+     123')
 
     def test_as_stat_number(self):
         label = 'unit'
         self.assertEqual(as_stat_number(None, 1, 0, label), 'N/A unit')
 
         self.assertEqual(as_stat_number(1, 1, 0, label), '1 unit')
-        self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+        self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
         self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
         self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
         with temp_locale('en_US.utf8'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
             self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
         with temp_locale('de_DE.utf8'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '      123 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
             self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
@@ -562,7 +562,7 @@ class PublishTest(unittest.TestCase):
         self.do_test_get_long_summary_md(dict(
         ), ('N/A files  N/A suites  N/A :stopwatch:\n'
             'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
-            'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+            'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
             '\n'
             'results for commit None\n'))
 
@@ -572,7 +572,7 @@ class PublishTest(unittest.TestCase):
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
         ), ('1 files    2 suites  3s :stopwatch:\n'
             '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
-            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
+            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
             '\n'
             'results for commit None\n'))
 
@@ -583,7 +583,7 @@ class PublishTest(unittest.TestCase):
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         ), ('1 files  +  2    2 suites  -3  3s :stopwatch: +4s\n'
             '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
-            '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
+            '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
             '\n'
             'results for commit 12345678 ± comparison against type commit 01234567\n'))
 
@@ -591,7 +591,7 @@ class PublishTest(unittest.TestCase):
         self.assertTrue(get_long_summary_with_digest_md(dict(
         )).startswith('N/A files  N/A suites  N/A :stopwatch:\n'
                       'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
-                      'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
+                      'N/A runs  N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -603,7 +603,7 @@ class PublishTest(unittest.TestCase):
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
         )).startswith('1 files    2 suites  3s :stopwatch:\n'
                       '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
-                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
+                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -616,7 +616,7 @@ class PublishTest(unittest.TestCase):
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )).startswith('1 files  +  2    2 suites  -3  3s :stopwatch: +4s\n'
                       '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
-                      '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
+                      '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
                       '\n'
                       'results for commit 12345678 ± comparison against type commit 01234567\n'
                       '\n'
@@ -639,7 +639,7 @@ class PublishTest(unittest.TestCase):
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('  10 files    10 suites  39m 1s :stopwatch:\n'
                               '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
-                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
+                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '\n'
                               'results for commit example\n'))
 
@@ -651,10 +651,9 @@ class PublishTest(unittest.TestCase):
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites  0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
-                              '0 runs  0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
+                              '0 runs  0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x: 0 :fire:\n'
                               '\n'
                               'results for commit a commit\n'))
-
 
 if __name__ == '__main__':
     unittest.main()
