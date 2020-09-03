@@ -3,8 +3,9 @@ import gzip
 import json
 import logging
 import os
-import re
 import pathlib
+import re
+import sys
 from collections import defaultdict, Counter
 from typing import List, Dict, Any, Union, Optional, Tuple
 
@@ -534,18 +535,20 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     publish(token, event, repo, commit, stats, check_name)
 
 
-def check_event_name(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
+def exit_when_event_not_supported(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
     # only checked when run by GitHub Actions GitHub App
     if os.environ.get('GITHUB_ACTIONS') is None:
-        logger.warning('action not running on GitHub, skipping event name check')
+        logger.warning('action not running on GitHub, ignoring event name')
         return
 
     if event is None:
-        raise RuntimeError('No event name provided trough GITHUB_EVENT_NAME')
+        logger.error('No event name provided trough GITHUB_EVENT_NAME')
+        sys.exit(1)
 
     logger.debug("action triggered by '{}' event".format(event))
     if event != 'push':
-        raise RuntimeError('Unsupported event, only ''push'' is supported: {}'.format(event))
+        logger.warning("event '{}' is not supported")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
@@ -558,7 +561,7 @@ if __name__ == "__main__":
     logger.level = logging.getLevelName(log_level)
 
     # check event is supported
-    check_event_name()
+    exit_when_event_not_supported()
 
     token = get_var('GITHUB_TOKEN')
     event = get_var('GITHUB_EVENT_PATH')

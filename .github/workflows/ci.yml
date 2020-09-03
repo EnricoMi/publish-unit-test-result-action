@@ -33,8 +33,8 @@ jobs:
         python -m pytest --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
-      if: always()
       uses: EnricoMi/publish-unit-test-result-action@master
+      if: github.event_name == "push"
       with:
         check_name: Unit Test Results
         github_token: ${{ secrets.GITHUB_TOKEN }}
