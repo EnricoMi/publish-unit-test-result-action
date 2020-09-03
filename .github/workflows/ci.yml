@@ -34,7 +34,7 @@ jobs:
 
     - name: Unit Test Results
       if: always()
-      uses: EnricoMi/publish-unit-test-result-action@master
+      uses: EnricoMi/publish-unit-test-result-action@branch-number-formatting
       with:
         check_name: Unit Test Results
         github_token: ${{ secrets.GITHUB_TOKEN }}
