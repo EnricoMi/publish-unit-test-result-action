@@ -24,20 +24,20 @@ changes in the number of runs as well.
 
 The symbols have the following meaning:
 
-|symbol|meaning|
+|Symbol|Meaning|
 |:----:|-------|
-|![✔](https://github.githubassets.com/images/icons/emoji/unicode/2714.png)|A successful test or run|
-|![💤](https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png)|A skipped test or run|
-|![✖](https://github.githubassets.com/images/icons/emoji/unicode/2716.png)|A failed test or run|
-|![🔥](https://github.githubassets.com/images/icons/emoji/unicode/1f525.png)|An erroneous test or run|
-|![⏱](https://github.githubassets.com/images/icons/emoji/unicode/23f1.png)|The duration of all tests or runs|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png" height="20"/>|A successful test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png" height="20"/>|A skipped test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/2716.png" height="20"/>|A failed test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
 
 When this action has been run on master, or earlier commits in the same branch, then this action
 also compares unit test results across commits. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request:
 
 ![...](github-pull-request-comment-delta.png)
 
-## Using this action
+## Using this Action
 
 You can add this action to your GitHub workflow and configure it as follows:
 
