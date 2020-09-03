@@ -194,7 +194,7 @@ def as_delta(number: int, digits: int) -> str:
 def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: int = 0, delta_digits: int = 0, label: str = None) -> str:
     if number is None:
         if label:
-            return 'N/A {}'.format( label)
+            return 'N/A {}'.format(label)
         return 'N/A'
     if isinstance(number, int):
         formatted = '{number:0{digits},}'.format(number=number, digits=number_digits)
