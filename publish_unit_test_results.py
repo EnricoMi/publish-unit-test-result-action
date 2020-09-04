@@ -409,14 +409,16 @@ def get_long_summary_with_digest_md(stats: Dict[str, Any], digest_stats: Optiona
 
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dict[Any, Any], check_name: str):
-    from github import Github, PullRequest
-    from githubext import Repository, Commit
+    from github import Github, PullRequest, Requester, MainClass
+    from githubext import Repository, Commit, IssueComment
 
     # to prevent githubext import to be auto-removed
     if getattr(Repository, 'create_check_run') is None:
         raise RuntimeError('patching github Repository failed')
     if getattr(Commit, 'get_check_runs') is None:
         raise RuntimeError('patching github Commit failed')
+    if getattr(IssueComment, 'node_id') is None:
+        raise RuntimeError('patching github IssueComment failed')
 
     gh = Github(token)
     repo = gh.get_repo(repo_name)
@@ -432,7 +434,9 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
                 logger.debug(pr)
             raise RuntimeError('Found multiple pull requests for commit {}'.format(commit))
 
-        return pulls[0].as_pull_request()
+        pull = pulls[0].as_pull_request()
+        logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
+        return pull
 
     def get_stats_from_commit(commit_sha: str) -> Optional[Dict[Any, Any]]:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
@@ -485,12 +489,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
         logger.info('creating check')
         repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
 
-    def publish_comment(stats: Dict[Any, Any]) -> None:
-        pull = get_pull(commit_sha)
-        if pull is None:
-            logger.debug('there is no pull request for commit {}'.format(commit_sha))
-            return
-
+    def publish_comment(stats: Dict[Any, Any], pull) -> None:
         # compare them with earlier stats
         base_commit_sha = pull.base.sha if pull else None
         logger.debug('comparing against base={}'.format(base_commit_sha))
@@ -501,14 +500,110 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
         # we don't want to actually do this when not run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
             logger.warning('action not running on GitHub, skipping creating comment')
-            return
+            return pull
 
         logger.info('creating comment')
         pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats_with_delta)))
+        return pull
+
+    def hide_comments(pull: PullRequest) -> None:
+        # rewriting history of branch removes commits
+        # we do not want to show test results for those commits anymore
+        req = Requester.Requester(token,
+                                  password=None,
+                                  jwt=None,
+                                  base_url=MainClass.DEFAULT_BASE_URL,
+                                  timeout=MainClass.DEFAULT_TIMEOUT,
+                                  client_id=None,
+                                  client_secret=None,
+                                  user_agent="PyGithub/Python",
+                                  per_page=MainClass.DEFAULT_PER_PAGE,
+                                  verify=True,
+                                  retry=None)
+
+        def get_pull_request_comments(pull: PullRequest) -> List[Dict[str, Any]]:
+            query = dict(
+                query=r'query ListComments {'
+                      r'  repository(owner:"' + repo.owner.login + r'", name:"' + repo.name + r'") {'
+                      r'    pullRequest(number:' + str(pull.number) + r') {'
+                      r'      comments(last: 100) {'
+                      r'        nodes {'
+                      r'          id, author { login }, body, isMinimized'
+                      r'        }'
+                      r'      }'
+                      r'    }'
+                      r'  }'
+                      r'}'
+            )
+
+            headers, data = req.requestJsonAndCheck(
+                "POST", 'https://api.github.com/graphql', input=query
+            )
+
+            return data \
+                .get('data', {}) \
+                .get('repository', {}) \
+                .get('pullRequest', {}) \
+                .get('comments', {}) \
+                .get('nodes')
+
+        def hide_comment(comment_node_id) -> bool:
+            input = dict(
+                query=r'mutation MinimizeComment {'
+                      r'  minimizeComment(input: { subjectId: "' + comment_node_id + r'", classifier: OUTDATED } ) {'
+                      r'    minimizedComment { isMinimized, minimizedReason }'
+                      r'  }'
+                      r'}'
+            )
+            headers, data = req.requestJsonAndCheck(
+                "POST", 'https://api.github.com/graphql', input=input
+            )
+            return data.get('data').get('minimizeComment').get('minimizedComment').get('isMinimized')
+
+        # get commits of this pull request
+        commit_shas = set([commit.sha for commit in pull.get_commits()])
+
+        # get commits of this pull request
+        comments = get_pull_request_comments(pull)
+
+        # get all comments that come from this action and are not hidden
+        comments = list([comment for comment in comments
+                         if comment.get('author', {}).get('login') == 'github-actions'
+                         and comment.get('isMinimized') is False
+                         and comment.get('body', '').startswith('## Unit Test Results\n')
+                         and '\nresults for commit ' in comment.get('body')])
+
+        # get comment node ids and their commit sha (possibly abbreviated)
+        matches = [(comment.get('id'), re.search(r'^results for commit ([0-9a-f]{8,40})(?:\s.*)?$', comment.get('body'), re.MULTILINE))
+                   for comment in comments]
+        comment_commits = [(node_id, match.group(1)) for node_id, match in matches if match is not None]
+
+        # get those comment node ids whose commit is not part of this pull request any more
+        comment_ids = [(node_id, comment_commit_sha)
+                       for (node_id, comment_commit_sha) in comment_commits
+                       if not any([sha for sha in commit_shas if sha.startswith(comment_commit_sha)])]
+
+        # we don't want to actually do this when not run by GitHub Actions GitHub App
+        if os.environ.get('GITHUB_ACTIONS') is None:
+            logger.warning('action not running on GitHub, skipping hiding comment')
+            for node_id, comment_commit_sha in comment_ids:
+                logger.info('commend for commit {} should be hidden'.format(comment_commit_sha))
+            return
+
+        # hide all those comments that do not have a commit
+        for node_id, comment_commit_sha in comment_ids:
+            logger.info('hiding unit test result comment for commit {}'.format(comment_commit_sha))
+            hide_comment(node_id)
 
     logger.info('publishing results for commit {}'.format(commit_sha))
     publish_check(stats)
-    publish_comment(stats)
+
+    pull = get_pull(commit_sha)
+    if pull is not None:
+        publish_comment(stats, pull)
+        hide_comments(pull)
+    else:
+        logger.info('there is no pull request for commit {}'.format(commit_sha))
 
 
 def write_stats_file(stats, filename) -> None:
