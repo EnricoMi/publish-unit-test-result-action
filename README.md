@@ -43,7 +43,7 @@ You can add this action to your GitHub workflow and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1.0
+  uses: EnricoMi/publish-unit-test-result-action@v1.1
   if: always()
   with:
     check_name: Unit Test Results
