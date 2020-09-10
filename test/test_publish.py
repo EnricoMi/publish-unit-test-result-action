@@ -107,6 +107,52 @@ class PublishTest(unittest.TestCase):
                                       time=1.898
                                   )
                               ]))
+        self.assertEqual(parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml']),
+                         dict(files=1,
+                              suites=1,
+                              suite_tests=5,
+                              suite_skipped=0,
+                              suite_failures=0,
+                              suite_errors=0,
+                              suite_time=2,
+                              cases=[
+                                  dict(
+                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                      result='success',
+                                      test_name='diff options with empty diff column name',
+                                      time=0.259
+                                  ),
+                                  dict(
+                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                      result='success',
+                                      test_name='diff options left and right prefixes',
+                                      time=1.959
+                                  ),
+                                  dict(
+                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                      result='success',
+                                      test_name='diff options diff value',
+                                      time=0.002
+                                  ),
+                                  dict(
+                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                      result='success',
+                                      test_name='diff options with change column name same as diff column',
+                                      time=0.002
+                                  ),
+                                  dict(
+                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                      result='success',
+                                      test_name='fluent methods of diff options',
+                                      time=0.001
+                                  )
+                              ])
+                         )
 
     def test_get_test_results(self):
         self.assertEqual(get_test_results(dict(cases=[])), dict(

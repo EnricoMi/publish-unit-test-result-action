@@ -21,19 +21,21 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     """Parses junit xml files and returns aggregated statistics as a dict."""
     junits = [(file, JUnitXml.fromfile(file)) for file in files]
 
-    suites = sum([len(junit) for file, junit in junits])
-    suite_tests = sum([suite.tests for file, junit in junits for suite in junit])
-    suite_skipped = sum([suite.skipped for file, junit in junits for suite in junit])
-    suite_failures = sum([suite.failures for file, junit in junits for suite in junit])
-    suite_errors = sum([suite.errors for file, junit in junits for suite in junit])
-    suite_time = int(sum([suite.time for file, junit in junits for suite in junit]))
+    suites = [(file, suite)
+              for file, junit in junits
+              for suite in (junit if junit._tag == "testsuites" else [junit])]
+    suite_tests = sum([suite.tests for file, suite in suites])
+    suite_skipped = sum([suite.skipped for file, suite in suites])
+    suite_failures = sum([suite.failures for file, suite in suites])
+    suite_errors = sum([suite.errors for file, suite in suites])
+    suite_time = int(sum([suite.time for file, suite in suites]))
 
     cases = [dict(file=file, class_name=case.classname, test_name=case.name, result=case.result._tag if case.result is not None else 'success', time=case.time)
-             for file, junit in junits for suite in junit for case in suite]
+             for file, suite in suites for case in suite]
 
     return dict(files=len(files),
                 # test states and counts from suites
-                suites=suites,
+                suites=len(suites),
                 suite_tests=suite_tests,
                 suite_skipped=suite_skipped,
                 suite_failures=suite_failures,
