@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite errors="0" failures="1" hostname="3f909e363d82" name="pytest" skipped="1"
+               tests="5" time="2.481" timestamp="2020-09-04T16:18:04.966371">
+        <testcase classname="test.test_spark.SparkTests" file="test/test_spark.py" line="1412"
+                  name="test_check_shape_compatibility" time="6.435"></testcase>
+        <testcase classname="test.test_spark.SparkTests" file="test/test_spark.py" line="1641"
+                  name="test_get_available_devices" time="0.001">
+            <skipped message="get_available_devices only supported in Spark 3.0 and above"
+                     type="pytest.skip">/horovod/test/test_spark.py:1642: get_available_devices only
+                supported in Spark 3.0 and above
+            </skipped>
+        </testcase>
+        <testcase classname="test.test_spark.SparkTests" file="test/test_spark.py" line="1102"
+                  name="test_get_col_info" time="6.417"></testcase>
+        <testcase classname="test.test_spark.SparkTests" file="test/test_spark.py" line="819"
+                  name="test_rsh_events" time="7.541">
+            <failure message="self = &lt;test_spark.SparkTests testMethod=test_rsh_events&gt;
+
+    def test_rsh_events(self):
+&gt;       self.do_test_rsh_events(3)
+
+test_spark.py:821: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_spark.py:836: in do_test_rsh_events
+    self.do_test_rsh(command, 143, events=events)
+test_spark.py:852: in do_test_rsh
+    self.assertEqual(expected_result, res)
+E   AssertionError: 143 != 0">self = &lt;test_spark.SparkTests testMethod=test_rsh_events&gt;
+
+                def test_rsh_events(self):
+                &gt; self.do_test_rsh_events(3)
+
+                test_spark.py:821:
+                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+                test_spark.py:836: in do_test_rsh_events
+                self.do_test_rsh(command, 143, events=events)
+                test_spark.py:852: in do_test_rsh
+                self.assertEqual(expected_result, res)
+                E AssertionError: 143 != 0
+            </failure>
+        </testcase>
+        <testcase classname="test.test_spark.SparkTests" file="test/test_spark.py" line="813"
+                  name="test_rsh_with_non_zero_exit_code" time="1.514"></testcase>
+    </testsuite>
+</testsuites>
