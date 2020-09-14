@@ -30,7 +30,7 @@ jobs:
         PYTHONPATH: ..
       run: |
         cd test
-        python -m pytest --junit-xml ../test-results/pytest.xml
+        python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1.0
