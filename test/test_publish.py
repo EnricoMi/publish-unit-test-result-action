@@ -76,6 +76,63 @@ class PublishTest(unittest.TestCase):
                               suite_errors=0,
                               suite_time=0,
                               cases=[]))
+        self.assertEqual(
+            parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml']),
+            dict(files=1,
+                 suites=1,
+                 suite_tests=5,
+                 suite_skipped=0,
+                 suite_failures=0,
+                 suite_errors=0,
+                 suite_time=2,
+                 cases=[
+                     dict(
+                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                         file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                         test_name='diff options with empty diff column name',
+                         result='success',
+                         content=None,
+                         message=None,
+                         time=0.259
+                     ),
+                     dict(
+                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                         file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                         test_name='diff options left and right prefixes',
+                         result='success',
+                         content=None,
+                         message=None,
+                         time=1.959
+                     ),
+                     dict(
+                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                         file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                         test_name='diff options diff value',
+                         result='success',
+                         content=None,
+                         message=None,
+                         time=0.002
+                     ),
+                     dict(
+                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                         file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                         test_name='diff options with change column name same as diff column',
+                         result='success',
+                         content=None,
+                         message=None,
+                         time=0.002
+                     ),
+                     dict(
+                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                         file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                         test_name='fluent methods of diff options',
+                         result='success',
+                         content=None,
+                         message=None,
+                         time=0.001
+                     )
+                 ])
+            )
         self.assertEqual(parse_junit_xml_files(['files/junit.mpi.integration.xml']),
                          dict(files=1,
                               suites=1,
@@ -90,6 +147,8 @@ class PublishTest(unittest.TestCase):
                                       class_name='test.test_interactiverun.InteractiveRunTests',
                                       test_name='test_failed_run',
                                       result='success',
+                                      content=None,
+                                      message=None,
                                       time=9.386
                                   ),
                                   dict(
@@ -97,6 +156,8 @@ class PublishTest(unittest.TestCase):
                                       class_name='test.test_interactiverun.InteractiveRunTests',
                                       test_name='test_happy_run',
                                       result='success',
+                                      content=None,
+                                      message=None,
                                       time=4.012
                                   ),
                                   dict(
@@ -104,59 +165,97 @@ class PublishTest(unittest.TestCase):
                                       class_name='test.test_interactiverun.InteractiveRunTests',
                                       test_name='test_happy_run_elastic',
                                       result='success',
+                                      content=None,
+                                      message=None,
                                       time=1.898
                                   )
                               ]))
-        self.assertEqual(parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml']),
-                         dict(files=1,
-                              suites=1,
-                              suite_tests=5,
-                              suite_skipped=0,
-                              suite_failures=0,
-                              suite_errors=0,
-                              suite_time=2,
-                              cases=[
-                                  dict(
-                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                                      result='success',
-                                      test_name='diff options with empty diff column name',
-                                      time=0.259
-                                  ),
-                                  dict(
-                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                                      result='success',
-                                      test_name='diff options left and right prefixes',
-                                      time=1.959
-                                  ),
-                                  dict(
-                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                                      result='success',
-                                      test_name='diff options diff value',
-                                      time=0.002
-                                  ),
-                                  dict(
-                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                                      result='success',
-                                      test_name='diff options with change column name same as diff column',
-                                      time=0.002
-                                  ),
-                                  dict(
-                                      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                      file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                                      result='success',
-                                      test_name='fluent methods of diff options',
-                                      time=0.001
-                                  )
-                              ])
-                         )
+        self.assertEqual(parse_junit_xml_files(['files/junit.fail.xml']),
+                         dict(
+                             cases=[
+                                 dict(
+                                     class_name='test.test_spark.SparkTests',
+                                     content=None,
+                                     file='files/junit.fail.xml',
+                                     message=None,
+                                     result='success',
+                                     test_name='test_check_shape_compatibility',
+                                     time=6.435
+                                 ),
+                                 dict(
+                                     class_name='test.test_spark.SparkTests',
+                                     content='/horovod/test/test_spark.py:1642: get_available_devices only\n'
+                                             '                supported in Spark 3.0 and above\n'
+                                             '            ',
+                                     file='files/junit.fail.xml',
+                                     message='get_available_devices only supported in Spark 3.0 and above',
+                                     result='skipped',
+                                     test_name='test_get_available_devices',
+                                     time=0.001
+                                 ),
+                                 dict(
+                                     class_name='test.test_spark.SparkTests',
+                                     content=None,
+                                     file='files/junit.fail.xml',
+                                     message=None,
+                                     result='success',
+                                     test_name='test_get_col_info',
+                                     time=6.417
+                                 ),
+                                 dict(
+                                     class_name='test.test_spark.SparkTests',
+                                     content='self = <test_spark.SparkTests testMethod=test_rsh_events>\n'
+                                             '\n'
+                                             '                def test_rsh_events(self):\n'
+                                             '                > self.do_test_rsh_events(3)\n'
+                                             '\n'
+                                             '                test_spark.py:821:\n'
+                                             '                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n'
+                                             '                test_spark.py:836: in do_test_rsh_events\n'
+                                             '                self.do_test_rsh(command, 143, events=events)\n'
+                                             '                test_spark.py:852: in do_test_rsh\n'
+                                             '                self.assertEqual(expected_result, res)\n'
+                                             '                E AssertionError: 143 != 0\n'
+                                             '            ',
+                                     file='files/junit.fail.xml',
+                                     message='self = <test_spark.SparkTests testMethod=test_rsh_events>'
+                                             ''
+                                             '      def test_rsh_events(self): '
+                                             '>       self.do_test_rsh_events(3) '
+                                             ' '
+                                             'test_spark.py:821: '
+                                             ' _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  '
+                                             'test_spark.py:836: in do_test_rsh_events '
+                                             '    self.do_test_rsh(command, 143, events=events) '
+                                             'test_spark.py:852: in do_test_rsh '
+                                             '    self.assertEqual(expected_result, res) '
+                                             'E   AssertionError: 143 != 0',
+                                     result='failure',
+                                     test_name='test_rsh_events',
+                                     time=7.541
+                                 ),
+                                 dict(
+                                     class_name='test.test_spark.SparkTests',
+                                     content=None,
+                                     file='files/junit.fail.xml',
+                                     message=None,
+                                     result='success',
+                                     test_name='test_rsh_with_non_zero_exit_code',
+                                     time=1.514
+                                 )
+                             ],
+                             files=1,
+                             suite_errors=0,
+                             suite_failures=1,
+                             suite_skipped=1,
+                             suite_tests=5,
+                             suite_time=2,
+                             suites=1
+                         ))
 
     def test_get_test_results(self):
         self.assertEqual(get_test_results(dict(cases=[])), dict(
-            cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0,
+            cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results={},
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
         ))
         self.assertEqual(get_test_results(dict(cases=[
@@ -169,27 +268,43 @@ class PublishTest(unittest.TestCase):
             dict(file='test', class_name='class2', test_name='test4', result='failure', time=7),
         ])), dict(
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
+            case_results=dict([
+                ('class1::test1', dict(success=[dict(file='test', class_name='class1', test_name='test1', result='success', time=1)])),
+                ('class1::test2', dict(skipped=[dict(file='test', class_name='class1', test_name='test2', result='skipped', time=2)])),
+                ('class1::test3', dict(failure=[dict(file='test', class_name='class1', test_name='test3', result='failure', time=3)])),
+                ('class2::test1', dict(error=[dict(file='test', class_name='class2', test_name='test1', result='error', time=4)])),
+                ('class2::test2', dict(skipped=[dict(file='test', class_name='class2', test_name='test2', result='skipped', time=5)])),
+                ('class2::test3', dict(failure=[dict(file='test', class_name='class2', test_name='test3', result='failure', time=6)])),
+                ('class2::test4', dict(failure=[dict(file='test', class_name='class2', test_name='test4', result='failure', time=7)])),
+            ]),
             tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
         ))
         self.assertEqual(get_test_results(dict(cases=[
-            dict(file='test', class_name='class1', test_name='test1', result='success', time=2),
+            dict(file='test', class_name='class1', test_name='test1', result='success', time=1),
             dict(file='test', class_name='class1', test_name='test1', result='success', time=2),
 
             # success state has precedence over skipped
-            dict(file='test', class_name='class1', test_name='test2', result='success', time=2),
-            dict(file='test', class_name='class1', test_name='test2', result='skipped', time=2),
+            dict(file='test', class_name='class1', test_name='test2', result='success', time=3),
+            dict(file='test', class_name='class1', test_name='test2', result='skipped', time=4),
 
             # only when all runs are skipped, test has state skipped
-            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=2),
-            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=2),
+            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=5),
+            dict(file='test', class_name='class1', test_name='test3', result='skipped', time=6),
 
-            dict(file='test', class_name='class1', test_name='test4', result='success', time=2),
-            dict(file='test', class_name='class1', test_name='test4', result='failure', time=2),
+            dict(file='test', class_name='class1', test_name='test4', result='success', time=7),
+            dict(file='test', class_name='class1', test_name='test4', result='failure', time=8),
 
-            dict(file='test', class_name='class1', test_name='test5', result='success', time=2),
-            dict(file='test', class_name='class1', test_name='test5', result='error', time=2),
+            dict(file='test', class_name='class1', test_name='test5', result='success', time=9),
+            dict(file='test', class_name='class1', test_name='test5', result='error', time=10),
         ])), dict(
-            cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=20,
+            cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
+            case_results=dict([
+                ('class1::test1', dict(success=[dict(file='test', class_name='class1', test_name='test1', result='success', time=1), dict(file='test', class_name='class1', test_name='test1', result='success', time=2)])),
+                ('class1::test2', dict(success=[dict(file='test', class_name='class1', test_name='test2', result='success', time=3)], skipped=[dict(file='test', class_name='class1', test_name='test2', result='skipped', time=4)])),
+                ('class1::test3', dict(skipped=[dict(file='test', class_name='class1', test_name='test3', result='skipped', time=5), dict(file='test', class_name='class1', test_name='test3', result='skipped', time=6)])),
+                ('class1::test4', dict(success=[dict(file='test', class_name='class1', test_name='test4', result='success', time=7)], failure=[dict(file='test', class_name='class1', test_name='test4', result='failure', time=8)])),
+                ('class1::test5', dict(success=[dict(file='test', class_name='class1', test_name='test5', result='success', time=9)], error=[dict(file='test', class_name='class1', test_name='test5', result='error', time=10)])),
+            ]),
             tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
         ))
 
@@ -707,6 +822,149 @@ class PublishTest(unittest.TestCase):
                       'results for commit 12345678 ± comparison against type commit 01234567\n'
                       '\n'
                       '[test-results]:data:application/gzip;base64,'))
+
+    def test_get_case_messages(self):
+        results = dict([
+            ('class1::test1', dict([
+                ('success', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2'),
+                ])),
+                ('skipped', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3'),
+                ])),
+                ('failure', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                ])),
+                ('error', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5'),
+                ])),
+            ]))
+        ])
+
+        expected = dict([
+            ('class1::test1', dict([
+                ('success', dict([
+                    ('message1', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
+                    ])),
+                    ('message2', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2'),
+                    ]))
+                ])),
+                ('skipped', dict([
+                    ('message2', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2'),
+                    ])),
+                    ('message3', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3'),
+                    ]))
+                ])),
+                ('failure', dict([
+                    ('message4', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                    ])),
+                ])),
+                ('error', dict([
+                    ('message5', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5'),
+                    ])),
+                ])),
+            ]))
+        ])
+
+        actual = get_case_messages(results)
+
+        self.assertEqual(expected, actual)
+
+    def test_get_annotation(self):
+        messages = dict([
+            ('class1::test1', dict([
+                ('success', dict([
+                    ('message1', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1')
+                    ]))
+                ])),
+                ('skipped', dict([
+                    ('message2', list([
+                        dict(class_name=None, test_name='test1', file='file1', result='skipped', message='message2')
+                    ]))
+                ])),
+                ('failure', dict([
+                    ('message3', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message3')
+                    ])),
+                    ('message4', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4')
+                    ])),
+                ])),
+                ('error', dict([
+                    ('message5', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='error', message='message6')
+                    ]))
+                ])),
+            ]))
+        ])
+
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='notice', message='message2', title='test1: 1 out of 6 runs skipped'), get_annotation(messages, 'class1::test1', 'skipped', 'message2'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message3', title='test1 (class1): 1 out of 6 runs failed'), get_annotation(messages, 'class1::test1', 'failure', 'message3'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message4', title='test1 (class1): 2 out of 6 runs failed'), get_annotation(messages, 'class1::test1', 'failure', 'message4'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='failure', message='message5', title='test1 (class1): 1 out of 6 runs with error'), get_annotation(messages, 'class1::test1', 'error', 'message5'))
+
+    def test_get_annotations(self):
+        results = dict([
+            ('class1::test1', dict([
+                ('success', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='success message')
+                ])),
+                ('skipped', list([
+                        dict(class_name=None, test_name='test1', file='file1', result='skipped', message='skip message')
+                ])),
+                ('failure', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2')
+                ])),
+                ('error', list([
+                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='error message')
+                ])),
+            ]))
+        ])
+
+        expected = [
+            dict(
+                annotation_level='warning',
+                end_line=0,
+                message='fail message 1',
+                path='file1',
+                start_line=0,
+                title='test1 (class1): 1 out of 6 runs failed'
+            ), dict(
+                annotation_level='warning',
+                end_line=0,
+                message='fail message 2',
+                path='file1',
+                start_line=0,
+                title='test1 (class1): 2 out of 6 runs failed'
+            ), dict(
+                annotation_level='failure',
+                end_line=0,
+                message='error message',
+                path='file1',
+                start_line=0,
+                title='test1 (class1): 1 out of 6 runs with error'
+            )
+        ]
+
+        annotations = get_annotations(results)
+
+        self.assertEqual(expected, annotations)
 
     def test_files(self):
         parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
