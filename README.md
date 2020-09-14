@@ -53,12 +53,6 @@ You can add this action to your GitHub workflow and configure it as follows:
 ```
 
 The `if` clause guarantees that this action is always run, even if earlier steps in your workflow fail.
-If you want to run the action in a workflow that is triggered by events other than `push`,
-you can skip this action on non-`push` actions with this `if`-clause:
-
-```yaml
-  if: github.event_name == 'push'
-```
 
 The job name in the GitHub Actions section that provides the test results can be configured via the
 `check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
