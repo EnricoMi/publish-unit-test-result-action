@@ -54,14 +54,9 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
 
 def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
     cases = parsed_results['cases']
-    cases_skipped = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'), message=case.get('message'))
-                     for case in cases if case.get('result') == 'skipped']
-    # case.content is better for failures
-    cases_failures = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'), message=case.get('content'))
-                      for case in cases if case.get('result') == 'failure']
-    # case.content is better for errors
-    cases_errors = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'), message=case.get('content'))
-                    for case in cases if case.get('result') == 'error']
+    cases_skipped = [case for case in cases if case.get('result') == 'skipped']
+    cases_failures = [case for case in cases if case.get('result') == 'failure']
+    cases_errors = [case for case in cases if case.get('result') == 'error']
     cases_time = sum([case.get('time') for case in cases])
 
     # group cases by tests
@@ -429,7 +424,8 @@ def get_case_messages(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) 
         for state in case_results[key]:
             messages = defaultdict(list)
             for case in case_results[key][state]:
-                messages[case.get('message')].append(case)
+                message = case.get('message') if case.get('result') == 'skipped' else case.get('content')
+                messages[message].append(case)
             states[state] = messages
         runs[key] = states
     return runs
@@ -445,7 +441,7 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
     file = case.get('file')
     test_name = case.get('test_name') if 'test_name' in case else 'Unknown test'
     class_name = case.get('class_name') if 'class_name' in case else None
-    title = test_name if class_name is None else '{} ({})'.format(test_name, class_name)
+    title = test_name if not class_name else '{} ({})'.format(test_name, class_name)
     title_state = \
         'pass' if state == 'success' else \
             'failed' if state == 'failure' else \
@@ -453,9 +449,9 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
                     'skipped'
     if all_cases > 1:
         if same_cases == all_cases:
-            title = '{}: all {} runs {}'.format(title, all_cases, title_state)
+            title = 'All {} runs {}: {}'.format(all_cases, title_state, title)
         else:
-            title = '{}: {} out of {} runs {}'.format(title, same_cases, all_cases, title_state)
+            title = '{} out of {} runs {}: {}'.format(same_cases, all_cases, title_state, title)
     else:
         title = '{} {}'.format(title, title_state)
 

@@ -827,52 +827,52 @@ class PublishTest(unittest.TestCase):
         results = dict([
             ('class1::test1', dict([
                 ('success', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1', content='content1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1', content='content1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2', content='content2'),
                 ])),
                 ('skipped', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2', content='content2'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3', content='content3'),
                 ])),
                 ('failure', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4', content='content4'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4', content='content4'),
                 ])),
                 ('error', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5', content='content5'),
                 ])),
             ]))
         ])
 
         expected = dict([
             ('class1::test1', dict([
-                ('success', dict([
-                    ('message1', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
-                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1'),
+                ('success', defaultdict(list, [
+                    ('content1', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1', content='content1'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message1', content='content1'),
                     ])),
-                    ('message2', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2'),
+                    ('content2', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='success', message='message2', content='content2'),
                     ]))
                 ])),
-                ('skipped', dict([
+                ('skipped', defaultdict(list, [
                     ('message2', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message2', content='content2'),
                     ])),
                     ('message3', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='skipped', message='message3', content='content3'),
                     ]))
                 ])),
-                ('failure', dict([
-                    ('message4', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
-                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
+                ('failure', defaultdict(list, [
+                    ('content4', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4', content='content4'),
+                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4', content='content4'),
                     ])),
                 ])),
-                ('error', dict([
-                    ('message5', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5'),
+                ('error', defaultdict(list, [
+                    ('content5', list([
+                        dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5', content='content5'),
                     ])),
                 ])),
             ]))
@@ -897,7 +897,7 @@ class PublishTest(unittest.TestCase):
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message3')
+                        dict(class_name='', test_name='test1', file='file1', result='failure', message='message3')
                     ])),
                     ('message4', list([
                         dict(class_name='class1', test_name='test1', file='file1', result='failure', message='message4'),
@@ -912,27 +912,27 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='notice', message='message2', title='test1: 1 out of 6 runs skipped'), get_annotation(messages, 'class1::test1', 'skipped', 'message2'))
-        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message3', title='test1 (class1): 1 out of 6 runs failed'), get_annotation(messages, 'class1::test1', 'failure', 'message3'))
-        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message4', title='test1 (class1): 2 out of 6 runs failed'), get_annotation(messages, 'class1::test1', 'failure', 'message4'))
-        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='failure', message='message5', title='test1 (class1): 1 out of 6 runs with error'), get_annotation(messages, 'class1::test1', 'error', 'message5'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='notice', message='message2', title='1 out of 6 runs skipped: test1'), get_annotation(messages, 'class1::test1', 'skipped', 'message2'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message3', title='1 out of 6 runs failed: test1'), get_annotation(messages, 'class1::test1', 'failure', 'message3'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='warning', message='message4', title='2 out of 6 runs failed: test1 (class1)'), get_annotation(messages, 'class1::test1', 'failure', 'message4'))
+        self.assertEqual(dict(path='file1', start_line=0, end_line=0, annotation_level='failure', message='message5', title='1 out of 6 runs with error: test1 (class1)'), get_annotation(messages, 'class1::test1', 'error', 'message5'))
 
     def test_get_annotations(self):
         results = dict([
             ('class1::test1', dict([
                 ('success', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='success message')
+                    dict(class_name='class1', test_name='test1', file='file1', result='success', message='success message', content='success content')
                 ])),
                 ('skipped', list([
-                        dict(class_name=None, test_name='test1', file='file1', result='skipped', message='skip message')
+                        dict(class_name=None, test_name='test1', file='file1', result='skipped', message='skip message', content='skip content')
                 ])),
                 ('failure', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 1'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2'),
-                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2')
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 1', content='fail content 1'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2', content='fail content 2'),
+                    dict(class_name='class1', test_name='test1', file='file1', result='failure', message='fail message 2', content='fail content 2')
                 ])),
                 ('error', list([
-                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='error message')
+                    dict(class_name='class1', test_name='test1', file='file1', result='error', message='error message', content='error content')
                 ])),
             ]))
         ])
@@ -941,24 +941,24 @@ class PublishTest(unittest.TestCase):
             dict(
                 annotation_level='warning',
                 end_line=0,
-                message='fail message 1',
+                message='fail content 1',
                 path='file1',
                 start_line=0,
-                title='test1 (class1): 1 out of 6 runs failed'
+                title='1 out of 6 runs failed: test1 (class1)'
             ), dict(
                 annotation_level='warning',
                 end_line=0,
-                message='fail message 2',
+                message='fail content 2',
                 path='file1',
                 start_line=0,
-                title='test1 (class1): 2 out of 6 runs failed'
+                title='2 out of 6 runs failed: test1 (class1)'
             ), dict(
                 annotation_level='failure',
                 end_line=0,
-                message='error message',
+                message='error content',
                 path='file1',
                 start_line=0,
-                title='test1 (class1): 1 out of 6 runs with error'
+                title='1 out of 6 runs with error: test1 (class1)'
             )
         ]
 
