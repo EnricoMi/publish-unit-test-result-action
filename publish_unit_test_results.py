@@ -476,9 +476,9 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
         start_line=line,
         end_line=line,
         annotation_level=level,
-        message=message or '',
+        message='\n'.join(same_result_files),
         title=title,
-        raw_details='\n'.join(same_result_files)
+        raw_details=message
     )
 
 

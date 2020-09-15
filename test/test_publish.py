@@ -939,10 +939,10 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='notice', message='message2', title='1 out of 6 runs skipped: test1', raw_details='result-file1'), get_annotation(messages, 'class1::test1', 'skipped', 'message2'))
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='message3', title='1 out of 6 runs failed: test1', raw_details='result-file1'), get_annotation(messages, 'class1::test1', 'failure', 'message3'))
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='message4', title='2 out of 6 runs failed: test1 (class1)', raw_details='result-file1\nresult-file2'), get_annotation(messages, 'class1::test1', 'failure', 'message4'))
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='failure', message='message5', title='1 out of 6 runs with error: test1 (class1)', raw_details='result-file1'), get_annotation(messages, 'class1::test1', 'error', 'message5'))
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_annotation(messages, 'class1::test1', 'skipped', 'message2'))
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_annotation(messages, 'class1::test1', 'failure', 'message3'))
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_annotation(messages, 'class1::test1', 'failure', 'message4'))
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_annotation(messages, 'class1::test1', 'error', 'message5'))
 
     def test_get_annotations(self):
         results = dict([
@@ -968,27 +968,27 @@ class PublishTest(unittest.TestCase):
             dict(
                 annotation_level='warning',
                 end_line=123,
-                message='fail content 1',
+                message='result-file1',
                 path='file1',
                 start_line=123,
                 title='1 out of 6 runs failed: test1 (class1)',
-                raw_details='result-file1'
+                raw_details='fail content 1'
             ), dict(
                 annotation_level='warning',
                 end_line=123,
-                message='fail content 2',
+                message='result-file2\nresult-file3',
                 path='file1',
                 start_line=123,
                 title='2 out of 6 runs failed: test1 (class1)',
-                raw_details='result-file2\nresult-file3'
+                raw_details='fail content 2'
             ), dict(
                 annotation_level='failure',
                 end_line=123,
-                message='error content',
+                message='result-file1',
                 path='file1',
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
-                raw_details='result-file1'
+                raw_details='error content'
             )
         ]
 
