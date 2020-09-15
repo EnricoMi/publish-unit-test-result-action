@@ -6,9 +6,9 @@ import os
 import pathlib
 import re
 import sys
+from collections import defaultdict
 from html import unescape
-from collections import defaultdict, Counter
-from typing import List, Dict, Any, Union, Optional, Tuple, Callable
+from typing import List, Dict, Any, Union, Optional, Tuple
 
 from junitparser import *
 
