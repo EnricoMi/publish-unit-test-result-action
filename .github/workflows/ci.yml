@@ -49,3 +49,9 @@ jobs:
         path: |
           test-results/*.xml
           unit-test-results.json
+
+    - name: Set up Docker Buildx
+      uses: crazy-max/ghaction-docker-buildx@master
+
+    - name: Run Buildx
+      run: docker buildx build --output "type=image,push=false" .
