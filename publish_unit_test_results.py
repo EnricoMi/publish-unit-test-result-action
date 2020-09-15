@@ -20,26 +20,34 @@ punctuation_space = ' '
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     """Parses junit xml files and returns aggregated statistics as a dict."""
-    junits = [(file, JUnitXml.fromfile(file)) for file in files]
+    junits = [(result_file, JUnitXml.fromfile(result_file)) for result_file in files]
 
-    suites = [(file, suite)
-              for file, junit in junits
+    suites = [(result_file, suite)
+              for result_file, junit in junits
               for suite in (junit if junit._tag == "testsuites" else [junit])]
-    suite_tests = sum([suite.tests for file, suite in suites])
-    suite_skipped = sum([suite.skipped for file, suite in suites])
-    suite_failures = sum([suite.failures for file, suite in suites])
-    suite_errors = sum([suite.errors for file, suite in suites])
-    suite_time = int(sum([suite.time for file, suite in suites]))
+    suite_tests = sum([suite.tests for result_file, suite in suites])
+    suite_skipped = sum([suite.skipped for result_file, suite in suites])
+    suite_failures = sum([suite.failures for result_file, suite in suites])
+    suite_errors = sum([suite.errors for result_file, suite in suites])
+    suite_time = int(sum([suite.time for result_file, suite in suites]))
+
+    def int_opt(string: str) -> Optional[int]:
+        try:
+            return int(string) if string else None
+        except ValueError:
+            return None
 
     cases = [dict(
-        file=file,
+        result_file=result_file,
+        test_file=case._elem.get('file'),
+        line=int_opt(case._elem.get('line')),
         class_name=case.classname,
         test_name=case.name,
         result=case.result._tag if case.result else 'success',
         message=unescape(case.result.message) if case.result else None,
         content=unescape(case.result._elem.text) if case.result else None,
         time=case.time
-    ) for file, suite in suites for case in suite]
+    ) for result_file, suite in suites for case in suite]
 
     return dict(files=len(files),
                 # test states and counts from suites
@@ -62,7 +70,7 @@ def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
     # group cases by tests
     cases_results = defaultdict(lambda: defaultdict(list))
     for case in cases:
-        key = '{}::{}'.format(case.get('class_name'), case.get('test_name'))
+        key = (case.get('test_file'), case.get('class_name'), case.get('test_name'))
         cases_results[key][case.get('result')].append(case)
 
     test_results = dict()
@@ -438,7 +446,9 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
                      for s in messages[key]
                      for m in messages[key][s]
                      for case in messages[key][s][m]])
-    file = case.get('file')
+    same_result_files = [case.get('result_file') for case in messages[key][state][message] if case.get('result_file')]
+    test_file = case.get('test_file')
+    line = case.get('line') or 0
     test_name = case.get('test_name') if 'test_name' in case else 'Unknown test'
     class_name = case.get('class_name') if 'class_name' in case else None
     title = test_name if not class_name else '{} ({})'.format(test_name, class_name)
@@ -462,12 +472,13 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
     )
 
     return dict(
-        path=file or '/',
-        start_line=0,  # TODO!
-        end_line=0,    # TODO!
+        path=test_file or class_name or '/',
+        start_line=line,
+        end_line=line,
         annotation_level=level,
         message=message or '',
-        title=title
+        title=title,
+        raw_details='\n'.join(same_result_files)
     )
 
 
