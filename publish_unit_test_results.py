@@ -431,10 +431,13 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
 
         if pulls.totalCount == 0:
             return None
+        for pr in pulls:
+            pr = pr.as_pull_request()
+            logger.debug(pr)
+            logger.debug(pr.raw_data)
         if pulls.totalCount > 1:
-            for pr in pulls:
-                logger.debug(pr)
-            raise RuntimeError('Found multiple pull requests for commit {}'.format(commit))
+            logger.error('found multiple pull requests for commit {}'.format(commit))
+            return None
 
         pull = pulls[0].as_pull_request()
         logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
