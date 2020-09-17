@@ -426,20 +426,34 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
     repo = gh.get_repo(repo_name)
 
     def get_pull(commit: str) -> PullRequest:
-        pulls = gh.search_issues('type:pr {}'.format(commit))
-        logger.debug('found {} pull requests for commit {}'.format(pulls.totalCount, commit))
+        issues = gh.search_issues('type:pr {}'.format(commit))
+        logger.debug('found {} pull requests for commit {}'.format(issues.totalCount, commit))
 
-        if pulls.totalCount == 0:
+        if issues.totalCount == 0:
             return None
-        for pr in pulls:
-            pr = pr.as_pull_request()
+        logger.debug('running in repo {}'.format(repo_name))
+        for issue in issues:
+            pr = issue.as_pull_request()
             logger.debug(pr)
             logger.debug(pr.raw_data)
-        if pulls.totalCount > 1:
+            logger.debug('PR {}: {} -> {}'.format(pr.html_url, pr.head.repo.full_name, pr.base.repo.full_name))
+
+        # we can only publish the comment to PRs that are in the same repository as this action is executed in
+        # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY
+        # we won't have permission otherwise
+        pulls = list([pr
+                      for issue in issues
+                      for pr in [issue.as_pull_request()]
+                      if pr.base.repo.full_name == repo_name])
+
+        if len(pulls) == 0:
+            logger.debug('found no pull requests in repo {} for commit {}'.format(repo_name, commit))
+            return None
+        if len(pulls) > 1:
             logger.error('found multiple pull requests for commit {}'.format(commit))
             return None
 
-        pull = pulls[0].as_pull_request()
+        pull = pulls[0]
         logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
         return pull
 
