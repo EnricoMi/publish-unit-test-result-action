@@ -6,7 +6,8 @@ import os
 import pathlib
 import re
 import sys
-from collections import defaultdict, Counter
+from collections import defaultdict
+from html import unescape
 from typing import List, Dict, Any, Union, Optional, Tuple
 
 from junitparser import *
@@ -19,19 +20,34 @@ punctuation_space = ' '
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     """Parses junit xml files and returns aggregated statistics as a dict."""
-    junits = [(file, JUnitXml.fromfile(file)) for file in files]
+    junits = [(result_file, JUnitXml.fromfile(result_file)) for result_file in files]
 
-    suites = [(file, suite)
-              for file, junit in junits
+    suites = [(result_file, suite)
+              for result_file, junit in junits
               for suite in (junit if junit._tag == "testsuites" else [junit])]
-    suite_tests = sum([suite.tests for file, suite in suites])
-    suite_skipped = sum([suite.skipped for file, suite in suites])
-    suite_failures = sum([suite.failures for file, suite in suites])
-    suite_errors = sum([suite.errors for file, suite in suites])
-    suite_time = int(sum([suite.time for file, suite in suites]))
+    suite_tests = sum([suite.tests for result_file, suite in suites])
+    suite_skipped = sum([suite.skipped for result_file, suite in suites])
+    suite_failures = sum([suite.failures for result_file, suite in suites])
+    suite_errors = sum([suite.errors for result_file, suite in suites])
+    suite_time = int(sum([suite.time for result_file, suite in suites]))
 
-    cases = [dict(file=file, class_name=case.classname, test_name=case.name, result=case.result._tag if case.result is not None else 'success', time=case.time)
-             for file, suite in suites for case in suite]
+    def int_opt(string: str) -> Optional[int]:
+        try:
+            return int(string) if string else None
+        except ValueError:
+            return None
+
+    cases = [dict(
+        result_file=result_file,
+        test_file=case._elem.get('file'),
+        line=int_opt(case._elem.get('line')),
+        class_name=case.classname,
+        test_name=case.name,
+        result=case.result._tag if case.result else 'success',
+        message=unescape(case.result.message) if case.result else None,
+        content=unescape(case.result._elem.text) if case.result else None,
+        time=case.time
+    ) for result_file, suite in suites for case in suite]
 
     return dict(files=len(files),
                 # test states and counts from suites
@@ -46,31 +62,29 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
 
 def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
     cases = parsed_results['cases']
-    cases_skipped = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
-                     for case in cases if case.get('result') == 'skipped']
-    cases_failures = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
-                      for case in cases if case.get('result') == 'failure']
-    cases_errors = [dict(class_name=case.get('class_name)'), test_name=case.get('test_name'))
-                    for case in cases if case.get('result') == 'error']
+    cases_skipped = [case for case in cases if case.get('result') == 'skipped']
+    cases_failures = [case for case in cases if case.get('result') == 'failure']
+    cases_errors = [case for case in cases if case.get('result') == 'error']
     cases_time = sum([case.get('time') for case in cases])
 
-    cases_results = defaultdict(Counter)
+    # group cases by tests
+    cases_results = defaultdict(lambda: defaultdict(list))
     for case in cases:
-        key = '{}::{}'.format(case.get('class_name'), case.get('test_name'))
-        cases_results[key][case.get('result')] += 1
+        key = (case.get('test_file'), case.get('class_name'), case.get('test_name'))
+        cases_results[key][case.get('result')].append(case)
 
     test_results = dict()
-    for case, counter in cases_results.items():
-        test_results[case] = \
-            'error' if counter['error'] else \
-            'failure' if counter['failure'] else \
-            'success' if counter['success'] else \
+    for test, states in cases_results.items():
+        test_results[test] = \
+            'error' if 'error' in states else \
+            'failure' if 'failure' in states else \
+            'success' if 'success' in states else \
             'skipped'
 
     tests = len(test_results)
-    tests_skipped = len([case for case, state in test_results.items() if state == 'skipped'])
-    tests_failures = len([case for case, state in test_results.items() if state == 'failure'])
-    tests_errors = len([case for case, state in test_results.items() if state == 'error'])
+    tests_skipped = len([test for test, state in test_results.items() if state == 'skipped'])
+    tests_failures = len([test for test, state in test_results.items() if state == 'failure'])
+    tests_errors = len([test for test, state in test_results.items() if state == 'error'])
 
     results = parsed_results.copy()
     results.update(
@@ -80,6 +94,7 @@ def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
         cases_failures=len(cases_failures),
         cases_errors=len(cases_errors),
         cases_time=cases_time,
+        case_results={k: dict(v) for k, v in cases_results.items()},
 
         tests=tests,
         # distinct test states by case name
@@ -410,7 +425,76 @@ def get_long_summary_with_digest_md(stats: Dict[str, Any], digest_stats: Optiona
     return '{}\n{}{}'.format(summary, digest_prefix, digest)
 
 
-def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dict[Any, Any], check_name: str):
+def get_case_messages(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]]:
+    runs = dict()
+    for key in case_results:
+        states = dict()
+        for state in case_results[key]:
+            messages = defaultdict(list)
+            for case in case_results[key][state]:
+                message = case.get('message') if case.get('result') == 'skipped' else case.get('content')
+                messages[message].append(case)
+            states[state] = messages
+        runs[key] = states
+    return runs
+
+
+def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]], key, state, message) -> Dict[str, Any]:
+    case = messages[key][state][message][0]
+    same_cases = len(messages[key][state][message])
+    all_cases = len([case
+                     for s in messages[key]
+                     for m in messages[key][s]
+                     for case in messages[key][s][m]])
+    same_result_files = [case.get('result_file') for case in messages[key][state][message] if case.get('result_file')]
+    test_file = case.get('test_file')
+    line = case.get('line') or 0
+    test_name = case.get('test_name') if 'test_name' in case else 'Unknown test'
+    class_name = case.get('class_name') if 'class_name' in case else None
+    title = test_name if not class_name else '{} ({})'.format(test_name, class_name)
+    title_state = \
+        'pass' if state == 'success' else \
+            'failed' if state == 'failure' else \
+                'with error' if state == 'error' else \
+                    'skipped'
+    if all_cases > 1:
+        if same_cases == all_cases:
+            title = 'All {} runs {}: {}'.format(all_cases, title_state, title)
+        else:
+            title = '{} out of {} runs {}: {}'.format(same_cases, all_cases, title_state, title)
+    else:
+        title = '{} {}'.format(title, title_state)
+
+    level = (
+        'warning' if case.get('result') == 'failure' else
+        'failure' if case.get('result') == 'error' else  # failure is used for test errors
+        'notice'
+    )
+
+    return dict(
+        path=test_file or class_name or '/',
+        start_line=line,
+        end_line=line,
+        annotation_level=level,
+        message='\n'.join(same_result_files),
+        title=title,
+        raw_details=message
+    )
+
+
+def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> List[Dict[str, Any]]:
+    messages = get_case_messages(case_results)
+    return [
+        get_annotation(messages, key, state, message)
+        for key in messages
+        for state in messages[key] if state not in ['success', 'skipped']
+        for message in messages[key][state]
+    ]
+
+
+def publish(token: str, event: dict, repo_name: str, commit_sha: str,
+            stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
+            check_name: str):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -487,7 +571,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
             logger.debug('stats: {}'.format(stats))
             return stats
 
-    def publish_check(stats: Dict[Any, Any]) -> None:
+    def publish_check(stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> None:
         # get stats from earlier commits
         before_commit_sha = event.get('before')
         logger.debug('comparing against before={}'.format(before_commit_sha))
@@ -495,18 +579,24 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
         stats_with_delta = get_stats_with_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
+        all_annotations = get_annotations(cases)
+
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
             logger.warning('action not running on GitHub, skipping publishing the check')
             return
 
-        output = dict(
-            title=get_short_summary(stats),
-            summary=get_long_summary_with_digest_md(stats_with_delta, stats),
-        )
+        # we can send only 50 annotations at once, so we split them into chunks of 50
+        all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
+        for annotations in all_annotations:
+            output = dict(
+                title=get_short_summary(stats),
+                summary=get_long_summary_with_digest_md(stats_with_delta, stats),
+                annotations=annotations
+            )
 
-        logger.info('creating check')
-        repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
+            logger.info('creating check')
+            repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
 
     def publish_comment(stats: Dict[Any, Any], pull) -> None:
         # compare them with earlier stats
@@ -615,7 +705,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str, stats: Dic
             hide_comment(node_id)
 
     logger.info('publishing results for commit {}'.format(commit_sha))
-    publish_check(stats)
+    publish_check(stats, cases)
 
     pull = get_pull(commit_sha)
     if pull is not None:
@@ -646,7 +736,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, check_name)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name)
 
 
 def exit_when_event_not_supported(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
