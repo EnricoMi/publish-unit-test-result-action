@@ -9,6 +9,9 @@ inputs:
     description: 'Name of the created check run'
     required: false
     default: 'Unit Test Results'
+  report_individual_runs:
+    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
+    required: false
   files:
     description: 'File pattern of test result files'
     required: true

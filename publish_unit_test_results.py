@@ -439,9 +439,13 @@ def get_case_messages(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) 
     return runs
 
 
-def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]], key, state, message) -> Dict[str, Any]:
+def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]],
+                   key, state, message, report_individual_runs) -> Dict[str, Any]:
     case = messages[key][state][message][0]
-    same_cases = len(messages[key][state][message])
+    same_cases = len(messages[key][state][message] if report_individual_runs else
+                     [case
+                      for m in messages[key][state]
+                      for case in messages[key][state][m]])
     all_cases = len([case
                      for s in messages[key]
                      for m in messages[key][s]
@@ -482,19 +486,20 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
     )
 
 
-def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> List[Dict[str, Any]]:
+def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], report_individual_runs: bool) -> List[Dict[str, Any]]:
     messages = get_case_messages(case_results)
     return [
-        get_annotation(messages, key, state, message)
+        get_annotation(messages, key, state, message, report_individual_runs)
         for key in messages
         for state in messages[key] if state not in ['success', 'skipped']
-        for message in messages[key][state]
+        for message in (messages[key][state] if report_individual_runs else
+                        [list(messages[key][state].keys())[0]])
     ]
 
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            check_name: str):
+            check_name: str, report_individual_runs: bool):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -579,7 +584,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         stats_with_delta = get_stats_with_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
-        all_annotations = get_annotations(cases)
+        all_annotations = get_annotations(cases, report_individual_runs)
 
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -721,7 +726,7 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str) -> None:
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str, report_individual_runs: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
 
@@ -736,7 +741,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, report_individual_runs)
 
 
 def exit_when_event_not_supported(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
@@ -771,6 +776,7 @@ if __name__ == "__main__":
     event = get_var('GITHUB_EVENT_PATH')
     repo = get_var('GITHUB_REPOSITORY')
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
+    report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
     commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
     files = get_var('FILES')
 
@@ -787,4 +793,4 @@ if __name__ == "__main__":
     with open(event, 'r') as f:
         event = json.load(f)
 
-    main(token, event, repo, commit, files, check_name)
+    main(token, event, repo, commit, files, check_name, report_individual_runs)
