@@ -450,7 +450,12 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
                      for s in messages[key]
                      for m in messages[key][s]
                      for case in messages[key][s][m]])
-    same_result_files = [case.get('result_file') for case in messages[key][state][message] if case.get('result_file')]
+    same_result_files = [case.get('result_file')
+                         for case in (messages[key][state][message] if report_individual_runs else
+                                      [c
+                                       for m in messages[key][state]
+                                       for c in messages[key][state][m]])
+                         if case.get('result_file')]
     test_file = case.get('test_file')
     line = case.get('line') or 0
     test_name = case.get('test_name') if 'test_name' in case else 'Unknown test'
