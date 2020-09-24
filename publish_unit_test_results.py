@@ -749,20 +749,15 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     publish(token, event, repo, commit, stats, results['case_results'], check_name, report_individual_runs)
 
 
-def exit_when_event_not_supported(event: str = os.environ.get('GITHUB_EVENT_NAME')) -> None:
-    # only checked when run by GitHub Actions GitHub App
-    if os.environ.get('GITHUB_ACTIONS') is None:
-        logger.warning('action not running on GitHub, ignoring event name')
-        return
+def get_commit_sha(event: dict, event_name: str):
+    logger.debug("action triggered by '{}' event".format(event_name))
 
-    if event is None:
-        logger.error('No event name provided trough GITHUB_EVENT_NAME')
-        sys.exit(1)
+    if event_name == 'push':
+        return os.environ.get('GITHUB_SHA')
+    elif event_name in ['pull_request', 'pull_request_target']:
+        return event.get('pull_request', {}).get('head', {}).get('sha')
 
-    logger.debug("action triggered by '{}' event".format(event))
-    if event != 'push':
-        logger.warning("event '{}' is not supported")
-        sys.exit(0)
+    raise RuntimeError("event '{}' is not supported".format(event))
 
 
 if __name__ == "__main__":
@@ -774,28 +769,27 @@ if __name__ == "__main__":
     log_level = get_var('LOG_LEVEL') or 'INFO'
     logger.level = logging.getLevelName(log_level)
 
-    # check event is supported
-    exit_when_event_not_supported()
-
-    token = get_var('GITHUB_TOKEN')
-    event = get_var('GITHUB_EVENT_PATH')
-    repo = get_var('GITHUB_REPOSITORY')
-    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
-    report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
-    commit = get_var('COMMIT') or os.environ.get('GITHUB_SHA')
-    files = get_var('FILES')
-
     def check_var(var: str, name: str, label: str) -> None:
         if var is None:
             raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
 
-    check_var(token, 'GITHUB_TOKEN', 'GitHub token')
+    event = get_var('GITHUB_EVENT_PATH')
+    event_name = get_var('GITHUB_EVENT_NAME')
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
-    check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
-    check_var(commit, 'COMMIT', 'Commit')
-    check_var(files, 'FILES', 'Files pattern')
-
+    check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'r') as f:
         event = json.load(f)
+
+    token = get_var('GITHUB_TOKEN')
+    repo = get_var('GITHUB_REPOSITORY')
+    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
+    report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
+    commit = get_var('COMMIT') or get_commit_sha(event, event_name)
+    files = get_var('FILES')
+
+    check_var(token, 'GITHUB_TOKEN', 'GitHub token')
+    check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
+    check_var(commit, 'COMMIT or event file', 'Commit SHA')
+    check_var(files, 'FILES', 'Files pattern')
 
     main(token, event, repo, commit, files, check_name, report_individual_runs)
