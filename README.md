@@ -50,7 +50,7 @@ and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1.1
+  uses: EnricoMi/publish-unit-test-result-action@v1.2
   if: always()
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -154,7 +154,7 @@ jobs:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1.1
+        uses: EnricoMi/publish-unit-test-result-action@v1.2
         with:
           check_name: Unit Test Results
           github_token: ${{ secrets.GITHUB_TOKEN }}
