@@ -1,6 +1,6 @@
-name: CI (PR)
+name: CI (PR target)
 
-on: [pull_request]
+on: [pull_request_target]
 
 jobs:
   build-and-test:
