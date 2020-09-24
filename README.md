@@ -45,7 +45,8 @@ also compares unit test results across commits. This allows seeing changes in th
 
 ## Using this Action
 
-You can add this action to your GitHub workflow and configure it as follows:
+You can add this action to your GitHub workflow on `push`, `pull_request`, and `pull_request_target` events
+and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -57,7 +58,7 @@ You can add this action to your GitHub workflow and configure it as follows:
     files: test-results/**/*.xml
 ```
 
-The `if` clause guarantees that this action always runs, even if earlier steps in your workflow fail (e.g., the unit test step).
+The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
 The job name in the GitHub Actions section that provides the test results can be configured via the
 `check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
@@ -65,3 +66,97 @@ The job name in the GitHub Actions section that provides the test results can be
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
 [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
+
+## Support fork repositories
+
+This action posts a comment with test results to all pull requests that contain the commit and
+are part of the repository that the action runs in. It would not be able to post to pull requests
+in other repositories.
+
+When someone forks your repository, the `push` event will run in the fork repository and cannot post
+the results to a pull request in your repo. For that to work, you need to also trigger the workflow
+on the `pull_request_target` event, which is [equivalent](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
+to the `pull_request` event, except it runs in the target repository of the pull request:
+
+```yaml
+on: [push, pull_request_target]
+```
+
+However, both events would trigger on pull request that merges within the same repository.
+This can be avoided by the following job `if` clause:
+
+```yaml
+jobs:
+  build-and-test:
+    if: github.event_name == 'push' || github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+```
+
+Now your action runs in forked repositories on `push`, and inside your repo
+for pull requests from forks into your repository, which is able to publish to your pull request.
+
+## Use with matrix strategy
+
+In a scenario where your unit tests run multiple times in different environments (e.g. a matrix strategy),
+the action should run only once over all test results. For this, put the action into a separate job
+that depends on all your test environments. Those need to upload the test results as artifacts, which
+are then all downloaded by your publish job.
+
+You will need to use the `if: success() || failure()` clause when you [support fork repositories](#support-fork-repositories): 
+
+```yaml
+name: CI
+
+on: [push, pull_request_target]
+
+jobs:
+  build-and-test:
+    name: Build and Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
+    # for pull requests within the same repository, the pull event is sufficient
+    if: github.event_name == 'push' || github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: PyTest
+      run: python -m pytest test --junit-xml pytest.xml
+
+    - name: Upload Unit Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Unit Test Results (Python ${{ matrix.python-version }})
+        path: pytest.xml
+
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    # the build-and-test job might be skipped, we don't need to run this job then
+    if: success() || failure()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1.1
+        with:
+          check_name: Unit Test Results
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: pytest.xml
+```
