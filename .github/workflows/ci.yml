@@ -1,6 +1,6 @@
-name: CI (PR target)
+name: CI
 
-on: [pull_request_target]
+on: [push]
 
 jobs:
   build-and-test:
@@ -33,7 +33,7 @@ jobs:
         python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@branch-pull-request
+      uses: EnricoMi/publish-unit-test-result-action@v1.0
       if: always()
       with:
         check_name: Unit Test Results
