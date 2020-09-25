@@ -54,11 +54,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    #    - name: Setup Python
-    #      uses: actions/setup-python@v2
-    #      with:
-    #        python-version: 3.6
-
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade --force --no-cache-dir pip
@@ -66,7 +61,14 @@ runs:
       shell: bash
 
     - name: Publish Unit Test Results
-      run: python $GITHUB_ACTION_PATH/publish_unit_test_results.py ${{ inputs.check_name }}
+      run: python $GITHUB_ACTION_PATH/publish_unit_test_results.py
+      env:
+        github_token: ${{ inputs.check_name }}
+        check_name: ${{ inputs.check_name }}
+        files: ${{ inputs.files }}
+        report_individual_runs: ${{ inputs.report_individual_runs }}
+        deduplicate_classes_by_file_name: ${{ inputs.deduplicate_classes_by_file_name }}
+        log_level: ${{ inputs.log_level }}
       shell: bash
 
 branding:

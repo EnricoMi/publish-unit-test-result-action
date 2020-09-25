@@ -51,6 +51,11 @@ The symbols have the following meaning:
 You can add this action to your GitHub workflow as follows:
 
 ```yaml
+- name: Setup Python
+  uses: actions/setup-python@v2
+  with:
+    python-version: 3.6
+
 - name: Publish Unit Test Results
   uses: EnricoMi/publish-unit-test-result-action@v1
   if: always()
