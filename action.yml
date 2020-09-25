@@ -9,12 +9,15 @@ inputs:
     description: 'Name of the created check run'
     required: false
     default: 'Unit Test Results'
-  report_individual_runs:
-    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
-    required: false
   files:
     description: 'File pattern of test result files'
     required: true
+  report_individual_runs:
+    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
+    required: false
+  deduplicate_classes_by_file_name:
+    description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise'
+    required: false
   log_level:
     description: 'Action logging level'
     required: false
