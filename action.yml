@@ -54,21 +54,29 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # TODO: isolate this installation from workflow python via virtual env
     - name: Install Python dependencies
       run: |
+        echo '##[group]Install Python dependencies'
         python -m pip install --upgrade --force --no-cache-dir pip
         pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/requirements.txt
+        echo '##[endgroup]'
       shell: bash
 
     - name: Publish Unit Test Results
-      run: python $GITHUB_ACTION_PATH/publish_unit_test_results.py
+      run: |
+        echo '##[group]Publish Unit Test Results'
+        echo $check_name
+        echo $CHECK_NAME
+        python $GITHUB_ACTION_PATH/publish_unit_test_results.py
+        echo '##[endgroup]'
       env:
-        github_token: ${{ inputs.check_name }}
-        check_name: ${{ inputs.check_name }}
-        files: ${{ inputs.files }}
-        report_individual_runs: ${{ inputs.report_individual_runs }}
-        deduplicate_classes_by_file_name: ${{ inputs.deduplicate_classes_by_file_name }}
-        log_level: ${{ inputs.log_level }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        CHECK_NAME: ${{ inputs.check_name }}
+        FILES: ${{ inputs.files }}
+        REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
+        DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
+        LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
 
 branding:
