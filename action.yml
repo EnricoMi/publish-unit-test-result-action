@@ -52,8 +52,24 @@ inputs:
     required: false
     default: 'INFO'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade --force --no-cache-dir pip
+        pip install --upgrade --force --no-cache-dir -r requirements.txt
+
+    - name: Publish Unit Test Results
+      run: python publish_unit_test_results.py
+
 branding:
   icon: 'check-circle'
   color: 'green'
