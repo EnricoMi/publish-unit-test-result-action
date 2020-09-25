@@ -54,10 +54,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # TODO: isolate this installation from workflow python via virtual env
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
+        python -m pip install --upgrade --force --no-cache-dir pip
+        pip install --upgrade --force --no-cache-dir virtualenv
+        virtualenv venv
+        source venv/bin/activate
         python -m pip install --upgrade --force --no-cache-dir pip
         pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/requirements.txt
         echo '##[endgroup]'
@@ -66,8 +69,7 @@ runs:
     - name: Publish Unit Test Results
       run: |
         echo '##[group]Publish Unit Test Results'
-        echo $check_name
-        echo $CHECK_NAME
+        source venv/bin/activate
         python $GITHUB_ACTION_PATH/publish_unit_test_results.py
         echo '##[endgroup]'
       env:
