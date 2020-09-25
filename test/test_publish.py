@@ -281,7 +281,7 @@ class PublishTest(unittest.TestCase):
                          ))
 
     def test_get_test_results(self):
-        self.assertEqual(get_test_results(dict(cases=[])), dict(
+        self.assertEqual(get_test_results(dict(cases=[]), False), dict(
             cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results={},
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
         ))
@@ -293,16 +293,16 @@ class PublishTest(unittest.TestCase):
             dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', time=5),
             dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', time=6),
             dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', time=7),
-        ])), dict(
+        ]), False), dict(
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
             case_results=dict([
-                (('test', 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=1)])),
-                (('test', 'class1', 'test2'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', time=2)])),
-                (('test', 'class1', 'test3'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', time=3)])),
-                (('test', 'class2', 'test1'), dict(error=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', time=4)])),
-                (('test', 'class2', 'test2'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', time=5)])),
-                (('test', 'class2', 'test3'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', time=6)])),
-                (('test', 'class2', 'test4'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', time=7)])),
+                ((None, 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=1)])),
+                ((None, 'class1', 'test2'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', time=2)])),
+                ((None, 'class1', 'test3'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', time=3)])),
+                ((None, 'class2', 'test1'), dict(error=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', time=4)])),
+                ((None, 'class2', 'test2'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', time=5)])),
+                ((None, 'class2', 'test3'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', time=6)])),
+                ((None, 'class2', 'test4'), dict(failure=[dict(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', time=7)])),
             ]),
             tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
         ))
@@ -323,16 +323,64 @@ class PublishTest(unittest.TestCase):
 
             dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='success', time=9),
             dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='error', time=10),
-        ])), dict(
+        ]), False), dict(
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=dict([
-                (('test', 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=1), dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=2)])),
-                (('test', 'class1', 'test2'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='success', time=3)], skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', time=4)])),
-                (('test', 'class1', 'test3'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', time=5), dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', time=6)])),
-                (('test', 'class1', 'test4'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='success', time=7)], failure=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='failure', time=8)])),
-                (('test', 'class1', 'test5'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='success', time=9)], error=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='error', time=10)])),
+                ((None, 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=1), dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', time=2)])),
+                ((None, 'class1', 'test2'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='success', time=3)], skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', time=4)])),
+                ((None, 'class1', 'test3'), dict(skipped=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', time=5), dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', time=6)])),
+                ((None, 'class1', 'test4'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='success', time=7)], failure=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='failure', time=8)])),
+                ((None, 'class1', 'test5'), dict(success=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='success', time=9)], error=[dict(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='error', time=10)])),
             ]),
             tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
+        ))
+
+        with_duplicates = dict(cases=[
+            dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', time=1),
+            dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', time=2),
+
+            # success state has precedence over skipped
+            dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', time=3),
+            dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', time=4),
+
+            # only when all runs are skipped, test has state skipped
+            dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', time=5),
+            dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', time=6),
+
+            dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', time=7),
+            dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', time=8),
+
+            dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', time=9),
+            dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', time=10),
+        ])
+
+        self.maxDiff = None
+        self.assertEqual(get_test_results(with_duplicates, False), dict(
+            cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
+            case_results=dict([
+                ((None, 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', time=1), dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', time=2)])),
+                ((None, 'class1', 'test2'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', time=3)], skipped=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', time=4)])),
+                ((None, 'class1', 'test3'), dict(skipped=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', time=5), dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', time=6)])),
+                ((None, 'class1', 'test4'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', time=7)], failure=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', time=8)])),
+                ((None, 'class1', 'test5'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', time=9)], error=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', time=10)])),
+            ]),
+            tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
+        ))
+        self.assertEqual(get_test_results(with_duplicates, True), dict(
+            cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
+            case_results=dict([
+                (('test1', 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', time=1)])),
+                (('test2', 'class1', 'test1'), dict(success=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', time=2)])),
+                (('test1', 'class1', 'test2'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', time=3)])),
+                (('test2', 'class1', 'test2'), dict(skipped=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', time=4)])),
+                (('test1', 'class1', 'test3'), dict(skipped=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', time=5)])),
+                (('test2', 'class1', 'test3'), dict(skipped=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', time=6)])),
+                (('test1', 'class1', 'test4'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', time=7)])),
+                (('test2', 'class1', 'test4'), dict(failure=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', time=8)])),
+                (('test1', 'class1', 'test5'), dict(success=[dict(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', time=9)])),
+                (('test2', 'class1', 'test5'), dict(error=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', time=10)])),
+            ]),
+            tests=10, tests_skipped=3, tests_failures=1, tests_errors=1,
         ))
 
     def test_get_stats(self):
@@ -1087,7 +1135,7 @@ class PublishTest(unittest.TestCase):
                                         'files/junit.spark.integration.1.xml',
                                         'files/junit.spark.integration.2.xml'])
         parsed['commit'] = 'example'
-        results = get_test_results(parsed)
+        results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('  10 files    10 suites   39m 1s :stopwatch:\n'
@@ -1099,7 +1147,7 @@ class PublishTest(unittest.TestCase):
     def test_empty_file(self):
         parsed = parse_junit_xml_files(['files/empty.xml'])
         parsed['commit'] = 'a commit sha'
-        results = get_test_results(parsed)
+        results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'

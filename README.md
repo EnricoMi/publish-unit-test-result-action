@@ -56,6 +56,8 @@ and configure it as follows:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     check_name: Unit Test Results
     files: test-results/**/*.xml
+    report_individual_runs: true
+    deduplicate_classes_by_file_name: false
 ```
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
@@ -66,6 +68,11 @@ The job name in the GitHub Actions section that provides the test results can be
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
 [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
+
+If multiple runs exist for a test, only the first failure is reported, unless `report_individual_runs` is `true`.
+
+In the rare situation where a project contains test class duplicates with the same name in different files,
+you may want to set `deduplicate_classes_by_file_name` to `true`.
 
 ## Support fork repositories
 
