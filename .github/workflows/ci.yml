@@ -6,7 +6,9 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
     - name: Setup Ubuntu
@@ -40,6 +42,8 @@ jobs:
         check_name: Unit Test Results
         github_token: ${{ secrets.GITHUB_TOKEN }}
         files: "test-results/*.xml"
+        report_individual_runs: true
+        deduplicate_classes_by_file_name: false
         log_level: DEBUG
 
     - name: Upload Test Results

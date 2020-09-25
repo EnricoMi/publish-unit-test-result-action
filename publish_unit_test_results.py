@@ -5,7 +5,6 @@ import logging
 import os
 import pathlib
 import re
-import sys
 from collections import defaultdict
 from html import unescape
 from typing import List, Dict, Any, Union, Optional, Tuple
@@ -60,7 +59,7 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
                 cases=cases)
 
 
-def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
+def get_test_results(parsed_results: Dict[Any, Any], dedup_classes_by_file_name: bool) -> Dict[Any, Any]:
     cases = parsed_results['cases']
     cases_skipped = [case for case in cases if case.get('result') == 'skipped']
     cases_failures = [case for case in cases if case.get('result') == 'failure']
@@ -70,7 +69,7 @@ def get_test_results(parsed_results: Dict[Any, Any]) -> Dict[Any, Any]:
     # group cases by tests
     cases_results = defaultdict(lambda: defaultdict(list))
     for case in cases:
-        key = (case.get('test_file'), case.get('class_name'), case.get('test_name'))
+        key = (case.get('test_file') if dedup_classes_by_file_name else None, case.get('class_name'), case.get('test_name'))
         cases_results[key][case.get('result')].append(case)
 
     test_results = dict()
@@ -731,7 +730,8 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str, report_individual_runs: bool) -> None:
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str,
+         report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
 
@@ -740,7 +740,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     parsed['commit'] = commit
 
     # process the parsed results
-    results = get_test_results(parsed)
+    results = get_test_results(parsed, dedup_classes_by_file_name)
 
     # turn them into stats
     stats = get_stats(results)
@@ -784,6 +784,7 @@ if __name__ == "__main__":
     repo = get_var('GITHUB_REPOSITORY')
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
+    dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
     commit = get_var('COMMIT') or get_commit_sha(event, event_name)
     files = get_var('FILES')
 
@@ -792,4 +793,4 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT or event file', 'Commit SHA')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, event, repo, commit, files, check_name, report_individual_runs)
+    main(token, event, repo, commit, files, check_name, report_individual_runs, dedup_classes_by_file_name)
