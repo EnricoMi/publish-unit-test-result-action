@@ -95,7 +95,9 @@ This can be avoided by the following job `if` clause:
 ```yaml
 jobs:
   build-and-test:
-    if: github.event_name == 'push' || github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 ```
 
 Now your action runs in forked repositories on `push`, and inside your repo
@@ -121,7 +123,9 @@ jobs:
     runs-on: ubuntu-latest
     # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
     # for pull requests within the same repository, the pull event is sufficient
-    if: github.event_name == 'push' || github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
       fail-fast: false
