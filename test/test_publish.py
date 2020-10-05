@@ -186,7 +186,6 @@ class PublishTest(unittest.TestCase):
                                       time=1.898
                                   )
                               ]))
-        self.maxDiff=None
         self.assertEqual(parse_junit_xml_files(['files/junit.fail.xml']),
                          dict(
                              cases=[
@@ -279,6 +278,73 @@ class PublishTest(unittest.TestCase):
                              suite_time=2,
                              suites=1
                          ))
+        self.assertEqual(parse_junit_xml_files(['files/minimal-attributes.xml']),
+                         dict(
+                             cases=[
+                                 dict(
+                                     class_name='ClassName',
+                                     content=None,
+                                     result_file='files/minimal-attributes.xml',
+                                     test_file=None,
+                                     line=None,
+                                     message=None,
+                                     result='success',
+                                     test_name='test_name',
+                                     time=None
+                                 ),
+                                 dict(
+                                     class_name='ClassName',
+                                     content=None,
+                                     result_file='files/minimal-attributes.xml',
+                                     test_file=None,
+                                     line=None,
+                                     message=None,
+                                     result='skipped',
+                                     test_name='skipped_test',
+                                     time=None
+                                 ),
+                                 dict(
+                                     class_name='ClassName',
+                                     content=None,
+                                     result_file='files/minimal-attributes.xml',
+                                     test_file=None,
+                                     line=None,
+                                     message=None,
+                                     result='failure',
+                                     test_name='failed_test',
+                                     time=None
+                                 ),
+                                 dict(
+                                     class_name='ClassName',
+                                     content=None,
+                                     result_file='files/minimal-attributes.xml',
+                                     test_file=None,
+                                     line=None,
+                                     message=None,
+                                     result='error',
+                                     test_name='error_test',
+                                     time=None
+                                 )
+                             ],
+                             files=1,
+                             suite_errors=1,
+                             suite_failures=1,
+                             suite_skipped=1,
+                             suite_tests=4,
+                             suite_time=0,
+                             suites=1
+                         ))
+        self.assertEqual(parse_junit_xml_files(['files/no-attributes.xml']),
+                         dict(
+                             cases=[],
+                             files=1,
+                             suite_errors=1,
+                             suite_failures=1,
+                             suite_skipped=1,
+                             suite_tests=4,
+                             suite_time=0,
+                             suites=1
+                         ))
 
     def test_get_test_results(self):
         self.assertEqual(get_test_results(dict(cases=[]), False), dict(
@@ -354,7 +420,6 @@ class PublishTest(unittest.TestCase):
             dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', time=10),
         ])
 
-        self.maxDiff = None
         self.assertEqual(get_test_results(with_duplicates, False), dict(
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=dict([
@@ -381,6 +446,20 @@ class PublishTest(unittest.TestCase):
                 (('test2', 'class1', 'test5'), dict(error=[dict(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', time=10)])),
             ]),
             tests=10, tests_skipped=3, tests_failures=1, tests_errors=1,
+        ))
+
+        self.assertEqual(get_test_results(dict(cases=[
+            dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', time=1),
+            dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='skipped', time=None),
+            dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='failure', time=2),
+            dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='skipped', time=None),
+        ]), False), dict(
+            cases=4, cases_skipped=2, cases_failures=1, cases_errors=0, cases_time=3,
+            case_results=dict([
+                ((None, 'class', 'test1'), dict(success=[dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', time=1)], skipped=[dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='skipped', time=None)])),
+                ((None, 'class', 'test2'), dict(failure=[dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='failure', time=2)], skipped=[dict(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='skipped', time=None)])),
+            ]),
+            tests=2, tests_skipped=0, tests_failures=1, tests_errors=0,
         ))
 
     def test_get_stats(self):
@@ -917,6 +996,20 @@ class PublishTest(unittest.TestCase):
                 ('error', list([
                     dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5', content='content5'),
                 ])),
+            ])),
+            ('class2::test2', dict([
+                ('success', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None)
+                ])),
+                ('skipped', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None)
+                ])),
+                ('failure', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None)
+                ])),
+                ('error', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None)
+                ])),
             ]))
         ])
 
@@ -948,6 +1041,28 @@ class PublishTest(unittest.TestCase):
                 ('error', defaultdict(list, [
                     ('content5', list([
                         dict(class_name='class1', test_name='test1', file='file1', result='error', message='message5', content='content5'),
+                    ])),
+                ])),
+            ])),
+            ('class2::test2', dict([
+                ('success', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None)
+                    ])),
+                ])),
+                ('skipped', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None)
+                    ])),
+                ])),
+                ('failure', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None)
+                    ])),
+                ])),
+                ('error', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None)
                     ])),
                 ])),
             ]))
@@ -984,6 +1099,28 @@ class PublishTest(unittest.TestCase):
                         dict(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='message6')
                     ]))
                 ])),
+            ])),
+            ('class2::test2', dict([
+                ('success', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None)
+                    ])),
+                ])),
+                ('skipped', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None)
+                    ])),
+                ])),
+                ('failure', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None)
+                    ])),
+                ])),
+                ('error', dict([
+                    (None, list([
+                        dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None)
+                    ])),
+                ])),
             ]))
         ])
 
@@ -991,6 +1128,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=False))
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=False))
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=False))
+
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
 
     def test_get_annotation_report_individual_runs(self):
         messages = dict([
@@ -1044,6 +1185,20 @@ class PublishTest(unittest.TestCase):
                 ('error', list([
                     dict(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content')
                 ])),
+            ])),
+            ('class2::test2', dict([
+                ('success', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None)
+                ])),
+                ('skipped', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None)
+                ])),
+                ('failure', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None)
+                ])),
+                ('error', list([
+                    dict(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None)
+                ])),
             ]))
         ])
 
@@ -1064,7 +1219,24 @@ class PublishTest(unittest.TestCase):
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
                 raw_details='error content'
-            )
+            ),
+            dict(
+                annotation_level='warning',
+                end_line=0,
+                message='result-file1',
+                path='class2',
+                start_line=0,
+                title='1 out of 4 runs failed: test2 (class2)',
+                raw_details=None
+            ), dict(
+                annotation_level='failure',
+                end_line=0,
+                message='result-file1',
+                path='class2',
+                start_line=0,
+                title='1 out of 4 runs with error: test2 (class2)',
+                raw_details=None
+            ),
         ]
 
         annotations = get_annotations(results, report_individual_runs=False)
