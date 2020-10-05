@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite>
+        <testcase classname="ClassName" name="test_name"/>
+        <testcase classname="ClassName" name="skipped_test">
+            <skipped/>
+        </testcase>
+        <testcase classname="ClassName" name="failed_test">
+            <failure/>
+        </testcase>
+        <testcase classname="ClassName" name="error_test">
+            <error/>
+        </testcase>
+    </testsuite>
+</testsuites>
