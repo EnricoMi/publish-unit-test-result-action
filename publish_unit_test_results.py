@@ -36,17 +36,22 @@ def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
         except ValueError:
             return None
 
-    cases = [dict(
-        result_file=result_file,
-        test_file=case._elem.get('file'),
-        line=int_opt(case._elem.get('line')),
-        class_name=case.classname,
-        test_name=case.name,
-        result=case.result._tag if case.result else 'success',
-        message=unescape(case.result.message) if case.result else None,
-        content=unescape(case.result._elem.text) if case.result else None,
-        time=case.time
-    ) for result_file, suite in suites for case in suite]
+    cases = [
+        dict(
+            result_file=result_file,
+            test_file=case._elem.get('file'),
+            line=int_opt(case._elem.get('line')),
+            class_name=case.classname,
+            test_name=case.name,
+            result=case.result._tag if case.result else 'success',
+            message=unescape(case.result.message) if case.result and case.result.message is not None else None,
+            content=unescape(case.result._elem.text) if case.result and case.result._elem.text is not None else None,
+            time=case.time
+        )
+        for result_file, suite in suites
+        for case in suite
+        if case.classname is not None and case.name is not None
+    ]
 
     return dict(files=len(files),
                 # test states and counts from suites
@@ -64,7 +69,7 @@ def get_test_results(parsed_results: Dict[Any, Any], dedup_classes_by_file_name:
     cases_skipped = [case for case in cases if case.get('result') == 'skipped']
     cases_failures = [case for case in cases if case.get('result') == 'failure']
     cases_errors = [case for case in cases if case.get('result') == 'error']
-    cases_time = sum([case.get('time') for case in cases])
+    cases_time = sum([case.get('time') or 0 for case in cases])
 
     # group cases by tests
     cases_results = defaultdict(lambda: defaultdict(list))
