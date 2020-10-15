@@ -336,12 +336,12 @@ def get_short_summary(stats: Dict[str, Any]) -> str:
 
 def get_short_summary_md(stats: Dict[str, Any]) -> str:
     """Provides a single-line summary with markdown for the given stats."""
-    md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
+    md = ('```diff\n{tests}\n+ {tests_succ}\n# {tests_skip}\n- {tests_fail}\n! {tests_error}```'.format(
         tests=as_stat_number(stats.get('tests'), 0, 0, 'tests'),
-        tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, ':zzz:'),
-        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':heavy_multiplication_x:'),
-        tests_error=as_stat_number(stats.get('tests_error'), 0, 0, ':fire:'),
+        tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, 'succ'),
+        tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, 'skip'),
+        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, 'fail'),
+        tests_error=as_stat_number(stats.get('tests_error'), 0, 0, 'error'),
     ))
     return md
 
@@ -384,22 +384,22 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     tests_error_part = ' {tests_error}'.format(
         tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:')
     ) if get_magnitude(tests_error) else ''
-    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
+    tests_line = '```diff\n{tests}\n+ {tests_succ}\n# {tests_skip}\n- {tests_fail}\n! {tests_error_part}```'.format(
         tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
-        tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, 'succ'),
+        tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, 'skip'),
+        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, 'fail'),
         tests_error_part=tests_error_part
     )
 
     runs_error_part = ' {runs_error}'.format(
         runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:')
     ) if get_magnitude(runs_error) else ''
-    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
+    runs_line = '```diff\n{runs}\n+ {runs_succ}\n# {runs_skip}\n- {runs_fail}\n! {runs_error_part}```'.format(
         runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
-        runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, 'succ'),
+        runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, 'skip'),
+        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, 'fail'),
         runs_error_part=runs_error_part,
     )
 
