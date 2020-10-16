@@ -855,20 +855,20 @@ class PublishTest(unittest.TestCase):
 
     def test_get_short_summary_md(self):
         self.do_test_get_short_summary_md(dict(
-        ), ('N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x: N/A :fire:'))
+        ), ('N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :x: N/A :fire:'))
 
         self.do_test_get_short_summary_md(dict(
             files=1, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
-        ), ('4 tests 5 :heavy_check_mark: 6 :zzz: 7 :heavy_multiplication_x: 8 :fire:'))
+        ), ('4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:'))
 
         self.do_test_get_short_summary_md(dict(
             files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             reference_type='type', reference_commit='0123456789abcdef'
-        ), ('4 tests -5  5 :heavy_check_mark: +6  6 :zzz: -7  7 :heavy_multiplication_x: +8  8 :fire: -9 '))
+        ), ('4 tests -5  5 :heavy_check_mark: +6  6 :zzz: -7  7 :x: +8  8 :fire: -9 '))
 
     def do_test_get_long_summary_md(self, stats, expected_md):
         self.assertEqual(get_long_summary_md(stats), expected_md)
@@ -876,7 +876,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_md(self):
         self.do_test_get_long_summary_md(dict(
         ), ('N/A files  N/A suites   N/A :stopwatch:\n'
-            'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x:\n'
+            'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :x:\n'
             '\n'
             'results for commit None\n'))
 
@@ -885,7 +885,7 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8
         ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :heavy_multiplication_x: 8 :fire:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
             '\n'
             'results for commit None\n'))
 
@@ -894,8 +894,8 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0
         ), ('1 files    2 suites   3s :stopwatch:\n'
-            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:\n'
-            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x:\n'
+            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
+            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
             '\n'
             'results for commit None\n'))
 
@@ -904,8 +904,8 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
         ), ('1 files    2 suites   3s :stopwatch:\n'
-            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
-            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
+            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
+            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
             '\n'
             'results for commit None\n'))
 
@@ -915,15 +915,15 @@ class PublishTest(unittest.TestCase):
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         ), ('1 files  +  2    2 suites  -3   3s :stopwatch: +4s\n'
-            '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
-            '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
+            '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :x: +  8    8 :fire: -  9 \n'
+            '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :x: -13  13 :fire: +14 \n'
             '\n'
             'results for commit 12345678 ± comparison against type commit 01234567\n'))
 
     def test_get_long_summary_with_digest_md(self):
         self.assertTrue(get_long_summary_with_digest_md(dict(
         )).startswith('N/A files  N/A suites   N/A :stopwatch:\n'
-                      'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :heavy_multiplication_x:\n'
+                      'N/A tests N/A :heavy_check_mark: N/A :zzz: N/A :x:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -934,7 +934,7 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8
         )).startswith('1 files  2 suites   3s :stopwatch:\n'
-                      '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :heavy_multiplication_x: 8 :fire:\n'
+                      '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -945,8 +945,8 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0
         )).startswith('1 files    2 suites   3s :stopwatch:\n'
-                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:\n'
-                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x:\n'
+                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
+                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -957,8 +957,8 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13
         )).startswith('1 files    2 suites   3s :stopwatch:\n'
-                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :heavy_multiplication_x:   8 :fire:\n'
-                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :heavy_multiplication_x: 13 :fire:\n'
+                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
+                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
                       '\n'
                       'results for commit None\n'
                       '\n'
@@ -970,8 +970,8 @@ class PublishTest(unittest.TestCase):
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )).startswith('1 files  +  2    2 suites  -3   3s :stopwatch: +4s\n'
-                      '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :heavy_multiplication_x: +  8    8 :fire: -  9 \n'
-                      '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :heavy_multiplication_x: -13  13 :fire: +14 \n'
+                      '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :x: +  8    8 :fire: -  9 \n'
+                      '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :x: -13  13 :fire: +14 \n'
                       '\n'
                       'results for commit 12345678 ± comparison against type commit 01234567\n'
                       '\n'
@@ -1311,8 +1311,8 @@ class PublishTest(unittest.TestCase):
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('  10 files    10 suites   39m 1s :stopwatch:\n'
-                              '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :heavy_multiplication_x:\n'
-                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :heavy_multiplication_x:\n'
+                              '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :x:\n'
+                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :x:\n'
                               '\n'
                               'results for commit example\n'))
 
@@ -1323,7 +1323,7 @@ class PublishTest(unittest.TestCase):
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
-                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :heavy_multiplication_x:\n'
+                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
                               '\n'
                               'results for commit a commit\n'))
 
