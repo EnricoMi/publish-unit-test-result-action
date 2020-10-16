@@ -340,7 +340,7 @@ def get_short_summary_md(stats: Dict[str, Any]) -> str:
         tests=as_stat_number(stats.get('tests'), 0, 0, 'tests'),
         tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, ':heavy_check_mark:'),
         tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, ':zzz:'),
-        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':heavy_multiplication_x:'),
+        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':x:'),
         tests_error=as_stat_number(stats.get('tests_error'), 0, 0, ':fire:'),
     ))
     return md
@@ -388,7 +388,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
         tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
         tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
         tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':x:'),
         tests_error_part=tests_error_part
     )
 
@@ -399,7 +399,7 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
         runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
         runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':heavy_multiplication_x:'),
+        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':x:'),
         runs_error_part=runs_error_part,
     )
 
