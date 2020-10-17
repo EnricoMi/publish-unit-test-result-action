@@ -209,7 +209,7 @@ def as_delta(number: int, digits: int) -> str:
     elif number > 0:
         sign = '+'
     else:
-        sign = '-'
+        sign = ' - '
     return '{}{}'.format(sign, string)
 
 
