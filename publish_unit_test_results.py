@@ -292,7 +292,7 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
 
 def get_short_summary(stats: Dict[str, Any]) -> str:
     """Provides a single-line summary for the given stats."""
-    default = 'Unit Test Results'
+    default = check_name
     if stats is None:
         return default
 
@@ -626,7 +626,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             return pull
 
         logger.info('creating comment')
-        pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats_with_delta)))
+        pull.create_issue_comment('## {}\n{}'.format(check_name, get_long_summary_md(stats_with_delta)))
         return pull
 
     def hide_comments(pull: PullRequest) -> None:
@@ -693,7 +693,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         comments = list([comment for comment in comments
                          if comment.get('author', {}).get('login') == 'github-actions'
                          and comment.get('isMinimized') is False
-                         and comment.get('body', '').startswith('## Unit Test Results\n')
+                         and comment.get('body', '').startswith('## {}\n'.format(check_name))
                          and '\nresults for commit ' in comment.get('body')])
 
         # get comment node ids and their commit sha (possibly abbreviated)
