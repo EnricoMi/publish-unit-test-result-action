@@ -16,6 +16,11 @@ digest_prefix = '[test-results]:data:application/gzip;base64,'
 digit_space = '  '
 punctuation_space = ' '
 
+hide_comments_mode_off = "off"
+hide_comments_mode_all_but_latest = "all but latest"
+hide_comments_mode_orphaned = "orphaned commits"
+hide_comments_modes = [hide_comments_mode_off, hide_comments_mode_all_but_latest, hide_comments_mode_orphaned]
+
 
 def parse_junit_xml_files(files: List[str]) -> Dict[Any, Any]:
     """Parses junit xml files and returns aggregated statistics as a dict."""
@@ -290,9 +295,8 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
     return json.loads(ungest_string(digest))
 
 
-def get_short_summary(stats: Dict[str, Any], check_name='Unit Test Results') -> str:
+def get_short_summary(stats: Dict[str, Any], default: str) -> str:
     """Provides a single-line summary for the given stats."""
-    default = check_name
     if stats is None:
         return default
 
@@ -508,7 +512,8 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            check_name: str, comment_title: str, report_individual_runs: bool):
+            check_name: str, comment_title: str,
+            report_individual_runs: bool, hide_comment_mode: str):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -522,6 +527,18 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
 
     gh = Github(token)
     repo = gh.get_repo(repo_name)
+
+    req = Requester.Requester(token,
+                              password=None,
+                              jwt=None,
+                              base_url=MainClass.DEFAULT_BASE_URL,
+                              timeout=MainClass.DEFAULT_TIMEOUT,
+                              client_id=None,
+                              client_secret=None,
+                              user_agent="PyGithub/Python",
+                              per_page=MainClass.DEFAULT_PER_PAGE,
+                              verify=True,
+                              retry=None)
 
     def get_pull(commit: str) -> PullRequest:
         issues = gh.search_issues('type:pr {}'.format(commit))
@@ -629,64 +646,53 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         pull.create_issue_comment('## {}\n{}'.format(title, get_long_summary_md(stats_with_delta)))
         return pull
 
-    def hide_comments(pull: PullRequest) -> None:
+    def get_pull_request_comments(pull: PullRequest) -> List[Dict[str, Any]]:
+        query = dict(
+            query=r'query ListComments {'
+                  r'  repository(owner:"' + repo.owner.login + r'", name:"' + repo.name + r'") {'
+                  r'    pullRequest(number:' + str(pull.number) + r') {'
+                  r'      comments(last: 100) {'
+                  r'        nodes {'
+                  r'          id, author { login }, body, isMinimized'
+                  r'        }'
+                  r'      }'
+                  r'    }'
+                  r'  }'
+                  r'}'
+        )
+
+        headers, data = req.requestJsonAndCheck(
+            "POST", 'https://api.github.com/graphql', input=query
+        )
+
+        return data \
+            .get('data', {}) \
+            .get('repository', {}) \
+            .get('pullRequest', {}) \
+            .get('comments', {}) \
+            .get('nodes')
+
+    def hide_comment(comment_node_id) -> bool:
+        input = dict(
+            query=r'mutation MinimizeComment {'
+                  r'  minimizeComment(input: { subjectId: "' + comment_node_id + r'", classifier: OUTDATED } ) {'
+                  r'    minimizedComment { isMinimized, minimizedReason }'
+                  r'  }'
+                  r'}'
+        )
+        headers, data = req.requestJsonAndCheck(
+            "POST", 'https://api.github.com/graphql', input=input
+        )
+        return data.get('data').get('minimizeComment').get('minimizedComment').get('isMinimized')
+
+    def hide_orphaned_commit_comments(pull: PullRequest) -> None:
         # rewriting history of branch removes commits
         # we do not want to show test results for those commits anymore
-        req = Requester.Requester(token,
-                                  password=None,
-                                  jwt=None,
-                                  base_url=MainClass.DEFAULT_BASE_URL,
-                                  timeout=MainClass.DEFAULT_TIMEOUT,
-                                  client_id=None,
-                                  client_secret=None,
-                                  user_agent="PyGithub/Python",
-                                  per_page=MainClass.DEFAULT_PER_PAGE,
-                                  verify=True,
-                                  retry=None)
-
-        def get_pull_request_comments(pull: PullRequest) -> List[Dict[str, Any]]:
-            query = dict(
-                query=r'query ListComments {'
-                      r'  repository(owner:"' + repo.owner.login + r'", name:"' + repo.name + r'") {'
-                      r'    pullRequest(number:' + str(pull.number) + r') {'
-                      r'      comments(last: 100) {'
-                      r'        nodes {'
-                      r'          id, author { login }, body, isMinimized'
-                      r'        }'
-                      r'      }'
-                      r'    }'
-                      r'  }'
-                      r'}'
-            )
-
-            headers, data = req.requestJsonAndCheck(
-                "POST", 'https://api.github.com/graphql', input=query
-            )
-
-            return data \
-                .get('data', {}) \
-                .get('repository', {}) \
-                .get('pullRequest', {}) \
-                .get('comments', {}) \
-                .get('nodes')
-
-        def hide_comment(comment_node_id) -> bool:
-            input = dict(
-                query=r'mutation MinimizeComment {'
-                      r'  minimizeComment(input: { subjectId: "' + comment_node_id + r'", classifier: OUTDATED } ) {'
-                      r'    minimizedComment { isMinimized, minimizedReason }'
-                      r'  }'
-                      r'}'
-            )
-            headers, data = req.requestJsonAndCheck(
-                "POST", 'https://api.github.com/graphql', input=input
-            )
-            return data.get('data').get('minimizeComment').get('minimizedComment').get('isMinimized')
 
         # get commits of this pull request
         commit_shas = set([commit.sha for commit in pull.get_commits()])
 
-        # get commits of this pull request
+        # get comments of this pull request
         comments = get_pull_request_comments(pull)
 
         # get all comments that come from this action and are not hidden
@@ -713,9 +719,37 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
                 logger.info('commend for commit {} should be hidden'.format(comment_commit_sha))
             return
 
-        # hide all those comments that do not have a commit
+        # hide all those comments
         for node_id, comment_commit_sha in comment_ids:
             logger.info('hiding unit test result comment for commit {}'.format(comment_commit_sha))
+            hide_comment(node_id)
+
+    def hide_all_but_latest_comments(pull: PullRequest) -> None:
+        # we want to reduce the number of shown comments to a minimum
+
+        # get comments of this pull request
+        comments = get_pull_request_comments(pull)
+
+        # get all comments that come from this action and are not hidden
+        comments = list([comment for comment in comments
+                         if comment.get('author', {}).get('login') == 'github-actions'
+                         and comment.get('isMinimized') is False
+                         and comment.get('body', '').startswith('## {}\n'.format(comment_title))
+                         and '\nresults for commit ' in comment.get('body')])
+
+        # take all but the last comment
+        comment_ids = [comment.get('id') for comment in comments[:-1]]
+
+        # we don't want to actually do this when not run by GitHub Actions GitHub App
+        if os.environ.get('GITHUB_ACTIONS') is None:
+            logger.warning('action not running on GitHub, skipping hiding comment')
+            for node_id in comment_ids:
+                logger.info('commend {} should be hidden'.format(node_id))
+            return
+
+        # hide all those comments
+        for node_id in comment_ids:
+            logger.info('hiding unit test result comment {}'.format(node_id))
             hide_comment(node_id)
 
     logger.info('publishing results for commit {}'.format(commit_sha))
@@ -724,7 +758,10 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
     pull = get_pull(commit_sha)
     if pull is not None:
         publish_comment(comment_title, stats, pull)
-        hide_comments(pull)
+        if hide_comment_mode == hide_comments_mode_orphaned:
+            hide_orphaned_commit_comments(pull)
+        elif hide_comment_mode == hide_comments_mode_all_but_latest:
+            hide_all_but_latest_comments(pull)
     else:
         logger.info('there is no pull request for commit {}'.format(commit_sha))
 
@@ -735,8 +772,10 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str, comment_title: str,
-         report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
+         check_name: str, comment_title: str,
+         report_individual_runs: bool, dedup_classes_by_file_name: bool,
+         hide_comment_mode: str) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
 
@@ -751,7 +790,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, report_individual_runs)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, report_individual_runs, hide_comment_mode)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -774,9 +813,11 @@ if __name__ == "__main__":
     log_level = get_var('LOG_LEVEL') or 'INFO'
     logger.level = logging.getLevelName(log_level)
 
-    def check_var(var: str, name: str, label: str) -> None:
+    def check_var(var: str, name: str, label: str, allowed_values: Optional[List[str]] = None) -> None:
         if var is None:
             raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
+        if allowed_values and var not in allowed_values:
+            raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
 
     event = get_var('GITHUB_EVENT_PATH')
     event_name = get_var('GITHUB_EVENT_NAME')
@@ -791,12 +832,14 @@ if __name__ == "__main__":
     comment_title = get_var('COMMENT_TITLE') or check_name
     report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
     dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
+    hide_comment_mode = get_var('HIDE_COMMENTS') or 'all but latest'
     commit = get_var('COMMIT') or get_commit_sha(event, event_name)
     files = get_var('FILES')
 
     check_var(token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
+    check_var(hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
     check_var(commit, 'COMMIT or event file', 'Commit SHA')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, event, repo, commit, files, check_name, comment_title, report_individual_runs, dedup_classes_by_file_name)
+    main(token, event, repo, commit, files, check_name, comment_title, report_individual_runs, dedup_classes_by_file_name, hide_comment_mode)
