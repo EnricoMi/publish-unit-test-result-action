@@ -724,11 +724,11 @@ class PublishTest(unittest.TestCase):
     def test_as_delta(self):
         self.assertEqual(as_delta(0, 1), '±0')
         self.assertEqual(as_delta(+1, 1), '+1')
-        self.assertEqual(as_delta(-2, 1), '-2')
+        self.assertEqual(as_delta(-2, 1), ' - 2')
 
         self.assertEqual(as_delta(0, 2), '±  0')
         self.assertEqual(as_delta(+1, 2), '+  1')
-        self.assertEqual(as_delta(-2, 2), '-  2')
+        self.assertEqual(as_delta(-2, 2), ' -   2')
 
         self.assertEqual(as_delta(1, 5), '+       1')
         self.assertEqual(as_delta(12, 5), '+     12')
@@ -766,7 +766,7 @@ class PublishTest(unittest.TestCase):
 
         self.assertEqual(as_stat_number(dict(number=1), 1, 0, label), '1 unit')
 
-        self.assertEqual(as_stat_number(dict(number=1, delta=-1), 1, 1, label), '1 unit -1 ')
+        self.assertEqual(as_stat_number(dict(number=1, delta=-1), 1, 1, label), '1 unit  - 1 ')
         self.assertEqual(as_stat_number(dict(number=2, delta=+0), 1, 1, label), '2 unit ±0 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 1, label), '3 unit +1 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 2, label), '3 unit +  1 ')
@@ -780,9 +780,9 @@ class PublishTest(unittest.TestCase):
             self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
             self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
 
-        self.assertEqual(as_stat_number(dict(delta=-1), 3, 1, label), 'N/A unit -1 ')
+        self.assertEqual(as_stat_number(dict(delta=-1), 3, 1, label), 'N/A unit  - 1 ')
 
-        self.assertEqual(as_stat_number(dict(number=1, delta=-2, new=3), 1, 1, label), '1 unit -2, 3 new ')
+        self.assertEqual(as_stat_number(dict(number=1, delta=-2, new=3), 1, 1, label), '1 unit  - 2, 3 new ')
         self.assertEqual(as_stat_number(dict(number=2, delta=+0, new=3, gone=4), 1, 1, label), '2 unit ±0, 3 new, 4 gone ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1, gone=4), 1, 1, label), '3 unit +1, 4 gone ')
 
@@ -868,7 +868,7 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             reference_type='type', reference_commit='0123456789abcdef'
-        ), ('4 tests -5  5 :heavy_check_mark: +6  6 :zzz: -7  7 :x: +8  8 :fire: -9 '))
+        ), ('4 tests  - 5  5 :heavy_check_mark: +6  6 :zzz:  - 7  7 :x: +8  8 :fire:  - 9 '))
 
     def do_test_get_long_summary_md(self, stats, expected_md):
         self.assertEqual(get_long_summary_md(stats), expected_md)
@@ -914,9 +914,9 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        ), ('1 files  +  2    2 suites  -3   3s :stopwatch: +4s\n'
-            '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :x: +  8    8 :fire: -  9 \n'
-            '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :x: -13  13 :fire: +14 \n'
+        ), ('1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
+            '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
+            '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
             '\n'
             'results for commit 12345678 ± comparison against type commit 01234567\n'))
 
@@ -969,9 +969,9 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        )).startswith('1 files  +  2    2 suites  -3   3s :stopwatch: +4s\n'
-                      '4 tests -  5    5 :heavy_check_mark: +  6    6 :zzz: -  7    7 :x: +  8    8 :fire: -  9 \n'
-                      '9 runs  +10  10 :heavy_check_mark: -11  11 :zzz: +12  12 :x: -13  13 :fire: +14 \n'
+        )).startswith('1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
+                      '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
+                      '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
                       '\n'
                       'results for commit 12345678 ± comparison against type commit 01234567\n'
                       '\n'
