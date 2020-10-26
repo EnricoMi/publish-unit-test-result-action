@@ -46,6 +46,7 @@ jobs:
         files: "test-results/*.xml"
         report_individual_runs: true
         deduplicate_classes_by_file_name: false
+        hide_comments: orphaned commits
         log_level: DEBUG
 
     - name: Upload Test Results
