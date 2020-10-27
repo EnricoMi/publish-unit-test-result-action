@@ -789,7 +789,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, hide_comment_mode, comment_title, report_individual_runs)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, hide_comment_mode, report_individual_runs)
 
 
 def get_commit_sha(event: dict, event_name: str):
