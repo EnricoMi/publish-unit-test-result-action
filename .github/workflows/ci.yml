@@ -42,6 +42,7 @@ jobs:
       if: always()
       with:
         check_name: Unit Test Results Check Name
+        comment_title: Unit Test Results Title
         github_token: ${{ secrets.GITHUB_TOKEN }}
         files: "test-results/*.xml"
         report_individual_runs: true
