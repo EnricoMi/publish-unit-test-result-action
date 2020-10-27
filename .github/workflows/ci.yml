@@ -41,7 +41,7 @@ jobs:
       uses: EnricoMi/publish-unit-test-result-action@branch-test-issue-comment
       if: always()
       with:
-        check_name: Unit Test Results
+        check_name: Unit Test Results Check Name
         github_token: ${{ secrets.GITHUB_TOKEN }}
         files: "test-results/*.xml"
         report_individual_runs: true
