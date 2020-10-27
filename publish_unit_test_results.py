@@ -290,9 +290,9 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
     return json.loads(ungest_string(digest))
 
 
-def get_short_summary(stats: Dict[str, Any]) -> str:
+def get_short_summary(stats: Dict[str, Any], check_name='Unit Test Results') -> str:
     """Provides a single-line summary for the given stats."""
-    default = 'Unit Test Results'
+    default = check_name
     if stats is None:
         return default
 
@@ -508,7 +508,7 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            check_name: str, report_individual_runs: bool):
+            check_name: str, comment_title: str, report_individual_runs: bool):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -604,7 +604,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
-                title=get_short_summary(stats),
+                title=get_short_summary(stats, check_name),
                 summary=get_long_summary_with_digest_md(stats_with_delta, stats),
                 annotations=annotations
             )
@@ -612,7 +612,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             logger.info('creating check')
             repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
 
-    def publish_comment(stats: Dict[Any, Any], pull) -> None:
+    def publish_comment(title: str, stats: Dict[Any, Any], pull) -> None:
         # compare them with earlier stats
         base_commit_sha = pull.base.sha if pull else None
         logger.debug('comparing against base={}'.format(base_commit_sha))
@@ -626,7 +626,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             return pull
 
         logger.info('creating comment')
-        pull.create_issue_comment('## Unit Test Results\n{}'.format(get_long_summary_md(stats_with_delta)))
+        pull.create_issue_comment('## {}\n{}'.format(title, get_long_summary_md(stats_with_delta)))
         return pull
 
     def hide_comments(pull: PullRequest) -> None:
@@ -693,7 +693,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         comments = list([comment for comment in comments
                          if comment.get('author', {}).get('login') == 'github-actions'
                          and comment.get('isMinimized') is False
-                         and comment.get('body', '').startswith('## Unit Test Results\n')
+                         and comment.get('body', '').startswith('## {}\n'.format(comment_title))
                          and '\nresults for commit ' in comment.get('body')])
 
         # get comment node ids and their commit sha (possibly abbreviated)
@@ -723,7 +723,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
 
     pull = get_pull(commit_sha)
     if pull is not None:
-        publish_comment(stats, pull)
+        publish_comment(comment_title, stats, pull)
         hide_comments(pull)
     else:
         logger.info('there is no pull request for commit {}'.format(commit_sha))
@@ -735,7 +735,7 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str,
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check_name: str, comment_title: str,
          report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
@@ -751,7 +751,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, check
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, report_individual_runs)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, report_individual_runs)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -788,6 +788,7 @@ if __name__ == "__main__":
     token = get_var('GITHUB_TOKEN')
     repo = get_var('GITHUB_REPOSITORY')
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
+    comment_title = get_var('COMMENT_TITLE') or check_name
     report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
     dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
     commit = get_var('COMMIT') or get_commit_sha(event, event_name)
@@ -798,4 +799,4 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT or event file', 'Commit SHA')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, event, repo, commit, files, check_name, report_individual_runs, dedup_classes_by_file_name)
+    main(token, event, repo, commit, files, check_name, comment_title, report_individual_runs, dedup_classes_by_file_name)

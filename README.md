@@ -65,6 +65,9 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 The job name in the GitHub Actions section that provides the test results can be configured via the
 `check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
 
+The comment title in the Pull request **Conversation** tab that shows test results can also be configured via the `comment_title` variable.
+It is optional and defaults to the `check_name` variable.
+
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
 [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
