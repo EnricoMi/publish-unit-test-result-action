@@ -55,6 +55,8 @@ and configure it as follows:
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     check_name: Unit Test Results
+    comment_title: Unit Test Statistics
+    hide_comments: all but latest
     files: test-results/**/*.xml
     report_individual_runs: true
     deduplicate_classes_by_file_name: false
@@ -65,8 +67,15 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 The job name in the GitHub Actions section that provides the test results can be configured via the
 `check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
 
-The comment title in the Pull request **Conversation** tab that shows test results can also be configured via the `comment_title` variable.
+Each run of the action creates a new comment on the respective pull request with unit test results.
+The title of the comment can be configured via the `comment_title` variable.
 It is optional and defaults to the `check_name` variable.
+
+The `hide_comments` option allows hiding earlier comments to reduce the volume of comments.
+The default is `all but latest`, which hides all earlier comments of the action.
+Setting the option to `orphaned commits` will hide comments for orphaned commits only.
+These are commits that do no longer belong to the pull request (due to commit history rewrite).
+Hiding comments can be disabled all together with value `off`.
 
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
