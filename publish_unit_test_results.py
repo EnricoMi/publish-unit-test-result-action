@@ -290,7 +290,7 @@ def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
     return json.loads(ungest_string(digest))
 
 
-def get_short_summary(stats: Dict[str, Any]) -> str:
+def get_short_summary(stats: Dict[str, Any], check_name='Unit Test Results') -> str:
     """Provides a single-line summary for the given stats."""
     default = check_name
     if stats is None:
@@ -604,7 +604,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
-                title=get_short_summary(stats),
+                title=get_short_summary(stats, check_name),
                 summary=get_long_summary_with_digest_md(stats_with_delta, stats),
                 annotations=annotations
             )
