@@ -508,7 +508,7 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            issue_comment_title: str, check_name: str, report_individual_runs: bool):
+            comment_title: str, check_name: str, report_individual_runs: bool):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -723,7 +723,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
 
     pull = get_pull(commit_sha)
     if pull is not None:
-        publish_comment(issue_comment_title, stats, pull)
+        publish_comment(comment_title, stats, pull)
         hide_comments(pull)
     else:
         logger.info('there is no pull request for commit {}'.format(commit_sha))
@@ -735,7 +735,7 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str, issue_comment_title: str, check_name: str,
+def main(token: str, event: dict, repo: str, commit: str, files_glob: str, comment_title: str, check_name: str,
          report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
@@ -751,7 +751,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str, issue
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], issue_comment_title, check_name, report_individual_runs)
+    publish(token, event, repo, commit, stats, results['case_results'], comment_title, check_name, report_individual_runs)
 
 
 def get_commit_sha(event: dict, event_name: str):
