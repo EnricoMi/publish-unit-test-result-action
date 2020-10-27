@@ -512,8 +512,8 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
 
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            check_name: str, comment_title: str,
-            report_individual_runs: bool, hide_comment_mode: str):
+            check_name: str, comment_title: str, hide_comment_mode: str,
+            report_individual_runs: bool):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -773,9 +773,8 @@ def write_stats_file(stats, filename) -> None:
 
 
 def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
-         check_name: str, comment_title: str,
-         report_individual_runs: bool, dedup_classes_by_file_name: bool,
-         hide_comment_mode: str) -> None:
+         check_name: str, comment_title: str, hide_comment_mode: str,
+         report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
 
@@ -790,7 +789,7 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, report_individual_runs, hide_comment_mode)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, hide_comment_mode, comment_title, report_individual_runs)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -842,4 +841,4 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT or event file', 'Commit SHA')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, event, repo, commit, files, check_name, comment_title, report_individual_runs, dedup_classes_by_file_name, hide_comment_mode)
+    main(token, event, repo, commit, files, check_name, comment_title, hide_comment_mode, report_individual_runs, dedup_classes_by_file_name)
