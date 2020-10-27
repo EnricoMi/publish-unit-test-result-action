@@ -693,7 +693,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         comments = list([comment for comment in comments
                          if comment.get('author', {}).get('login') == 'github-actions'
                          and comment.get('isMinimized') is False
-                         and comment.get('body', '').startswith('## {}\n'.format(check_name))
+                         and comment.get('body', '').startswith('## {}\n'.format(comment_title))
                          and '\nresults for commit ' in comment.get('body')])
 
         # get comment node ids and their commit sha (possibly abbreviated)
