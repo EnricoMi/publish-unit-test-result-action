@@ -513,7 +513,7 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
 def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
             check_name: str, comment_title: str, hide_comment_mode: str,
-            report_individual_runs: bool):
+            comment_on_pr: bool, report_individual_runs: bool):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -755,15 +755,16 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
     logger.info('publishing results for commit {}'.format(commit_sha))
     publish_check(stats, cases)
 
-    pull = get_pull(commit_sha)
-    if pull is not None:
-        publish_comment(comment_title, stats, pull)
-        if hide_comment_mode == hide_comments_mode_orphaned:
-            hide_orphaned_commit_comments(pull)
-        elif hide_comment_mode == hide_comments_mode_all_but_latest:
-            hide_all_but_latest_comments(pull)
-    else:
-        logger.info('there is no pull request for commit {}'.format(commit_sha))
+    if comment_on_pr:
+        pull = get_pull(commit_sha)
+        if pull is not None:
+            publish_comment(comment_title, stats, pull)
+            if hide_comment_mode == hide_comments_mode_orphaned:
+                hide_orphaned_commit_comments(pull)
+            elif hide_comment_mode == hide_comments_mode_all_but_latest:
+                hide_all_but_latest_comments(pull)
+        else:
+            logger.info('there is no pull request for commit {}'.format(commit_sha))
 
 
 def write_stats_file(stats, filename) -> None:
@@ -774,7 +775,8 @@ def write_stats_file(stats, filename) -> None:
 
 def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
          check_name: str, comment_title: str, hide_comment_mode: str,
-         report_individual_runs: bool, dedup_classes_by_file_name: bool) -> None:
+         comment_on_pr: bool, report_individual_runs: bool,
+         dedup_classes_by_file_name: bool) -> None:
     files = [str(file) for file in pathlib.Path().glob(files_glob)]
     logger.info('reading {}: {}'.format(files_glob, list(files)))
 
@@ -789,7 +791,8 @@ def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, hide_comment_mode, report_individual_runs)
+    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, hide_comment_mode,
+            comment_on_pr, report_individual_runs)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -832,6 +835,7 @@ if __name__ == "__main__":
     report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
     dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
     hide_comment_mode = get_var('HIDE_COMMENTS') or 'all but latest'
+    comment_on_pr = get_var('COMMENT_ON_PR') == 'false'
     commit = get_var('COMMIT') or get_commit_sha(event, event_name)
     files = get_var('FILES')
 
@@ -841,4 +845,5 @@ if __name__ == "__main__":
     check_var(commit, 'COMMIT or event file', 'Commit SHA')
     check_var(files, 'FILES', 'Files pattern')
 
-    main(token, event, repo, commit, files, check_name, comment_title, hide_comment_mode, report_individual_runs, dedup_classes_by_file_name)
+    main(token, event, repo, commit, files, check_name, comment_title, hide_comment_mode, comment_on_pr,
+         report_individual_runs, dedup_classes_by_file_name)
