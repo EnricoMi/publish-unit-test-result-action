@@ -835,7 +835,8 @@ if __name__ == "__main__":
     report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
     dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
     hide_comment_mode = get_var('HIDE_COMMENTS') or 'all but latest'
-    comment_on_pr = get_var('COMMENT_ON_PR') == 'false'
+    # Comment on PRs if COMMENT_ON_PR is not set to 'false'
+    comment_on_pr = get_var('COMMENT_ON_PR') != 'false'
     commit = get_var('COMMIT') or get_commit_sha(event, event_name)
     files = get_var('FILES')
 
