@@ -22,6 +22,10 @@ inputs:
     description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
     required: false
     default: 'all but latest'
+  comment_on_pr:
+    description: 'Toggle PR comments: false - disable PR comments, true - comment on PRs'
+    required: false
+    default: 'true'
   log_level:
     description: 'Action logging level'
     required: false
