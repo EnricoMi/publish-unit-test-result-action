@@ -23,7 +23,7 @@ inputs:
     required: false
     default: 'all but latest'
   comment_on_pr:
-    description: 'Toggle PR comments: false - disable PR comments, true - comment on PRs'
+    description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
     required: false
     default: 'true'
   log_level:
