@@ -57,6 +57,7 @@ and configure it as follows:
     check_name: Unit Test Results
     comment_title: Unit Test Statistics
     hide_comments: all but latest
+    comment_on_pr: true
     files: test-results/**/*.xml
     report_individual_runs: true
     deduplicate_classes_by_file_name: false
@@ -76,6 +77,9 @@ The default is `all but latest`, which hides all earlier comments of the action.
 Setting the option to `orphaned commits` will hide comments for orphaned commits only.
 These are commits that do no longer belong to the pull request (due to commit history rewrite).
 Hiding comments can be disabled all together with value `off`.
+
+To disable comments on pull requests completely, set the option `comment_on_pr` to `false`.
+Pull request comments are enabled by default.
 
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
