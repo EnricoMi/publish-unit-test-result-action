@@ -744,7 +744,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         if os.environ.get('GITHUB_ACTIONS') is None:
             logger.warning('action not running on GitHub, skipping hiding comment')
             for node_id in comment_ids:
-                logger.info('commend {} should be hidden'.format(node_id))
+                logger.info('comment {} should be hidden'.format(node_id))
             return
 
         # hide all those comments
@@ -763,8 +763,12 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
                 hide_orphaned_commit_comments(pull)
             elif hide_comment_mode == hide_comments_mode_all_but_latest:
                 hide_all_but_latest_comments(pull)
+            else:
+                logger.info('hide_comments disabled, not hiding any comments')
         else:
             logger.info('there is no pull request for commit {}'.format(commit_sha))
+    else:
+        logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
 
 def write_stats_file(stats, filename) -> None:
