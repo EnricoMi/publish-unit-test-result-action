@@ -464,10 +464,33 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
     ]
 
 
-def publish(token: str, event: dict, repo_name: str, commit_sha: str,
-            stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]],
-            check_name: str, comment_title: str, hide_comment_mode: str,
-            comment_on_pr: bool, report_individual_runs: bool):
+class Args:
+    def __init__(self,
+                 token,
+                 event,
+                 repo,
+                 commit,
+                 files_glob,
+                 check_name,
+                 comment_title,
+                 hide_comment_mode,
+                 comment_on_pr,
+                 report_individual_runs,
+                 dedup_classes_by_file_name):
+        self.token = token
+        self.event = event
+        self.repo = repo
+        self.commit = commit
+        self.files_glob = files_glob
+        self.check_name = check_name
+        self.comment_title = comment_title
+        self.hide_comment_mode = hide_comment_mode
+        self.comment_on_pr = comment_on_pr
+        self.report_individual_runs = report_individual_runs
+        self.dedup_classes_by_file_name = dedup_classes_by_file_name
+
+
+def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]]):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -479,10 +502,10 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
     if getattr(IssueComment, 'node_id') is None:
         raise RuntimeError('patching github IssueComment failed')
 
-    gh = Github(token)
-    repo = gh.get_repo(repo_name)
+    gh = Github(args.token)
+    repo = gh.get_repo(args.repo)
 
-    req = Requester.Requester(token,
+    req = Requester.Requester(args.token,
                               password=None,
                               jwt=None,
                               base_url=MainClass.DEFAULT_BASE_URL,
@@ -500,7 +523,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
 
         if issues.totalCount == 0:
             return None
-        logger.debug('running in repo {}'.format(repo_name))
+        logger.debug('running in repo {}'.format(args.repo))
         for issue in issues:
             pr = issue.as_pull_request()
             logger.debug(pr)
@@ -513,10 +536,10 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         pulls = list([pr
                       for issue in issues
                       for pr in [issue.as_pull_request()]
-                      if pr.base.repo.full_name == repo_name])
+                      if pr.base.repo.full_name == args.repo])
 
         if len(pulls) == 0:
-            logger.debug('found no pull requests in repo {} for commit {}'.format(repo_name, commit))
+            logger.debug('found no pull requests in repo {} for commit {}'.format(args.repo, commit))
             return None
         if len(pulls) > 1:
             logger.error('found multiple pull requests for commit {}'.format(commit))
@@ -564,7 +587,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         stats_with_delta = get_stats_with_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
-        all_annotations = get_annotations(cases, report_individual_runs)
+        all_annotations = get_annotations(cases, args.report_individual_runs)
 
         # only works when run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -575,13 +598,13 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
-                title=get_short_summary(stats, check_name),
+                title=get_short_summary(stats, args.check_name),
                 summary=get_long_summary_with_digest_md(stats_with_delta, stats),
                 annotations=annotations
             )
 
             logger.info('creating check')
-            repo.create_check_run(name=check_name, head_sha=commit_sha, status='completed', conclusion='success', output=output)
+            repo.create_check_run(name=check_name, head_sha=args.commit, status='completed', conclusion='success', output=output)
 
     def publish_comment(title: str, stats: Dict[Any, Any], pull) -> None:
         # compare them with earlier stats
@@ -653,7 +676,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         comments = list([comment for comment in comments
                          if comment.get('author', {}).get('login') == 'github-actions'
                          and comment.get('isMinimized') is False
-                         and comment.get('body', '').startswith('## {}\n'.format(comment_title))
+                         and comment.get('body', '').startswith('## {}\n'.format(args.comment_title))
                          and '\nresults for commit ' in comment.get('body')])
 
         # get comment node ids and their commit sha (possibly abbreviated)
@@ -688,7 +711,7 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
         comments = list([comment for comment in comments
                          if comment.get('author', {}).get('login') == 'github-actions'
                          and comment.get('isMinimized') is False
-                         and comment.get('body', '').startswith('## {}\n'.format(comment_title))
+                         and comment.get('body', '').startswith('## {}\n'.format(args.comment_title))
                          and '\nresults for commit ' in comment.get('body')])
 
         # take all but the last comment
@@ -706,21 +729,21 @@ def publish(token: str, event: dict, repo_name: str, commit_sha: str,
             logger.info('hiding unit test result comment {}'.format(node_id))
             hide_comment(node_id)
 
-    logger.info('publishing results for commit {}'.format(commit_sha))
+    logger.info('publishing results for commit {}'.format(args.commit))
     publish_check(stats, cases)
 
-    if comment_on_pr:
-        pull = get_pull(commit_sha)
+    if args.comment_on_pr:
+        pull = get_pull(args.commit)
         if pull is not None:
-            publish_comment(comment_title, stats, pull)
-            if hide_comment_mode == hide_comments_mode_orphaned:
+            publish_comment(args.comment_title, stats, pull)
+            if args.hide_comment_mode == hide_comments_mode_orphaned:
                 hide_orphaned_commit_comments(pull)
-            elif hide_comment_mode == hide_comments_mode_all_but_latest:
+            elif args.hide_comment_mode == hide_comments_mode_all_but_latest:
                 hide_all_but_latest_comments(pull)
             else:
                 logger.info('hide_comments disabled, not hiding any comments')
         else:
-            logger.info('there is no pull request for commit {}'.format(commit_sha))
+            logger.info('there is no pull request for commit {}'.format(args.commit))
     else:
         logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
@@ -731,26 +754,22 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(token: str, event: dict, repo: str, commit: str, files_glob: str,
-         check_name: str, comment_title: str, hide_comment_mode: str,
-         comment_on_pr: bool, report_individual_runs: bool,
-         dedup_classes_by_file_name: bool) -> None:
-    files = [str(file) for file in pathlib.Path().glob(files_glob)]
-    logger.info('reading {}: {}'.format(files_glob, list(files)))
+def main(args: Args) -> None:
+    files = [str(file) for file in pathlib.Path().glob(args.files_glob)]
+    logger.info('reading {}: {}'.format(args.files_glob, list(files)))
 
     # get the unit test results
     parsed = parse_junit_xml_files(files)
-    parsed['commit'] = commit
+    parsed['commit'] = args.commit
 
     # process the parsed results
-    results = get_test_results(parsed, dedup_classes_by_file_name)
+    results = get_test_results(parsed, args.dedup_classes_by_file_name)
 
     # turn them into stats
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(token, event, repo, commit, stats, results['case_results'], check_name, comment_title, hide_comment_mode,
-            comment_on_pr, report_individual_runs)
+    publish(args, stats, results['case_results'])
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -786,22 +805,25 @@ if __name__ == "__main__":
     with open(event, 'r') as f:
         event = json.load(f)
 
-    token = get_var('GITHUB_TOKEN')
-    repo = get_var('GITHUB_REPOSITORY')
-    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
-    comment_title = get_var('COMMENT_TITLE') or check_name
-    report_individual_runs = get_var('REPORT_INDIVIDUAL_RUNS') == 'true'
-    dedup_classes_by_file_name = get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true'
-    hide_comment_mode = get_var('HIDE_COMMENTS') or 'all but latest'
-    comment_on_pr = get_var('COMMENT_ON_PR') != 'false'
-    commit = get_var('COMMIT') or get_commit_sha(event, event_name)
-    files = get_var('FILES')
+    check_name = get_var('CHECK_NAME') or 'Unit Test Results',
+    args = Args(
+        token=get_var('GITHUB_TOKEN'),
+        event=event,
+        repo=get_var('GITHUB_REPOSITORY'),
+        commit=get_var('COMMIT') or get_commit_sha(event, event_name),
+        files_glob=get_var('FILES'),
+        check_name=check_name,
+        comment_title=get_var('COMMENT_TITLE') or check_name,
+        hide_comment_mode=get_var('HIDE_COMMENTS') or 'all but latest',
+        comment_on_pr=get_var('COMMENT_ON_PR') != 'false',
+        report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS') == 'true',
+        dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',
+    )
 
-    check_var(token, 'GITHUB_TOKEN', 'GitHub token')
-    check_var(repo, 'GITHUB_REPOSITORY', 'GitHub repository')
-    check_var(hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
-    check_var(commit, 'COMMIT or event file', 'Commit SHA')
-    check_var(files, 'FILES', 'Files pattern')
+    check_var(args.token, 'GITHUB_TOKEN', 'GitHub token')
+    check_var(args.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
+    check_var(args.commit, 'COMMIT or event file', 'Commit SHA')
+    check_var(args.files_glob, 'FILES', 'Files pattern')
+    check_var(args.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
 
-    main(token, event, repo, commit, files, check_name, comment_title, hide_comment_mode, comment_on_pr,
-         report_individual_runs, dedup_classes_by_file_name)
+    main(args)
