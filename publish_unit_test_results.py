@@ -488,15 +488,17 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
         'notice'
     )
 
-    return dict(
+    annotation = dict(
         path=test_file or class_name or '/',
         start_line=line,
         end_line=line,
         annotation_level=level,
         message='\n'.join(same_result_files),
-        title=title,
-        raw_details=message
+        title=title
     )
+    if message is not None:
+        annotation.update(raw_details=message)
+    return annotation
 
 
 def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], report_individual_runs: bool) -> List[Dict[str, Any]]:
