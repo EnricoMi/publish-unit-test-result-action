@@ -38,7 +38,7 @@ jobs:
         python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@master
+      uses: EnricoMi/publish-unit-test-result-action@branch-nil-raw-details
       if: always()
       with:
         check_name: Unit Test Results
