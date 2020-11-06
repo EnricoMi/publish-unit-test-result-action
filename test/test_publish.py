@@ -1130,9 +1130,9 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=False))
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=False))
 
-        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
-        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
-        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)'), get_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)'), get_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
+        self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)'), get_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
 
     def test_get_annotation_report_individual_runs(self):
         messages = dict([
@@ -1227,16 +1227,14 @@ class PublishTest(unittest.TestCase):
                 message='result-file1',
                 path='class2',
                 start_line=0,
-                title='1 out of 4 runs failed: test2 (class2)',
-                raw_details=None
+                title='1 out of 4 runs failed: test2 (class2)'
             ), dict(
                 annotation_level='failure',
                 end_line=0,
                 message='result-file1',
                 path='class2',
                 start_line=0,
-                title='1 out of 4 runs with error: test2 (class2)',
-                raw_details=None
+                title='1 out of 4 runs with error: test2 (class2)'
             ),
         ]
 
