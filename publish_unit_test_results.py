@@ -6,9 +6,11 @@ import os
 import pathlib
 import re
 from collections import defaultdict
-from typing import List, Dict, Any, Union, Optional, Tuple
+from typing import List, Any, Union, Optional, Tuple, Mapping
 
 from junit import parse_junit_xml_files
+from unittestresults import get_test_results, Numeric, UnitTestCaseResults, UnitTestRunResults, \
+    UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, get_stats, get_stats_delta
 
 logger = logging.getLogger('publish-unit-test-results')
 digest_prefix = '[test-results]:data:application/gzip;base64,'
@@ -18,120 +20,23 @@ punctuation_space = ' '
 hide_comments_mode_off = "off"
 hide_comments_mode_all_but_latest = "all but latest"
 hide_comments_mode_orphaned = "orphaned commits"
-hide_comments_modes = [hide_comments_mode_off, hide_comments_mode_all_but_latest, hide_comments_mode_orphaned]
+hide_comments_modes = [
+    hide_comments_mode_off,
+    hide_comments_mode_all_but_latest,
+    hide_comments_mode_orphaned
+]
 
 
-def get_test_results(parsed_results: Dict[Any, Any], dedup_classes_by_file_name: bool) -> Dict[Any, Any]:
-    cases = parsed_results['cases']
-    cases_skipped = [case for case in cases if case.get('result') == 'skipped']
-    cases_failures = [case for case in cases if case.get('result') == 'failure']
-    cases_errors = [case for case in cases if case.get('result') == 'error']
-    cases_time = sum([case.get('time') or 0 for case in cases])
-
-    # group cases by tests
-    cases_results = defaultdict(lambda: defaultdict(list))
-    for case in cases:
-        key = (case.get('test_file') if dedup_classes_by_file_name else None, case.get('class_name'), case.get('test_name'))
-        cases_results[key][case.get('result')].append(case)
-
-    test_results = dict()
-    for test, states in cases_results.items():
-        test_results[test] = \
-            'error' if 'error' in states else \
-            'failure' if 'failure' in states else \
-            'success' if 'success' in states else \
-            'skipped'
-
-    tests = len(test_results)
-    tests_skipped = len([test for test, state in test_results.items() if state == 'skipped'])
-    tests_failures = len([test for test, state in test_results.items() if state == 'failure'])
-    tests_errors = len([test for test, state in test_results.items() if state == 'error'])
-
-    results = parsed_results.copy()
-    results.update(
-        cases=len(cases),
-        # test states and counts from cases
-        cases_skipped=len(cases_skipped),
-        cases_failures=len(cases_failures),
-        cases_errors=len(cases_errors),
-        cases_time=cases_time,
-        case_results={k: dict(v) for k, v in cases_results.items()},
-
-        tests=tests,
-        # distinct test states by case name
-        tests_skipped=tests_skipped,
-        tests_failures=tests_failures,
-        tests_errors=tests_errors,
-    )
-    return results
-
-
-def get_formatted_digits(*numbers: Union[dict, Optional[int]]) -> Tuple[int, int]:
+def get_formatted_digits(*numbers: Union[Optional[int], Numeric]) -> Tuple[int, int]:
     if isinstance(numbers[0], dict):
-        number_digits = max([len(as_stat_number(abs(number.get('number')) if number.get('number') is not None else None)) for number in numbers])
-        delta_digits = max([len(as_stat_number(abs(number.get('delta')) if number.get('delta') is not None else None)) for number in numbers])
+        # TODO: is not None else None?!?
+        number_digits = max([len(as_stat_number(abs(number.get('number')) if number.get('number') is not None else None))
+                             for number in numbers])
+        delta_digits = max([len(as_stat_number(abs(number.get('delta')) if number.get('delta') is not None else None))
+                            for number in numbers])
         return number_digits, delta_digits
-    return max([len(as_stat_number(abs(number) if number is not None else None)) for number in numbers]), 0
-
-
-def get_stats(test_results: Dict[str, Any]) -> Dict[str, Any]:
-    """Provides stats for the given test results dict."""
-    tests_succ = test_results['tests'] if 'tests' in test_results else None
-    if tests_succ is not None:
-        for key in ['tests_skipped', 'tests_failures', 'tests_errors']:
-            if test_results.get(key):
-                tests_succ -= test_results[key]
-
-    runs_succ = test_results['suite_tests'] if 'suite_tests' in test_results else None
-    for key in ['suite_skipped', 'suite_failures', 'suite_errors']:
-        if test_results.get(key):
-            runs_succ -= test_results[key]
-
-    return dict(
-        files=test_results.get('files'),
-        suites=test_results.get('suites'),
-        duration=test_results.get('suite_time'),
-
-        tests=test_results.get('tests'),
-        tests_succ=tests_succ,
-        tests_skip=test_results.get('tests_skipped'),
-        tests_fail=test_results.get('tests_failures'),
-        tests_error=test_results.get('tests_errors'),
-
-        runs=test_results.get('suite_tests'),
-        runs_succ=runs_succ,
-        runs_skip=test_results.get('suite_skipped'),
-        runs_fail=test_results.get('suite_failures'),
-        runs_error=test_results.get('suite_errors'),
-
-        commit=test_results.get('commit')
-    )
-
-
-def get_stats_with_delta(stats: Dict[str, Any],
-                         reference_stats: Dict[str, Any],
-                         reference_type: str) -> Dict[str, Any]:
-    """Given two stats dicts provides a stats dict with deltas."""
-    reference_commit = reference_stats.get('commit')
-    delta = dict(
-        commit=stats.get('commit'),
-        reference_type=reference_type,
-        reference_commit=reference_commit
-    )
-
-    for key in ['files', 'suites', 'duration',
-                'tests', 'tests_succ', 'tests_skip', 'tests_fail', 'tests_error',
-                'runs', 'runs_succ', 'runs_skip', 'runs_fail', 'runs_error']:
-        if key in stats and stats[key] is not None:
-            if key == 'duration':
-                val = dict(duration=stats[key])
-            else:
-                val = dict(number=stats[key])
-            if key in reference_stats and reference_stats[key] is not None:
-                val['delta'] = stats[key] - reference_stats[key]
-            delta[key] = val
-
-    return delta
+    return max([len(as_stat_number(abs(number) if number is not None else None))
+                for number in numbers]), 0
 
 
 def get_magnitude(value: Union[int, dict]) -> Optional[int]:
@@ -170,7 +75,10 @@ def as_delta(number: int, digits: int) -> str:
     return '{}{}'.format(sign, string)
 
 
-def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: int = 0, delta_digits: int = 0, label: str = None) -> str:
+def as_stat_number(number: Optional[Union[int, Numeric]],
+                   number_digits: int = 0,
+                   delta_digits: int = 0,
+                   label: str = None) -> str:
     if number is None:
         if label:
             return 'N/A {}'.format(label)
@@ -201,7 +109,7 @@ def as_stat_number(number: Optional[Union[int, Dict[str, int]]], number_digits: 
         return 'N/A'
 
 
-def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label=None) -> str:
+def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str:
     if duration is None:
         if label:
             return 'N/A {}'.format(label)
@@ -225,43 +133,42 @@ def as_stat_duration(duration: Optional[Union[int, Dict[str, int]]], label=None)
         sign = '' if delta is None else '±' if delta == 0 else '+' if delta > 1 else '-'
         if delta and abs(delta) >= 60:
             sign += ' '
-        return as_stat_duration(duration, label) + (' {}{}'.format(sign, as_stat_duration(delta)) if delta is not None else '')
+        return as_stat_duration(duration, label) + (' {}{}'.format(
+            sign,
+            as_stat_duration(delta)
+        ) if delta is not None else '')
     else:
         logger.warning('unsupported stats duration type {}: {}'.format(type(duration), duration))
         return 'N/A'
 
 
 def digest_string(string: str) -> str:
-    return str(base64.encodebytes(gzip.compress(bytes(string, 'utf8'), compresslevel=9)), 'utf8').replace('\n', '')
+    return str(base64.encodebytes(gzip.compress(bytes(string, 'utf8'), compresslevel=9)), 'utf8') \
+        .replace('\n', '')
 
 
 def ungest_string(string: str) -> str:
     return str(gzip.decompress(base64.decodebytes(bytes(string, 'utf8'))), 'utf8')
 
 
-def get_digest_from_stats(stats: Dict[Any, Any]) -> str:
-    return digest_string(json.dumps(stats))
+def get_digest_from_stats(stats: UnitTestRunResults) -> str:
+    return digest_string(json.dumps(stats.to_dict()))
 
 
-def get_stats_from_digest(digest: str) -> Dict[Any, Any]:
-    return json.loads(ungest_string(digest))
+def get_stats_from_digest(digest: str) -> UnitTestRunResults:
+    return UnitTestRunResults.from_dict(json.loads(ungest_string(digest)))
 
 
-def get_short_summary(stats: Dict[str, Any], default: str) -> str:
+def get_short_summary(stats: UnitTestRunResults) -> str:
     """Provides a single-line summary for the given stats."""
-    if stats is None:
-        return default
-
-    tests = get_magnitude(stats.get('tests'))
-    success = get_magnitude(stats.get('tests_succ'))
-    skipped = get_magnitude(stats.get('tests_skip'))
-    failure = get_magnitude(stats.get('tests_fail'))
-    error = get_magnitude(stats.get('tests_error'))
-    duration = get_magnitude(stats.get('duration'))
+    tests = get_magnitude(stats.tests)
+    success = get_magnitude(stats.tests_succ)
+    skipped = get_magnitude(stats.tests_skip)
+    failure = get_magnitude(stats.tests_fail)
+    error = get_magnitude(stats.tests_error)
+    duration = get_magnitude(stats.duration)
 
     def get_test_summary():
-        if tests is None:
-            return default
         if tests == 0:
             return 'No tests found'
         if tests > 0:
@@ -275,7 +182,8 @@ def get_short_summary(stats: Dict[str, Any], default: str) -> str:
                     )
 
             summary = ['{}'.format(as_stat_number(number, 0, 0, label))
-                       for number, label in [(error, 'errors'), (failure, 'fail'), (skipped, 'skipped'), (success, 'pass')]
+                       for number, label in [(error, 'errors'), (failure, 'fail'),
+                                             (skipped, 'skipped'), (success, 'pass')]
                        if number > 0]
             summary = ', '.join(summary)
 
@@ -290,72 +198,62 @@ def get_short_summary(stats: Dict[str, Any], default: str) -> str:
     return '{} in {}'.format(get_test_summary(), as_stat_duration(duration))
 
 
-def get_short_summary_md(stats: Dict[str, Any]) -> str:
+def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     """Provides a single-line summary with markdown for the given stats."""
     md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
-        tests=as_stat_number(stats.get('tests'), 0, 0, 'tests'),
-        tests_succ=as_stat_number(stats.get('tests_succ'), 0, 0, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(stats.get('tests_skip'), 0, 0, ':zzz:'),
-        tests_fail=as_stat_number(stats.get('tests_fail'), 0, 0, ':x:'),
-        tests_error=as_stat_number(stats.get('tests_error'), 0, 0, ':fire:'),
+        tests=as_stat_number(stats.tests, 0, 0, 'tests'),
+        tests_succ=as_stat_number(stats.tests_succ, 0, 0, ':heavy_check_mark:'),
+        tests_skip=as_stat_number(stats.tests_skip, 0, 0, ':zzz:'),
+        tests_fail=as_stat_number(stats.tests_fail, 0, 0, ':x:'),
+        tests_error=as_stat_number(stats.tests_error, 0, 0, ':fire:'),
     ))
     return md
 
 
-def get_long_summary_md(stats: Dict[str, Any]) -> str:
+def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
-    files = stats.get('files')
-    suites = stats.get('suites')
-    duration = stats.get('duration')
+    hide_runs = stats.runs == stats.tests and \
+        stats.runs_succ == stats.tests_succ and \
+        stats.runs_skip == stats.tests_skip and \
+        stats.runs_fail == stats.tests_fail and \
+        stats.runs_error == stats.tests_error
 
-    tests = stats.get('tests')
-    tests_succ = stats.get('tests_succ')
-    tests_skip = stats.get('tests_skip')
-    tests_fail = stats.get('tests_fail')
-    tests_error = stats.get('tests_error')
+    files_digits, files_delta_digits = get_formatted_digits(stats.files, stats.tests, stats.runs)
+    success_digits, success_delta_digits = get_formatted_digits(stats.suites, stats.tests_succ, stats.runs_succ)
+    skip_digits, skip_delta_digits = get_formatted_digits(stats.tests_skip, stats.runs_skip)
+    fail_digits, fail_delta_digits = get_formatted_digits(stats.tests_fail, stats.runs_fail)
+    error_digits, error_delta_digits = get_formatted_digits(stats.tests_error, stats.runs_error)
 
-    runs = stats.get('runs')
-    runs_succ = stats.get('runs_succ')
-    runs_skip = stats.get('runs_skip')
-    runs_fail = stats.get('runs_fail')
-    runs_error = stats.get('runs_error')
-    hide_runs = runs == tests and runs_succ == tests_succ and runs_skip == tests_skip and runs_fail == tests_fail and runs_error == tests_error
-
-    files_digits, files_delta_digits = get_formatted_digits(files, tests, runs)
-    success_digits, success_delta_digits = get_formatted_digits(suites, tests_succ, runs_succ)
-    skip_digits, skip_delta_digits = get_formatted_digits(tests_skip, runs_skip)
-    fail_digits, fail_delta_digits = get_formatted_digits(tests_fail, runs_fail)
-    error_digits, error_delta_digits = get_formatted_digits(tests_error, runs_error)
-
-    commit = stats.get('commit')
-    reference_type = stats.get('reference_type')
-    reference_commit = stats.get('reference_commit')
+    commit = stats.commit
+    is_delta_stats = isinstance(stats, UnitTestRunDeltaResults)
+    reference_type = stats.reference_type if is_delta_stats else None
+    reference_commit = stats.reference_commit if is_delta_stats else None
 
     misc_line = '{files} {suites}  {duration}\n'.format(
-        files=as_stat_number(files, files_digits, files_delta_digits, 'files '),
-        suites=as_stat_number(suites, success_digits, 0, 'suites '),
-        duration=as_stat_duration(duration, ':stopwatch:')
+        files=as_stat_number(stats.files, files_digits, files_delta_digits, 'files '),
+        suites=as_stat_number(stats.suites, success_digits, 0, 'suites '),
+        duration=as_stat_duration(stats.duration, ':stopwatch:')
     )
 
     tests_error_part = ' {tests_error}'.format(
-        tests_error=as_stat_number(tests_error, error_digits, error_delta_digits, ':fire:')
-    ) if get_magnitude(tests_error) else ''
+        tests_error=as_stat_number(stats.tests_error, error_digits, error_delta_digits, ':fire:')
+    ) if get_magnitude(stats.tests_error) else ''
     tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
-        tests=as_stat_number(tests, files_digits, files_delta_digits, 'tests'),
-        tests_succ=as_stat_number(tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        tests_fail=as_stat_number(tests_fail, fail_digits, fail_delta_digits, ':x:'),
+        tests=as_stat_number(stats.tests, files_digits, files_delta_digits, 'tests'),
+        tests_succ=as_stat_number(stats.tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
+        tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
+        tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, ':x:'),
         tests_error_part=tests_error_part
     )
 
     runs_error_part = ' {runs_error}'.format(
-        runs_error=as_stat_number(runs_error, error_digits, error_delta_digits, ':fire:')
-    ) if get_magnitude(runs_error) else ''
+        runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, ':fire:')
+    ) if get_magnitude(stats.runs_error) else ''
     runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
-        runs=as_stat_number(runs, files_digits, files_delta_digits, 'runs '),
-        runs_succ=as_stat_number(runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        runs_skip=as_stat_number(runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        runs_fail=as_stat_number(runs_fail, fail_digits, fail_delta_digits, ':x:'),
+        runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
+        runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
+        runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
+        runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, ':x:'),
         runs_error_part=runs_error_part,
     )
 
@@ -379,13 +277,25 @@ def get_long_summary_md(stats: Dict[str, Any]) -> str:
     return md
 
 
-def get_long_summary_with_digest_md(stats: Dict[str, Any], digest_stats: Optional[Dict[str, Any]] = None) -> str:
+def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
+                                    digest_stats: Optional[UnitTestRunResults] = None) -> str:
+    """
+    Provides the summary of stats with digest of digest_stats if given, otherwise
+    digest of stats. In that case, stats must be UnitTestRunResults.
+
+    :param stats: stats to summarize
+    :param digest_stats: stats to digest
+    :return: summary with digest
+    """
+    if digest_stats is None and isinstance(stats, UnitTestRunDeltaResults):
+        raise ValueError('stats must be UnitTestRunResults when no digest_stats is given')
     summary = get_long_summary_md(stats)
     digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
     return '{}\n{}{}'.format(summary, digest_prefix, digest)
 
 
-def get_case_messages(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]]:
+def get_case_messages(case_results: UnitTestCaseResults)\
+        -> Mapping[str, Mapping[str, Mapping[str, List[Mapping[Any, Any]]]]]:
     runs = dict()
     for key in case_results:
         states = dict()
@@ -399,8 +309,8 @@ def get_case_messages(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]]) 
     return runs
 
 
-def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]]],
-                   key, state, message, report_individual_runs) -> Dict[str, Any]:
+def get_annotation(messages: Mapping[str, Mapping[str, Mapping[str, List[Mapping[Any, Any]]]]],
+                   key, state, message, report_individual_runs) -> Mapping[str, Any]:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
                      [case
@@ -423,9 +333,9 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
     title = test_name if not class_name else '{} ({})'.format(test_name, class_name)
     title_state = \
         'pass' if state == 'success' else \
-            'failed' if state == 'failure' else \
-                'with error' if state == 'error' else \
-                    'skipped'
+        'failed' if state == 'failure' else \
+        'with error' if state == 'error' else \
+        'skipped'
     if all_cases > 1:
         if same_cases == all_cases:
             title = 'All {} runs {}: {}'.format(all_cases, title_state, title)
@@ -453,7 +363,8 @@ def get_annotation(messages: Dict[str, Dict[str, Dict[str, List[Dict[Any, Any]]]
     return annotation
 
 
-def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], report_individual_runs: bool) -> List[Dict[str, Any]]:
+def get_annotations(case_results: UnitTestCaseResults,
+                    report_individual_runs: bool) -> List[Mapping[str, Any]]:
     messages = get_case_messages(case_results)
     return [
         get_annotation(messages, key, state, message, report_individual_runs)
@@ -464,7 +375,7 @@ def get_annotations(case_results: Dict[str, Dict[str, List[Dict[Any, Any]]]], re
     ]
 
 
-class Args:
+class Settings:
     def __init__(self,
                  token,
                  event,
@@ -490,7 +401,7 @@ class Args:
         self.dedup_classes_by_file_name = dedup_classes_by_file_name
 
 
-def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]]):
+def publish(args: Settings, stats: UnitTestRunResults, cases: UnitTestCaseResults):
     from github import Github, PullRequest, Requester, MainClass
     from githubext import Repository, Commit, IssueComment
 
@@ -549,7 +460,7 @@ def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[D
         logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
         return pull
 
-    def get_stats_from_commit(commit_sha: str) -> Optional[Dict[Any, Any]]:
+    def get_stats_from_commit(commit_sha: str) -> Optional[UnitTestRunResults]:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
@@ -579,12 +490,12 @@ def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[D
             logger.debug('stats: {}'.format(stats))
             return stats
 
-    def publish_check(stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[Dict[Any, Any]]]]) -> None:
+    def publish_check(stats: UnitTestRunResults, cases: UnitTestCaseResults) -> None:
         # get stats from earlier commits
         before_commit_sha = event.get('before')
         logger.debug('comparing against before={}'.format(before_commit_sha))
         before_stats = get_stats_from_commit(before_commit_sha)
-        stats_with_delta = get_stats_with_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
+        stats_with_delta = get_stats_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         all_annotations = get_annotations(cases, args.report_individual_runs)
@@ -604,14 +515,18 @@ def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[D
             )
 
             logger.info('creating check')
-            repo.create_check_run(name=check_name, head_sha=args.commit, status='completed', conclusion='success', output=output)
+            repo.create_check_run(name=check_name,
+                                  head_sha=args.commit,
+                                  status='completed',
+                                  conclusion='success',
+                                  output=output)
 
-    def publish_comment(title: str, stats: Dict[Any, Any], pull) -> None:
+    def publish_comment(title: str, stats: UnitTestRunResults, pull) -> None:
         # compare them with earlier stats
         base_commit_sha = pull.base.sha if pull else None
         logger.debug('comparing against base={}'.format(base_commit_sha))
         base_stats = get_stats_from_commit(base_commit_sha)
-        stats_with_delta = get_stats_with_delta(stats, base_stats, 'base') if base_stats is not None else stats
+        stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         # we don't want to actually do this when not run by GitHub Actions GitHub App
@@ -623,7 +538,7 @@ def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[D
         pull.create_issue_comment('## {}\n{}'.format(title, get_long_summary_md(stats_with_delta)))
         return pull
 
-    def get_pull_request_comments(pull: PullRequest) -> List[Dict[str, Any]]:
+    def get_pull_request_comments(pull: PullRequest) -> List[Mapping[str, Any]]:
         query = dict(
             query=r'query ListComments {'
                   r'  repository(owner:"' + repo.owner.login + r'", name:"' + repo.name + r'") {'
@@ -682,12 +597,16 @@ def publish(args: Args, stats: Dict[Any, Any], cases: Dict[str, Dict[str, List[D
         # get comment node ids and their commit sha (possibly abbreviated)
         matches = [(comment.get('id'), re.search(r'^results for commit ([0-9a-f]{8,40})(?:\s.*)?$', comment.get('body'), re.MULTILINE))
                    for comment in comments]
-        comment_commits = [(node_id, match.group(1)) for node_id, match in matches if match is not None]
+        comment_commits = [(node_id, match.group(1))
+                           for node_id, match in matches
+                           if match is not None]
 
         # get those comment node ids whose commit is not part of this pull request any more
         comment_ids = [(node_id, comment_commit_sha)
                        for (node_id, comment_commit_sha) in comment_commits
-                       if not any([sha for sha in commit_shas if sha.startswith(comment_commit_sha)])]
+                       if not any([sha
+                                   for sha in commit_shas
+                                   if sha.startswith(comment_commit_sha)])]
 
         # we don't want to actually do this when not run by GitHub Actions GitHub App
         if os.environ.get('GITHUB_ACTIONS') is None:
@@ -754,13 +673,12 @@ def write_stats_file(stats, filename) -> None:
         f.write(json.dumps(stats))
 
 
-def main(args: Args) -> None:
+def main(args: Settings) -> None:
     files = [str(file) for file in pathlib.Path().glob(args.files_glob)]
     logger.info('reading {}: {}'.format(args.files_glob, list(files)))
 
     # get the unit test results
-    parsed = parse_junit_xml_files(files)
-    parsed['commit'] = args.commit
+    parsed = parse_junit_xml_files(files).with_commit(args.commit)
 
     # process the parsed results
     results = get_test_results(parsed, args.dedup_classes_by_file_name)
@@ -769,7 +687,7 @@ def main(args: Args) -> None:
     stats = get_stats(results)
 
     # publish the delta stats
-    publish(args, stats, results['case_results'])
+    publish(args, stats, results.case_results)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -806,7 +724,7 @@ if __name__ == "__main__":
         event = json.load(f)
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results',
-    args = Args(
+    args = Settings(
         token=get_var('GITHUB_TOKEN'),
         event=event,
         repo=get_var('GITHUB_REPOSITORY'),
