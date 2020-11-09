@@ -1,10 +1,13 @@
+import mock
 import contextlib
 import locale
 import unittest
 
-from publish_unit_test_results import *
-from unittestresults import get_stats
+from publish import *
+from unittestresults import get_test_results
+from junit import parse_junit_xml_files
 from test import d, n
+from unittestresults import get_stats
 
 
 @contextlib.contextmanager
@@ -278,64 +281,88 @@ class PublishTest(unittest.TestCase):
             'results for commit 12345678 ± comparison against type commit 01234567\n'))
 
     def test_get_long_summary_with_digest_md_with_single_run(self):
-        self.assertTrue(get_long_summary_with_digest_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
-            commit='commit'
-        )).startswith('1 files  2 suites   3s :stopwatch:\n'
-                      '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
-                      '\n'
-                      'results for commit commit\n'
-                      '\n'
-                      '[test-results]:data:application/gzip;base64,'))
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunResults(
+                    files=1, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    commit='commit'
+                )
+            )
+
+        self.assertEquals(actual, '1 files  2 suites   3s :stopwatch:\n'
+                                  '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
+                                  '\n'
+                                  'results for commit commit\n'
+                                  '\n'
+                                  '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSQqAMBAEvyI5e3EXPyMSIwwukUlyEv9uJxIVb13VUIeYaFFGdEmWJsI4sgFywOh4sKQ3YAHEYf1Vxt0bJ6Uy3lWvm2mHqB8xDbRANI9QzJphWhh2W0z6+Sve6g0G/vQCf3NSrytZQFznBZMgccHfAAAA')
 
     def test_get_long_summary_with_digest_md_with_multiple_runs(self):
-        self.assertTrue(get_long_summary_with_digest_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
-            commit='commit'
-        )).startswith('1 files    2 suites   3s :stopwatch:\n'
-                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
-                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
-                      '\n'
-                      'results for commit commit\n'
-                      '\n'
-                      '[test-results]:data:application/gzip;base64,'))
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunResults(
+                    files=1, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                    commit='commit'
+                )
+            )
+
+        self.assertEquals(actual, '1 files    2 suites   3s :stopwatch:\n'
+                                  '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
+                                  '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
+                                  '\n'
+                                  'results for commit commit\n'
+                                  '\n'
+                                  '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/03MSw6DMAwE0KugrFlgaEH0MhVKg2TxSeUkq4q7MwGSspt5luenRp6NU6+CykK5wP4oNconyODZrqgNKg4+nh4pv13Q2rhoz79N/AW0GcaBZ0CXwYhYgVQQCWt87694W6Qq27lIlOBapDrBfVHbZWGPktK2A4fA80fiAAAA')
 
     def test_get_long_summary_with_digest_md_with_errors(self):
-        self.assertTrue(get_long_summary_with_digest_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
-            commit='commit'
-        )).startswith('1 files    2 suites   3s :stopwatch:\n'
-                      '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
-                      '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
-                      '\n'
-                      'results for commit commit\n'
-                      '\n'
-                      '[test-results]:data:application/gzip;base64,'))
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunResults(
+                    files=1, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    commit='commit'
+                )
+            )
+
+        self.assertEquals(actual, '1 files    2 suites   3s :stopwatch:\n'
+                                  '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
+                                  '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
+                                  '\n'
+                                  'results for commit commit\n'
+                                  '\n'
+                                  '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/03OzQ6DIBAE4FcxnD10tf8v0xDEZFOVZoGT6bt3qC7tbebbMGE1I08+mntDbWNi5vQtHcqQxSYOC2qPikMqp6PmR8zO+Vjs9LMnvwDnCqPlCXCp4EWCQK4QyUt5ftvj3yIdqm2LRAr7InUKukjlmy7MMyc0Te8PumEONuMAAAA=')
 
     def test_get_long_summary_with_digest_md_with_delta(self):
-        self.assertTrue(get_long_summary_with_digest_md(UnitTestRunDeltaResults(
-            files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
-            commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        ), UnitTestRunResults(
-            files=1, suites=2, duration=3,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
-            commit='commit'
-        )).startswith('1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
-                      '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
-                      '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
-                      '\n'
-                      'results for commit 12345678 ± comparison against type commit 01234567\n'
-                      '\n'
-                      '[test-results]:data:application/gzip;base64,'))
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunDeltaResults(
+                    files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
+                ), UnitTestRunResults(
+                    files=1, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    commit='commit'
+                )
+            )
+
+        self.assertEquals(actual, '1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
+                                  '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
+                                  '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
+                                  '\n'
+                                  'results for commit 12345678 ± comparison against type commit 01234567\n'
+                                  '\n'
+                                  '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSQqAMBAEvyI5e3EXPyMSIwwukUlyEv9uJxIVb13VUIeYaFFGdEmWJsI4sgFywOh4sKQ3YAHEYf1Vxt0bJ6Uy3lWvm2mHqB8xDbRANI9QzJphWhh2W0z6+Sve6g0G/vQCf3NSrytZQFznBZMgccHfAAAA')
 
     def test_get_long_summary_with_digest_md_with_delta_results_only(self):
         with self.assertRaises(ValueError) as context:
