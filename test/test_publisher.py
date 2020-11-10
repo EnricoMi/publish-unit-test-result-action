@@ -241,8 +241,6 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
         mock_calls = self.call_mocked_publish(settings, pr=pr)
 
-        for mock in mock_calls:
-            print(mock)
         self.assertEqual(4, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]

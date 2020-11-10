@@ -111,7 +111,6 @@ class Publisher:
             return None
 
         runs = commit.get_check_runs()
-        print(runs.totalCount)
         self._logger.debug('found {} check runs for commit {}'.format(runs.totalCount, commit_sha))
         runs = list([run for run in runs if run.name == self._args.check_name])
         self._logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit_sha, self._args.check_name))
