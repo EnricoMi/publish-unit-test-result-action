@@ -387,7 +387,7 @@ class TestPublisher(unittest.TestCase):
             conclusion='success',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n\nresults for commit commit\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02PSwqEMBBEryJZz8L4m89lBokRmlEzdJKVeHcraqu7eq/ogp5VT4P16pPpR6Z8pLBBAegit4HcBCyBKMJWFQJfH42xPsnqcj/6Q9Sn6FsaIJpTWGbHME8YjlM6L19Hvk1eal98Cx+DOhchgzq9YNw4UgBJWlbiXLVa4wAAAA==',
+                'summary': '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n\nresults for commit commit\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zHdX73QAAAA==',
                 'annotations': [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
@@ -413,7 +413,7 @@ class TestPublisher(unittest.TestCase):
             conclusion='success',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n\nresults for commit commit\u2003± comparison against ancestor commit base\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02PSwqEMBBEryJZz8L4m89lBokRmlEzdJKVeHcraqu7eq/ogp5VT4P16pPpR6Z8pLBBAegit4HcBCyBKMJWFQJfH42xPsnqcj/6Q9Sn6FsaIJpTWGbHME8YjlM6L19Hvk1eal98Cx+DOhchgzq9YNw4UgBJWlbiXLVa4wAAAA==',
+                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n\nresults for commit commit\u2003± comparison against ancestor commit base\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zHdX73QAAAA==',
                 'annotations': [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
@@ -457,7 +457,7 @@ class TestPublisher(unittest.TestCase):
                     conclusion='success',
                     output={
                         'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                        'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n\nresults for commit commit\u2003± comparison against ancestor commit base\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02PSwqEMBBEryJZz8L4m89lBokRmlEzdJKVeHcraqu7eq/ogp5VT4P16pPpR6Z8pLBBAegit4HcBCyBKMJWFQJfH42xPsnqcj/6Q9Sn6FsaIJpTWGbHME8YjlM6L19Hvk1eal98Cx+DOhchgzq9YNw4UgBJWlbiXLVa4wAAAA==',
+                        'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n\nresults for commit commit\u2003± comparison against ancestor commit base\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zHdX73QAAAA==',
                         'annotations': [
                             {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
                             # for each batch starting at start we expect 50 annotations
@@ -720,60 +720,4 @@ class TestPublisher(unittest.TestCase):
         publisher.get_action_comments(self.hide_comments)
         publisher.hide_comment.assert_has_calls(
             [mock.call('comment one'), mock.call('comment two')], any_order=False
-        )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # end-to-end test
-    def test(self):
-        settings = self.create_settings(comment_on_pr=False)
-
-        gh = mock.MagicMock(Github)
-        gh._Github__requester = mock.MagicMock
-        repo = mock.MagicMock()
-        commit = mock.MagicMock()
-
-        run = mock.MagicMock()
-        run.name = settings.check_name
-        run.output = dict(summary='summary\n{}{}'.format(digest_prefix, self.digest))
-
-        check_runs = self.create_github_collection([run])
-        commit.get_check_runs = mock.Mock(return_value=check_runs)
-        repo.get_commit = mock.Mock(return_value=commit)
-        gh.get_repo = mock.Mock(return_value=repo)
-        publisher = Publisher(settings, gh)
-        cases = UnitTestCaseResults()
-
-        # makes gzipped digest deterministic
-        with mock.patch('gzip.time.time', return_value=0):
-            publisher.publish(self.stats, cases)
-
-        gh.get_repo.assert_called_once_with(settings.repo)
-        repo.get_commit.assert_called_once_with(settings.event.get('before'))
-        commit.get_check_runs.assert_called_once_with()
-        repo.create_check_run.assert_called_once_with(
-            conclusion='success',
-            head_sha='commit',
-            name='Check Name',
-            output={
-                'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n\nresults for commit commit\u2003± comparison against ancestor commit base\n\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02PSwqEMBBEryJZz8L4m89lBokRmlEzdJKVeHcraqu7eq/ogp5VT4P16pPpR6Z8pLBBAegit4HcBCyBKMJWFQJfH42xPsnqcj/6Q9Sn6FsaIJpTWGbHME8YjlM6L19Hvk1eal98Cx+DOhchgzq9YNw4UgBJWlbiXLVa4wAAAA==',
-                'annotations': []
-            },
-            status='completed'
         )

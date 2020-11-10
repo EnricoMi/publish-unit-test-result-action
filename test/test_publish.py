@@ -201,10 +201,10 @@ class PublishTest(unittest.TestCase):
 
     def test_get_stats_from_digest(self):
         self.assertEqual(
-            get_stats_from_digest('H4sIALSWTl8C/03OzQ6DIBAE4FcxnD10tf8v0xDEZFOVZoGT6b'
-                                  't3qC7tbebbMGE1I08+mntDbWNi5vQtHcqQxSYOC2qPikMqp6Pm'
-                                  'R8zO+Vjs9LMnvwDnCqPlCXCp4EWCQK4QyUt5ftvj3yIdqm2LRA'
-                                  'r7InUKukjlmy7MMyc0Te8PumEONuMAAAA='),
+            get_stats_from_digest('H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
+                                  'x3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr'
+                                  '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
+                                  'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA'),
             UnitTestRunResults(
                 files=1, suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
@@ -304,7 +304,7 @@ class PublishTest(unittest.TestCase):
                                  '\n'
                                  'results for commit commit\n'
                                  '\n'
-                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSQqAMBAEvyI5e3EXPyMSIwwukUlyEv9uJxIVb13VUIeYaFFGdEmWJsI4sgFywOh4sKQ3YAHEYf1Vxt0bJ6Uy3lWvm2mHqB8xDbRANI9QzJphWhh2W0z6+Sve6g0G/vQCf3NSrytZQFznBZMgccHfAAAA')
+                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZFjuzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAeK6buousrLZAAAA')
 
     def test_get_long_summary_with_digest_md_with_multiple_runs(self):
         # makes gzipped digest deterministic
@@ -324,7 +324,7 @@ class PublishTest(unittest.TestCase):
                                  '\n'
                                  'results for commit commit\n'
                                  '\n'
-                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/03MSw6DMAwE0KugrFlgaEH0MhVKg2TxSeUkq4q7MwGSspt5luenRp6NU6+CykK5wP4oNconyODZrqgNKg4+nh4pv13Q2rhoz79N/AW0GcaBZ0CXwYhYgVQQCWt87694W6Qq27lIlOBapDrBfVHbZWGPktK2A4fA80fiAAAA')
+                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/03MwQqDMBAE0F+RnD24aiv6M0VShaVqZJOciv/e0brR28wbmK8ZeRq86TLKM+Mjh6OUKO8ofWC3oFaoGMI+1ZpfPloLeFzw4RXwTDD2PAGaBIOIE0gBkbjsf+0Z9Y6KBP87IoXzjkqF+51188wBRdP2A3NU1srcAAAA')
 
     def test_get_long_summary_with_digest_md_with_errors(self):
         # makes gzipped digest deterministic
@@ -344,7 +344,7 @@ class PublishTest(unittest.TestCase):
                                  '\n'
                                  'results for commit commit\n'
                                  '\n'
-                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/03OzQ6DIBAE4FcxnD10tf8v0xDEZFOVZoGT6bt3qC7tbebbMGE1I08+mntDbWNi5vQtHcqQxSYOC2qPikMqp6PmR8zO+Vjs9LMnvwDnCqPlCXCp4EWCQK4QyUt5ftvj3yIdqm2LRAr7InUKukjlmy7MMyc0Te8PumEONuMAAAA=')
+                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZPx3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnHPUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
 
     def test_get_long_summary_with_digest_md_with_delta(self):
         # makes gzipped digest deterministic
@@ -369,7 +369,7 @@ class PublishTest(unittest.TestCase):
                                  '\n'
                                  'results for commit 12345678 ± comparison against type commit 01234567\n'
                                  '\n'
-                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSQqAMBAEvyI5e3EXPyMSIwwukUlyEv9uJxIVb13VUIeYaFFGdEmWJsI4sgFywOh4sKQ3YAHEYf1Vxt0bJ6Uy3lWvm2mHqB8xDbRANI9QzJphWhh2W0z6+Sve6g0G/vQCf3NSrytZQFznBZMgccHfAAAA')
+                                 '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZFjuzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAeK6buousrLZAAAA')
 
     def test_get_long_summary_with_digest_md_with_delta_results_only(self):
         with self.assertRaises(ValueError) as context:

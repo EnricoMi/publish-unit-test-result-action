@@ -130,13 +130,13 @@ class UnitTestRunResults:
             duration=self.duration,
 
             tests=self.tests,
-            tests_success=self.tests_succ,
+            tests_succ=self.tests_succ,
             tests_skip=self.tests_skip,
             tests_fail=self.tests_fail,
             tests_error=self.tests_error,
 
             runs=self.runs,
-            runs_success=self.runs_succ,
+            runs_succ=self.runs_succ,
             runs_skip=self.runs_skip,
             runs_fail=self.runs_fail,
             runs_error=self.runs_error,
@@ -152,13 +152,13 @@ class UnitTestRunResults:
             duration=values.get('duration'),
 
             tests=values.get('tests'),
-            tests_succ=values.get('tests_success'),
+            tests_succ=values.get('tests_succ'),
             tests_skip=values.get('tests_skip'),
             tests_fail=values.get('tests_fail'),
             tests_error=values.get('tests_error'),
 
             runs=values.get('runs'),
-            runs_succ=values.get('runs_success'),
+            runs_succ=values.get('runs_succ'),
             runs_skip=values.get('runs_skip'),
             runs_fail=values.get('runs_fail'),
             runs_error=values.get('runs_error'),

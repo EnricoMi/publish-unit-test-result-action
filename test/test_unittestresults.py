@@ -17,8 +17,8 @@ class TestUnitTestResults(unittest.TestCase):
         ).to_dict()
         expected = dict(
             files=1, suites=2, duration=3,
-            tests=4, tests_success=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         )
         self.assertEqual(expected, actual)
@@ -26,8 +26,8 @@ class TestUnitTestResults(unittest.TestCase):
     def test_unit_test_run_results_from_dict(self):
         actual = UnitTestRunResults.from_dict(dict(
             files=1, suites=2, duration=3,
-            tests=4, tests_success=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_success=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ))
         expected = UnitTestRunResults(
