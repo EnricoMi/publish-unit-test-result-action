@@ -14,6 +14,7 @@ RUN pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --
 
 COPY githubext /action/githubext
 COPY junit /action/junit
+COPY publish /action/publish
 COPY unittestresults /action/unittestresults
 COPY publish_unit_test_results.py /action/
 
