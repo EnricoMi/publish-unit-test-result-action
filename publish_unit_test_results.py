@@ -65,7 +65,7 @@ if __name__ == "__main__":
     with open(event, 'r') as f:
         event = json.load(f)
 
-    check_name = get_var('CHECK_NAME') or 'Unit Test Results',
+    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     args = Settings(
         token=get_var('GITHUB_TOKEN'),
         event=event,
