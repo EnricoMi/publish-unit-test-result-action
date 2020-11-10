@@ -45,8 +45,8 @@ also compares unit test results across commits. This allows seeing changes in th
 
 ## Using this Action
 
-You can add this action to your GitHub workflow on `push`, `pull_request`, and `pull_request_target` events
-and configure it as follows:
+You can add this action to your GitHub workflow on `push`, `pull_request`, `pull_request_target` 
+and `workflow_dispatch` events and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
