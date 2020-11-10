@@ -28,7 +28,7 @@ jobs:
       run: |
         python -m pip install --upgrade --force --no-cache-dir pip
         pip install --force --no-cache-dir -r requirements.txt
-        pip install --force --no-cache-dir pytest
+        pip install --force --no-cache-dir pytest mock
 
     - name: PyTest
       env:
