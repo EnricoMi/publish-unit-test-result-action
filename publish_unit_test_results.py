@@ -14,22 +14,22 @@ from unittestresults import get_test_results, get_stats
 logger = logging.getLogger('publish-unit-test-results')
 
 
-def main(args: Settings) -> None:
-    files = [str(file) for file in pathlib.Path().glob(args.files_glob)]
-    logger.info('reading {}: {}'.format(args.files_glob, list(files)))
+def main(settings: Settings) -> None:
+    files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
+    logger.info('reading {}: {}'.format(settings.files_glob, list(files)))
 
     # get the unit test results
-    parsed = parse_junit_xml_files(files).with_commit(args.commit)
+    parsed = parse_junit_xml_files(files).with_commit(settings.commit)
 
     # process the parsed results
-    results = get_test_results(parsed, args.dedup_classes_by_file_name)
+    results = get_test_results(parsed, settings.dedup_classes_by_file_name)
 
     # turn them into stats
     stats = get_stats(results)
 
     # publish the delta stats
-    gh = Github(args.token)
-    Publisher(args, gh).publish(stats, results.case_results)
+    gh = Github(settings.token)
+    Publisher(settings, gh).publish(stats, results.case_results)
 
 
 def get_commit_sha(event: dict, event_name: str):
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         event = json.load(f)
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
-    args = Settings(
+    settings = Settings(
         token=get_var('GITHUB_TOKEN'),
         event=event,
         repo=get_var('GITHUB_REPOSITORY'),
@@ -80,10 +80,10 @@ if __name__ == "__main__":
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',
     )
 
-    check_var(args.token, 'GITHUB_TOKEN', 'GitHub token')
-    check_var(args.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
-    check_var(args.commit, 'COMMIT or event file', 'Commit SHA')
-    check_var(args.files_glob, 'FILES', 'Files pattern')
-    check_var(args.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
+    check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
+    check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
+    check_var(settings.commit, 'COMMIT or event file', 'Commit SHA')
+    check_var(settings.files_glob, 'FILES', 'Files pattern')
+    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
 
-    main(args)
+    main(settings)

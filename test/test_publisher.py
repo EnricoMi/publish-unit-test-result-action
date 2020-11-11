@@ -168,7 +168,7 @@ class TestPublisher(unittest.TestCase):
 
         # mock Publisher and call publish
         publisher = mock.MagicMock(Publisher)
-        publisher._args = settings
+        publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
         Publisher.publish(publisher, stats, cases)
 
@@ -679,7 +679,7 @@ class TestPublisher(unittest.TestCase):
         ])
 
         publisher = mock.MagicMock(Publisher)
-        publisher._args = settings
+        publisher._settings = settings
         publisher._req = mock.MagicMock()
         publisher._req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
@@ -705,7 +705,7 @@ class TestPublisher(unittest.TestCase):
         ])
 
         publisher = mock.MagicMock(Publisher)
-        publisher._args = settings
+        publisher._settings = settings
         publisher._req = mock.MagicMock()
         publisher._req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})

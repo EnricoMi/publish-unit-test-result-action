@@ -44,28 +44,28 @@ class Publisher:
     if getattr(IssueComment, 'node_id') is None:
         raise RuntimeError('patching github IssueComment failed')
 
-    def __init__(self, args: Settings, gh: Github):
-        self._args = args
+    def __init__(self, settings: Settings, gh: Github):
+        self._settings = settings
         self._gh = gh
-        self._repo = gh.get_repo(self._args.repo)
+        self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
 
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults):
-        self._logger.info('publishing results for commit {}'.format(self._args.commit))
+        self._logger.info('publishing results for commit {}'.format(self._settings.commit))
         self.publish_check(stats, cases)
 
-        if self._args.comment_on_pr:
-            pull = self.get_pull(self._args.commit)
+        if self._settings.comment_on_pr:
+            pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._args.comment_title, stats, pull)
-                if self._args.hide_comment_mode == hide_comments_mode_orphaned:
+                self.publish_comment(self._settings.comment_title, stats, pull)
+                if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
-                elif self._args.hide_comment_mode == hide_comments_mode_all_but_latest:
+                elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                     self.hide_all_but_latest_comments(pull)
                 else:
                     self._logger.info('hide_comments disabled, not hiding any comments')
             else:
-                self._logger.info('there is no pull request for commit {}'.format(self._args.commit))
+                self._logger.info('there is no pull request for commit {}'.format(self._settings.commit))
         else:
             self._logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
@@ -75,7 +75,7 @@ class Publisher:
 
         if issues.totalCount == 0:
             return None
-        self._logger.debug('running in repo {}'.format(self._args.repo))
+        self._logger.debug('running in repo {}'.format(self._settings.repo))
         for issue in issues:
             pr = issue.as_pull_request()
             self._logger.debug(pr)
@@ -88,10 +88,10 @@ class Publisher:
         pulls = list([pr
                       for issue in issues
                       for pr in [issue.as_pull_request()]
-                      if pr.base.repo.full_name == self._args.repo])
+                      if pr.base.repo.full_name == self._settings.repo])
 
         if len(pulls) == 0:
-            self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._args.repo, commit))
+            self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._settings.repo, commit))
             return None
         if len(pulls) > 1:
             self._logger.error('found multiple pull requests for commit {}'.format(commit))
@@ -112,8 +112,8 @@ class Publisher:
 
         runs = commit.get_check_runs()
         self._logger.debug('found {} check runs for commit {}'.format(runs.totalCount, commit_sha))
-        runs = list([run for run in runs if run.name == self._args.check_name])
-        self._logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit_sha, self._args.check_name))
+        runs = list([run for run in runs if run.name == self._settings.check_name])
+        self._logger.debug('found {} check runs for commit {} with title {}'.format(len(runs), commit_sha, self._settings.check_name))
         if len(runs) != 1:
             return None
 
@@ -133,13 +133,13 @@ class Publisher:
 
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> None:
         # get stats from earlier commits
-        before_commit_sha = self._args.event.get('before')
+        before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
         before_stats = self.get_stats_from_commit(before_commit_sha)
         stats_with_delta = get_stats_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
-        all_annotations = get_annotations(cases, self._args.report_individual_runs)
+        all_annotations = get_annotations(cases, self._settings.report_individual_runs)
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
@@ -151,8 +151,8 @@ class Publisher:
             )
 
             self._logger.info('creating check')
-            self._repo.create_check_run(name=self._args.check_name,
-                                        head_sha=self._args.commit,
+            self._repo.create_check_run(name=self._settings.check_name,
+                                        head_sha=self._settings.commit,
                                         status='completed',
                                         conclusion='success',
                                         output=output)
@@ -216,7 +216,7 @@ class Publisher:
         return list([comment for comment in comments
                      if comment.get('author', {}).get('login') == 'github-actions'
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
-                     and comment.get('body', '').startswith('## {}\n'.format(self._args.comment_title))
+                     and comment.get('body', '').startswith('## {}\n'.format(self._settings.comment_title))
                      and '\nresults for commit ' in comment.get('body')])
 
     def hide_orphaned_commit_comments(self, pull: PullRequest) -> None:
