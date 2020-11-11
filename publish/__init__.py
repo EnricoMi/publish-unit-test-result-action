@@ -390,16 +390,12 @@ def get_annotation(messages: CaseMessages,
     )
 
 
-def provide_annotation_for(state: str) -> bool:
-    return state not in ['success', 'skipped']
-
-
 def get_annotations(case_results: UnitTestCaseResults, report_individual_runs: bool) -> List[Annotation]:
     messages = get_case_messages(case_results)
     return [
         get_annotation(messages, key, state, message, report_individual_runs)
         for key in messages
-        for state in messages[key] if provide_annotation_for(state)
+        for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else
                         [list(messages[key][state].keys())[0]])
     ]
