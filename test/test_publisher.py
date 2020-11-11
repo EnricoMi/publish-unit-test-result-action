@@ -843,3 +843,6 @@ class TestPublisher(unittest.TestCase):
         publisher.hide_comment.assert_has_calls(
             [mock.call('comment one'), mock.call('comment two')], any_order=False
         )
+
+    def test_fail(self):
+        self.fail('just testing with failing test')
