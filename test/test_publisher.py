@@ -846,3 +846,5 @@ class TestPublisher(unittest.TestCase):
 
     def test_fail(self):
         self.fail('just testing with failing test')
+
+have this error
