@@ -77,6 +77,12 @@ class TestPublisher(unittest.TestCase):
         gh._Github__requester = mock.MagicMock()
         repo = mock.MagicMock()
 
+        # have repo.create_check_run return the arguments given to it
+        def create_check_run_hook(**kwargs) -> Mapping[str, Any]:
+            return {'check_run_for_kwargs': kwargs}
+
+        repo.create_check_run = mock.Mock(side_effect=create_check_run_hook)
+
         if commit:
             runs = []
             if digest and check_names:
@@ -162,7 +168,8 @@ class TestPublisher(unittest.TestCase):
     def call_mocked_publish(settings: Settings,
                             stats: UnitTestRunResults = stats,
                             cases: UnitTestCaseResults = cases,
-                            pr: object = None):
+                            pr: object = None,
+                            cr: object = None):
         # UnitTestCaseResults is mutable, always copy it
         cases = UnitTestCaseResults(cases)
 
@@ -170,6 +177,7 @@ class TestPublisher(unittest.TestCase):
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
+        publisher.publish_check = mock.Mock(return_value=cr)
         Publisher.publish(publisher, stats, cases)
 
         # return calls to mocked instance, except call to _logger
@@ -216,8 +224,9 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_with_comment_without_hiding(self):
         pr = object()
+        cr = object()
         settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=pr)
+        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(3, len(mock_calls))
 
@@ -233,13 +242,14 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
         self.assertEqual({}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
         pr = object()
+        cr = object()
         settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
-        mock_calls = self.call_mocked_publish(settings, pr=pr)
+        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(4, len(mock_calls))
 
@@ -255,7 +265,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
@@ -377,10 +387,10 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            publisher.publish_check(self.stats, self.cases)
+            check_run = publisher.publish_check(self.stats, self.cases)
 
         repo.get_commit.assert_not_called()
-        repo.create_check_run.assert_called_once_with(
+        create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
@@ -391,7 +401,7 @@ class TestPublisher(unittest.TestCase):
                            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
                            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
                            '\n'
-                           'results for commit commit\n'
+                           'Results for commit commit.\n'
                            '\n'
                            '[test-results]:data:application/gzip;base64,'
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
@@ -404,6 +414,11 @@ class TestPublisher(unittest.TestCase):
                 ]
             }
         )
+        repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
+
+        # this checks that publisher.publish_check returned
+        # the result of the last call to repo.create_check_run
+        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
 
     def test_publish_check_with_base_stats(self):
         base_commit = 'base'
@@ -413,10 +428,10 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            publisher.publish_check(self.stats, self.cases)
+            check_run = publisher.publish_check(self.stats, self.cases)
 
         repo.get_commit.assert_called_once_with(base_commit)
-        repo.create_check_run.assert_called_once_with(
+        create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
@@ -427,7 +442,7 @@ class TestPublisher(unittest.TestCase):
                            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
                            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
                            '\n'
-                           'results for commit commit\u2003± comparison against ancestor commit base\n'
+                           'Results for commit commit.\u2003± Comparison against ancestor commit base.\n'
                            '\n'
                            '[test-results]:data:application/gzip;base64,'
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
@@ -440,6 +455,11 @@ class TestPublisher(unittest.TestCase):
                 ]
             }
         )
+        repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
+
+        # this checks that publisher.publish_check returned
+        # the result of the last call to repo.create_check_run
+        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
 
     def test_publish_check_with_multiple_annotation_pages(self):
         base_commit = 'base'
@@ -464,42 +484,48 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            publisher.publish_check(self.stats, cases)
+            check_run = publisher.publish_check(self.stats, cases)
 
         repo.get_commit.assert_called_once_with(base_commit)
         # we expect multiple calls to create_check_run
+        create_check_run_kwargss = [
+            dict(
+                name=settings.check_name,
+                head_sha=settings.commit,
+                status='completed',
+                conclusion='success',
+                output={
+                    'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
+                    'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+                               '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
+                               '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+                               '\n'
+                               'Results for commit commit.\u2003± Comparison against ancestor commit base.\n'
+                               '\n'
+                               '[test-results]:data:application/gzip;base64,'
+                               'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
+                               '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
+                               '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
+                               'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                    'annotations': [
+                        {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
+                        # for each batch starting at start we expect 50 annotations
+                        for i in range(start, start+50)
+                    ]
+                }
+            )
+            # we expect three calls, each batch starting at these starts
+            for start in [1, 51, 101]
+        ]
         repo.create_check_run.assert_has_calls(
-            [
-                mock.call(
-                    name=settings.check_name,
-                    head_sha=settings.commit,
-                    status='completed',
-                    conclusion='success',
-                    output={
-                        'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                        'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-                                   '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-                                   '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
-                                   '\n'
-                                   'results for commit commit\u2003± comparison against ancestor commit base\n'
-                                   '\n'
-                                   '[test-results]:data:application/gzip;base64,'
-                                   'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
-                                   '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
-                                   '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                                   'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
-                        'annotations': [
-                            {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
-                            # for each batch starting at start we expect 50 annotations
-                            for i in range(start, start+50)
-                        ]
-                    }
-                )
-                # we expect three calls, each batch starting at these starts
-                for start in [1, 51, 101]
-            ],
+            [mock.call(**create_check_run_kwargs)
+             for create_check_run_kwargs in create_check_run_kwargss],
             any_order=False
         )
+
+        # this checks that publisher.publish_check returned
+        # the result of the last call to repo.create_check_run
+        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargss[-1]}, check_run)
 
     def test_publish_comment(self):
         settings = self.create_settings()
@@ -518,7 +544,7 @@ class TestPublisher(unittest.TestCase):
             '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
             '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
             '\n'
-            'results for commit commit\u2003± comparison against base commit base\n'
+            'Results for commit commit.\u2003± Comparison against base commit base.\n'
         )
 
     def test_publish_comment_without_base(self):
@@ -537,7 +563,54 @@ class TestPublisher(unittest.TestCase):
             '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
             '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
             '\n'
-            'results for commit commit\n'
+            'Results for commit commit.\n'
+        )
+
+    def test_publish_comment_with_check_run_with_annotations(self):
+        settings = self.create_settings()
+        base_commit = 'base-commit'
+
+        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        pr = self.create_github_pr(settings.repo, base_commit)
+        cr = mock.MagicMock(html_url='http://check-run.url')
+        publisher = Publisher(settings, gh)
+
+        publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
+
+        repo.get_commit.assert_called_once_with(base_commit)
+        pr.create_issue_comment.assert_called_once_with(
+            '## Comment Title\n'
+            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
+            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+            '\n'
+            'For more details on these failures and errors, see [this check](http://check-run.url).\n'
+            '\n'
+            'Results for commit commit.\u2003± Comparison against base commit base.\n'
+        )
+
+    def test_publish_comment_with_check_run_without_annotations(self):
+        settings = self.create_settings()
+        base_commit = 'base-commit'
+
+        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        pr = self.create_github_pr(settings.repo, base_commit)
+        cr = mock.MagicMock(html_url='http://check-run.url')
+        publisher = Publisher(settings, gh)
+
+        stats = self.stats.to_dict()
+        stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)
+        stats = UnitTestRunResults.from_dict(stats)
+        publisher.publish_comment(settings.comment_title, stats, pr, cr)
+
+        repo.get_commit.assert_called_once_with(base_commit)
+        pr.create_issue_comment.assert_called_once_with(
+            '## Comment Title\n'
+            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u20030 :x: \u2006-\u200a2\u2002\n'
+            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u20030 :x: \u2006-\u200a4\u2002\n'
+            '\n'
+            'Results for commit commit.\u2003± Comparison against base commit base.\n'
         )
 
     def test_get_pull_request_comments(self):
@@ -575,7 +648,7 @@ class TestPublisher(unittest.TestCase):
             'id': 'comment one',
             'author': {'login': 'github-actions'},
             'body': '## Comment Title\n'
-                    'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+                    'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
@@ -583,7 +656,7 @@ class TestPublisher(unittest.TestCase):
             'author': {'login': 'someone else'},
             'body': '## Comment Title\n'
                     'more body\n'
-                    'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+                    'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
@@ -591,7 +664,7 @@ class TestPublisher(unittest.TestCase):
             'author': {'login': 'github-actions'},
             'body': '## Wrong Comment Title\n'
                     'more body\n'
-                    'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+                    'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
@@ -599,7 +672,7 @@ class TestPublisher(unittest.TestCase):
             'author': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'more body\n'
-                    'no results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+                    'no Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
@@ -607,7 +680,7 @@ class TestPublisher(unittest.TestCase):
             'author': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'more body\n'
-                    'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+                    'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': True
         },
         {
@@ -615,6 +688,14 @@ class TestPublisher(unittest.TestCase):
             'author': {'login': 'github-actions'},
             'body': 'comment',
             'isMinimized': True
+        },
+        # earlier version of comments with lower case result and comparison
+        {
+            'id': 'comment seven',
+            'author': {'login': 'github-actions'},
+            'body': '## Comment Title\n'
+                    'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
+            'isMinimized': False
         }
     ]
 
@@ -625,20 +706,20 @@ class TestPublisher(unittest.TestCase):
 
         expected = [comment
                     for comment in self.comments
-                    if comment.get('id') in ['comment one', 'comment five']]
+                    if comment.get('id') in ['comment one', 'comment five', 'comment seven']]
         actual = publisher.get_action_comments(self.comments, is_minimized=None)
 
         self.assertEqual(expected, actual)
 
-    def test_get_action_comments_minimized(self):
+    def test_get_action_comments_not_minimized(self):
         settings = self.create_settings()
         gh, req, repo, commit = self.create_mocks()
         publisher = Publisher(settings, gh)
 
         expected = [comment
                     for comment in self.comments
-                    if comment.get('id') == 'comment one']
-        actual = publisher.get_action_comments(self.comments)
+                    if comment.get('id') in ['comment one', 'comment seven']]
+        actual = publisher.get_action_comments(self.comments, is_minimized=False)
 
         self.assertEqual(expected, actual)
 
@@ -674,7 +755,7 @@ class TestPublisher(unittest.TestCase):
                     '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
                     '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
                     '\n'
-                    'results for commit dee59820\n',
+                    'Results for commit dee59820.\n',
             'isMinimized': False
         },
         {
@@ -684,7 +765,7 @@ class TestPublisher(unittest.TestCase):
                     '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
                     '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
                     '\n'
-                    'results for commit 70b5dd18\n',
+                    'Results for commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
@@ -694,7 +775,18 @@ class TestPublisher(unittest.TestCase):
                     '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
                     '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
                     '\n'
-                    'results for commit b469da3d\n',
+                    'Results for commit b469da3d.\n',
+            'isMinimized': False
+        },
+        # earlier version of comments with lower case result and comparison
+        {
+            'id': 'comment four',
+            'author': {'login': 'github-actions'},
+            'body': '## Comment Title\n'
+                    '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
+                    '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
+                    '\n'
+                    'results for commit 52048b4\u2003± comparison against base commit 70b5dd18\n',
             'isMinimized': False
         }
     ]

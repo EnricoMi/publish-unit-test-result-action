@@ -249,7 +249,7 @@ class PublishTest(unittest.TestCase):
         )), ('1 files  2 suites   3s :stopwatch:\n'
             '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
             '\n'
-            'results for commit commit\n'))
+            'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_multiple_runs(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
@@ -261,7 +261,7 @@ class PublishTest(unittest.TestCase):
             '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
             '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
             '\n'
-            'results for commit commit\n'))
+            'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_errors(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
@@ -273,7 +273,7 @@ class PublishTest(unittest.TestCase):
             '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
             '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
             '\n'
-            'results for commit commit\n'))
+            'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_deltas(self):
         self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
@@ -285,7 +285,73 @@ class PublishTest(unittest.TestCase):
             '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
             '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
             '\n'
-            'results for commit 12345678 ± comparison against type commit 01234567\n'))
+            'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
+
+    def test_get_long_summary_md_with_details_url_with_fails(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x:\n'
+            '\n'
+            'For more details on these failures, see [this check](https://details.url/).\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_details_url_with_errors(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=8,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=8,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x: 8 :fire:\n'
+            '\n'
+            'For more details on these errors, see [this check](https://details.url/).\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_details_url_with_fails_and_errors(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
+            '\n'
+            'For more details on these failures and errors, see [this check](https://details.url/).\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_details_url_without_fails_or_errors(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
 
     def test_get_long_summary_with_digest_md_with_single_run(self):
         # makes gzipped digest deterministic
@@ -302,7 +368,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(actual, '1 files  2 suites   3s :stopwatch:\n'
                                  '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
                                  '\n'
-                                 'results for commit commit\n'
+                                 'Results for commit commit.\n'
                                  '\n'
                                  '[test-results]:data:application/gzip;base64,'
                                  'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
@@ -326,7 +392,7 @@ class PublishTest(unittest.TestCase):
                                  '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
                                  '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
                                  '\n'
-                                 'results for commit commit\n'
+                                 'Results for commit commit.\n'
                                  '\n'
                                  '[test-results]:data:application/gzip;base64,'
                                  'H4sIAAAAAAAC/03MwQqDMBAE0F+RnD24aiv6M0VShaVqZJOciv'
@@ -350,7 +416,7 @@ class PublishTest(unittest.TestCase):
                                  '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
                                  '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
                                  '\n'
-                                 'results for commit commit\n'
+                                 'Results for commit commit.\n'
                                  '\n'
                                  '[test-results]:data:application/gzip;base64,'
                                  'H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
@@ -379,7 +445,7 @@ class PublishTest(unittest.TestCase):
                                  '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
                                  '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
                                  '\n'
-                                 'results for commit 12345678 ± comparison against type commit 01234567\n'
+                                 'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
                                  '\n'
                                  '[test-results]:data:application/gzip;base64,'
                                  'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
@@ -738,7 +804,7 @@ class PublishTest(unittest.TestCase):
                               '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :x:\n'
                               '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :x:\n'
                               '\n'
-                              'results for commit example\n'))
+                              'Results for commit example.\n'))
 
     def test_empty_file(self):
         parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
@@ -748,7 +814,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
                               '\n'
-                              'results for commit a commit\n'))
+                              'Results for commit a commit.\n'))
 
 
 if __name__ == '__main__':

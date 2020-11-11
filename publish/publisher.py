@@ -33,8 +33,12 @@ class Publisher:
 
     _logger = logging.getLogger('publish.publisher')
 
-    from github import Github, PullRequest
-    from githubext import Repository, Commit, IssueComment
+    from github import Github
+    from github.PullRequest import PullRequest
+    from githubext.CheckRun import CheckRun
+    from githubext.Commit import Commit
+    from githubext.IssueComment import IssueComment
+    from githubext.Repository import Repository
 
     # to prevent githubext import to be auto-removed
     if getattr(Repository, 'create_check_run') is None:
@@ -52,12 +56,12 @@ class Publisher:
 
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults):
         self._logger.info('publishing results for commit {}'.format(self._settings.commit))
-        self.publish_check(stats, cases)
+        check_run = self.publish_check(stats, cases)
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -131,7 +135,7 @@ class Publisher:
             self._logger.debug('stats: {}'.format(stats))
             return stats
 
-    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> None:
+    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
@@ -139,6 +143,7 @@ class Publisher:
         stats_with_delta = get_stats_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
+        check_run = None
         all_annotations = get_annotations(cases, self._settings.report_individual_runs)
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
@@ -151,23 +156,31 @@ class Publisher:
             )
 
             self._logger.info('creating check')
-            self._repo.create_check_run(name=self._settings.check_name,
-                                        head_sha=self._settings.commit,
-                                        status='completed',
-                                        conclusion='success',
-                                        output=output)
+            check_run = self._repo.create_check_run(name=self._settings.check_name,
+                                                    head_sha=self._settings.commit,
+                                                    status='completed',
+                                                    conclusion='success',
+                                                    output=output)
+        return check_run
 
-    def publish_comment(self, title: str, stats: UnitTestRunResults, pull) -> None:
+    def publish_comment(self,
+                        title: str,
+                        stats: UnitTestRunResults,
+                        pull_request: PullRequest,
+                        check_run: Optional[CheckRun] = None) -> None:
         # compare them with earlier stats
-        base_commit_sha = pull.base.sha if pull else None
+        base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
         base_stats = self.get_stats_from_commit(base_commit_sha)
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         self._logger.info('creating comment')
-        pull.create_issue_comment('## {}\n{}'.format(title, get_long_summary_md(stats_with_delta)))
-        return pull
+        details_url = check_run.html_url if check_run else None
+        pull_request.create_issue_comment(
+            '## {}\n{}'.format(title, get_long_summary_md(stats_with_delta, details_url))
+        )
+        return pull_request
 
     def get_pull_request_comments(self, pull: PullRequest) -> List[Mapping[str, Any]]:
         query = dict(
@@ -217,7 +230,7 @@ class Publisher:
                      if comment.get('author', {}).get('login') == 'github-actions'
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
                      and comment.get('body', '').startswith('## {}\n'.format(self._settings.comment_title))
-                     and '\nresults for commit ' in comment.get('body')])
+                     and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])
 
     def hide_orphaned_commit_comments(self, pull: PullRequest) -> None:
         # rewriting history of branch removes commits
@@ -233,7 +246,7 @@ class Publisher:
         comments = self.get_action_comments(comments)
 
         # get comment node ids and their commit sha (possibly abbreviated)
-        matches = [(comment.get('id'), re.search(r'^results for commit ([0-9a-f]{8,40})(?:\s.*)?$', comment.get('body'), re.MULTILINE))
+        matches = [(comment.get('id'), re.search(r'^[Rr]esults for commit ([0-9a-f]{8,40})\.(?:\s.*)?$', comment.get('body'), re.MULTILINE))
                    for comment in comments]
         comment_commits = [(node_id, match.group(1))
                            for node_id, match in matches
