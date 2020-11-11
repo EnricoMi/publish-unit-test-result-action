@@ -598,7 +598,7 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh)
 
-        stats = self.stats.to_dict()
+        stats = dict(self.stats.to_dict())
         stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)
         stats = UnitTestRunResults.from_dict(stats)
         publisher.publish_comment(settings.comment_title, stats, pr, cr)

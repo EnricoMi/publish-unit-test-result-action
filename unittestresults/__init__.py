@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Optional, List, Mapping, Any, Union, Dict
+from typing import Optional, List, Mapping, Any, Union
 
 from dataclasses import dataclass
 
@@ -123,7 +123,7 @@ class UnitTestRunResults:
 
     commit: str
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> Mapping[str, Any]:
         return dict(
             files=self.files,
             suites=self.suites,
