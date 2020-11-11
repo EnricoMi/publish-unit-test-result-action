@@ -13,6 +13,9 @@ COPY requirements.txt /action/
 RUN pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --force --no-cache-dir -r /action/requirements.txt
 
 COPY githubext /action/githubext
+COPY junit /action/junit
+COPY publish /action/publish
+COPY unittestresults /action/unittestresults
 COPY publish_unit_test_results.py /action/
 
 ENTRYPOINT ["python", "/action/publish_unit_test_results.py"]
