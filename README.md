@@ -15,7 +15,8 @@ Each failing test will produce an annotation with failure details:
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
-A comment is posted on the pull request page of that commit, if one exists:
+A comment is posted on the pull request page of that commit, if one exists.
+In presence of failures or errors, the comment links to the respective check page with failure details:
 
 ![...](github-pull-request-comment.png)
 
@@ -34,14 +35,9 @@ The symbols have the following meaning:
 |:----:|-------|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png" height="20"/>|A successful test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png" height="20"/>|A skipped test or run|
-|<img src="https://github.githubassets.com/images/icons/emoji/unicode/2716.png" height="20"/>|A failed test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/274c.png" height="20"/>|A failed test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
-
-When this action has been run on master, or earlier commits in the same branch, then this action
-also compares unit test results across commits. This allows seeing changes in the number of tests and runs introduced by a given commit or pull request:
-
-![...](github-pull-request-comment-delta.png)
 
 ## Using this Action
 
