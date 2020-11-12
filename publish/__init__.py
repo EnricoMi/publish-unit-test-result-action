@@ -220,7 +220,8 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     return md
 
 
-def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
+def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
+                        details_url: Optional[str] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
     hide_runs = stats.runs == stats.tests and \
                 stats.runs_succ == stats.tests_succ and \
@@ -267,21 +268,26 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
         runs_error_part=runs_error_part,
     )
 
-    commit_line = '\nresults for commit {commit}{compare}\n'.format(
+    details_on = (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
+                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+    details_line = '\nFor more details on these {details_on}, see [this check]({url}).\n'.format(
+        details_on=' and '.join(details_on),
+        url=details_url
+    )
+
+    commit_line = '\nResults for commit {commit}.{compare}\n'.format(
         commit=as_short_commit(commit),
-        compare=' ± comparison against {reference_type} commit {reference_commit}'.format(
+        compare=' ± Comparison against {reference_type} commit {reference_commit}.'.format(
             reference_type=reference_type,
             reference_commit=as_short_commit(reference_commit)
         ) if reference_type and reference_commit else ''
     )
 
-    md = ('{misc}'
-          '{tests}'
-          '{runs}'
-          '{commit}'.format(
+    md = ('{misc}{tests}{runs}{details}{commit}'.format(
         misc=misc_line,
         tests=tests_line,
         runs=runs_line if not hide_runs else '',
+        details=details_line if details_url and details_on else '',
         commit=commit_line
     ))
     return md
@@ -393,5 +399,3 @@ def get_annotations(case_results: UnitTestCaseResults, report_individual_runs: b
         for message in (messages[key][state] if report_individual_runs else
                         [list(messages[key][state].keys())[0]])
     ]
-
-
