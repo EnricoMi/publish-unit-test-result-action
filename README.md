@@ -41,8 +41,8 @@ The symbols have the following meaning:
 
 ## Using this Action
 
-You can add this action to your GitHub workflow on `push`, `pull_request`, `pull_request_target` and 
-`workflow_dispatch` events and configure it as follows:
+You can add this action to your GitHub workflow on `push`, `pull_request`, `pull_request_target`, 
+`workflow_dispatch` and `schedule` events and configure it as follows:
 
 ```yaml
 - name: Publish Unit Test Results
