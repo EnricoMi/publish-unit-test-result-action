@@ -41,8 +41,7 @@ The symbols have the following meaning:
 
 ## Using this Action
 
-You can add this action to your GitHub workflow on `push`, `pull_request`, `pull_request_target`, 
-`workflow_dispatch` and `schedule` events and configure it as follows:
+You can add this action to your GitHub workflow as follows:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -95,13 +94,13 @@ in other repositories.
 When someone forks your repository, the `push` event will run in the fork repository and cannot post
 the results to a pull request in your repo. For that to work, you need to also trigger the workflow
 on the `pull_request_target` event, which is [equivalent](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
-to the `pull_request` event, except it runs in the target repository of the pull request:
+to the `pull_request` event, except that it runs in the target repository of the pull request:
 
 ```yaml
 on: [push, pull_request_target]
 ```
 
-However, both events would trigger on pull request that merges within the same repository.
+However, both events would trigger on a pull request that merges within the same repository.
 This can be avoided by the following job `if` clause:
 
 ```yaml
@@ -112,8 +111,9 @@ jobs:
       github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 ```
 
-Now your action runs in forked repositories on `push`, and inside your repo
-for pull requests from forks into your repository, which is able to publish to your pull request.
+Now your action runs on `push` events in your repository, and inside your repo
+for pull requests from forks into your repository, which is able to publish
+comments to your pull request.
 
 ## Use with matrix strategy
 
