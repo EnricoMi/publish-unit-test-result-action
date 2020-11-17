@@ -6,6 +6,7 @@ from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
 class Settings:
     def __init__(self,
                  token,
+                 api_url,
                  event,
                  repo,
                  commit,
@@ -17,6 +18,7 @@ class Settings:
                  report_individual_runs,
                  dedup_classes_by_file_name):
         self.token = token
+        self.api_url = api_url
         self.event = event
         self.repo = repo
         self.commit = commit
@@ -73,7 +75,7 @@ class Publisher:
         else:
             self._logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
-    def get_pull(self, commit: str) -> PullRequest:
+    def get_pull(self, commit: str) -> Optional[PullRequest]:
         issues = self._gh.search_issues('type:pr {}'.format(commit))
         self._logger.debug('found {} pull requests for commit {}'.format(issues.totalCount, commit))
 
@@ -198,7 +200,7 @@ class Publisher:
         )
 
         headers, data = self._req.requestJsonAndCheck(
-            "POST", 'https://api.github.com/graphql', input=query
+            "POST", '{}/graphql'.format(self._settings.api_url), input=query
         )
 
         return data \
@@ -217,7 +219,7 @@ class Publisher:
                   r'}'
         )
         headers, data = self._req.requestJsonAndCheck(
-            "POST", 'https://api.github.com/graphql', input=input
+            "POST", '{}/graphql'.format(self._settings.api_url), input=input
         )
         return data \
             .get('data', {}) \
