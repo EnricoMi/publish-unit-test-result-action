@@ -1,7 +1,6 @@
 import os
 import unittest
 from contextlib import contextmanager
-from github import MainClass
 
 from publish_unit_test_results import get_commit_sha
 
