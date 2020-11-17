@@ -41,8 +41,7 @@ The symbols have the following meaning:
 
 ## Using this Action
 
-You can add this action to your GitHub workflow on `push`, `pull_request`, `pull_request_target`, 
-`workflow_dispatch` and `schedule` events and configure it as follows:
+You can add this action to your GitHub workflow as follows:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -50,23 +49,36 @@ You can add this action to your GitHub workflow on `push`, `pull_request`, `pull
   if: always()
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
-    check_name: Unit Test Results
-    comment_title: Unit Test Statistics
-    hide_comments: all but latest
-    comment_on_pr: true
     files: test-results/**/*.xml
-    report_individual_runs: true
-    deduplicate_classes_by_file_name: false
 ```
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
+### Configuration
+
+The action publishes results to the commit that it has been triggered on.
+Depending on the [workflow event](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push)
+this can be different kinds of commits.
+See [Github Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows)
+for which commit the `GITHUB_SHA` environment variable actually refers to.
+
+Pull request related events refer to the merge commit, which is not your pushed commit and is not part of the commit history shown
+at Github. Therefore, the actual pushed commit SHA is used, provided by the [event payload](https://developer.github.com/webhooks/event-payloads/#pull_request).
+
+If you need the action to use a different commit SHA than those described above,
+you can set it via the `commit` option:
+
+```
+with:
+  commit: ${{ your-commit-sha }}
+```
+
 The job name in the GitHub Actions section that provides the test results can be configured via the
-`check_name` variable. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
+`check_name` option. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
 
 Each run of the action creates a new comment on the respective pull request with unit test results.
 The title of the comment can be configured via the `comment_title` variable.
-It is optional and defaults to the `check_name` variable.
+It is optional and defaults to the `check_name` option.
 
 The `hide_comments` option allows hiding earlier comments to reduce the volume of comments.
 The default is `all but latest`, which hides all earlier comments of the action.
@@ -86,6 +98,20 @@ If multiple runs exist for a test, only the first failure is reported, unless `r
 In the rare situation where a project contains test class duplicates with the same name in different files,
 you may want to set `deduplicate_classes_by_file_name` to `true`.
 
+See this complete list of configuration options for reference:
+```
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    commit: ${{ your-commit-sha }}
+    check_name: Unit Test Results
+    comment_title: Unit Test Statistics
+    hide_comments: all but latest
+    comment_on_pr: true
+    files: test-results/**/*.xml
+    report_individual_runs: true
+    deduplicate_classes_by_file_name: false
+```
+
 ## Support fork repositories
 
 This action posts a comment with test results to all pull requests that contain the commit and
@@ -95,13 +121,13 @@ in other repositories.
 When someone forks your repository, the `push` event will run in the fork repository and cannot post
 the results to a pull request in your repo. For that to work, you need to also trigger the workflow
 on the `pull_request_target` event, which is [equivalent](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
-to the `pull_request` event, except it runs in the target repository of the pull request:
+to the `pull_request` event, except that it runs in the target repository of the pull request:
 
 ```yaml
 on: [push, pull_request_target]
 ```
 
-However, both events would trigger on pull request that merges within the same repository.
+However, both events would trigger on a pull request that merges within the same repository.
 This can be avoided by the following job `if` clause:
 
 ```yaml
@@ -112,8 +138,9 @@ jobs:
       github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 ```
 
-Now your action runs in forked repositories on `push`, and inside your repo
-for pull requests from forks into your repository, which is able to publish to your pull request.
+Now your action runs on `push` events in your repository, and inside your repo
+for pull requests from forks into your repository, which is able to publish
+comments to your pull request.
 
 ## Use with matrix strategy
 

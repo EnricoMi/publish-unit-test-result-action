@@ -35,12 +35,12 @@ def main(settings: Settings) -> None:
 def get_commit_sha(event: dict, event_name: str):
     logger.debug("action triggered by '{}' event".format(event_name))
 
-    if event_name in ['push', 'workflow_dispatch', 'schedule']:
-        return os.environ.get('GITHUB_SHA')
-    elif event_name in ['pull_request', 'pull_request_target']:
+    # https://developer.github.com/webhooks/event-payloads/
+    if event_name.startswith('pull_request'):
         return event.get('pull_request', {}).get('head', {}).get('sha')
 
-    raise RuntimeError("event '{}' is not supported".format(event))
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
+    return os.environ.get('GITHUB_SHA')
 
 
 if __name__ == "__main__":
