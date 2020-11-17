@@ -4,7 +4,7 @@ import os
 import pathlib
 from typing import List, Optional
 
-from github import Github
+import github
 
 from junit import parse_junit_xml_files
 from publish import hide_comments_modes
@@ -28,7 +28,7 @@ def main(settings: Settings) -> None:
     stats = get_stats(results)
 
     # publish the delta stats
-    gh = Github(settings.token)
+    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
     Publisher(settings, gh).publish(stats, results.case_results)
 
 
@@ -64,10 +64,12 @@ if __name__ == "__main__":
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'r') as f:
         event = json.load(f)
+    api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     settings = Settings(
         token=get_var('GITHUB_TOKEN'),
+        api_url=api_url,
         event=event,
         repo=get_var('GITHUB_REPOSITORY'),
         commit=get_var('COMMIT') or get_commit_sha(event, event_name),
