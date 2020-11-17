@@ -45,7 +45,7 @@ You can add this action to your GitHub workflow as follows:
 
 ```yaml
 - name: Publish Unit Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1.4
+  uses: EnricoMi/publish-unit-test-result-action@v1.5
   if: always()
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -204,7 +204,7 @@ jobs:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1.4
+        uses: EnricoMi/publish-unit-test-result-action@v1.5
         with:
           check_name: Unit Test Results
           github_token: ${{ secrets.GITHUB_TOKEN }}
