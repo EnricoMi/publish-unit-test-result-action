@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.6-alpine
 
 LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
 LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
