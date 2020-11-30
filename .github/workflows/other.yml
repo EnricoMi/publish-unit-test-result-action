@@ -1,0 +1,17 @@
+name: Other Workflow
+
+on: [push]
+
+jobs:
+  build-and-test:
+    name: Other Workflow
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+
+    - name: Some Python
+      run: python -c "print('hello')"
