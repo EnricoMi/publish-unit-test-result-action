@@ -76,7 +76,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: EnricoMi/publish-unit-test-result-action
+          images: ghcr.io/EnricoMi/publish-unit-test-result-action
           tag-sha: true
           tag-semver: |
             {{raw}}
