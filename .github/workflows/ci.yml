@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on: [push, pull_request_target]
 
@@ -68,8 +68,7 @@ jobs:
     needs: build-and-test
     if: >
       github.event_name == 'push' &&
-      github.repository_owner == 'EnricoMi' &&
-      (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/master'))
+      github.repository_owner == 'EnricoMi'
 
     runs-on: ubuntu-latest
     steps:
