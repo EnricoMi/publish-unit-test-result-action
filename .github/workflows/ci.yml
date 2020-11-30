@@ -62,3 +62,47 @@ jobs:
 
     - name: Run Buildx
       run: docker buildx build --output "type=image,push=false" .
+
+  deploy:
+    name: Deploy to GitHub Container Registry
+    needs: build-and-test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: enricomi/publish-unit-test-result-action
+          tag-sha: true
+          tag-semver: |
+            {{raw}}
+            v{{major}}.{{minor}}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          # use path context here (context + file) as GIT context is broken:
+          # https://github.com/docker/build-push-action/issues/160
+          context: .
+          file: ./Dockerfile
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          pull: true
+          push: true
