@@ -68,7 +68,8 @@ jobs:
     needs: build-and-test
     if: >
       github.event_name == 'push' &&
-      github.repository_owner == 'EnricoMi'
+      github.repository_owner == 'EnricoMi' &&
+      (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/master'))
 
     runs-on: ubuntu-latest
     steps:
@@ -84,6 +85,7 @@ jobs:
           tag-semver: |
             {{raw}}
             v{{major}}.{{minor}}
+            v{{major}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
