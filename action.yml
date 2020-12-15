@@ -12,6 +12,9 @@ inputs:
     description: 'Name of the created check run'
     required: false
     default: 'Unit Test Results'
+  comment_title:
+    description: 'Title of PR comments, defaults to value of check_name input'
+    required: false
   files:
     description: 'File pattern of test result files'
     required: true
