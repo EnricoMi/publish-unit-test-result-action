@@ -278,11 +278,13 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         runs_error_part=runs_error_part,
     )
 
-    details_on = (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
-                 (['errors'] if get_magnitude(stats.tests_error) > 0 else []) + \
-                 (['parsing errors'] if errors > 0 else [])
+    details_on = (['parsing errors'] if errors > 0 else []) + \
+                 (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
+                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+    details_on = details_on[0:-2] + [' and '.join(details_on[-2:])] if details_on else []
+
     details_line = '\nFor more details on these {details_on}, see [this check]({url}).\n'.format(
-        details_on=' and '.join(details_on),
+        details_on=', '.join(details_on),
         url=details_url
     )
 

@@ -329,24 +329,41 @@ class PublishTest(unittest.TestCase):
             'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_details_url_with_fails_and_errors(self):
+    def test_get_long_summary_md_with_details_url_with_parse_errors(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=2, errors=errors, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('2 files  1 errors  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+            '\n'
+            'For more details on these parsing errors, see [this check](https://details.url/).\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_details_url_with_fails_and_errors_and_parse_errors(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, errors=errors, suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  2 suites   3s :stopwatch:\n'
+        ), ('1 files  1 errors  2 suites   3s :stopwatch:\n'
             '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
             '\n'
-            'For more details on these failures and errors, see [this check](https://details.url/).\n'
+            'For more details on these parsing errors, failures and errors, see [this check](https://details.url/).\n'
             '\n'
             'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_details_url_without_fails_or_errors(self):
+    def test_get_long_summary_md_with_details_url_without_fails_or_errors_or_parse_errors(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3,
