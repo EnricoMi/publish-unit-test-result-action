@@ -16,7 +16,8 @@ logger = logging.getLogger('publish-unit-test-results')
 
 def main(settings: Settings) -> None:
     files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
-    logger.info('reading {}: {}'.format(settings.files_glob, list(files)))
+    logger.info('reading {}'.format(settings.files_glob))
+    logger.debug('reading {}'.format(list(files)))
 
     # get the unit test results
     parsed = parse_junit_xml_files(files).with_commit(settings.commit)
