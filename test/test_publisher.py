@@ -5,8 +5,11 @@ from github import Github
 
 from publish import *
 from publish.publisher import Publisher, Settings
-from unittestresults import UnitTestCase
+from unittestresults import UnitTestCase, ParseError
 from collections import Collection
+
+
+errors = [ParseError('file', 'error', 1, 2)]
 
 
 class TestPublisher(unittest.TestCase):
@@ -50,7 +53,7 @@ class TestPublisher(unittest.TestCase):
 
     stats = UnitTestRunResults(
         files=1,
-        errors={},
+        errors=[],
         suites=2,
         duration=3,
 
@@ -144,7 +147,7 @@ class TestPublisher(unittest.TestCase):
 
     base_stats = UnitTestRunResults(
         files=1,
-        errors={'file': 'error'},
+        errors=[],
         suites=2,
         duration=3,
 
@@ -393,13 +396,19 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_check_without_base_stats(self):
+        self.do_test_publish_check_without_base_stats([])
+
+    def test_publish_check_without_base_stats_with_errors(self):
+        self.do_test_publish_check_without_base_stats(errors)
+
+    def do_test_publish_check_without_base_stats(self, errors: List[ParseError]):
         settings = self.create_settings(before=None)
         gh, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         create_check_run_kwargs = dict(
@@ -409,7 +418,7 @@ class TestPublisher(unittest.TestCase):
             conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
+                'summary': '\u205f\u20041 files\u2004\u2003{errors}2 suites\u2004\u2003\u20023s :stopwatch:\n'
                            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
                            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
                            '\n'
@@ -419,7 +428,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
@@ -433,6 +442,12 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
 
     def test_publish_check_with_base_stats(self):
+        self.do_test_publish_check_with_base_stats([])
+
+    def test_publish_check_with_base_stats_with_errors(self):
+        self.do_test_publish_check_with_base_stats(errors)
+
+    def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         base_commit = 'base'
         settings = self.create_settings(before=base_commit)
         gh, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
@@ -440,7 +455,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(base_commit)
         create_check_run_kwargs = dict(
@@ -450,7 +465,7 @@ class TestPublisher(unittest.TestCase):
             conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u2003{errors}2 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
                            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
                            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
                            '\n'
@@ -460,7 +475,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}

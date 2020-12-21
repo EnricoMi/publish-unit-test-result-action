@@ -142,6 +142,28 @@ class UnitTestRunResults:
 
     commit: str
 
+    def with_errors(self, errors: List[ParseError]):
+        return UnitTestRunResults(
+            files=self.files,
+            errors=errors,
+            suites=self.suites,
+            duration=self.duration,
+
+            tests=self.tests,
+            tests_succ=self.tests_succ,
+            tests_skip=self.tests_skip,
+            tests_fail=self.tests_fail,
+            tests_error=self.tests_error,
+
+            runs=self.runs,
+            runs_succ=self.runs_succ,
+            runs_skip=self.runs_skip,
+            runs_fail=self.runs_fail,
+            runs_error=self.runs_error,
+
+            commit=self.commit
+        )
+
     def to_dict(self) -> Dict[str, Any]:
         return dict(
             files=self.files,

@@ -7,7 +7,7 @@ from publish import *
 from unittestresults import get_test_results
 from junit import parse_junit_xml_files
 from test import d, n
-from unittestresults import get_stats, UnitTestCase
+from unittestresults import get_stats, UnitTestCase, ParseError
 
 
 @contextlib.contextmanager
@@ -19,6 +19,9 @@ def temp_locale(encoding) -> Any:
     finally:
         locale.setlocale(locale.LC_ALL, old_locale)
     return res
+
+
+errors = [ParseError('file', 'error', 1, 2)]
 
 
 class PublishTest(unittest.TestCase):
@@ -400,7 +403,7 @@ class PublishTest(unittest.TestCase):
                                  'PloLeFzw4RXwTDD2PAGaBIOIE0gBkbjsf+0Z9Y6KBP87IoXzjk'
                                  'qF+51188wBRdP2A3NU1srcAAAA')
 
-    def test_get_long_summary_with_digest_md_with_errors(self):
+    def test_get_long_summary_with_digest_md_with_test_errors(self):
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
@@ -413,6 +416,30 @@ class PublishTest(unittest.TestCase):
             )
 
         self.assertEqual(actual, '1 files    2 suites   3s :stopwatch:\n'
+                                 '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
+                                 '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
+                                 '\n'
+                                 'Results for commit commit.\n'
+                                 '\n'
+                                 '[test-results]:data:application/gzip;base64,'
+                                 'H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
+                                 'x3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr'
+                                 '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
+                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
+
+    def test_get_long_summary_with_digest_md_with_parse_errors(self):
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunResults(
+                    files=1, errors=errors, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    commit='commit'
+                )
+            )
+
+        self.assertEqual(actual, '1 files    1 errors    2 suites   3s :stopwatch:\n'
                                  '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
                                  '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
                                  '\n'
@@ -442,6 +469,35 @@ class PublishTest(unittest.TestCase):
             )
 
         self.assertEqual(actual, '1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
+                                 '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
+                                 '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
+                                 '\n'
+                                 'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
+                                 '\n'
+                                 '[test-results]:data:application/gzip;base64,'
+                                 'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
+                                 'juzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0'
+                                 'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
+                                 'K6buousrLZAAAA')
+
+    def test_get_long_summary_with_digest_md_with_delta_and_parse_errors(self):
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunDeltaResults(
+                    files=n(1, 2), errors=errors, suites=n(2, -3), duration=d(3, 4),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
+                ), UnitTestRunResults(
+                    files=1, errors=[], suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    commit='commit'
+                )
+            )
+
+        self.assertEqual(actual, '1 files  +  2    1 errors    2 suites   - 3   3s :stopwatch: +4s\n'
                                  '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
                                  '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
                                  '\n'
@@ -812,6 +868,16 @@ class PublishTest(unittest.TestCase):
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
+                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
+                              '\n'
+                              'Results for commit a commit.\n'))
+
+    def test_non_parsable_file(self):
+        parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        md = get_long_summary_md(stats)
+        self.assertEqual(md, ('1 files  1 errors  0 suites   0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
                               '\n'
                               'Results for commit a commit.\n'))
