@@ -1,11 +1,11 @@
 import unittest
-
-from unittestresults import get_test_results, get_stats, get_stats_delta, \
-    ParsedUnitTestResultsWithCommit, UnitTestCase, UnitTestResults, UnitTestCaseResults, \
-    UnitTestRunResults, UnitTestRunDeltaResults, ParseError
 from xml.etree.ElementTree import ParseError as XmlParseError
-from test import d, n
 
+from test import d, n
+from unittestresults import get_test_results, get_stats, get_stats_delta, \
+    ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
+    UnitTestCase, UnitTestResults, UnitTestCaseResults, \
+    UnitTestRunResults, UnitTestRunDeltaResults, ParseError
 
 errors = [ParseError('file', 'error', None, None)]
 
@@ -31,6 +31,39 @@ class TestUnitTestResults(unittest.TestCase):
         actual = ParseError.from_exception('file', ValueError('error'))
         expected = ParseError('file', 'error', None, None)
         self.assertEqual(expected, actual)
+
+    def test_parsed_unit_test_results_with_commit(self):
+        self.assertEqual(
+            ParsedUnitTestResultsWithCommit(
+                files=1,
+                errors=[ParseError('file', 'message', 1, 2)],
+                suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+                cases=[
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', time=2),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', time=3),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', time=4),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', message='message5', content='content5', time=5),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', time=6),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', time=7),
+                ],
+                commit='commit sha'
+            ),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError('file', 'message', 1, 2)],
+                suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+                cases=[
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', time=2),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', time=3),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', time=4),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', message='message5', content='content5', time=5),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', time=6),
+                    UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', time=7),
+                ]
+            ).with_commit('commit sha')
+        )
 
     def test_unit_test_run_results_to_dict(self):
         actual = UnitTestRunResults(
