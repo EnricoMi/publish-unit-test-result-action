@@ -149,16 +149,7 @@ class Publisher:
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         check_run = None
-        all_annotations = get_annotations(cases, self._settings.report_individual_runs)
-        #error_annotations = [(error.msg, (line, col) = error.position)
-        #                     for error in stats.errors
-        #                     if isinstance(error, ParseError)]
-        #error_annotations = [(error.strerror, error.errno)
-        #                     for error in stats.errors
-        #                     if isinstance(error, FileNotFoundError)]
-        #error_annotations = [str(error)
-        #                     for error in stats.errors
-        #                     if isinstance(error, BaseException)]
+        all_annotations = get_annotations(cases, stats.errors, self._settings.report_individual_runs)
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]

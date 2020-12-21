@@ -9,7 +9,7 @@ from typing import List, Any, Union, Optional, Tuple, Mapping
 from dataclasses import dataclass
 
 from unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
-    UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults
+    UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 
 class CaseMessages(defaultdict):
@@ -338,6 +338,8 @@ class Annotation:
     path: str
     start_line: int
     end_line: int
+    start_column: Optional[int]
+    end_column: Optional[int]
     annotation_level: str
     message: str
     title: str
@@ -345,14 +347,18 @@ class Annotation:
 
     def to_dict(self) -> Mapping[str, Any]:
         dictionary = self.__dict__.copy()
+        if not dictionary.get('start_column'):
+            del dictionary['start_column']
+        if not dictionary.get('end_column'):
+            del dictionary['end_column']
         if not dictionary.get('raw_details'):
             del dictionary['raw_details']
         return dictionary
 
 
-def get_annotation(messages: CaseMessages,
-                   key: str, state: str, message: Optional[str],
-                   report_individual_runs: bool) -> Annotation:
+def get_case_annotation(messages: CaseMessages,
+                        key: str, state: str, message: Optional[str],
+                        report_individual_runs: bool) -> Annotation:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
                      [case
@@ -396,6 +402,8 @@ def get_annotation(messages: CaseMessages,
         path=test_file or class_name or '/',
         start_line=line,
         end_line=line,
+        start_column=None,
+        end_column=None,
         annotation_level=level,
         message='\n'.join(same_result_files),
         title=title,
@@ -403,12 +411,32 @@ def get_annotation(messages: CaseMessages,
     )
 
 
-def get_annotations(case_results: UnitTestCaseResults, report_individual_runs: bool) -> List[Annotation]:
+def get_error_annotation(error: ParseError) -> Annotation:
+    return Annotation(
+        path=error.file,
+        start_line=error.line or 0,
+        end_line=error.line or 0,
+        start_column=error.column,
+        end_column=error.column,
+        annotation_level='failure',
+        message=error.message,
+        title=f'Error processing result file',
+        raw_details=None
+    )
+
+
+def get_annotations(case_results: UnitTestCaseResults,
+                    parse_errors: List[ParseError],
+                    report_individual_runs: bool) -> List[Annotation]:
     messages = get_case_messages(case_results)
-    return [
-        get_annotation(messages, key, state, message, report_individual_runs)
+    case_annotations = [
+        get_case_annotation(messages, key, state, message, report_individual_runs)
         for key in messages
         for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else
                         [list(messages[key][state].keys())[0]])
     ]
+
+    error_annotations = [get_error_annotation(error) for error in parse_errors]
+
+    return error_annotations + case_annotations
