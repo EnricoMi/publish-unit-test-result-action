@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Optional, List, Mapping, Any, Union
+from typing import Optional, List, Mapping, Any, Union, Dict
 
 from dataclasses import dataclass
 
@@ -27,6 +27,7 @@ class UnitTestCaseResults(defaultdict):
 @dataclass(frozen=True)
 class ParsedUnitTestResults:
     files: int
+    errors: Mapping[str, str]
     suites: int
     suite_tests: int
     suite_skipped: int
@@ -38,6 +39,7 @@ class ParsedUnitTestResults:
     def with_commit(self, commit: str) -> 'ParsedUnitTestResultsWithCommit':
         return ParsedUnitTestResultsWithCommit(
             self.files,
+            self.errors,
             self.suites,
             self.suite_tests,
             self.suite_skipped,
@@ -65,6 +67,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
                    tests_errors: int) -> 'UnitTestResults':
         return UnitTestResults(
             files=self.files,
+            errors=self.errors,
             suites=self.suites,
             suite_tests=self.suite_tests,
             suite_skipped=self.suite_skipped,
@@ -106,6 +109,7 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
 @dataclass(frozen=True)
 class UnitTestRunResults:
     files: int
+    errors: Mapping[str, str]
     suites: int
     duration: int
 
@@ -123,9 +127,10 @@ class UnitTestRunResults:
 
     commit: str
 
-    def to_dict(self) -> Mapping[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         return dict(
             files=self.files,
+            errors=self.errors,
             suites=self.suites,
             duration=self.duration,
 
@@ -148,6 +153,7 @@ class UnitTestRunResults:
     def from_dict(values: Mapping[str, Any]) -> 'UnitTestRunResults':
         return UnitTestRunResults(
             files=values.get('files'),
+            errors={},
             suites=values.get('suites'),
             duration=values.get('duration'),
 
@@ -256,6 +262,7 @@ def get_stats(test_results: UnitTestResults) -> UnitTestRunResults:
 
     return UnitTestRunResults(
         files=test_results.files,
+        errors=test_results.errors,
         suites=test_results.suites,
         duration=test_results.suite_time,
 

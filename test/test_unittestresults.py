@@ -10,13 +10,13 @@ class TestUnitTestResults(unittest.TestCase):
 
     def test_unit_test_run_results_to_dict(self):
         actual = UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors={'file': 'error'}, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ).to_dict()
         expected = dict(
-            files=1, suites=2, duration=3,
+            files=1, errors={'file': 'error'}, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -31,7 +31,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ))
         expected = UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors={}, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -41,11 +41,13 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_empty_cases(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=0,
+            errors={},
             suites=0, suite_tests=0, suite_skipped=0, suite_failures=0, suite_errors=0, suite_time=0,
             cases=[],
             commit='commit'
         ), False), UnitTestResults(
             files=0,
+            errors={},
             suites=0, suite_tests=0, suite_skipped=0, suite_failures=0, suite_errors=0, suite_time=0,
             cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results=UnitTestCaseResults(),
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
@@ -55,6 +57,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -68,6 +71,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
             case_results=UnitTestCaseResults([
@@ -86,6 +90,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_multiple_runs(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -108,6 +113,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -124,6 +130,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_duplicate_class_names(self):
         with_duplicates = ParsedUnitTestResultsWithCommit(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -148,6 +155,7 @@ class TestUnitTestResults(unittest.TestCase):
 
         self.assertEqual(get_test_results(with_duplicates, False), UnitTestResults(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -163,6 +171,7 @@ class TestUnitTestResults(unittest.TestCase):
 
         self.assertEqual(get_test_results(with_duplicates, True), UnitTestResults(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -184,6 +193,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_some_nones(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -194,6 +204,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
+            errors={},
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=4, cases_skipped=2, cases_failures=1, cases_errors=0, cases_time=3,
             case_results=UnitTestCaseResults([
@@ -207,6 +218,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_stats(self):
         self.assertEqual(get_stats(UnitTestResults(
             files=1,
+            errors={'file': 'error'},
 
             suites=2,
             suite_tests=20,
@@ -230,6 +242,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         )), UnitTestRunResults(
             files=1,
+            errors={'file': 'error'},
             suites=2,
             duration=3,
 
@@ -251,6 +264,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_stats_delta(self):
         self.assertEqual(get_stats_delta(UnitTestRunResults(
             files=1,
+            errors={},
             suites=2,
             duration=3,
 
@@ -269,6 +283,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), UnitTestRunResults(
             files=3,
+            errors={},
             suites=5,
             duration=7,
 

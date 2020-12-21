@@ -50,6 +50,7 @@ class TestPublisher(unittest.TestCase):
 
     stats = UnitTestRunResults(
         files=1,
+        errors={},
         suites=2,
         duration=3,
 
@@ -143,6 +144,7 @@ class TestPublisher(unittest.TestCase):
 
     base_stats = UnitTestRunResults(
         files=1,
+        errors={'file': 'error'},
         suites=2,
         duration=3,
 
@@ -346,8 +348,17 @@ class TestPublisher(unittest.TestCase):
         publisher = Publisher(settings, gh)
 
         actual = publisher.get_stats_from_commit(commit_sha)
+        actual_dict = None
+        if actual is not None:
+            actual_dict = actual.to_dict()
+            del actual_dict['errors']
 
-        self.assertEqual(expected, actual)
+        expected_dict = None
+        if expected is not None:
+            expected_dict = expected.to_dict()
+            del expected_dict['errors']
+
+        self.assertEqual(expected_dict, actual_dict)
         if commit_sha is not None and commit_sha != '0000000000000000000000000000000000000000':
             repo.get_commit.assert_called_once_with(commit_sha)
             if commit is not None:

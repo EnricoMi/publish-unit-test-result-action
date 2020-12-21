@@ -1,14 +1,32 @@
+import logging
 from html import unescape
-from typing import Optional, Iterable
+from typing import Optional, Iterable, Union, Any
 
 from junitparser import *
+from xml.etree.ElementTree import ParseError
 
 from unittestresults import ParsedUnitTestResults, UnitTestCase
+
+logger = logging.getLogger('junit')
 
 
 def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
-    junits = [(result_file, JUnitXml.fromfile(result_file)) for result_file in files]
+    def parse(path: str) -> Union[str, Any]:
+        try:
+            return JUnitXml.fromfile(path)
+        except BaseException as e:
+            logger.exception(f'could not parse file: {path}', exc_info=e)
+            return str(e)
+
+    parsed_files = [(result_file, parse(result_file))
+                            for result_file in files]
+    junits = [(result_file, junit)
+              for result_file, junit in parsed_files
+              if not isinstance(junit, str)]
+    parse_errors = {result_file: exception
+                    for result_file, exception in parsed_files
+                    if isinstance(exception, str)}
 
     suites = [(result_file, suite)
               for result_file, junit in junits
@@ -43,7 +61,8 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
     ]
 
     return ParsedUnitTestResults(
-        files=len(junits),
+        files=len(parsed_files),
+        errors=parse_errors,
         # test state counts from suites
         suites=len(suites),
         suite_tests=suite_tests,
