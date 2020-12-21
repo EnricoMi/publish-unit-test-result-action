@@ -2,6 +2,7 @@ import unittest
 
 import mock
 from github import Github
+from github_action import GithubAction
 
 from publish import *
 from publish.publisher import Publisher, Settings
@@ -80,6 +81,7 @@ class TestPublisher(unittest.TestCase):
                      check_names: List[str] = None):
         gh = mock.MagicMock(Github)
         gh._Github__requester = mock.MagicMock()
+        gha = mock.MagicMock(GithubAction)
         repo = mock.MagicMock()
 
         # have repo.create_check_run return the arguments given to it
@@ -104,7 +106,7 @@ class TestPublisher(unittest.TestCase):
         repo.name = repo_name
         gh.get_repo = mock.Mock(return_value=repo)
 
-        return gh, gh._Github__requester, repo, commit
+        return gh, gha, gh._Github__requester, repo, commit
 
     cases = UnitTestCaseResults([
         ((None, 'class', 'test'), dict(
@@ -295,9 +297,9 @@ class TestPublisher(unittest.TestCase):
                          settings: Settings,
                          search_issues: mock.Mock,
                          expected: Optional[mock.Mock]):
-        gh, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         gh.search_issues = mock.Mock(return_value=search_issues)
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         actual = publisher.get_pull(settings.commit)
 
@@ -347,8 +349,8 @@ class TestPublisher(unittest.TestCase):
                                       digest: Optional[str],
                                       check_names: Optional[List[str]],
                                       expected: Optional[Union[UnitTestRunResults, mock.Mock]]):
-        gh, req, repo, commit = self.create_mocks(commit=commit, digest=digest, check_names=check_names)
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks(commit=commit, digest=digest, check_names=check_names)
+        publisher = Publisher(settings, gh, gha)
 
         actual = publisher.get_stats_from_commit(commit_sha)
         actual_dict = None
@@ -403,8 +405,8 @@ class TestPublisher(unittest.TestCase):
 
     def do_test_publish_check_without_base_stats(self, errors: List[ParseError]):
         settings = self.create_settings(before=None)
-        gh, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
+        publisher = Publisher(settings, gh, gha)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -451,8 +453,8 @@ class TestPublisher(unittest.TestCase):
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         base_commit = 'base'
         settings = self.create_settings(before=base_commit)
-        gh, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
+        publisher = Publisher(settings, gh, gha)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -493,8 +495,8 @@ class TestPublisher(unittest.TestCase):
     def test_publish_check_with_multiple_annotation_pages(self):
         base_commit = 'base'
         settings = self.create_settings(before=base_commit)
-        gh, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
+        publisher = Publisher(settings, gh, gha)
 
         # generate a lot cases
         cases = UnitTestCaseResults([
@@ -560,9 +562,9 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         publisher.publish_comment(settings.comment_title, self.stats, pr)
 
@@ -579,9 +581,9 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_without_base(self):
         settings = self.create_settings()
 
-        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo)
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         publisher.publish_comment(settings.comment_title, self.stats, pr)
 
@@ -599,10 +601,10 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
 
@@ -622,10 +624,10 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         stats = dict(self.stats.to_dict())
         stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)
@@ -645,12 +647,12 @@ class TestPublisher(unittest.TestCase):
     def test_get_pull_request_comments(self):
         settings = self.create_settings()
 
-        gh, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
+        gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
         req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'repository': {'pullRequest': {'comments': {'nodes': ['node']}}}}})
         )
         pr = self.create_github_pr(settings.repo, number=1234)
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         response = publisher.get_pull_request_comments(pr)
 
@@ -730,8 +732,8 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_action_comments(self):
         settings = self.create_settings()
-        gh, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks()
+        publisher = Publisher(settings, gh, gha)
 
         expected = [comment
                     for comment in self.comments
@@ -742,8 +744,8 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_action_comments_not_minimized(self):
         settings = self.create_settings()
-        gh, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh)
+        gh, gha, req, repo, commit = self.create_mocks()
+        publisher = Publisher(settings, gh, gha)
 
         expected = [comment
                     for comment in self.comments
@@ -756,11 +758,11 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         comment_node_id = 'node id'
 
-        gh, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
         )
-        publisher = Publisher(settings, gh)
+        publisher = Publisher(settings, gh, gha)
 
         response = publisher.hide_comment(comment_node_id)
 

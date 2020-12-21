@@ -1,7 +1,8 @@
 from publish import *
-from xml.etree.ElementTree import ParseError
+import github_action
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
     get_stats_delta
+from github_action import GithubAction
 
 
 class Settings:
@@ -51,9 +52,10 @@ class Publisher:
     if getattr(IssueComment, 'node_id') is None:
         raise RuntimeError('patching github IssueComment failed')
 
-    def __init__(self, settings: Settings, gh: Github):
+    def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
         self._settings = settings
         self._gh = gh
+        self._gha = gha
         self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
 
@@ -101,7 +103,7 @@ class Publisher:
             self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._settings.repo, commit))
             return None
         if len(pulls) > 1:
-            self._logger.error('found multiple pull requests for commit {}'.format(commit))
+            self._gha.error('found multiple pull requests for commit {}'.format(commit))
             return None
 
         pull = pulls[0]
@@ -114,7 +116,7 @@ class Publisher:
 
         commit = self._repo.get_commit(commit_sha)
         if commit is None:
-            self._logger.error('could not find commit {}'.format(commit_sha))
+            self._gha.error('could not find commit {}'.format(commit_sha))
             return None
 
         runs = commit.get_check_runs()

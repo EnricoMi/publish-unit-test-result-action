@@ -1,44 +1,71 @@
+import io
 import unittest
+from contextlib import contextmanager
 
-import github_action as ga
+from github_action import GithubAction
+
+
+@contextmanager
+def gh_action_test(test: unittest.TestCase, expected: str) -> GithubAction:
+    with io.StringIO() as string:
+        yield GithubAction(file=string)
+        test.assertEqual(expected, string.getvalue())
 
 
 class TestGithubAction(unittest.TestCase):
 
     def test_set_output(self):
-        self.assertEqual('::set-output name=varname::varval', ga.set_output('varname', 'varval'))
+        with gh_action_test(self, '::set-output name=varname::varval') as gha:
+            gha.set_output('varname', 'varval')
 
     def test_add_mask(self):
-        self.assertEqual('::add-mask::the mask', ga.add_mask('the mask'))
+        with gh_action_test(self, '::add-mask::the mask') as gha:
+            gha.add_mask('the mask')
 
     def test_stop_commands(self):
-        self.assertEqual('::stop-commands::the end token', ga.stop_commands('the end token'))
+        with gh_action_test(self, '::stop-commands::the end token') as gha:
+            gha.stop_commands('the end token')
 
     def test_continue_commands(self):
-        self.assertEqual('::the end token::', ga.continue_commands('the end token'))
+        with gh_action_test(self, '::the end token::') as gha:
+            gha.continue_commands('the end token')
 
     def test_save_state(self):
-        self.assertEqual('::save-state name=state-name::state-value', ga.save_state('state-name', 'state-value'))
+        with gh_action_test(self, '::save-state name=state-name::state-value') as gha:
+            gha.save_state('state-name', 'state-value')
 
     def test_group(self):
-        self.assertEqual('::group::group title', ga.group('group title'))
+        with gh_action_test(self, '::group::group title') as gha:
+            gha.group('group title')
 
     def test_group_end(self):
-        self.assertEqual('::endgroup::', ga.group_end())
+        with gh_action_test(self, '::endgroup::') as gha:
+            gha.group_end()
 
     def test_debug(self):
-        self.assertEqual('::debug::the message', ga.debug('the message'))
+        with gh_action_test(self, '::debug::the message') as gha:
+            gha.debug('the message')
 
     def test_warning(self):
-        self.assertEqual('::warning::the message', ga.warning('the message'))
-        self.assertEqual('::warning file=the file::the message', ga.warning('the message', file='the file'))
-        self.assertEqual('::warning line=1::the message', ga.warning('the message', line=1))
-        self.assertEqual('::warning col=2::the message', ga.warning('the message', column=2))
-        self.assertEqual('::warning file=the file,line=1,col=2::the message', ga.warning('the message', file='the file', line=1, column=2))
+        with gh_action_test(self, '::warning::the message') as gha:
+            gha.warning('the message')
+        with gh_action_test(self, '::warning file=the file::the message') as gha:
+            gha.warning('the message', file='the file')
+        with gh_action_test(self, '::warning line=1::the message') as gha:
+            gha.warning('the message', line=1)
+        with gh_action_test(self, '::warning col=2::the message') as gha:
+            gha.warning('the message', column=2)
+        with gh_action_test(self, '::warning file=the file,line=1,col=2::the message') as gha:
+            gha.warning('the message', file='the file', line=1, column=2)
 
     def test_error(self):
-        self.assertEqual('::error::the message', ga.error('the message'))
-        self.assertEqual('::error file=the file::the message', ga.error('the message', file='the file'))
-        self.assertEqual('::error line=1::the message', ga.error('the message', line=1))
-        self.assertEqual('::error col=2::the message', ga.error('the message', column=2))
-        self.assertEqual('::error file=the file,line=1,col=2::the message', ga.error('the message', file='the file', line=1, column=2))
+        with gh_action_test(self, '::error::the message') as gha:
+            gha.error('the message')
+        with gh_action_test(self, '::error file=the file::the message') as gha:
+            gha.error('the message', file='the file')
+        with gh_action_test(self, '::error line=1::the message') as gha:
+            gha.error('the message', line=1)
+        with gh_action_test(self, '::error col=2::the message') as gha:
+            gha.error('the message', column=2)
+        with gh_action_test(self, '::error file=the file,line=1,col=2::the message') as gha:
+            gha.error('the message', file='the file', line=1, column=2)
