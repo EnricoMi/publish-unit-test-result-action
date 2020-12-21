@@ -9,9 +9,17 @@ import github
 from junit import parse_junit_xml_files
 from publish import hide_comments_modes
 from publish.publisher import Publisher, Settings
-from unittestresults import get_test_results, get_stats
+from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
 logger = logging.getLogger('publish-unit-test-results')
+
+
+def get_conclusion(parsed: ParsedUnitTestResults) -> str:
+    if parsed.files == 0:
+        return 'neutral'
+    if len(parsed.errors) > 0:
+        return 'failure'
+    return 'success'
 
 
 def main(settings: Settings) -> None:
@@ -28,8 +36,10 @@ def main(settings: Settings) -> None:
     # turn them into stats
     stats = get_stats(results)
 
+    # derive check run conclusion from files
+    conclusion = get_conclusion(parsed)
+
     # publish the delta stats
-    conclusion = 'success'  #, failure, neutral
     gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
     Publisher(settings, gh).publish(stats, results.case_results, conclusion)
 
