@@ -242,9 +242,11 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
     reference_type = stats.reference_type if is_delta_stats else None
     reference_commit = stats.reference_commit if is_delta_stats else None
 
-    misc_line = '{files} {suites}  {duration}\n'.format(
+    errors = len(stats.errors)
+    misc_line = '{files} {errors}{suites}  {duration}\n'.format(
         files=as_stat_number(stats.files, files_digits, files_delta_digits, 'files '),
-        suites=as_stat_number(stats.suites, success_digits, 0, 'suites '),
+        errors='{} '.format(as_stat_number(errors, success_digits, 0, 'errors ')) if errors > 0 else '',
+        suites=as_stat_number(stats.suites, success_digits if errors == 0 else skip_digits, 0, 'suites '),
         duration=as_stat_duration(stats.duration, ':stopwatch:')
     )
 
@@ -271,7 +273,8 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
     )
 
     details_on = (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
-                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+                 (['errors'] if get_magnitude(stats.tests_error) > 0 else []) + \
+                 (['parsing errors'] if errors > 0 else [])
     details_line = '\nFor more details on these {details_on}, see [this check]({url}).\n'.format(
         details_on=' and '.join(details_on),
         url=details_url

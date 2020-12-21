@@ -181,7 +181,7 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
         publisher.publish_check = mock.Mock(return_value=cr)
-        Publisher.publish(publisher, stats, cases)
+        Publisher.publish(publisher, stats, cases, 'success')
 
         # return calls to mocked instance, except call to _logger
         mock_calls = [(call[0], call.args, call.kwargs)
@@ -196,7 +196,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_without_comment_with_hiding(self):
@@ -206,7 +206,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
@@ -217,7 +217,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -235,7 +235,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -258,7 +258,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -399,14 +399,14 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases)
+            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
-            conclusion='success',
+            conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
                 'summary': '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
@@ -440,14 +440,14 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases)
+            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(base_commit)
         create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
-            conclusion='success',
+            conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
                 'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
@@ -496,7 +496,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, cases)
+            check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(base_commit)
         # we expect multiple calls to create_check_run
@@ -505,7 +505,7 @@ class TestPublisher(unittest.TestCase):
                 name=settings.check_name,
                 head_sha=settings.commit,
                 status='completed',
-                conclusion='success',
+                conclusion='conclusion',
                 output={
                     'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
                     'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'

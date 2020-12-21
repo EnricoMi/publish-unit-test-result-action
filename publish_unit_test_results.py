@@ -29,8 +29,9 @@ def main(settings: Settings) -> None:
     stats = get_stats(results)
 
     # publish the delta stats
+    conclusion = 'success'  #, failure, neutral
     gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-    Publisher(settings, gh).publish(stats, results.case_results)
+    Publisher(settings, gh).publish(stats, results.case_results, conclusion)
 
 
 def get_commit_sha(event: dict, event_name: str):

@@ -3,9 +3,8 @@ from html import unescape
 from typing import Optional, Iterable, Union, Any
 
 from junitparser import *
-from xml.etree.ElementTree import ParseError
 
-from unittestresults import ParsedUnitTestResults, UnitTestCase
+from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 logger = logging.getLogger('junit')
 
@@ -17,16 +16,16 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
             return JUnitXml.fromfile(path)
         except BaseException as e:
             logger.exception(f'could not parse file: {path}', exc_info=e)
-            return str(e)
+            return e
 
     parsed_files = [(result_file, parse(result_file))
                             for result_file in files]
     junits = [(result_file, junit)
               for result_file, junit in parsed_files
-              if not isinstance(junit, str)]
-    parse_errors = {result_file: exception
-                    for result_file, exception in parsed_files
-                    if isinstance(exception, str)}
+              if not isinstance(junit, BaseException)]
+    errors = [ParseError.from_exception(result_file, exception)
+              for result_file, exception in parsed_files
+              if isinstance(exception, BaseException)]
 
     suites = [(result_file, suite)
               for result_file, junit in junits
@@ -62,7 +61,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
 
     return ParsedUnitTestResults(
         files=len(parsed_files),
-        errors=parse_errors,
+        errors=errors,
         # test state counts from suites
         suites=len(suites),
         suite_tests=suite_tests,

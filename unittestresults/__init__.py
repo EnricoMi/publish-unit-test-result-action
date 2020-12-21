@@ -1,6 +1,6 @@
 from collections import defaultdict
 from typing import Optional, List, Mapping, Any, Union, Dict
-
+from xml.etree.ElementTree import ParseError as XmlParseError
 from dataclasses import dataclass
 
 
@@ -25,9 +25,24 @@ class UnitTestCaseResults(defaultdict):
 
 
 @dataclass(frozen=True)
+class ParseError:
+    file: str
+    message: str
+    line: Optional[int]
+    column: Optional[int]
+
+    @staticmethod
+    def from_exception(file: str, exception: BaseException):
+        if isinstance(exception, XmlParseError):
+            line, column = exception.position
+            return ParseError(file=file, message=exception.msg, line=line, column=column)
+        return ParseError(file=file, message=str(exception), line=None, column=None)
+
+
+@dataclass(frozen=True)
 class ParsedUnitTestResults:
     files: int
-    errors: Mapping[str, str]
+    errors: List[ParseError]
     suites: int
     suite_tests: int
     suite_skipped: int
@@ -109,7 +124,7 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
 @dataclass(frozen=True)
 class UnitTestRunResults:
     files: int
-    errors: Mapping[str, str]
+    errors: List[ParseError]
     suites: int
     duration: int
 
@@ -153,7 +168,7 @@ class UnitTestRunResults:
     def from_dict(values: Mapping[str, Any]) -> 'UnitTestRunResults':
         return UnitTestRunResults(
             files=values.get('files'),
-            errors={},
+            errors=values.get('errors', []),
             suites=values.get('suites'),
             duration=values.get('duration'),
 
@@ -179,6 +194,7 @@ Numeric = Mapping[str, int]
 @dataclass(frozen=True)
 class UnitTestRunDeltaResults:
     files: Numeric
+    errors: List[ParseError]
     suites: Numeric
     duration: Numeric
 
@@ -300,6 +316,7 @@ def get_stats_delta(stats: UnitTestRunResults,
     """Given two stats provides a stats with deltas."""
     return UnitTestRunDeltaResults(
         files=get_diff_value(stats.files, reference_stats.files),
+        errors=stats.errors,
         suites=get_diff_value(stats.suites, reference_stats.suites),
         duration=get_diff_value(stats.duration, reference_stats.duration, 'duration'),
 

@@ -2,21 +2,45 @@ import unittest
 
 from unittestresults import get_test_results, get_stats, get_stats_delta, \
     ParsedUnitTestResultsWithCommit, UnitTestCase, UnitTestResults, UnitTestCaseResults, \
-    UnitTestRunResults, UnitTestRunDeltaResults
+    UnitTestRunResults, UnitTestRunDeltaResults, ParseError
+from xml.etree.ElementTree import ParseError as XmlParseError
 from test import d, n
+
+
+errors = [ParseError('file', 'error', None, None)]
 
 
 class TestUnitTestResults(unittest.TestCase):
 
+    def test_parse_error_from_xml_parse_error(self):
+        error = XmlParseError('xml parse error')
+        error.code = 123
+        error.position = (1, 2)
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', 'xml parse error', 1, 2)
+        self.assertEqual(expected, actual)
+
+    def test_parse_error_from_file_not_found(self):
+        error = FileNotFoundError(2, 'No such file or directory')
+        error.filename = 'some file path'
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'", None, None)
+        self.assertEqual(expected, actual)
+
+    def test_parse_error_from_error(self):
+        actual = ParseError.from_exception('file', ValueError('error'))
+        expected = ParseError('file', 'error', None, None)
+        self.assertEqual(expected, actual)
+
     def test_unit_test_run_results_to_dict(self):
         actual = UnitTestRunResults(
-            files=1, errors={'file': 'error'}, suites=2, duration=3,
+            files=1, errors=errors, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ).to_dict()
         expected = dict(
-            files=1, errors={'file': 'error'}, suites=2, duration=3,
+            files=1, errors=errors, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -25,13 +49,28 @@ class TestUnitTestResults(unittest.TestCase):
 
     def test_unit_test_run_results_from_dict(self):
         actual = UnitTestRunResults.from_dict(dict(
+            files=1, errors=errors, suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            commit='commit'
+        ))
+        expected = UnitTestRunResults(
+            files=1, errors=errors, suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            commit='commit'
+        )
+        self.assertEqual(expected, actual)
+
+    def test_unit_test_run_results_from_dict_without_errors(self):
+        actual = UnitTestRunResults.from_dict(dict(
             files=1, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ))
         expected = UnitTestRunResults(
-            files=1, errors={}, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -41,13 +80,13 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_empty_cases(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=0,
-            errors={},
+            errors=[],
             suites=0, suite_tests=0, suite_skipped=0, suite_failures=0, suite_errors=0, suite_time=0,
             cases=[],
             commit='commit'
         ), False), UnitTestResults(
             files=0,
-            errors={},
+            errors=[],
             suites=0, suite_tests=0, suite_skipped=0, suite_failures=0, suite_errors=0, suite_time=0,
             cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results=UnitTestCaseResults(),
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
@@ -57,7 +96,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -71,7 +110,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
             case_results=UnitTestCaseResults([
@@ -90,7 +129,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_multiple_runs(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -113,7 +152,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -130,7 +169,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_duplicate_class_names(self):
         with_duplicates = ParsedUnitTestResultsWithCommit(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -155,7 +194,7 @@ class TestUnitTestResults(unittest.TestCase):
 
         self.assertEqual(get_test_results(with_duplicates, False), UnitTestResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -171,7 +210,7 @@ class TestUnitTestResults(unittest.TestCase):
 
         self.assertEqual(get_test_results(with_duplicates, True), UnitTestResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
             case_results=UnitTestCaseResults([
@@ -193,7 +232,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_test_results_with_some_nones(self):
         self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=[
                 UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', message='message1', content='content1', time=1),
@@ -204,7 +243,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), False), UnitTestResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=4, cases_skipped=2, cases_failures=1, cases_errors=0, cases_time=3,
             case_results=UnitTestCaseResults([
@@ -218,7 +257,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_stats(self):
         self.assertEqual(get_stats(UnitTestResults(
             files=1,
-            errors={'file': 'error'},
+            errors=errors,
 
             suites=2,
             suite_tests=20,
@@ -242,7 +281,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         )), UnitTestRunResults(
             files=1,
-            errors={'file': 'error'},
+            errors=errors,
             suites=2,
             duration=3,
 
@@ -264,7 +303,7 @@ class TestUnitTestResults(unittest.TestCase):
     def test_get_stats_delta(self):
         self.assertEqual(get_stats_delta(UnitTestRunResults(
             files=1,
-            errors={},
+            errors=[],
             suites=2,
             duration=3,
 
@@ -283,7 +322,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), UnitTestRunResults(
             files=3,
-            errors={},
+            errors=[],
             suites=5,
             duration=7,
 
@@ -302,6 +341,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='ref'
         ), 'type'), UnitTestRunDeltaResults(
             files=n(1, -2),
+            errors=[],
             suites=n(2, -3),
             duration=d(3, -4),
 
@@ -321,4 +361,3 @@ class TestUnitTestResults(unittest.TestCase):
             reference_commit='ref',
             reference_type='type'
         ))
-

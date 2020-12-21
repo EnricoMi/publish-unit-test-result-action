@@ -1,4 +1,5 @@
 from publish import *
+from xml.etree.ElementTree import ParseError
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
     get_stats_delta
 
@@ -56,9 +57,9 @@ class Publisher:
         self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
 
-    def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults):
-        self._logger.info('publishing results for commit {}'.format(self._settings.commit))
-        check_run = self.publish_check(stats, cases)
+    def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
+        self._logger.info('publishing {} results for commit {}'.format(conclusion, self._settings.commit))
+        check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
@@ -137,7 +138,7 @@ class Publisher:
             self._logger.debug('stats: {}'.format(stats))
             return stats
 
-    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> CheckRun:
+    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
@@ -147,6 +148,15 @@ class Publisher:
 
         check_run = None
         all_annotations = get_annotations(cases, self._settings.report_individual_runs)
+        #error_annotations = [(error.msg, (line, col) = error.position)
+        #                     for error in stats.errors
+        #                     if isinstance(error, ParseError)]
+        #error_annotations = [(error.strerror, error.errno)
+        #                     for error in stats.errors
+        #                     if isinstance(error, FileNotFoundError)]
+        #error_annotations = [str(error)
+        #                     for error in stats.errors
+        #                     if isinstance(error, BaseException)]
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
@@ -161,7 +171,7 @@ class Publisher:
             check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                     head_sha=self._settings.commit,
                                                     status='completed',
-                                                    conclusion='success',
+                                                    conclusion=conclusion,
                                                     output=output)
         return check_run
 
