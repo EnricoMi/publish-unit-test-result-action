@@ -296,7 +296,7 @@ class TestPublisher(unittest.TestCase):
     def do_test_get_pull(self,
                          settings: Settings,
                          search_issues: mock.Mock,
-                         expected: Optional[mock.Mock]):
+                         expected: Optional[mock.Mock]) -> mock.Mock:
         gh, gha, req, repo, commit = self.create_mocks()
         gh.search_issues = mock.Mock(return_value=search_issues)
         publisher = Publisher(settings, gh, gha)
@@ -305,6 +305,7 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(expected, actual)
         gh.search_issues.assert_called_once_with('type:pr {}'.format(settings.commit))
+        return gha
 
     def test_get_pull(self):
         settings = self.create_settings()
@@ -324,7 +325,8 @@ class TestPublisher(unittest.TestCase):
         pr2 = self.create_github_pr(settings.repo)
         search_issues = self.create_github_collection([pr1, pr2])
 
-        self.do_test_get_pull(settings, search_issues, None)
+        gha = self.do_test_get_pull(settings, search_issues, None)
+        gha.error.assert_called_once_with('found multiple pull requests for commit commit')
 
     def test_get_pull_forked_repo(self):
         settings = self.create_settings()
@@ -368,6 +370,11 @@ class TestPublisher(unittest.TestCase):
             repo.get_commit.assert_called_once_with(commit_sha)
             if commit is not None:
                 commit.get_check_runs.assert_called_once_with()
+
+        if expected is None and \
+                commit_sha is not None and \
+                commit_sha != '0000000000000000000000000000000000000000':
+            gha.error.assert_called_once_with('could not find commit {}'.format(commit_sha))
 
     def test_get_stats_from_commit(self):
         settings = self.create_settings()
