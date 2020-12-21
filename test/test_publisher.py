@@ -417,7 +417,8 @@ class TestPublisher(unittest.TestCase):
             status='completed',
             conclusion='conclusion',
             output={
-                'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
+                'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
+                    .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
                 'summary': '\u205f\u20041 files\u2004\u2003{errors}2 suites\u2004\u2003\u20023s :stopwatch:\n'
                            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
                            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
@@ -464,7 +465,8 @@ class TestPublisher(unittest.TestCase):
             status='completed',
             conclusion='conclusion',
             output={
-                'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
+                'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
+                    .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
                 'summary': '\u205f\u20041 files\u2004 ±0\u2002\u2003{errors}2 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
                            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
                            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'

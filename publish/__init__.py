@@ -173,6 +173,7 @@ def get_stats_from_digest(digest: str) -> UnitTestRunResults:
 
 def get_short_summary(stats: UnitTestRunResults) -> str:
     """Provides a single-line summary for the given stats."""
+    perrors = len(stats.errors)
     tests = get_magnitude(stats.tests)
     success = get_magnitude(stats.tests_succ)
     skipped = get_magnitude(stats.tests_skip)
@@ -182,9 +183,13 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 
     def get_test_summary():
         if tests == 0:
-            return 'No tests found'
+            if perrors == 0:
+                return 'No tests found'
+            else:
+                return '{} parse errors'.format(perrors)
         if tests > 0:
-            if (failure is None or failure == 0) and (error is None or error == 0):
+            if (failure is None or failure == 0) and \
+                    (error is None or error == 0) and perrors == 0:
                 if skipped == 0 and success == tests:
                     return 'All {} pass'.format(as_stat_number(tests, 0, 0, 'tests'))
                 if skipped > 0 and success == tests - skipped:
@@ -194,7 +199,8 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
                     )
 
             summary = ['{}'.format(as_stat_number(number, 0, 0, label))
-                       for number, label in [(error, 'errors'), (failure, 'fail'),
+                       for number, label in [(perrors, 'parse errors'),
+                                             (error, 'errors'), (failure, 'fail'),
                                              (skipped, 'skipped'), (success, 'pass')]
                        if number > 0]
             summary = ', '.join(summary)
