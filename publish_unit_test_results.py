@@ -10,6 +10,7 @@ from junit import parse_junit_xml_files
 from publish import hide_comments_modes
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
+from github_action import GithubAction
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -41,7 +42,8 @@ def main(settings: Settings) -> None:
 
     # publish the delta stats
     gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-    Publisher(settings, gh).publish(stats, results.case_results, conclusion)
+    gha = GithubAction()
+    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
 def get_commit_sha(event: dict, event_name: str):
