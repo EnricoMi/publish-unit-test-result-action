@@ -24,13 +24,20 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
 
 
 def main(settings: Settings) -> None:
+    gha = GithubAction()
+
     # resolve the files_glob to files
     files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
-    logger.info('reading {}'.format(settings.files_glob))
-    logger.debug('reading {}'.format(list(files)))
+    if len(files) == 0:
+        gha.warning(f'Could not find any files for {settings.files_glob}')
+    else:
+        logger.info('reading {}'.format(settings.files_glob))
+        logger.debug('reading {}'.format(list(files)))
 
     # get the unit test results
     parsed = parse_junit_xml_files(files).with_commit(settings.commit)
+    [gha.error(message=error.message, file=error.file, line=error.line, column=error.column)
+     for error in parsed.errors]
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
@@ -43,7 +50,6 @@ def main(settings: Settings) -> None:
 
     # publish the delta stats
     gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-    gha = GithubAction()
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 

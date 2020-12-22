@@ -1,12 +1,9 @@
-import logging
 from html import unescape
 from typing import Optional, Iterable, Union, Any
 
 from junitparser import *
 
 from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
-
-logger = logging.getLogger('junit')
 
 
 def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
@@ -15,7 +12,6 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
         try:
             return JUnitXml.fromfile(path)
         except BaseException as e:
-            logger.exception(f'could not parse file: {path}', exc_info=e)
             return e
 
     parsed_files = [(result_file, parse(result_file))
