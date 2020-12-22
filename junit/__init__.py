@@ -15,7 +15,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
             return e
 
     parsed_files = [(result_file, parse(result_file))
-                            for result_file in files]
+                    for result_file in files]
     junits = [(result_file, junit)
               for result_file, junit in parsed_files
               if not isinstance(junit, BaseException)]

@@ -36,7 +36,7 @@ def main(settings: Settings) -> None:
 
     # get the unit test results
     parsed = parse_junit_xml_files(files).with_commit(settings.commit)
-    [gha.error(message=error.message, file=error.file, line=error.line, column=error.column)
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
      for error in parsed.errors]
 
     # process the parsed results

@@ -103,7 +103,7 @@ class Publisher:
             self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._settings.repo, commit))
             return None
         if len(pulls) > 1:
-            self._gha.error('found multiple pull requests for commit {}'.format(commit))
+            self._gha.error('Found multiple pull requests for commit {}'.format(commit))
             return None
 
         pull = pulls[0]
@@ -116,7 +116,7 @@ class Publisher:
 
         commit = self._repo.get_commit(commit_sha)
         if commit is None:
-            self._gha.error('could not find commit {}'.format(commit_sha))
+            self._gha.error('Could not find commit {}'.format(commit_sha))
             return None
 
         runs = commit.get_check_runs()
