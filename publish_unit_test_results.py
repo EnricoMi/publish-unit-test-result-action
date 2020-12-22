@@ -24,6 +24,7 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
 
 
 def main(settings: Settings) -> None:
+    # resolve the files_glob to files
     files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
     logger.info('reading {}'.format(settings.files_glob))
     logger.debug('reading {}'.format(list(files)))
