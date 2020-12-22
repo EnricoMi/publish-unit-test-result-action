@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 from io import TextIOWrapper
 from typing import Mapping, Any, Optional
@@ -68,3 +69,4 @@ class GithubAction:
                            for key, value in params.items()])
         params = f' {params}' if params else ''
         file.write(f'::{command}{params}::{value}')
+        file.write(os.linesep)
