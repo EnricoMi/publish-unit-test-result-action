@@ -45,12 +45,40 @@ class Test(unittest.TestCase):
             suites=1,
             suite_tests=4,
             suite_skipped=1,
-            suite_failures=1,
-            suite_errors=1,
+            suite_failures=0,
+            suite_errors=0,
             suite_time=10,
             cases=[]
         ))
         self.assertEqual('success', actual)
+
+    def test_get_conclusion_failures(self):
+        actual = get_conclusion(ParsedUnitTestResults(
+            files=1,
+            errors=[],
+            suites=1,
+            suite_tests=4,
+            suite_skipped=1,
+            suite_failures=1,
+            suite_errors=0,
+            suite_time=10,
+            cases=[]
+        ))
+        self.assertEqual('failure', actual)
+
+    def test_get_conclusion_errors(self):
+        actual = get_conclusion(ParsedUnitTestResults(
+            files=1,
+            errors=[],
+            suites=1,
+            suite_tests=4,
+            suite_skipped=1,
+            suite_failures=0,
+            suite_errors=1,
+            suite_time=10,
+            cases=[]
+        ))
+        self.assertEqual('failure', actual)
 
     def test_get_conclusion_no_files(self):
         actual = get_conclusion(ParsedUnitTestResults(

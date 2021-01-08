@@ -20,6 +20,8 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
         return 'neutral'
     if len(parsed.errors) > 0:
         return 'failure'
+    if parsed.suite_failures > 0 or parsed.suite_errors > 0:
+        return 'failure'
     return 'success'
 
 
