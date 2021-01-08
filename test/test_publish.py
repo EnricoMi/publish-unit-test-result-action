@@ -951,7 +951,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
         self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
 
-    def test_get_annotations(self):
+    def test_get_case_annotations(self):
         results = UnitTestCaseResults([
             ('class1::test1', dict([
                 ('success', list([
@@ -1029,7 +1029,7 @@ class PublishTest(unittest.TestCase):
             ),
         ]
 
-        annotations = get_annotations(results, [], report_individual_runs=False)
+        annotations = get_case_annotations(results, report_individual_runs=False)
 
         self.assertEqual(expected, annotations)
 
@@ -1087,7 +1087,7 @@ class PublishTest(unittest.TestCase):
             )
         ]
 
-        annotations = get_annotations(results, [], report_individual_runs=True)
+        annotations = get_case_annotations(results, report_individual_runs=True)
 
         self.assertEqual(expected, annotations)
 

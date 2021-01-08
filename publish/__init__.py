@@ -483,6 +483,18 @@ def get_case_annotation(messages: CaseMessages,
     )
 
 
+def get_case_annotations(case_results: UnitTestCaseResults,
+                         report_individual_runs: bool) -> List[Annotation]:
+    messages = get_case_messages(case_results)
+    return [
+        get_case_annotation(messages, key, state, message, report_individual_runs)
+        for key in messages
+        for state in messages[key] if state not in ['success', 'skipped']
+        for message in (messages[key][state] if report_individual_runs else
+                        [list(messages[key][state].keys())[0]])
+    ]
+
+
 def get_error_annotation(error: ParseError) -> Annotation:
     return Annotation(
         path=error.file,
@@ -497,18 +509,5 @@ def get_error_annotation(error: ParseError) -> Annotation:
     )
 
 
-def get_annotations(case_results: UnitTestCaseResults,
-                    parse_errors: List[ParseError],
-                    report_individual_runs: bool) -> List[Annotation]:
-    messages = get_case_messages(case_results)
-    case_annotations = [
-        get_case_annotation(messages, key, state, message, report_individual_runs)
-        for key in messages
-        for state in messages[key] if state not in ['success', 'skipped']
-        for message in (messages[key][state] if report_individual_runs else
-                        [list(messages[key][state].keys())[0]])
-    ]
-
-    error_annotations = [get_error_annotation(error) for error in parse_errors]
-
-    return error_annotations + case_annotations
+def get_error_annotations(parse_errors: List[ParseError]):
+    return [get_error_annotation(error) for error in parse_errors]
