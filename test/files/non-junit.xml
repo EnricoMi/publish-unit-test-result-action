@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<suites>
+    <suite errors="0" failures="1" hostname="3f909e363d82" name="pytest" skipped="1"
+           tests="5" time="2.481" timestamp="2020-09-04T16:18:04.966371">
+        <case classname="test.test_spark.SparkTests" file="test/test_spark.py" line="1412"
+              name="test_check_shape_compatibility" time="6.435"/>
+    </suite>
+</suites>

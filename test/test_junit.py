@@ -327,6 +327,36 @@ class TestJunit(unittest.TestCase):
                 suites=0
             ))
 
+    def test_parse_junit_xml_files_with_non_parsable_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/non-xml.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/non-parsable.xml', message='syntax error: line 1, column 0', line=1, column=0)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
+    def test_parse_junit_xml_files_with_non_junit_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/non-junit.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/non-junit.xml', message='Invalid format.', line=None, column=None)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
     def test_parse_junit_xml_files_with_non_existing_file(self):
         self.assertEqual(
             parse_junit_xml_files(['files/does_not_exist.xml']),
