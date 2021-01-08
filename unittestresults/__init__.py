@@ -35,7 +35,15 @@ class ParseError:
     def from_exception(file: str, exception: BaseException):
         if isinstance(exception, XmlParseError):
             line, column = exception.position
-            return ParseError(file=file, message=exception.msg, line=line, column=column)
+            msg = exception.msg
+            if msg.startswith('syntax error:') or \
+                    msg.startswith('no element found:') or \
+                    msg.startswith('unclosed token:') or \
+                    msg.startswith('mismatched tag:'):
+                msg = f'File is not a valid XML file:\n{msg}'
+            elif msg.startswith('Invalid format.'):
+                msg = f'File is not a valid JUnit file:\n{msg}'
+            return ParseError(file=file, message=msg, line=line, column=column)
         return ParseError(file=file, message=str(exception), line=None, column=None)
 
 

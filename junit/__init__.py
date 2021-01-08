@@ -1,3 +1,4 @@
+import os
 from html import unescape
 from typing import Optional, Iterable, Union, Any
 
@@ -9,6 +10,11 @@ from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[str, Any]:
+        if not os.path.exists(path):
+            return FileNotFoundError(f'File does not exist.')
+        if os.stat(path).st_size == 0:
+            return Exception(f'File is empty.')
+
         try:
             return JUnitXml.fromfile(path)
         except BaseException as e:

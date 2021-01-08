@@ -318,7 +318,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError('files/empty.xml', 'no element found: line 1, column 0', 1, 0)],
+                errors=[ParseError('files/empty.xml', 'File is empty.', None, None)],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
@@ -327,12 +327,27 @@ class TestJunit(unittest.TestCase):
                 suites=0
             ))
 
-    def test_parse_junit_xml_files_with_non_parsable_file(self):
+    def test_parse_junit_xml_files_with_non_xml_file(self):
         self.assertEqual(
             parse_junit_xml_files(['files/non-xml.xml']),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file='files/non-parsable.xml', message='syntax error: line 1, column 0', line=1, column=0)],
+                errors=[ParseError(file='files/non-xml.xml', message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
+    def test_parse_junit_xml_files_with_corrupt_xml_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/corrupt-xml.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/corrupt-xml.xml', message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -363,7 +378,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError('files/does_not_exist.xml', "[Errno 2] No such file or directory: 'files/does_not_exist.xml'", None, None)],
+                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.', None, None)],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
