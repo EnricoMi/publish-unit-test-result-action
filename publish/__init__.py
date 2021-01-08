@@ -419,9 +419,9 @@ def get_error_annotation(error: ParseError) -> Annotation:
         start_column=error.column,
         end_column=error.column,
         annotation_level='failure',
-        message=error.file,
+        message=error.message,
         title=f'Error processing result file',
-        raw_details=error.message
+        raw_details=error.file
     )
 
 
