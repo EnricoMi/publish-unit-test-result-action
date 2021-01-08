@@ -9,7 +9,7 @@ from github_action import GithubAction
 def gh_action_test(test: unittest.TestCase, expected: str) -> GithubAction:
     with io.StringIO() as string:
         yield GithubAction(file=string)
-        test.assertEqual(expected, string.getvalue())
+        test.assertEqual(f'{expected}\n', string.getvalue())
 
 
 class TestGithubAction(unittest.TestCase):

@@ -326,7 +326,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('found multiple pull requests for commit commit')
+        gha.error.assert_called_once_with('Found multiple pull requests for commit commit')
 
     def test_get_pull_forked_repo(self):
         settings = self.create_settings()
@@ -374,7 +374,7 @@ class TestPublisher(unittest.TestCase):
         if expected is None and \
                 commit_sha is not None and \
                 commit_sha != '0000000000000000000000000000000000000000':
-            gha.error.assert_called_once_with('could not find commit {}'.format(commit_sha))
+            gha.error.assert_called_once_with('Could not find commit {}'.format(commit_sha))
 
     def test_get_stats_from_commit(self):
         settings = self.create_settings()
