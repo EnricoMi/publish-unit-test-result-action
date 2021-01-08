@@ -151,8 +151,9 @@ class Publisher:
         check_run = None
 
         error_annotations = get_error_annotations(stats.errors)
+        file_list_annotations = get_test_list_annotations(cases)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
-        all_annotations = error_annotations + case_annotations
+        all_annotations = error_annotations + file_list_annotations + case_annotations
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]

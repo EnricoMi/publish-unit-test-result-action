@@ -224,6 +224,16 @@ class PublishTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: abbreviate_bytes('abc', 0))
         self.assertRaises(ValueError, lambda: abbreviate_bytes('abc', -1))
 
+    def test_get_test_name(self):
+        self.assertEqual('Unknown test', get_test_name(None, None, None))
+        self.assertEqual('test name', get_test_name(None, None, 'test name'))
+        self.assertEqual('class name ‑ Unknown test', get_test_name(None, 'class name', None))
+        self.assertEqual('class name ‑ test name', get_test_name(None, 'class name', 'test name'))
+        self.assertEqual('file name ‑ Unknown test', get_test_name('file name', None, None))
+        self.assertEqual('file name ‑ test name', get_test_name('file name', None, 'test name'))
+        self.assertEqual('file name ‑ class name ‑ Unknown test', get_test_name('file name', 'class name', None))
+        self.assertEqual('file name ‑ class name ‑ test name', get_test_name('file name', 'class name', 'test name'))
+
     def test_get_formatted_digits(self):
         self.assertEqual(get_formatted_digits(None), (3, 0))
         self.assertEqual(get_formatted_digits(None, 1), (3, 0))
@@ -740,7 +750,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_case_messages(self):
         results = UnitTestCaseResults([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', list([
                     UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.0),
                     UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.1),
@@ -758,7 +768,7 @@ class PublishTest(unittest.TestCase):
                     UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', time=1.2345),
                 ])),
             ])),
-            ('class2::test2', dict([
+            ((None, 'class2', 'test2'), dict([
                 ('success', list([
                     UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
                 ])),
@@ -775,7 +785,7 @@ class PublishTest(unittest.TestCase):
         ])
 
         expected = CaseMessages([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', defaultdict(list, [
                     ('content1', list([
                         UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.0),
@@ -805,7 +815,7 @@ class PublishTest(unittest.TestCase):
                     ])),
                 ])),
             ])),
-            ('class2::test2', dict([
+            ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
                         UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
@@ -852,7 +862,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_case_annotation(self):
         messages = CaseMessages([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
                         UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, time=1.0)
@@ -878,7 +888,7 @@ class PublishTest(unittest.TestCase):
                     ]))
                 ])),
             ])),
-            ('class2::test2', dict([
+            ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
                         UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
@@ -902,18 +912,18 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=False))
 
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'skipped', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'failure', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'error', None, report_individual_runs=False))
 
     def test_get_case_annotation_report_individual_runs(self):
         messages = CaseMessages([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
                         UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, time=1.0)
@@ -941,19 +951,14 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=True))
-
-    def test_get_error_annotation(self):
-        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=True))
 
     def test_get_case_annotations(self):
         results = UnitTestCaseResults([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', list([
                     UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
                 ])),
@@ -969,7 +974,7 @@ class PublishTest(unittest.TestCase):
                     UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', time=1.2345)
                 ])),
             ])),
-            ('class2::test2', dict([
+            ((None, 'class2', 'test2'), dict([
                 ('success', list([
                     UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
                 ])),
@@ -1033,9 +1038,9 @@ class PublishTest(unittest.TestCase):
 
         self.assertEqual(expected, annotations)
 
-    def test_get_annotations_report_individual_runs(self):
+    def test_get_case_annotations_report_individual_runs(self):
         results = UnitTestCaseResults([
-            ('class1::test1', dict([
+            ((None, 'class1', 'test1'), dict([
                 ('success', list([
                     UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
                 ])),
@@ -1090,6 +1095,66 @@ class PublishTest(unittest.TestCase):
         annotations = get_case_annotations(results, report_individual_runs=True)
 
         self.assertEqual(expected, annotations)
+
+    def test_get_error_annotation(self):
+        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
+
+    def test_get_all_tests_list_annotation(self):
+        results = UnitTestCaseResults([
+            ((None, 'class1', 'test2'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ])),
+            ((None, 'class1', 'test1'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                ])),
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                ])),
+            ])),
+            (('file', 'class1', 'test2'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ]))
+        ])
+
+        self.assertIsNone(get_all_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2\nfile ‑ class1 ‑ test2'), get_all_tests_list_annotation(results))
+        del results[(None, 'class1', 'test1')]
+        del results[('file', 'class1', 'test2')]
+        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 test, see "Raw output" for the name of the test.', title='1 test found', raw_details='class1 ‑ test2'), get_all_tests_list_annotation(results))
+
+    def test_get_skipped_tests_list_annotation(self):
+        results = UnitTestCaseResults([
+            ((None, 'class1', 'test2'), dict([
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ])),
+            ((None, 'class1', 'test1'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                ])),
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                ])),
+            ])),
+            (('file', 'class1', 'test2'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ]))
+        ])
+
+        self.assertIsNone(get_skipped_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class1 ‑ test2'), get_skipped_tests_list_annotation(results))
+        del results[(None, 'class1', 'test1')]['success']
+        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2'), get_skipped_tests_list_annotation(results))
 
     def test_files(self):
         parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
