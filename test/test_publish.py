@@ -7,7 +7,7 @@ from publish import *
 from unittestresults import get_test_results
 from junit import parse_junit_xml_files
 from test import d, n
-from unittestresults import get_stats, UnitTestCase
+from unittestresults import get_stats, UnitTestCase, ParseError
 
 
 @contextlib.contextmanager
@@ -19,6 +19,9 @@ def temp_locale(encoding) -> Any:
     finally:
         locale.setlocale(locale.LC_ALL, old_locale)
     return res
+
+
+errors = [ParseError('file', 'error', 1, 2)]
 
 
 class PublishTest(unittest.TestCase):
@@ -177,7 +180,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_stats_digest_undigest(self):
         digest = get_digest_from_stats(UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -186,7 +189,7 @@ class PublishTest(unittest.TestCase):
         self.assertTrue(len(digest) > 100)
         stats = get_stats_from_digest(digest)
         self.assertEqual(stats, UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -206,7 +209,7 @@ class PublishTest(unittest.TestCase):
                                   '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
                                   'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA'),
             UnitTestRunResults(
-                files=1, suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                 runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
                 commit='commit'
@@ -214,18 +217,23 @@ class PublishTest(unittest.TestCase):
         )
 
     def test_get_short_summary(self):
-        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, suites=0, duration=123, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, suites=2, duration=123, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, errors=[], suites=0, duration=123, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors', get_short_summary(UnitTestRunResults(files=1, errors=errors, suites=0, duration=0, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=4, tests_succ=4, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=5, tests_succ=4, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
 
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -233,7 +241,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_short_summary_md_with_delta(self):
         self.assertEqual(get_short_summary_md(UnitTestRunDeltaResults(
-            files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='commit',
@@ -242,7 +250,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_md_with_single_runs(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
@@ -253,7 +261,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_md_with_multiple_runs(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
             commit='commit'
@@ -265,7 +273,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_md_with_errors(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
-            files=1, suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -277,7 +285,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_md_with_deltas(self):
         self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
-            files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -290,7 +298,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_md_with_details_url_with_fails(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
-                files=1, suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
                 commit='commit'
@@ -307,7 +315,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_md_with_details_url_with_errors(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
-                files=1, suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=8,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=8,
                 commit='commit'
@@ -321,27 +329,44 @@ class PublishTest(unittest.TestCase):
             'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_details_url_with_fails_and_errors(self):
+    def test_get_long_summary_md_with_details_url_with_parse_errors(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
-                files=1, suites=2, duration=3,
+                files=2, errors=errors, suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), ('2 files  1 errors  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+            '\n'
+            'For more details on these parsing errors, see [this check](https://details.url/).\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_details_url_with_fails_and_errors_and_parse_errors(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, errors=errors, suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  2 suites   3s :stopwatch:\n'
+        ), ('1 files  1 errors  2 suites   3s :stopwatch:\n'
             '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
             '\n'
-            'For more details on these failures and errors, see [this check](https://details.url/).\n'
+            'For more details on these parsing errors, failures and errors, see [this check](https://details.url/).\n'
             '\n'
             'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_details_url_without_fails_or_errors(self):
+    def test_get_long_summary_md_with_details_url_without_fails_or_errors_or_parse_errors(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(
-                files=1, suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -358,7 +383,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'
@@ -381,7 +406,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
                     commit='commit'
@@ -400,12 +425,12 @@ class PublishTest(unittest.TestCase):
                                  'PloLeFzw4RXwTDD2PAGaBIOIE0gBkbjsf+0Z9Y6KBP87IoXzjk'
                                  'qF+51188wBRdP2A3NU1srcAAAA')
 
-    def test_get_long_summary_with_digest_md_with_errors(self):
+    def test_get_long_summary_with_digest_md_with_test_errors(self):
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
                     commit='commit'
@@ -424,17 +449,41 @@ class PublishTest(unittest.TestCase):
                                  '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
                                  'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
 
+    def test_get_long_summary_with_digest_md_with_parse_errors(self):
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunResults(
+                    files=1, errors=errors, suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    commit='commit'
+                )
+            )
+
+        self.assertEqual(actual, '1 files    1 errors    2 suites   3s :stopwatch:\n'
+                                 '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
+                                 '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
+                                 '\n'
+                                 'Results for commit commit.\n'
+                                 '\n'
+                                 '[test-results]:data:application/gzip;base64,'
+                                 'H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
+                                 'x3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr'
+                                 '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
+                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
+
     def test_get_long_summary_with_digest_md_with_delta(self):
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunDeltaResults(
-                    files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
                     tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
                 ), UnitTestRunResults(
-                    files=1, suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'
@@ -453,10 +502,39 @@ class PublishTest(unittest.TestCase):
                                  'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
                                  'K6buousrLZAAAA')
 
+    def test_get_long_summary_with_digest_md_with_delta_and_parse_errors(self):
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = get_long_summary_with_digest_md(
+                UnitTestRunDeltaResults(
+                    files=n(1, 2), errors=errors, suites=n(2, -3), duration=d(3, 4),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
+                ), UnitTestRunResults(
+                    files=1, errors=[], suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    commit='commit'
+                )
+            )
+
+        self.assertEqual(actual, '1 files  +  2    1 errors    2 suites   - 3   3s :stopwatch: +4s\n'
+                                 '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
+                                 '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
+                                 '\n'
+                                 'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
+                                 '\n'
+                                 '[test-results]:data:application/gzip;base64,'
+                                 'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
+                                 'juzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0'
+                                 'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
+                                 'K6buousrLZAAAA')
+
     def test_get_long_summary_with_digest_md_with_delta_results_only(self):
         with self.assertRaises(ValueError) as context:
             get_long_summary_with_digest_md(UnitTestRunDeltaResults(
-                files=n(1, 2), suites=n(2, -3), duration=d(3, 4),
+                files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
                 tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                 runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                 commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -559,12 +637,12 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_annotation_to_dict(self):
-        annotation = Annotation(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2')
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2')
         self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), annotation.to_dict())
-        annotation = Annotation(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None)
+        annotation = Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None)
         self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)'), annotation.to_dict())
 
-    def test_get_annotation(self):
+    def test_get_case_annotation(self):
         messages = CaseMessages([
             ('class1::test1', dict([
                 ('success', dict([
@@ -616,16 +694,16 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=False))
 
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
-        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'skipped', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'failure', None, report_individual_runs=False))
+        self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None), get_case_annotation(messages, 'class2::test2', 'error', None, report_individual_runs=False))
 
-    def test_get_annotation_report_individual_runs(self):
+    def test_get_case_annotation_report_individual_runs(self):
         messages = CaseMessages([
             ('class1::test1', dict([
                 ('success', dict([
@@ -655,10 +733,15 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, 'class1::test1', 'skipped', 'message2', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, 'class1::test1', 'failure', 'message3', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, 'class1::test1', 'failure', 'message4', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, 'class1::test1', 'error', 'message5', report_individual_runs=True))
+
+    def test_get_error_annotation(self):
+        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
 
     def test_get_annotations(self):
         results = UnitTestCaseResults([
@@ -697,40 +780,48 @@ class PublishTest(unittest.TestCase):
         expected = [
             Annotation(
                 annotation_level='warning',
+                end_column=None,
                 end_line=123,
                 message='result-file1\nresult-file2\nresult-file3',
                 path='file1',
+                start_column=None,
                 start_line=123,
                 title='3 out of 6 runs failed: test1 (class1)',
                 raw_details='fail content 1'
             ), Annotation(
                 annotation_level='failure',
+                end_column=None,
                 end_line=123,
                 message='result-file1',
                 path='file1',
+                start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
                 raw_details='error content'
             ), Annotation(
                 annotation_level='warning',
+                end_column=None,
                 end_line=0,
                 message='result-file1',
                 path='class2',
+                start_column=None,
                 start_line=0,
                 title='1 out of 4 runs failed: test2 (class2)',
                 raw_details=None
             ), Annotation(
                 annotation_level='failure',
+                end_column=None,
                 end_line=0,
                 message='result-file1',
                 path='class2',
+                start_column=None,
                 start_line=0,
                 title='1 out of 4 runs with error: test2 (class2)',
                 raw_details=None
             ),
         ]
 
-        annotations = get_annotations(results, report_individual_runs=False)
+        annotations = get_annotations(results, [], report_individual_runs=False)
 
         self.assertEqual(expected, annotations)
 
@@ -757,32 +848,38 @@ class PublishTest(unittest.TestCase):
         expected = [
             Annotation(
                 annotation_level='warning',
+                end_column=None,
                 end_line=123,
                 message='result-file1',
                 path='file1',
+                start_column=None,
                 start_line=123,
                 title='1 out of 6 runs failed: test1 (class1)',
                 raw_details='fail content 1'
             ), Annotation(
                 annotation_level='warning',
+                end_column=None,
                 end_line=123,
                 message='result-file2\nresult-file3',
                 path='file1',
+                start_column=None,
                 start_line=123,
                 title='2 out of 6 runs failed: test1 (class1)',
                 raw_details='fail content 2'
             ), Annotation(
                 annotation_level='failure',
+                end_column=None,
                 end_line=123,
                 message='result-file1',
                 path='file1',
+                start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
                 raw_details='error content'
             )
         ]
 
-        annotations = get_annotations(results, report_individual_runs=True)
+        annotations = get_annotations(results, [], report_individual_runs=True)
 
         self.assertEqual(expected, annotations)
 
@@ -806,12 +903,22 @@ class PublishTest(unittest.TestCase):
                               '\n'
                               'Results for commit example.\n'))
 
-    def test_empty_file(self):
-        parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
+    def test_file_without_cases(self):
+        parsed = parse_junit_xml_files(['files/no-cases.xml']).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
+                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
+                              '\n'
+                              'Results for commit a commit.\n'))
+
+    def test_non_parsable_file(self):
+        parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        md = get_long_summary_md(stats)
+        self.assertEqual(md, ('1 files  1 errors  0 suites   0s :stopwatch:\n'
                               '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
                               '\n'
                               'Results for commit a commit.\n'))

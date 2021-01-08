@@ -1,7 +1,7 @@
 import unittest
 
 from junit import parse_junit_xml_files
-from unittestresults import ParsedUnitTestResults, UnitTestCase
+from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 
 class TestJunit(unittest.TestCase):
@@ -11,6 +11,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([]),
             ParsedUnitTestResults(
                 files=0,
+                errors=[],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -25,6 +26,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml']),
             ParsedUnitTestResults(
                 files=1,
+                errors=[],
                 suites=1,
                 suite_tests=5,
                 suite_skipped=0,
@@ -95,6 +97,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files(['files/junit.mpi.integration.xml']),
             ParsedUnitTestResults(
                 files=1,
+                errors=[],
                 suites=1,
                 suite_tests=3,
                 suite_skipped=0,
@@ -143,6 +146,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files(['files/junit.fail.xml']),
             ParsedUnitTestResults(
                 files=1,
+                errors=[],
                 suite_errors=0,
                 suite_failures=1,
                 suite_skipped=1,
@@ -284,6 +288,7 @@ class TestJunit(unittest.TestCase):
                     )
                 ],
                 files=1,
+                errors=[],
                 suite_errors=1,
                 suite_failures=1,
                 suite_skipped=1,
@@ -298,6 +303,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
+                errors=[],
                 suite_errors=1,
                 suite_failures=1,
                 suite_skipped=1,
@@ -306,3 +312,77 @@ class TestJunit(unittest.TestCase):
                 suites=1
             ))
 
+    def test_parse_junit_xml_files_with_empty_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/empty.xml']),
+            ParsedUnitTestResults(
+                cases=[],
+                files=1,
+                errors=[ParseError('files/empty.xml', 'File is empty.', None, None)],
+                suite_errors=0,
+                suite_failures=0,
+                suite_skipped=0,
+                suite_tests=0,
+                suite_time=0,
+                suites=0
+            ))
+
+    def test_parse_junit_xml_files_with_non_xml_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/non-xml.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/non-xml.xml', message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
+    def test_parse_junit_xml_files_with_corrupt_xml_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/corrupt-xml.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/corrupt-xml.xml', message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
+    def test_parse_junit_xml_files_with_non_junit_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/non-junit.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[ParseError(file='files/non-junit.xml', message='Invalid format.', line=None, column=None)],
+                suites=0,
+                suite_tests=0,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[]
+            ))
+
+    def test_parse_junit_xml_files_with_non_existing_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/does_not_exist.xml']),
+            ParsedUnitTestResults(
+                cases=[],
+                files=1,
+                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.', None, None)],
+                suite_errors=0,
+                suite_failures=0,
+                suite_skipped=0,
+                suite_tests=0,
+                suite_time=0,
+                suites=0
+            ))

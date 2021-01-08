@@ -9,18 +9,37 @@ import github
 from junit import parse_junit_xml_files
 from publish import hide_comments_modes
 from publish.publisher import Publisher, Settings
-from unittestresults import get_test_results, get_stats
+from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
+from github_action import GithubAction
 
 logger = logging.getLogger('publish-unit-test-results')
 
 
+def get_conclusion(parsed: ParsedUnitTestResults) -> str:
+    if parsed.files == 0:
+        return 'neutral'
+    if len(parsed.errors) > 0:
+        return 'failure'
+    if parsed.suite_failures > 0 or parsed.suite_errors > 0:
+        return 'failure'
+    return 'success'
+
+
 def main(settings: Settings) -> None:
+    gha = GithubAction()
+
+    # resolve the files_glob to files
     files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
-    logger.info('reading {}'.format(settings.files_glob))
-    logger.debug('reading {}'.format(list(files)))
+    if len(files) == 0:
+        gha.warning(f'Could not find any files for {settings.files_glob}')
+    else:
+        logger.info('reading {}'.format(settings.files_glob))
+        logger.debug('reading {}'.format(list(files)))
 
     # get the unit test results
     parsed = parse_junit_xml_files(files).with_commit(settings.commit)
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+     for error in parsed.errors]
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
@@ -28,9 +47,12 @@ def main(settings: Settings) -> None:
     # turn them into stats
     stats = get_stats(results)
 
+    # derive check run conclusion from files
+    conclusion = get_conclusion(parsed)
+
     # publish the delta stats
     gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-    Publisher(settings, gh).publish(stats, results.case_results)
+    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
 def get_commit_sha(event: dict, event_name: str):

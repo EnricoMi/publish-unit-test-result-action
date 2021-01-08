@@ -9,7 +9,7 @@ from typing import List, Any, Union, Optional, Tuple, Mapping
 from dataclasses import dataclass
 
 from unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
-    UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults
+    UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 
 class CaseMessages(defaultdict):
@@ -162,7 +162,9 @@ def ungest_string(string: str) -> str:
 
 
 def get_digest_from_stats(stats: UnitTestRunResults) -> str:
-    return digest_string(json.dumps(stats.to_dict()))
+    d = stats.to_dict()
+    del d['errors']  # we don't need errors in the digest
+    return digest_string(json.dumps(d))
 
 
 def get_stats_from_digest(digest: str) -> UnitTestRunResults:
@@ -171,6 +173,7 @@ def get_stats_from_digest(digest: str) -> UnitTestRunResults:
 
 def get_short_summary(stats: UnitTestRunResults) -> str:
     """Provides a single-line summary for the given stats."""
+    perrors = len(stats.errors)
     tests = get_magnitude(stats.tests)
     success = get_magnitude(stats.tests_succ)
     skipped = get_magnitude(stats.tests_skip)
@@ -180,9 +183,13 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 
     def get_test_summary():
         if tests == 0:
-            return 'No tests found'
+            if perrors == 0:
+                return 'No tests found'
+            else:
+                return '{} parse errors'.format(perrors)
         if tests > 0:
-            if (failure is None or failure == 0) and (error is None or error == 0):
+            if (failure is None or failure == 0) and \
+                    (error is None or error == 0) and perrors == 0:
                 if skipped == 0 and success == tests:
                     return 'All {} pass'.format(as_stat_number(tests, 0, 0, 'tests'))
                 if skipped > 0 and success == tests - skipped:
@@ -192,7 +199,8 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
                     )
 
             summary = ['{}'.format(as_stat_number(number, 0, 0, label))
-                       for number, label in [(error, 'errors'), (failure, 'fail'),
+                       for number, label in [(perrors, 'parse errors'),
+                                             (error, 'errors'), (failure, 'fail'),
                                              (skipped, 'skipped'), (success, 'pass')]
                        if number > 0]
             summary = ', '.join(summary)
@@ -240,9 +248,11 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
     reference_type = stats.reference_type if is_delta_stats else None
     reference_commit = stats.reference_commit if is_delta_stats else None
 
-    misc_line = '{files} {suites}  {duration}\n'.format(
+    errors = len(stats.errors)
+    misc_line = '{files} {errors}{suites}  {duration}\n'.format(
         files=as_stat_number(stats.files, files_digits, files_delta_digits, 'files '),
-        suites=as_stat_number(stats.suites, success_digits, 0, 'suites '),
+        errors='{} '.format(as_stat_number(errors, success_digits, 0, 'errors ')) if errors > 0 else '',
+        suites=as_stat_number(stats.suites, success_digits if errors == 0 else skip_digits, 0, 'suites '),
         duration=as_stat_duration(stats.duration, ':stopwatch:')
     )
 
@@ -268,10 +278,13 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         runs_error_part=runs_error_part,
     )
 
-    details_on = (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
+    details_on = (['parsing errors'] if errors > 0 else []) + \
+                 (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
                  (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+    details_on = details_on[0:-2] + [' and '.join(details_on[-2:])] if details_on else []
+
     details_line = '\nFor more details on these {details_on}, see [this check]({url}).\n'.format(
-        details_on=' and '.join(details_on),
+        details_on=', '.join(details_on),
         url=details_url
     )
 
@@ -325,6 +338,8 @@ class Annotation:
     path: str
     start_line: int
     end_line: int
+    start_column: Optional[int]
+    end_column: Optional[int]
     annotation_level: str
     message: str
     title: str
@@ -332,14 +347,18 @@ class Annotation:
 
     def to_dict(self) -> Mapping[str, Any]:
         dictionary = self.__dict__.copy()
+        if not dictionary.get('start_column'):
+            del dictionary['start_column']
+        if not dictionary.get('end_column'):
+            del dictionary['end_column']
         if not dictionary.get('raw_details'):
             del dictionary['raw_details']
         return dictionary
 
 
-def get_annotation(messages: CaseMessages,
-                   key: str, state: str, message: Optional[str],
-                   report_individual_runs: bool) -> Annotation:
+def get_case_annotation(messages: CaseMessages,
+                        key: str, state: str, message: Optional[str],
+                        report_individual_runs: bool) -> Annotation:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
                      [case
@@ -383,6 +402,8 @@ def get_annotation(messages: CaseMessages,
         path=test_file or class_name or '/',
         start_line=line,
         end_line=line,
+        start_column=None,
+        end_column=None,
         annotation_level=level,
         message='\n'.join(same_result_files),
         title=title,
@@ -390,12 +411,32 @@ def get_annotation(messages: CaseMessages,
     )
 
 
-def get_annotations(case_results: UnitTestCaseResults, report_individual_runs: bool) -> List[Annotation]:
+def get_error_annotation(error: ParseError) -> Annotation:
+    return Annotation(
+        path=error.file,
+        start_line=error.line or 0,
+        end_line=error.line or 0,
+        start_column=error.column,
+        end_column=error.column,
+        annotation_level='failure',
+        message=error.message,
+        title=f'Error processing result file',
+        raw_details=error.file
+    )
+
+
+def get_annotations(case_results: UnitTestCaseResults,
+                    parse_errors: List[ParseError],
+                    report_individual_runs: bool) -> List[Annotation]:
     messages = get_case_messages(case_results)
-    return [
-        get_annotation(messages, key, state, message, report_individual_runs)
+    case_annotations = [
+        get_case_annotation(messages, key, state, message, report_individual_runs)
         for key in messages
         for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else
                         [list(messages[key][state].keys())[0]])
     ]
+
+    error_annotations = [get_error_annotation(error) for error in parse_errors]
+
+    return error_annotations + case_annotations

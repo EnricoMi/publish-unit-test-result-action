@@ -1,6 +1,6 @@
 from collections import defaultdict
-from typing import Optional, List, Mapping, Any, Union
-
+from typing import Optional, List, Mapping, Any, Union, Dict
+from xml.etree.ElementTree import ParseError as XmlParseError
 from dataclasses import dataclass
 
 
@@ -25,8 +25,32 @@ class UnitTestCaseResults(defaultdict):
 
 
 @dataclass(frozen=True)
+class ParseError:
+    file: str
+    message: str
+    line: Optional[int]
+    column: Optional[int]
+
+    @staticmethod
+    def from_exception(file: str, exception: BaseException):
+        if isinstance(exception, XmlParseError):
+            line, column = exception.position
+            msg = exception.msg
+            if msg.startswith('syntax error:') or \
+                    msg.startswith('no element found:') or \
+                    msg.startswith('unclosed token:') or \
+                    msg.startswith('mismatched tag:'):
+                msg = f'File is not a valid XML file:\n{msg}'
+            elif msg.startswith('Invalid format.'):
+                msg = f'File is not a valid JUnit file:\n{msg}'
+            return ParseError(file=file, message=msg, line=line, column=column)
+        return ParseError(file=file, message=str(exception), line=None, column=None)
+
+
+@dataclass(frozen=True)
 class ParsedUnitTestResults:
     files: int
+    errors: List[ParseError]
     suites: int
     suite_tests: int
     suite_skipped: int
@@ -38,6 +62,7 @@ class ParsedUnitTestResults:
     def with_commit(self, commit: str) -> 'ParsedUnitTestResultsWithCommit':
         return ParsedUnitTestResultsWithCommit(
             self.files,
+            self.errors,
             self.suites,
             self.suite_tests,
             self.suite_skipped,
@@ -65,6 +90,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
                    tests_errors: int) -> 'UnitTestResults':
         return UnitTestResults(
             files=self.files,
+            errors=self.errors,
             suites=self.suites,
             suite_tests=self.suite_tests,
             suite_skipped=self.suite_skipped,
@@ -106,6 +132,7 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
 @dataclass(frozen=True)
 class UnitTestRunResults:
     files: int
+    errors: List[ParseError]
     suites: int
     duration: int
 
@@ -123,9 +150,32 @@ class UnitTestRunResults:
 
     commit: str
 
-    def to_dict(self) -> Mapping[str, Any]:
+    def with_errors(self, errors: List[ParseError]):
+        return UnitTestRunResults(
+            files=self.files,
+            errors=errors,
+            suites=self.suites,
+            duration=self.duration,
+
+            tests=self.tests,
+            tests_succ=self.tests_succ,
+            tests_skip=self.tests_skip,
+            tests_fail=self.tests_fail,
+            tests_error=self.tests_error,
+
+            runs=self.runs,
+            runs_succ=self.runs_succ,
+            runs_skip=self.runs_skip,
+            runs_fail=self.runs_fail,
+            runs_error=self.runs_error,
+
+            commit=self.commit
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
         return dict(
             files=self.files,
+            errors=self.errors,
             suites=self.suites,
             duration=self.duration,
 
@@ -148,6 +198,7 @@ class UnitTestRunResults:
     def from_dict(values: Mapping[str, Any]) -> 'UnitTestRunResults':
         return UnitTestRunResults(
             files=values.get('files'),
+            errors=values.get('errors', []),
             suites=values.get('suites'),
             duration=values.get('duration'),
 
@@ -173,6 +224,7 @@ Numeric = Mapping[str, int]
 @dataclass(frozen=True)
 class UnitTestRunDeltaResults:
     files: Numeric
+    errors: List[ParseError]
     suites: Numeric
     duration: Numeric
 
@@ -256,6 +308,7 @@ def get_stats(test_results: UnitTestResults) -> UnitTestRunResults:
 
     return UnitTestRunResults(
         files=test_results.files,
+        errors=test_results.errors,
         suites=test_results.suites,
         duration=test_results.suite_time,
 
@@ -293,6 +346,7 @@ def get_stats_delta(stats: UnitTestRunResults,
     """Given two stats provides a stats with deltas."""
     return UnitTestRunDeltaResults(
         files=get_diff_value(stats.files, reference_stats.files),
+        errors=stats.errors,
         suites=get_diff_value(stats.suites, reference_stats.suites),
         duration=get_diff_value(stats.duration, reference_stats.duration, 'duration'),
 

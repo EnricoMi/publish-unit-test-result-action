@@ -1,6 +1,8 @@
 from publish import *
+import github_action
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
     get_stats_delta
+from github_action import GithubAction
 
 
 class Settings:
@@ -50,15 +52,16 @@ class Publisher:
     if getattr(IssueComment, 'node_id') is None:
         raise RuntimeError('patching github IssueComment failed')
 
-    def __init__(self, settings: Settings, gh: Github):
+    def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
         self._settings = settings
         self._gh = gh
+        self._gha = gha
         self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
 
-    def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults):
-        self._logger.info('publishing results for commit {}'.format(self._settings.commit))
-        check_run = self.publish_check(stats, cases)
+    def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
+        self._logger.info('publishing {} results for commit {}'.format(conclusion, self._settings.commit))
+        check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
@@ -100,7 +103,7 @@ class Publisher:
             self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._settings.repo, commit))
             return None
         if len(pulls) > 1:
-            self._logger.error('found multiple pull requests for commit {}'.format(commit))
+            self._gha.error('Found multiple pull requests for commit {}'.format(commit))
             return None
 
         pull = pulls[0]
@@ -113,7 +116,7 @@ class Publisher:
 
         commit = self._repo.get_commit(commit_sha)
         if commit is None:
-            self._logger.error('could not find commit {}'.format(commit_sha))
+            self._gha.error('Could not find commit {}'.format(commit_sha))
             return None
 
         runs = commit.get_check_runs()
@@ -137,7 +140,7 @@ class Publisher:
             self._logger.debug('stats: {}'.format(stats))
             return stats
 
-    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> CheckRun:
+    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
@@ -146,7 +149,7 @@ class Publisher:
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         check_run = None
-        all_annotations = get_annotations(cases, self._settings.report_individual_runs)
+        all_annotations = get_annotations(cases, stats.errors, self._settings.report_individual_runs)
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
@@ -161,7 +164,7 @@ class Publisher:
             check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                     head_sha=self._settings.commit,
                                                     status='completed',
-                                                    conclusion='success',
+                                                    conclusion=conclusion,
                                                     output=output)
         return check_run
 
