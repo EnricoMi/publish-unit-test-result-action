@@ -1,10 +1,11 @@
 import base64
+import base64
 import gzip
 import json
 import logging
 import re
 from collections import defaultdict
-from typing import List, Any, Union, Optional, Tuple, Mapping
+from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator
 
 from dataclasses import dataclass
 
@@ -35,6 +36,74 @@ hide_comments_modes = [
     hide_comments_mode_all_but_latest,
     hide_comments_mode_orphaned
 ]
+
+
+def utf8_character_length(c: int) -> int:
+    if c >= 0x00010000:
+        return 4
+    if c >= 0x00000800:
+        return 3
+    if c >= 0x00000080:
+        return 2
+    return 1
+
+
+def alternating_range(positive_first: bool = True) -> Iterator[int]:
+    i = 0
+    yield i
+
+    if positive_first:
+        while True:
+            i += 1
+            yield i
+            yield -i
+    else:
+        while True:
+            i += 1
+            yield -i
+            yield i
+
+
+def abbreviate_bytes(string: Optional[str], length: int) -> Optional[str]:
+    if length < 3:
+        raise ValueError(f'Length must at least allow for the replacement character: {length}')
+
+    if string is None:
+        return None
+
+    char_length = len(string)
+    byte_length = len(string.encode('utf8'))
+    if byte_length <= length:
+        return string
+
+    odd = char_length % 2
+    middle = char_length // 2
+    pre = middle
+    suf = char_length - middle
+    for index in alternating_range(odd == 1):
+        if index >= 0:
+            suf -= 1
+        else:
+            pre -= 1
+        byte_length -= utf8_character_length(ord(string[middle + index]))
+        if byte_length <= length - 3:
+            return string[:pre] + '…' + (string[-suf:] if suf else '')
+
+
+def abbreviate(string: Optional[str], length: int) -> Optional[str]:
+    if length < 1:
+        raise ValueError(f'Length must at least allow for the replacement character: {length}')
+
+    if string is None:
+        return None
+
+    char_length = len(string)
+    if char_length <= length:
+        return string
+
+    pre = length // 2
+    suf = (length - 1) // 2
+    return string[:pre] + '…' + (string[-suf:] if suf else '')
 
 
 def get_formatted_digits(*numbers: Union[Optional[int], Numeric]) -> Tuple[int, int]:
@@ -347,6 +416,9 @@ class Annotation:
 
     def to_dict(self) -> Mapping[str, Any]:
         dictionary = self.__dict__.copy()
+        dictionary['message'] = abbreviate_bytes(dictionary['message'], 64000)
+        dictionary['title'] = abbreviate(dictionary['title'], 255)
+        dictionary['raw_details'] = abbreviate(dictionary['raw_details'], 64000)
         if not dictionary.get('start_column'):
             del dictionary['start_column']
         if not dictionary.get('end_column'):
