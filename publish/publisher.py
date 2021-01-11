@@ -144,9 +144,9 @@ class Publisher:
 
     @staticmethod
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
-        token = ' ‑ '  # U+2011 non-breaking hyphen
-        logger.info(f'annotation: {annotation.raw_data}')
-        return annotation.raw_details.split(token) if annotation is not None and not annotation.raw_details else []
+        if annotation:
+            logger.info(f'annotation: {annotation.raw_data}')
+        return annotation.raw_details.split('\n') if annotation is not None and not annotation.raw_details else []
 
     def get_test_lists_from_check_run(self, check_run: CheckRun) -> Tuple[Optional[List[str]], Optional[List[str]]]:
         all_tests_annotation: Optional[CheckRunAnnotation] = None
@@ -161,13 +161,15 @@ class Publisher:
         for annotation in check_run.get_annotations():
             if all_tests_title_regexp.match(annotation.title) and all_tests_message_regexp.match(annotation.message):
                 if all_tests_annotation is not None:
-                    logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                    if annotation:
+                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
                     return None, None
                 all_tests_annotation = annotation
 
             if skipped_tests_title_regexp.match(annotation.title) and skipped_tests_message_regexp.match(annotation.message):
                 if skipped_tests_annotation is not None:
-                    logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                    if annotation:
+                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
                     return None, None
                 skipped_tests_annotation = annotation
 
