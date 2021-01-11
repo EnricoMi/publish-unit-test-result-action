@@ -109,20 +109,9 @@ class Publisher:
         self._logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
         return pull
 
-    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
-        summary = check_run.output.summary
-        if summary is None:
-            return None
-        for line in summary.split('\n'):
-            self._logger.debug('summary: {}'.format(line))
-
-        pos = summary.index(digest_prefix) if digest_prefix in summary else None
-        if pos:
-            digest = summary[pos + len(digest_prefix):]
-            self._logger.debug('digest: {}'.format(digest))
-            stats = get_stats_from_digest(digest)
-            self._logger.debug('stats: {}'.format(stats))
-            return stats
+    def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
+        check_run = self.get_check_run(commit_sha)
+        return self.get_stats_from_check_run(check_run) if check_run is not None else None
 
     def get_check_run(self, commit_sha: str) -> Optional[CheckRun]:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
@@ -141,6 +130,21 @@ class Publisher:
             return None
 
         return runs[0]
+
+    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
+        summary = check_run.output.summary
+        if summary is None:
+            return None
+        for line in summary.split('\n'):
+            self._logger.debug('summary: {}'.format(line))
+
+        pos = summary.index(digest_prefix) if digest_prefix in summary else None
+        if pos:
+            digest = summary[pos + len(digest_prefix):]
+            self._logger.debug('digest: {}'.format(digest))
+            stats = get_stats_from_digest(digest)
+            self._logger.debug('stats: {}'.format(stats))
+            return stats
 
     @staticmethod
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
@@ -180,15 +184,9 @@ class Publisher:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
-        check_run = self.get_check_run(before_commit_sha)
-        before_stats = self.get_stats_from_check_run(check_run) if check_run is not None else None
+        before_stats = self.get_stats_from_commit(before_commit_sha)
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
-
-        # get test lists from check run
-        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(check_run)
-        logger.info(f'all tests: {before_all_tests}')
-        logger.info(f'all tests: {before_skipped_tests}')
 
         error_annotations = get_error_annotations(stats.errors)
         file_list_annotations = self.get_test_list_annotations(cases)
@@ -196,6 +194,7 @@ class Publisher:
         all_annotations = error_annotations + file_list_annotations + case_annotations
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
+        check_run = None
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
@@ -227,9 +226,15 @@ class Publisher:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
-        base_stats = self.get_stats_from_commit(base_commit_sha)
+        base_check_run = self.get_check_run(base_commit_sha)
+        base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
+
+        # get test lists from check run
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
+        logger.info(f'all tests: {before_all_tests}')
+        logger.info(f'skipped tests: {before_skipped_tests}')
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
