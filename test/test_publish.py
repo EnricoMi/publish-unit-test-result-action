@@ -844,10 +844,12 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_annotation_to_dict(self):
-        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2')
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), annotation.to_dict())
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2')
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), annotation.to_dict())
         annotation = Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)', raw_details=None)
         self.assertEqual(dict(path='class2', start_line=0, end_line=0, annotation_level='failure', message='result-file1', title='1 out of 4 runs with error: test2 (class2)'), annotation.to_dict())
+        annotation = Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='message', title=None, raw_details=None)
+        self.assertEqual(dict(path='file', start_line=0, end_line=0, annotation_level='notice', message='message'), annotation.to_dict())
 
     def test_annotation_to_dict_abbreviation(self):
         annotation = Annotation(path='file', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='message ' * 8000, title='title - ' * 31, raw_details='raw ' * 16000)

@@ -411,7 +411,7 @@ class Annotation:
     end_column: Optional[int]
     annotation_level: str
     message: str
-    title: str
+    title: Optional[str]
     raw_details: Optional[str]
 
     def to_dict(self) -> Mapping[str, Any]:
@@ -423,6 +423,8 @@ class Annotation:
             del dictionary['start_column']
         if not dictionary.get('end_column'):
             del dictionary['end_column']
+        if not dictionary.get('title'):
+            del dictionary['title']
         if not dictionary.get('raw_details'):
             del dictionary['raw_details']
         return dictionary
