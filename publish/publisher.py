@@ -56,7 +56,7 @@ class Publisher:
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -152,7 +152,8 @@ class Publisher:
             logger.info(f'annotation: {annotation.raw_data}')
         return annotation.raw_details.split('\n') if annotation is not None and annotation.raw_details else []
 
-    def get_test_lists_from_check_run(self, check_run: CheckRun) -> Tuple[Optional[List[str]], Optional[List[str]]]:
+    @staticmethod
+    def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
         if check_run is None:
             return None, None
 
@@ -166,22 +167,26 @@ class Publisher:
         skipped_tests_message_regexp = re.compile('^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
-            if all_tests_title_regexp.match(annotation.title) and all_tests_message_regexp.match(annotation.message):
+            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+                    all_tests_title_regexp.match(annotation.title) and \
+                    all_tests_message_regexp.match(annotation.message):
                 if all_tests_annotation is not None:
                     if annotation:
                         logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
                     return None, None
                 all_tests_annotation = annotation
 
-            if skipped_tests_title_regexp.match(annotation.title) and skipped_tests_message_regexp.match(annotation.message):
+            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+                    skipped_tests_title_regexp.match(annotation.title) and \
+                    skipped_tests_message_regexp.match(annotation.message):
                 if skipped_tests_annotation is not None:
                     if annotation:
                         logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
                     return None, None
                 skipped_tests_annotation = annotation
 
-        return self.get_test_list_from_annotation(all_tests_annotation), \
-               self.get_test_list_from_annotation(skipped_tests_annotation)
+        return Publisher.get_test_list_from_annotation(all_tests_annotation), \
+               Publisher.get_test_list_from_annotation(skipped_tests_annotation)
 
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
@@ -225,7 +230,8 @@ class Publisher:
                         title: str,
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
-                        check_run: Optional[CheckRun] = None) -> None:
+                        check_run: Optional[CheckRun] = None,
+                        cases: UnitTestCaseResults = None) -> PullRequest:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
@@ -236,13 +242,21 @@ class Publisher:
 
         # get test lists from check run
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
-        logger.info(f'all tests: {before_all_tests}')
-        logger.info(f'skipped tests: {before_skipped_tests}')
+        all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+        test_list_changes = {}
+        if before_all_tests is not None and before_skipped_tests is not None and \
+                all_tests is not None and skipped_tests is not None:
+            test_list_changes = {
+                'adds': list(set(all_tests) - set(before_all_tests)),
+                'removes': list(set(before_all_tests) - set(all_tests)),
+                'skips': list(set(skipped_tests) - set(before_skipped_tests)),
+                'un-skips': list(set(before_skipped_tests) - set(skipped_tests))
+            }
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
         pull_request.create_issue_comment(
-            '## {}\n{}'.format(title, get_long_summary_md(stats_with_delta, details_url))
+            '## {}\n{}'.format(title, get_long_summary_md(stats_with_delta, details_url, test_list_changes))
         )
         return pull_request
 

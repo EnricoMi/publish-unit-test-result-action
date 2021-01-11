@@ -585,6 +585,46 @@ class PublishTest(unittest.TestCase):
             'Results for commit commit.\n')
         )
 
+    def test_get_long_summary_md_with_test_lists(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, errors=[], suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/',
+            dict(
+                adds=['test1'],
+                removes=['test2', 'test3'],
+                skips=['test4', 'test5', 'test6', 'test7', 'test8', 'test9']
+            )
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+            '\n'
+            'Results for commit commit.\n'
+            '\n'
+            '**This pull request adds 1 test:**\n'
+            '```\n'
+            'test1\n'
+            '```\n'
+            '\n'
+            '**This pull request removes 2 tests:**\n'
+            '```\n'
+            'test2\n'
+            'test3\n'
+            '```\n'
+            '\n'
+            '**This pull request skips 6 tests, the first 5 tests are:**\n'
+            '```\n'
+            'test4\n'
+            'test5\n'
+            'test6\n'
+            'test7\n'
+            'test8\n'
+            '```\n')
+        )
+
     def test_get_long_summary_with_digest_md_with_single_run(self):
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -747,6 +787,13 @@ class PublishTest(unittest.TestCase):
                 commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
             ))
         self.assertIn('stats must be UnitTestRunResults when no digest_stats is given', context.exception.args)
+
+    def test_get_test_list_summary_md(self):
+        self.assertEqual('', get_test_list_summary_md('label', [], 3))
+        self.assertEqual('\n**This pull request label 1 test:**\n```\ntest1\n```\n', get_test_list_summary_md('label', ['test1'], 3))
+        self.assertEqual('\n**This pull request label 2 tests:**\n```\ntest1\ntest2\n```\n', get_test_list_summary_md('label', ['test1', 'test2'], 3))
+        self.assertEqual('\n**This pull request label 3 tests:**\n```\ntest1\ntest2\ntest3\n```\n', get_test_list_summary_md('label', ['test1', 'test2', 'test3'], 3))
+        self.assertEqual('\n**This pull request label 4 tests, the first 3 tests are:**\n```\ntest1\ntest2\ntest3\n```\n', get_test_list_summary_md('label', ['test1', 'test2', 'test3', 'test4'], 3))
 
     def test_get_case_messages(self):
         results = UnitTestCaseResults([

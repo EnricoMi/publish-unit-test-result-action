@@ -268,7 +268,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
@@ -291,7 +291,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
@@ -443,6 +443,102 @@ class TestPublisher(unittest.TestCase):
             [settings.check_name, 'other check', 'more checks'],
             self.get_stats('base')
         )
+
+    def test_get_test_lists_from_none_check_run(self):
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(None))
+
+    def test_get_test_lists_from_check_run_single_test(self):
+        annotation1 = mock.Mock()
+        annotation1.title = None
+        annotation1.message = 'message one'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '1 test found'
+        annotation2.message = 'There is 1 test, see "Raw output" for the name of the test'
+        annotation2.raw_details = 'test one'
+
+        annotation3 = mock.Mock()
+        annotation3.title = '1 skipped test found'
+        annotation3.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+        annotation3.raw_details = 'skip one'
+
+        annotations = [annotation1, annotation2, annotation3]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual((['test one'], ['skip one']), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_more_tests(self):
+        annotation1 = mock.Mock()
+        annotation1.title = None
+        annotation1.message = 'message one'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '3 tests found'
+        annotation2.message = 'There are 3 tests, see "Raw output" for the full list of tests.'
+        annotation2.raw_details = 'test one\ntest two\ntest three'
+
+        annotation3 = mock.Mock()
+        annotation3.title = '3 skipped tests found'
+        annotation3.message = 'There are 3 skipped tests, see "Raw output" for the full list of skipped tests.'
+        annotation3.raw_details = 'skip one\nskip two\nskip three'
+
+        annotations = [annotation1, annotation2, annotation3]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual(
+            (['test one', 'test two', 'test three'], ['skip one', 'skip two', 'skip three']),
+            Publisher.get_test_lists_from_check_run(check_run)
+        )
+
+    def test_get_test_lists_from_check_run_none_raw_details(self):
+        annotation1 = mock.Mock()
+        annotation1.title = '1 test found'
+        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '1 skipped test found'
+        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+        annotation2.raw_details = None
+
+        annotations = [annotation1, annotation2]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual(([], []), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_multiple_all_tests(self):
+        annotation1 = mock.Mock()
+        annotation1.title = '1 test found'
+        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
+        annotation1.raw_details = 'test one'
+
+        annotation2 = mock.Mock()
+        annotation2.title = '1 test found'
+        annotation2.message = 'There is 1 test, see "Raw output" for the name of the test'
+        annotation2.raw_details = 'test one'
+
+        annotations = [annotation1, annotation2]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_multiple_skipped_tests(self):
+        annotation1 = mock.Mock()
+        annotation1.title = '1 skipped test found'
+        annotation1.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+        annotation1.raw_details = 'skip one'
+
+        annotation2 = mock.Mock()
+        annotation2.title = '1 skipped test found'
+        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+        annotation2.raw_details = 'skip one'
+
+        annotations = [annotation1, annotation2]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_publish_check_without_annotations(self):
         self.do_test_publish_check_without_base_stats([], [none_list])

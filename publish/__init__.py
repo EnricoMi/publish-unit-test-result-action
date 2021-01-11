@@ -303,8 +303,26 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     return md
 
 
+def get_test_list_summary_md(label: str, test_list: List[str], list_limit: int) -> str:
+    if not test_list:
+        return ''
+
+    return ('\n'
+            '**This pull request {label} {len} test{s}{first}:**\n'
+            '```\n'
+            '{tests}\n'
+            '```\n'.format(
+                label=label,
+                len=len(test_list),
+                s='s' if len(test_list) > 1 else '',
+                first=f', the first {list_limit} tests are' if len(test_list) > list_limit else '',
+                tests='\n'.join(sorted(test_list[:list_limit]))
+            ))
+
+
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
-                        details_url: Optional[str] = None) -> str:
+                        details_url: Optional[str] = None,
+                        test_list_changes: Optional[Mapping[str, List[str]]] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
     hide_runs = stats.runs == stats.tests and \
                 stats.runs_succ == stats.tests_succ and \
@@ -363,6 +381,10 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         url=details_url
     )
 
+    test_changes = ''.join([get_test_list_summary_md(label, test_list, 5)
+                            for label, test_list in (test_list_changes.items() if test_list_changes else [])
+                            if test_list])
+
     commit_line = '\nResults for commit {commit}.{compare}\n'.format(
         commit=as_short_commit(commit),
         compare=' ± Comparison against {reference_type} commit {reference_commit}.'.format(
@@ -371,14 +393,14 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         ) if reference_type and reference_commit else ''
     )
 
-    md = ('{misc}{tests}{runs}{details}{commit}'.format(
+    return '{misc}{tests}{runs}{details}{commit}{test_changes}'.format(
         misc=misc_line,
         tests=tests_line,
         runs=runs_line if not hide_runs else '',
         details=details_line if details_url and details_on else '',
-        commit=commit_line
-    ))
-    return md
+        commit=commit_line,
+        test_changes=test_changes
+    )
 
 
 def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
@@ -538,10 +560,16 @@ def get_test_name(file_name: Optional[str],
     return token.join(name)
 
 
+def get_all_tests_list(cases: UnitTestCaseResults) -> List[str]:
+    if cases is None:
+        return None
+    return [get_test_name(file_name, class_name, test_name)
+            for (file_name, class_name, test_name) in cases.keys()]
+
+
 def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
     if len(cases) > 0:
-        test_list = [get_test_name(file_name, class_name, test_name)
-                     for (file_name, class_name, test_name) in cases.keys()]
+        test_list = get_all_tests_list(cases)
         if len(test_list) == 1:
             message = f'There is 1 test, see "Raw output" for the name of the test.'
         else:
@@ -559,13 +587,19 @@ def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annota
         )
 
 
+def get_skipped_tests_list(cases: UnitTestCaseResults) -> List[str]:
+    if cases is None:
+        return None
+    tests = [key
+             for key, result in cases.items()
+             if 'skipped' in result and len(result) == 1]
+    return [get_test_name(file_name, class_name, test_name)
+            for (file_name, class_name, test_name) in tests]
+
+
 def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
-    skipped_tests = [key
-                     for key, result in cases.items()
-                     if 'skipped' in result and len(result) == 1]
+    skipped_tests = get_skipped_tests_list(cases)
     if len(skipped_tests) > 0:
-        test_list = [get_test_name(file_name, class_name, test_name)
-                     for (file_name, class_name, test_name) in skipped_tests]
         if len(skipped_tests) == 1:
             message = f'There is 1 skipped test, see "Raw output" for the name of the skipped test.'
         else:
@@ -579,5 +613,5 @@ def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[An
             annotation_level='notice',
             message=message,
             title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found',
-            raw_details='\n'.join(sorted(test_list))
+            raw_details='\n'.join(sorted(skipped_tests))
         )
