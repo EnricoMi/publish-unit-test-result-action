@@ -188,6 +188,8 @@ class Publisher:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
+        self._logger.info('comparing against base={}'.format(base_commit_sha))
+        self._logger.info('pr={}'.format(pull_request.__dict__))
         base_stats = self.get_stats_from_commit(base_commit_sha)
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
