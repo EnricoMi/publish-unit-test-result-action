@@ -1,5 +1,6 @@
 from github import Github
 from github.CheckRun import CheckRun
+from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
 from github_action import GithubAction
@@ -108,7 +109,22 @@ class Publisher:
         self._logger.debug('found pull request #{} for commit {}'.format(pull.number, commit))
         return pull
 
-    def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
+    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
+        summary = check_run.output.summary
+        if summary is None:
+            return None
+        for line in summary.split('\n'):
+            self._logger.debug('summary: {}'.format(line))
+
+        pos = summary.index(digest_prefix) if digest_prefix in summary else None
+        if pos:
+            digest = summary[pos + len(digest_prefix):]
+            self._logger.debug('digest: {}'.format(digest))
+            stats = get_stats_from_digest(digest)
+            self._logger.debug('stats: {}'.format(stats))
+            return stats
+
+    def get_check_run(self, commit_sha: str) -> Optional[CheckRun]:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
@@ -124,29 +140,53 @@ class Publisher:
         if len(runs) != 1:
             return None
 
-        summary = runs[0].output.summary
-        if summary is None:
-            return None
-        for line in summary.split('\n'):
-            self._logger.debug('summary: {}'.format(line))
+        return runs[0]
 
-        pos = summary.index(digest_prefix) if digest_prefix in summary else None
-        if pos:
-            digest = summary[pos + len(digest_prefix):]
-            self._logger.debug('digest: {}'.format(digest))
-            stats = get_stats_from_digest(digest)
-            self._logger.debug('stats: {}'.format(stats))
-            return stats
+    @staticmethod
+    def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
+        token = ' ‑ '  # U+2011 non-breaking hyphen
+        logger.info(f'annotation: {annotation.raw_data}')
+        return annotation.raw_details.split(token) if annotation is not None and not annotation.raw_details else []
+
+    def get_test_lists_from_check_run(self, check_run: CheckRun) -> Tuple[Optional[List[str]], Optional[List[str]]]:
+        all_tests_annotation: Optional[CheckRunAnnotation] = None
+        skipped_tests_annotation: Optional[CheckRunAnnotation] = None
+
+        all_tests_title_regexp = re.compile('^\d+ test(s)? found$')
+        skipped_tests_title_regexp = re.compile('^\d+ skipped test(s)? found$')
+
+        all_tests_message_regexp = re.compile('^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
+        skipped_tests_message_regexp = re.compile('^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
+
+        for annotation in check_run.get_annotations():
+            if all_tests_title_regexp.match(annotation.title) and all_tests_message_regexp.match(annotation.message):
+                if all_tests_annotation is not None:
+                    logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                    return None, None
+                all_tests_annotation = annotation
+
+            if skipped_tests_title_regexp.match(annotation.title) and skipped_tests_message_regexp.match(annotation.message):
+                if skipped_tests_annotation is not None:
+                    logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                    return None, None
+                skipped_tests_annotation = annotation
+
+        return self.get_test_list_from_annotation(all_tests_annotation), \
+               self.get_test_list_from_annotation(skipped_tests_annotation)
 
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
-        before_stats = self.get_stats_from_commit(before_commit_sha)
+        check_run = self.get_check_run(before_commit_sha)
+        before_stats = self.get_stats_from_check_run(check_run) if check_run is not None else None
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
-        check_run = None
+        # get test lists from check run
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(check_run)
+        logger.info(f'all tests: {before_all_tests}')
+        logger.info(f'all tests: {before_skipped_tests}')
 
         error_annotations = get_error_annotations(stats.errors)
         file_list_annotations = self.get_test_list_annotations(cases)
