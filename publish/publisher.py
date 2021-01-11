@@ -150,7 +150,7 @@ class Publisher:
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
         if annotation:
             logger.info(f'annotation: {annotation.raw_data}')
-        return annotation.raw_details.split('\n') if annotation is not None and not annotation.raw_details else []
+        return annotation.raw_details.split('\n') if annotation is not None and annotation.raw_details else []
 
     def get_test_lists_from_check_run(self, check_run: CheckRun) -> Tuple[Optional[List[str]], Optional[List[str]]]:
         if check_run is None:
