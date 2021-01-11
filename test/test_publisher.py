@@ -23,12 +23,13 @@ class TestPublisher(unittest.TestCase):
         return mocked
 
     @staticmethod
-    def create_github_pr(repo: str, sha: Optional[str] = None, number: Optional[int] = None):
+    def create_github_pr(repo: str, sha: Optional[str] = None, number: Optional[int] = None, state: Optional[str] = None):
         pr = mock.MagicMock()
         pr.as_pull_request = mock.Mock(return_value=pr)
         pr.base.repo.full_name = repo
         pr.base.sha = sha
         pr.number = number
+        pr.state = state
         return pr
 
     @staticmethod
@@ -319,29 +320,51 @@ class TestPublisher(unittest.TestCase):
         actual = publisher.get_pull(settings.commit)
 
         self.assertEqual(expected, actual)
-        gh.search_issues.assert_called_once_with('type:pr {}'.format(settings.commit))
+        gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
         return gha
 
     def test_get_pull(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo)
         search_issues = self.create_github_collection([pr])
-        self.do_test_get_pull(settings, search_issues, pr)
+        gha = self.do_test_get_pull(settings, search_issues, pr)
+        gha.error.assert_not_called()
 
     def test_get_pull_no_match(self):
         settings = self.create_settings()
         search_issues = self.create_github_collection([])
-        self.do_test_get_pull(settings, search_issues, None)
+        gha = self.do_test_get_pull(settings, search_issues, None)
+        gha.error.assert_not_called()
 
-    def test_get_pull_multiple_matches(self):
+    def test_get_pull_multiple_closed_matches(self):
         settings = self.create_settings()
 
-        pr1 = self.create_github_pr(settings.repo)
-        pr2 = self.create_github_pr(settings.repo)
+        pr1 = self.create_github_pr(settings.repo, state='closed')
+        pr2 = self.create_github_pr(settings.repo, state='closed')
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('Found multiple pull requests for commit commit')
+        gha.error.assert_not_called()
+
+    def test_get_pull_one_closed_one_open_matches(self):
+        settings = self.create_settings()
+
+        pr1 = self.create_github_pr(settings.repo, state='closed')
+        pr2 = self.create_github_pr(settings.repo, state='open')
+        search_issues = self.create_github_collection([pr1, pr2])
+
+        gha = self.do_test_get_pull(settings, search_issues, pr2)
+        gha.error.assert_not_called()
+
+    def test_get_pull_multiple_open_matches(self):
+        settings = self.create_settings()
+
+        pr1 = self.create_github_pr(settings.repo, state='open')
+        pr2 = self.create_github_pr(settings.repo, state='open')
+        search_issues = self.create_github_collection([pr1, pr2])
+
+        gha = self.do_test_get_pull(settings, search_issues, None)
+        gha.error.assert_called_once_with('Found multiple open pull requests for commit commit')
 
     def test_get_pull_forked_repo(self):
         settings = self.create_settings()
