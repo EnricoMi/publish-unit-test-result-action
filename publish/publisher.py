@@ -80,12 +80,16 @@ class Publisher:
             self._logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
     def get_pull(self, commit: str) -> Optional[PullRequest]:
-        issues = self._gh.search_issues('type:pr {}'.format(commit))
-        self._logger.debug('found {} pull requests for commit {}'.format(issues.totalCount, commit))
+        issues = self._gh.search_issues('type:pr repo:"{repo}" {commit}'.format(
+            repo=self._settings.repo, commit=commit
+        ))
+        self._logger.debug('found {} pull requests in repo {} for commit {}'.format(
+            issues.totalCount, self._settings.repo, commit
+        ))
 
         if issues.totalCount == 0:
             return None
-        self._logger.debug('running in repo {}'.format(self._settings.repo))
+
         for issue in issues:
             pr = issue.as_pull_request()
             self._logger.debug(pr)
@@ -93,7 +97,7 @@ class Publisher:
             self._logger.debug('PR {}: {} -> {}'.format(pr.html_url, pr.head.repo.full_name, pr.base.repo.full_name))
 
         # we can only publish the comment to PRs that are in the same repository as this action is executed in
-        # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY
+        # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY / self._settings.repo
         # we won't have permission otherwise
         pulls = list([pr
                       for issue in issues
@@ -104,7 +108,12 @@ class Publisher:
             self._logger.debug('found no pull requests in repo {} for commit {}'.format(self._settings.repo, commit))
             return None
         if len(pulls) > 1:
-            self._gha.error('Found multiple pull requests for commit {}'.format(commit))
+            pulls = [pull for pull in pulls if pull.state == 'open']
+        if len(pulls) == 0:
+            self._logger.debug('found no open pull request in repo {} for commit {}'.format(self._settings.repo, commit))
+            return None
+        if len(pulls) > 1:
+            self._gha.error('Found multiple open pull requests for commit {}'.format(commit))
             return None
 
         pull = pulls[0]
