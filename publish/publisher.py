@@ -1,7 +1,10 @@
-from publish import *
-from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
-    get_stats_delta
+from github import Github
+from github.CheckRun import CheckRun
+from github.PullRequest import PullRequest
+
 from github_action import GithubAction
+from publish import *
+from unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
 class Settings:
@@ -37,21 +40,6 @@ class Settings:
 class Publisher:
 
     _logger = logging.getLogger('publish.publisher')
-
-    from github import Github
-    from github.PullRequest import PullRequest
-    from githubext.CheckRun import CheckRun
-    from githubext.Commit import Commit
-    from githubext.IssueComment import IssueComment
-    from githubext.Repository import Repository
-
-    # to prevent githubext import to be auto-removed
-    if getattr(Repository, 'create_check_run') is None:
-        raise RuntimeError('patching github Repository failed')
-    if getattr(Commit, 'get_check_runs') is None:
-        raise RuntimeError('patching github Commit failed')
-    if getattr(IssueComment, 'node_id') is None:
-        raise RuntimeError('patching github IssueComment failed')
 
     def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
         self._settings = settings
@@ -136,7 +124,7 @@ class Publisher:
         if len(runs) != 1:
             return None
 
-        summary = runs[0].output.get('summary')
+        summary = runs[0].output.summary
         if summary is None:
             return None
         for line in summary.split('\n'):

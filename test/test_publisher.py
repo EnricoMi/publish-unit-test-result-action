@@ -99,7 +99,9 @@ class TestPublisher(unittest.TestCase):
                 for check_name in check_names:
                     run = mock.MagicMock()
                     run.name = check_name
-                    run.output = dict(summary='summary\n{}{}'.format(digest_prefix, digest))
+                    check_run_output = mock.MagicMock()
+                    check_run_output.summary = 'summary\n{}{}'.format(digest_prefix, digest)
+                    run.output = check_run_output
                     runs.append(run)
 
             check_runs = self.create_github_collection(runs)
