@@ -37,6 +37,10 @@ hide_comments_modes = [
     hide_comments_mode_orphaned
 ]
 
+all_tests_list = 'all tests'
+skipped_tests_list = 'skipped tests'
+available_annotations = [all_tests_list, skipped_tests_list]
+
 
 def utf8_character_length(c: int) -> int:
     if c >= 0x00010000:
@@ -517,12 +521,6 @@ def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
     return [get_error_annotation(error) for error in parse_errors]
 
 
-def get_test_list_annotations(cases: UnitTestCaseResults) -> List[Annotation]:
-    all_tests = get_all_tests_list_annotation(cases)
-    skipped_tests = get_skipped_tests_list_annotation(cases)
-    return [annotation for annotation in [skipped_tests, all_tests] if annotation]
-
-
 def get_test_name(file_name: Optional[str],
                   class_name: Optional[str],
                   test_name: Optional[str]) -> str:
@@ -539,8 +537,6 @@ def get_test_name(file_name: Optional[str],
 
 
 def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
-    #key = (case.test_file if dedup_classes_by_file_name else None, case.class_name, case.test_name)
-    #cases[key][case.result].append(case)
     if len(cases) > 0:
         test_list = [get_test_name(file_name, class_name, test_name)
                      for (file_name, class_name, test_name) in cases.keys()]

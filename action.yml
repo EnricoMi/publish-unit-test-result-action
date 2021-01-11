@@ -32,6 +32,10 @@ inputs:
     description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
     required: false
     default: 'true'
+  check_run_annotations:
+    description: 'Adds additional information to the check run (comma-separated list): all tests - list all found tests, skipped tests - list all skipped tests'
+    required: false
+    default: 'all tests, skipped tests'
   log_level:
     description: 'Action logging level'
     required: false
