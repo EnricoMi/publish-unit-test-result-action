@@ -153,6 +153,9 @@ class Publisher:
         return annotation.raw_details.split('\n') if annotation is not None and not annotation.raw_details else []
 
     def get_test_lists_from_check_run(self, check_run: CheckRun) -> Tuple[Optional[List[str]], Optional[List[str]]]:
+        if check_run is None:
+            return None, None
+
         all_tests_annotation: Optional[CheckRunAnnotation] = None
         skipped_tests_annotation: Optional[CheckRunAnnotation] = None
 
