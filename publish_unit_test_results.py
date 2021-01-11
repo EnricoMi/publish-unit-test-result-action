@@ -2,12 +2,12 @@ import json
 import logging
 import os
 import pathlib
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import github
 
 from junit import parse_junit_xml_files
-from publish import hide_comments_modes
+from publish import hide_comments_modes, available_annotations
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 from github_action import GithubAction
@@ -75,11 +75,21 @@ if __name__ == "__main__":
     log_level = get_var('LOG_LEVEL') or 'INFO'
     logger.level = logging.getLevelName(log_level)
 
-    def check_var(var: str, name: str, label: str, allowed_values: Optional[List[str]] = None) -> None:
+    def check_var(var: Union[str, List[str]],
+                  name: str,
+                  label: str,
+                  allowed_values: Optional[List[str]] = None) -> None:
         if var is None:
             raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
-        if allowed_values and var not in allowed_values:
-            raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
+
+        if allowed_values:
+            if isinstance(var, str):
+                if var not in allowed_values:
+                    raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
+            if isinstance(var, list):
+                if any([v not in allowed_values for v in var]):
+                    raise RuntimeError('Some values in "{}" are not supported for variable {}, allowed: {}'.format(', '.join(var), name, ', '.join(allowed_values)))
+
 
     event = get_var('GITHUB_EVENT_PATH')
     event_name = get_var('GITHUB_EVENT_NAME')
@@ -90,6 +100,9 @@ if __name__ == "__main__":
     api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
+    annotations = get_var('CHECK_RUN_ANNOTATIONS') or 'skipped tests, all tests'
+    annotations = [annotation.strip()
+                   for annotation in annotations.split(',')]
     settings = Settings(
         token=get_var('GITHUB_TOKEN'),
         api_url=api_url,
@@ -103,6 +116,7 @@ if __name__ == "__main__":
         hide_comment_mode=get_var('HIDE_COMMENTS') or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS') == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',
+        check_run_annotation=annotations
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
@@ -110,5 +124,6 @@ if __name__ == "__main__":
     check_var(settings.commit, 'COMMIT or event file', 'Commit SHA')
     check_var(settings.files_glob, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
+    check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)
 
     main(settings)

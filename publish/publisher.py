@@ -1,5 +1,4 @@
 from publish import *
-import github_action
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, \
     get_stats_delta
 from github_action import GithubAction
@@ -18,7 +17,8 @@ class Settings:
                  comment_on_pr,
                  hide_comment_mode,
                  report_individual_runs,
-                 dedup_classes_by_file_name):
+                 dedup_classes_by_file_name,
+                 check_run_annotation):
         self.token = token
         self.api_url = api_url
         self.event = event
@@ -31,6 +31,7 @@ class Settings:
         self.hide_comment_mode = hide_comment_mode
         self.report_individual_runs = report_individual_runs
         self.dedup_classes_by_file_name = dedup_classes_by_file_name
+        self.check_run_annotation = check_run_annotation
 
 
 class Publisher:
@@ -149,7 +150,11 @@ class Publisher:
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         check_run = None
-        all_annotations = get_annotations(cases, stats.errors, self._settings.report_individual_runs)
+
+        error_annotations = get_error_annotations(stats.errors)
+        file_list_annotations = self.get_test_list_annotations(cases)
+        case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
+        all_annotations = error_annotations + file_list_annotations + case_annotations
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
@@ -167,6 +172,13 @@ class Publisher:
                                                     conclusion=conclusion,
                                                     output=output)
         return check_run
+
+    def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
+        all_tests = get_all_tests_list_annotation(cases) \
+            if all_tests_list in self._settings.check_run_annotation else []
+        skipped_tests = get_skipped_tests_list_annotation(cases) \
+            if skipped_tests_list in self._settings.check_run_annotation else []
+        return [annotation for annotation in [skipped_tests, all_tests] if annotation]
 
     def publish_comment(self,
                         title: str,

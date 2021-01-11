@@ -37,6 +37,10 @@ hide_comments_modes = [
     hide_comments_mode_orphaned
 ]
 
+all_tests_list = 'all tests'
+skipped_tests_list = 'skipped tests'
+available_annotations = [all_tests_list, skipped_tests_list]
+
 
 def utf8_character_length(c: int) -> int:
     if c >= 0x00010000:
@@ -411,7 +415,7 @@ class Annotation:
     end_column: Optional[int]
     annotation_level: str
     message: str
-    title: str
+    title: Optional[str]
     raw_details: Optional[str]
 
     def to_dict(self) -> Mapping[str, Any]:
@@ -423,13 +427,17 @@ class Annotation:
             del dictionary['start_column']
         if not dictionary.get('end_column'):
             del dictionary['end_column']
+        if not dictionary.get('title'):
+            del dictionary['title']
         if not dictionary.get('raw_details'):
             del dictionary['raw_details']
         return dictionary
 
 
 def get_case_annotation(messages: CaseMessages,
-                        key: str, state: str, message: Optional[str],
+                        key: Tuple[Optional[str], Optional[str], Optional[str]],
+                        state: str,
+                        message: Optional[str],
                         report_individual_runs: bool) -> Annotation:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
@@ -477,10 +485,22 @@ def get_case_annotation(messages: CaseMessages,
         start_column=None,
         end_column=None,
         annotation_level=level,
-        message='\n'.join(same_result_files),
+        message='\n'.join(sorted(same_result_files)),
         title=title,
         raw_details=message
     )
+
+
+def get_case_annotations(case_results: UnitTestCaseResults,
+                         report_individual_runs: bool) -> List[Annotation]:
+    messages = get_case_messages(case_results)
+    return [
+        get_case_annotation(messages, key, state, message, report_individual_runs)
+        for key in messages
+        for state in messages[key] if state not in ['success', 'skipped']
+        for message in (messages[key][state] if report_individual_runs else
+                        [list(messages[key][state].keys())[0]])
+    ]
 
 
 def get_error_annotation(error: ParseError) -> Annotation:
@@ -497,18 +517,65 @@ def get_error_annotation(error: ParseError) -> Annotation:
     )
 
 
-def get_annotations(case_results: UnitTestCaseResults,
-                    parse_errors: List[ParseError],
-                    report_individual_runs: bool) -> List[Annotation]:
-    messages = get_case_messages(case_results)
-    case_annotations = [
-        get_case_annotation(messages, key, state, message, report_individual_runs)
-        for key in messages
-        for state in messages[key] if state not in ['success', 'skipped']
-        for message in (messages[key][state] if report_individual_runs else
-                        [list(messages[key][state].keys())[0]])
-    ]
+def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
+    return [get_error_annotation(error) for error in parse_errors]
 
-    error_annotations = [get_error_annotation(error) for error in parse_errors]
 
-    return error_annotations + case_annotations
+def get_test_name(file_name: Optional[str],
+                  class_name: Optional[str],
+                  test_name: Optional[str]) -> str:
+    if not test_name:
+        test_name = 'Unknown test'
+
+    name = []
+    token = ' ‑ '  # U+2011 non-breaking hyphen
+    for part in [file_name, class_name, test_name]:
+        if part:
+            name.append(part.replace(token, ' ‐ '))  # U+2010 breaking hyphen
+
+    return token.join(name)
+
+
+def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
+    if len(cases) > 0:
+        test_list = [get_test_name(file_name, class_name, test_name)
+                     for (file_name, class_name, test_name) in cases.keys()]
+        if len(test_list) == 1:
+            message = f'There is 1 test, see "Raw output" for the name of the test.'
+        else:
+            message = f'There are {len(test_list)} tests, see "Raw output" for the full list of tests.'
+        return Annotation(
+            path='.github',
+            start_line=0,
+            end_line=0,
+            start_column=None,
+            end_column=None,
+            annotation_level='notice',
+            message=message,
+            title=f'{len(cases)} test{"s" if len(cases) > 1 else ""} found',
+            raw_details='\n'.join(sorted(test_list))
+        )
+
+
+def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
+    skipped_tests = [key
+                     for key, result in cases.items()
+                     if 'skipped' in result and len(result) == 1]
+    if len(skipped_tests) > 0:
+        test_list = [get_test_name(file_name, class_name, test_name)
+                     for (file_name, class_name, test_name) in skipped_tests]
+        if len(skipped_tests) == 1:
+            message = f'There is 1 skipped test, see "Raw output" for the name of the skipped test.'
+        else:
+            message = f'There are {len(skipped_tests)} skipped tests, see "Raw output" for the full list of skipped tests.'
+        return Annotation(
+            path='.github',
+            start_line=0,
+            end_line=0,
+            start_column=None,
+            end_column=None,
+            annotation_level='notice',
+            message=message,
+            title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found',
+            raw_details='\n'.join(sorted(test_list))
+        )
