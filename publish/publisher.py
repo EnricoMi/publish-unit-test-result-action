@@ -146,7 +146,7 @@ class Publisher:
         before_commit_sha = self._settings.event.get('before')
         self._logger.debug('comparing against before={}'.format(before_commit_sha))
         before_stats = self.get_stats_from_commit(before_commit_sha)
-        stats_with_delta = get_stats_delta(stats, before_stats, 'ancestor') if before_stats is not None else stats
+        stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         check_run = None

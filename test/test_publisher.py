@@ -159,30 +159,33 @@ class TestPublisher(unittest.TestCase):
         ))
     ])
 
-    base_stats = UnitTestRunResults(
-        files=1,
-        errors=[],
-        suites=2,
-        duration=3,
+    @staticmethod
+    def get_stats(base: str) -> UnitTestRunResults:
+        return UnitTestRunResults(
+            files=1,
+            errors=[],
+            suites=2,
+            duration=3,
 
-        tests=21,
-        tests_succ=12,
-        tests_skip=4,
-        tests_fail=2,
-        tests_error=3,
+            tests=21,
+            tests_succ=12,
+            tests_skip=4,
+            tests_fail=2,
+            tests_error=3,
 
-        runs=37,
-        runs_succ=25,
-        runs_skip=7,
-        runs_fail=4,
-        runs_error=1,
+            runs=37,
+            runs_succ=25,
+            runs_skip=7,
+            runs_fail=4,
+            runs_error=1,
 
-        commit='base'
-    )
+            commit=base
+        )
 
     # makes gzipped digest deterministic
     with mock.patch('gzip.time.time', return_value=0):
-        digest = get_digest_from_stats(base_stats)
+        base_digest = get_digest_from_stats(get_stats.__func__('base'))
+        past_digest = get_digest_from_stats(get_stats.__func__('past'))
 
     @staticmethod
     def call_mocked_publish(settings: Settings,
@@ -391,7 +394,7 @@ class TestPublisher(unittest.TestCase):
     def test_get_stats_from_commit(self):
         settings = self.create_settings()
         self.do_test_get_stats_from_commit(
-            settings, 'base commit', mock.Mock(), self.digest, [settings.check_name], self.base_stats
+            settings, 'base commit', mock.Mock(), self.base_digest, [settings.check_name], self.get_stats('base')
         )
 
     def test_get_stats_from_commit_with_no_commit(self):
@@ -400,20 +403,20 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_stats_from_commit_with_none_commit_sha(self):
         settings = self.create_settings()
-        self.do_test_get_stats_from_commit(settings, None, mock.Mock(), self.digest, [settings.check_name], None)
+        self.do_test_get_stats_from_commit(settings, None, mock.Mock(), self.base_digest, [settings.check_name], None)
 
     def test_get_stats_from_commit_with_zeros_commit_sha(self):
         settings = self.create_settings()
         self.do_test_get_stats_from_commit(
-            settings, '0000000000000000000000000000000000000000', mock.Mock(), self.digest, [settings.check_name], None
+            settings, '0000000000000000000000000000000000000000', mock.Mock(), self.base_digest, [settings.check_name], None
         )
 
     def test_get_stats_from_commit_with_multiple_check_runs(self):
         settings = self.create_settings()
         self.do_test_get_stats_from_commit(
-            settings, 'base commit', mock.Mock(), self.digest,
+            settings, 'base commit', mock.Mock(), self.base_digest,
             [settings.check_name, 'other check', 'more checks'],
-            self.base_stats
+            self.get_stats('base')
         )
 
     def test_publish_check_without_annotations(self):
@@ -484,16 +487,16 @@ class TestPublisher(unittest.TestCase):
         self.do_test_publish_check_with_base_stats(errors)
 
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
-        base_commit = 'base'
-        settings = self.create_settings(before=base_commit)
-        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
+        earlier_commit = 'past'
+        settings = self.create_settings(before=earlier_commit)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
             check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
-        repo.get_commit.assert_called_once_with(base_commit)
+        repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
         create_check_run_kwargs = dict(
             name=settings.check_name,
@@ -507,7 +510,7 @@ class TestPublisher(unittest.TestCase):
                            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
                            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
                            '\n'
-                           'Results for commit commit.\u2003± Comparison against ancestor commit base.\n'
+                           'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                            '\n'
                            '[test-results]:data:application/gzip;base64,'
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
@@ -529,9 +532,9 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
 
     def test_publish_check_with_multiple_annotation_pages(self):
-        base_commit = 'base'
-        settings = self.create_settings(before=base_commit)
-        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.digest, check_names=[settings.check_name])
+        earlier_commit = 'past'
+        settings = self.create_settings(before=earlier_commit)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
         # generate a lot cases
@@ -553,7 +556,7 @@ class TestPublisher(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
-        repo.get_commit.assert_called_once_with(base_commit)
+        repo.get_commit.assert_called_once_with(earlier_commit)
         # we expect multiple calls to create_check_run
         create_check_run_kwargss = [
             dict(
@@ -567,7 +570,7 @@ class TestPublisher(unittest.TestCase):
                                '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
                                '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
                                '\n'
-                               'Results for commit commit.\u2003± Comparison against ancestor commit base.\n'
+                               'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                                '\n'
                                '[test-results]:data:application/gzip;base64,'
                                'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
@@ -600,7 +603,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         publisher = Publisher(settings, gh, gha)
 
@@ -619,7 +622,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_without_base(self):
         settings = self.create_settings()
 
-        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo)
         publisher = Publisher(settings, gh, gha)
 
@@ -639,7 +642,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh, gha)
@@ -662,7 +665,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, gha, req, repo, commit = self.create_mocks(digest=self.digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh, gha)
