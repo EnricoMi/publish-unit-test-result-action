@@ -37,7 +37,7 @@ inputs:
     required: false
     default: 'all tests, skipped tests'
   check_run_annotations_branch:
-    description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk (*) matches all branches.'
+    description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
     required: false
   log_level:
     description: 'Action logging level'
