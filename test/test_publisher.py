@@ -40,7 +40,7 @@ class TestPublisher(unittest.TestCase):
                         check_run_annotation=default_annotations,
                         before: Optional[str] = 'before',
                         comment_test_changes: Optional[List[str]] = default_test_changes,
-                        comment_test_changes_limit: Optional[int] = 5):
+                        comment_test_changes_limit: Optional[int] = 10):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',

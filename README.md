@@ -133,7 +133,7 @@ and removal, and `skipped tests` to detect new skipped and un-skipped tests, as 
 `check_run_annotations_branch` to contain your default branch.
 
 The number of tests listed in each of these categories can be limited by
-`comment_test_changes_limit`, which defaults to `5`.
+`comment_test_changes_limit`, which defaults to `10`.
 
 See this complete list of configuration options for reference:
 ```yaml

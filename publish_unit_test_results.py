@@ -120,7 +120,7 @@ if __name__ == "__main__":
         event = json.load(f)
     api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     comment_test_changes_limit = get_var('COMMENT_TEST_CHANGES_LIMIT')
-    comment_test_changes_limit = int(comment_test_changes_limit) if comment_test_changes_limit else 5
+    comment_test_changes_limit = int(comment_test_changes_limit) if comment_test_changes_limit else 10
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     annotations = get_annotations_config(event)
