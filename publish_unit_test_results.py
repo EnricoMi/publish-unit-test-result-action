@@ -1,3 +1,4 @@
+
 import json
 import logging
 import os
@@ -7,7 +8,7 @@ from typing import List, Optional, Union
 import github
 
 from junit import parse_junit_xml_files
-from publish import hide_comments_modes, available_annotations, default_annotations
+from publish import hide_comments_modes, available_annotations, default_annotations, available_test_changes, default_test_changes
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 from github_action import GithubAction
@@ -118,11 +119,14 @@ if __name__ == "__main__":
     with open(event, 'r') as f:
         event = json.load(f)
     api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
-    test_changes_limit = get_var('TEST_CHANGES_LIMIT')
-    test_changes_limit = int(test_changes_limit) if test_changes_limit else 5
+    comment_test_changes_limit = get_var('COMMENT_TEST_CHANGES_LIMIT')
+    comment_test_changes_limit = int(comment_test_changes_limit) if comment_test_changes_limit else 5
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     annotations = get_annotations_config(event)
+    comment_test_changes = get_var('COMMENT_TEST_CHANGES')
+    comment_test_changes = [changes.strip() for changes in comment_test_changes.split(',')] \
+        if comment_test_changes else default_test_changes
 
     settings = Settings(
         token=get_var('GITHUB_TOKEN'),
@@ -134,7 +138,8 @@ if __name__ == "__main__":
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE') or check_name,
         comment_on_pr=get_var('COMMENT_ON_PR') != 'false',
-        test_changes_limit=test_changes_limit,
+        comment_test_changes=comment_test_changes,
+        comment_test_changes_limit=comment_test_changes_limit,
         hide_comment_mode=get_var('HIDE_COMMENTS') or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS') == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',
@@ -147,5 +152,8 @@ if __name__ == "__main__":
     check_var(settings.files_glob, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)
+    check_var(settings.comment_test_changes, 'COMMENT_TEST_CHANGES', 'comment test changes', available_test_changes)
+    if settings.comment_test_changes_limit <= 0:
+        raise RuntimeError(f'COMMENT_TEST_CHANGES_LIMIT must be larger than 0: {settings.comment_test_changes_limit}')
 
     main(settings)

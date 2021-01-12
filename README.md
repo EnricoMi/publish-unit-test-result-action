@@ -125,11 +125,15 @@ These additional information are only added to the default branch of your reposi
 Use `check_run_annotations_branch` to enable this for multiple branches (comma separated list) or all branches (`"*"`).
 
 Pull request comments can provide lists of tests that are added, removed, skipped and un-skipped
-by the pull requests. The number of tests listed in each of these categories can be limited by
-`test_changes_limit`, which defaults to `5`. It can be disabled entirely by setting it to `0`.
+by the pull requests. You can configure which type of test changes are reported via comma separated list
+`comment_test_changes: added, removed, skipped, un-skipped`. Disable with `none`. This defaults to `removed, skipped`.
+
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
+
+The number of tests listed in each of these categories can be limited by
+`comment_test_changes_limit`, which defaults to `5`.
 
 See this complete list of configuration options for reference:
 ```yaml
@@ -140,7 +144,8 @@ See this complete list of configuration options for reference:
     comment_title: Unit Test Statistics
     hide_comments: all but latest
     comment_on_pr: true
-    test_changes_limit: 5
+    comment_test_changes: removed, skipped
+    comment_test_changes_limit: 5
     files: test-results/**/*.xml
     report_individual_runs: true
     deduplicate_classes_by_file_name: false

@@ -43,6 +43,14 @@ none_list = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, none_list]
 default_annotations = [all_tests_list, skipped_tests_list]
 
+added_tests = 'added'
+removed_tests = 'removed'
+skipped_tests = 'skipped'
+un_skipped_tests = 'un-skipped'
+no_test_changes = 'none'
+available_test_changes = [added_tests, removed_tests, skipped_tests, un_skipped_tests, no_test_changes]
+default_test_changes = [added_tests, removed_tests, skipped_tests, un_skipped_tests]
+
 
 def utf8_character_length(c: int) -> int:
     if c >= 0x00010000:

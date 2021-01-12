@@ -19,7 +19,8 @@ class Settings:
                  check_name,
                  comment_title,
                  comment_on_pr,
-                 test_changes_limit,
+                 comment_test_changes,
+                 comment_test_changes_limit,
                  hide_comment_mode,
                  report_individual_runs,
                  dedup_classes_by_file_name,
@@ -33,7 +34,8 @@ class Settings:
         self.check_name = check_name
         self.comment_title = comment_title
         self.comment_on_pr = comment_on_pr
-        self.test_changes_limit = test_changes_limit
+        self.comment_test_changes = comment_test_changes
+        self.comment_test_changes_limit = comment_test_changes_limit
         self.hide_comment_mode = hide_comment_mode
         self.report_individual_runs = report_individual_runs
         self.dedup_classes_by_file_name = dedup_classes_by_file_name
@@ -230,19 +232,18 @@ class Publisher:
 
     def get_test_list_changes(self, before_check_run: CheckRun, cases: UnitTestCaseResults):
         test_list_changes = {}
-        if self._settings.test_changes_limit:
-            before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(before_check_run)
-            all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-            if before_all_tests is not None and all_tests is not None:
-                test_list_changes.update({
-                    'adds': list(set(all_tests) - set(before_all_tests)),
-                    'removes': list(set(before_all_tests) - set(all_tests)),
-                })
-            if before_skipped_tests is not None and skipped_tests is not None:
-                test_list_changes.update({
-                    'skips': list(set(skipped_tests) - set(before_skipped_tests)),
-                    'un-skips': list(set(before_skipped_tests) - set(skipped_tests))
-                })
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(before_check_run)
+        all_tests, skip_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+        if before_all_tests is not None and all_tests is not None:
+            if added_tests in self._settings.comment_test_changes:
+                test_list_changes.update({'adds': list(set(all_tests) - set(before_all_tests))})
+            if removed_tests in self._settings.comment_test_changes:
+                test_list_changes.update({'removes': list(set(before_all_tests) - set(all_tests))})
+        if before_skipped_tests is not None and skip_tests is not None:
+            if skipped_tests in self._settings.comment_test_changes:
+                test_list_changes.update({'skips': list(set(skip_tests) - set(before_skipped_tests))})
+            if un_skipped_tests in self._settings.comment_test_changes:
+                test_list_changes.update({'un-skips': list(set(before_skipped_tests) - set(skip_tests))})
 
         return test_list_changes
 
@@ -265,7 +266,7 @@ class Publisher:
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
-        summary = get_long_summary_md(stats_with_delta, details_url, test_list_changes, self._settings.test_changes_limit)
+        summary = get_long_summary_md(stats_with_delta, details_url, test_list_changes, self._settings.comment_test_changes_limit)
         pull_request.create_issue_comment(
             '## {}\n{}'.format(title, summary)
         )
