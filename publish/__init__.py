@@ -322,7 +322,8 @@ def get_test_list_summary_md(label: str, test_list: List[str], list_limit: int) 
 
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
                         details_url: Optional[str] = None,
-                        test_list_changes: Optional[Mapping[str, List[str]]] = None) -> str:
+                        test_list_changes: Optional[Mapping[str, List[str]]] = None,
+                        test_list_changes_limit: Optional[int] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
     hide_runs = stats.runs == stats.tests and \
                 stats.runs_succ == stats.tests_succ and \
@@ -381,7 +382,7 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         url=details_url
     )
 
-    test_changes = ''.join([get_test_list_summary_md(label, test_list, 5)
+    test_changes = ''.join([get_test_list_summary_md(label, test_list, test_list_changes_limit or len(test_list))
                             for label, test_list in (test_list_changes.items() if test_list_changes else [])
                             if test_list])
 

@@ -19,6 +19,7 @@ class Settings:
                  check_name,
                  comment_title,
                  comment_on_pr,
+                 test_changes_limit,
                  hide_comment_mode,
                  report_individual_runs,
                  dedup_classes_by_file_name,
@@ -32,6 +33,7 @@ class Settings:
         self.check_name = check_name
         self.comment_title = comment_title
         self.comment_on_pr = comment_on_pr
+        self.test_changes_limit = test_changes_limit
         self.hide_comment_mode = hide_comment_mode
         self.report_individual_runs = report_individual_runs
         self.dedup_classes_by_file_name = dedup_classes_by_file_name
@@ -148,9 +150,9 @@ class Publisher:
 
     @staticmethod
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
-        if annotation:
-            logger.info(f'annotation: {annotation.raw_data}')
-        return annotation.raw_details.split('\n') if annotation is not None and annotation.raw_details else []
+        if annotation is None or not annotation.raw_details:
+            return None
+        return annotation.raw_details.split('\n')
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
@@ -226,12 +228,30 @@ class Publisher:
             if skipped_tests_list in self._settings.check_run_annotation else []
         return [annotation for annotation in [skipped_tests, all_tests] if annotation]
 
+    def get_test_list_changes(self, before_check_run: CheckRun, cases: UnitTestCaseResults):
+        test_list_changes = {}
+        if self._settings.test_changes_limit:
+            before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(before_check_run)
+            all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+            if before_all_tests is not None and all_tests is not None:
+                test_list_changes.update({
+                    'adds': list(set(all_tests) - set(before_all_tests)),
+                    'removes': list(set(before_all_tests) - set(all_tests)),
+                })
+            if before_skipped_tests is not None and skipped_tests is not None:
+                test_list_changes.update({
+                    'skips': list(set(skipped_tests) - set(before_skipped_tests)),
+                    'un-skips': list(set(before_skipped_tests) - set(skipped_tests))
+                })
+
+        return test_list_changes
+
     def publish_comment(self,
                         title: str,
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: UnitTestCaseResults = None) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
@@ -241,22 +261,13 @@ class Publisher:
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         # get test lists from check run
-        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
-        all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-        test_list_changes = {}
-        if before_all_tests is not None and before_skipped_tests is not None and \
-                all_tests is not None and skipped_tests is not None:
-            test_list_changes = {
-                'adds': list(set(all_tests) - set(before_all_tests)),
-                'removes': list(set(before_all_tests) - set(all_tests)),
-                'skips': list(set(skipped_tests) - set(before_skipped_tests)),
-                'un-skips': list(set(before_skipped_tests) - set(skipped_tests))
-            }
+        test_list_changes = self.get_test_list_changes(base_check_run, cases)
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
+        summary = get_long_summary_md(stats_with_delta, details_url, test_list_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(
-            '## {}\n{}'.format(title, get_long_summary_md(stats_with_delta, details_url, test_list_changes))
+            '## {}\n{}'.format(title, summary)
         )
         return pull_request
 
