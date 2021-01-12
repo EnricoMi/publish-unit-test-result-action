@@ -72,11 +72,11 @@ def get_annotations_config(event: Optional[dict]) -> List[str]:
         if annotations else default_annotations
     default_branch = event.get('repository', {}).get('default_branch') if event else None
     annotations_branch = get_var('CHECK_RUN_ANNOTATIONS_BRANCH') or default_branch or 'main, master'
-    annotations_branches = {branch.strip() for branch in annotations_branch.split(',')}
+    annotations_branches = {f'refs/heads/{branch.strip()}' for branch in annotations_branch.split(',')}
     branch = get_var('GITHUB_REF')
 
     if annotations and branch and annotations_branches and \
-            '*' not in annotations_branches and \
+            'refs/heads/*' not in annotations_branches and \
             branch not in annotations_branches:
         branches = "', '".join(annotations_branches)
         logger.info(f"Current branch '{branch}' not among branches '{branches}', "
