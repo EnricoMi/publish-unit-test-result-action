@@ -109,11 +109,14 @@ If multiple runs exist for a test, only the first failure is reported, unless `r
 In the rare situation where a project contains test class duplicates with the same name in different files,
 you may want to set `deduplicate_classes_by_file_name` to `true`.
 
-The check run provides more information than the test failures. With `check_run_annotations`, additional information
-can be displayed. Use comma to set multiple values:
+With `check_run_annotations`, the check run provides additional information.
+Use comma to set multiple values:
 
 - All found tests are displayed with `all tests`.
 - All skipped tests are listed with `skipped tests`.
+
+These additional information are only added to the default branch of your repository, e.g. `main` or `master`.
+Use `check_run_annotations_branch` to enable this for multiple branches (comma separated list) or all branches (`"*"`).
 
 See this complete list of configuration options for reference:
 ```yaml
@@ -127,6 +130,7 @@ See this complete list of configuration options for reference:
     files: test-results/**/*.xml
     report_individual_runs: true
     deduplicate_classes_by_file_name: false
+    check_run_annotations_branch: main, master, branch_one
     check_run_annotations: all tests, skipped tests
 ```
 

@@ -37,7 +37,7 @@ class TestPublisher(unittest.TestCase):
                         hide_comment_mode=hide_comments_mode_off,
                         report_individual_runs=False,
                         dedup_classes_by_file_name=False,
-                        check_run_annotation=available_annotations,
+                        check_run_annotation=default_annotations,
                         before: Optional[str] = 'before'):
         return Settings(
             token=None,
@@ -445,7 +445,10 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_check_without_annotations(self):
-        self.do_test_publish_check_without_base_stats([], [])
+        self.do_test_publish_check_without_base_stats([], [none_list])
+
+    def test_publish_check_with_default_annotations(self):
+        self.do_test_publish_check_without_base_stats([], default_annotations)
 
     def test_publish_check_with_all_tests_annotations(self):
         self.do_test_publish_check_without_base_stats([], [all_tests_list])
@@ -459,7 +462,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_check_without_base_stats_with_errors(self):
         self.do_test_publish_check_without_base_stats(errors)
 
-    def do_test_publish_check_without_base_stats(self, errors: List[ParseError], annotations: List[str] = available_annotations):
+    def do_test_publish_check_without_base_stats(self, errors: List[ParseError], annotations: List[str] = default_annotations):
         settings = self.create_settings(before=None, check_run_annotation=annotations)
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
