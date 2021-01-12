@@ -39,7 +39,9 @@ hide_comments_modes = [
 
 all_tests_list = 'all tests'
 skipped_tests_list = 'skipped tests'
-available_annotations = [all_tests_list, skipped_tests_list]
+none_list = 'none'
+available_annotations = [all_tests_list, skipped_tests_list, none_list]
+default_annotations = [all_tests_list, skipped_tests_list]
 
 
 def utf8_character_length(c: int) -> int:
