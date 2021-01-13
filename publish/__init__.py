@@ -690,14 +690,43 @@ def get_all_tests_list(cases: UnitTestCaseResults) -> List[str]:
             for (file_name, class_name, test_name) in cases.keys()]
 
 
-def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
-    if len(cases) > 0:
-        test_list = get_all_tests_list(cases)
-        if len(test_list) == 1:
-            message = f'There is 1 test, see "Raw output" for the name of the test.'
-        else:
-            message = f'There are {len(test_list)} tests, see "Raw output" for the full list of tests.'
-        return Annotation(
+def chunk_test_list(tests: List[str], delimiter: str, max_chunk_size: int) -> List[List[str]]:
+    if not tests:
+        return []
+
+    sizes = [len(f'{test}{delimiter}'.encode('utf8')) for test in tests]
+    if sum(sizes) <= max_chunk_size:
+        return [tests]
+
+    chunks = []
+    while tests:
+        size = 0
+        length = 0
+        while length < len(tests) and size + sizes[length] < max_chunk_size:
+            size = size + sizes[length]
+            length = length + 1
+
+        chunks.append(tests[:length])
+        tests = tests[length:]
+        sizes = sizes[length:]
+
+    return chunks
+
+
+def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation]:
+    if not cases:
+        return []
+
+    test_list = get_all_tests_list(cases)
+    if len(test_list) == 1:
+        message = f'There is 1 test, see "Raw output" for the name of the test.'
+    else:
+        message = f'There are {len(test_list)} tests, see "Raw output" for the full list of tests.'
+
+    # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
+    test_chunks = chunk_test_list(sorted(test_list), '\n', 64000)
+    return [
+        Annotation(
             path='.github',
             start_line=0,
             end_line=0,
@@ -706,8 +735,10 @@ def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annota
             annotation_level='notice',
             message=message,
             title=f'{len(cases)} test{"s" if len(cases) > 1 else ""} found',
-            raw_details='\n'.join(sorted(test_list))
+            raw_details='\n'.join(chunk)
         )
+        for chunk in test_chunks
+    ]
 
 
 def get_skipped_tests_list(cases: UnitTestCaseResults) -> Optional[List[str]]:
@@ -720,14 +751,20 @@ def get_skipped_tests_list(cases: UnitTestCaseResults) -> Optional[List[str]]:
             for (file_name, class_name, test_name) in tests]
 
 
-def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annotation]:
+def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation]:
     skipped_tests = get_skipped_tests_list(cases)
-    if len(skipped_tests) > 0:
-        if len(skipped_tests) == 1:
-            message = f'There is 1 skipped test, see "Raw output" for the name of the skipped test.'
-        else:
-            message = f'There are {len(skipped_tests)} skipped tests, see "Raw output" for the full list of skipped tests.'
-        return Annotation(
+    if not skipped_tests:
+        return []
+
+    if len(skipped_tests) == 1:
+        message = f'There is 1 skipped test, see "Raw output" for the name of the skipped test.'
+    else:
+        message = f'There are {len(skipped_tests)} skipped tests, see "Raw output" for the full list of skipped tests.'
+
+    # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
+    test_chunks = chunk_test_list(sorted(skipped_tests), '\n', 64000)
+    return [
+        Annotation(
             path='.github',
             start_line=0,
             end_line=0,
@@ -736,5 +773,7 @@ def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[An
             annotation_level='notice',
             message=message,
             title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found',
-            raw_details='\n'.join(sorted(skipped_tests))
+            raw_details='\n'.join(chunk)
         )
+        for chunk in test_chunks
+    ]
