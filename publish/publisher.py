@@ -226,7 +226,7 @@ class Publisher:
             if all_tests_list in self._settings.check_run_annotation else []
         skipped_tests = get_skipped_tests_list_annotation(cases) \
             if skipped_tests_list in self._settings.check_run_annotation else []
-        return [annotation for annotation in [skipped_tests, all_tests] if annotation]
+        return [annotation for annotation in skipped_tests + all_tests if annotation]
 
     def publish_comment(self,
                         title: str,

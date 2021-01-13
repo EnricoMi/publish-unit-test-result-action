@@ -1460,11 +1460,11 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertIsNone(get_all_tests_list_annotation(UnitTestCaseResults()))
-        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2\nfile ‑ class1 ‑ test2'), get_all_tests_list_annotation(results))
+        self.assertEqual([], get_all_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2\nfile ‑ class1 ‑ test2')], get_all_tests_list_annotation(results))
         del results[(None, 'class1', 'test1')]
         del results[('file', 'class1', 'test2')]
-        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 test, see "Raw output" for the name of the test.', title='1 test found', raw_details='class1 ‑ test2'), get_all_tests_list_annotation(results))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 test, see "Raw output" for the name of the test.', title='1 test found', raw_details='class1 ‑ test2')], get_all_tests_list_annotation(results))
 
     def test_get_skipped_tests_list_annotation(self):
         results = UnitTestCaseResults([
@@ -1488,10 +1488,61 @@ class PublishTest(unittest.TestCase):
             ]))
         ])
 
-        self.assertIsNone(get_skipped_tests_list_annotation(UnitTestCaseResults()))
-        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class1 ‑ test2'), get_skipped_tests_list_annotation(results))
+        self.assertEqual([], get_skipped_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class1 ‑ test2')], get_skipped_tests_list_annotation(results))
         del results[(None, 'class1', 'test1')]['success']
-        self.assertEqual(Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2'), get_skipped_tests_list_annotation(results))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2')], get_skipped_tests_list_annotation(results))
+
+    def test_chunk(self):
+        self.assertEqual([], chunk_test_list([], '\n', 100))
+
+        four_per_chunk = [['abcdefghijklmnopqrstu-0',
+                           'abcdefghijklmnopqrstu-1',
+                           'abcdefghijklmnopqrstu-2',
+                           'abcdefghijklmnopqrstu-3'],
+                          ['abcdefghijklmnopqrstu-4',
+                           'abcdefghijklmnopqrstu-5',
+                           'abcdefghijklmnopqrstu-6',
+                           'abcdefghijklmnopqrstu-7'],
+                          ['abcdefghijklmnopqrstu-8',
+                           'abcdefghijklmnopqrstu-9']]
+
+        three_per_chunk = [['abcdefghijklmnopqrstuv-0',
+                            'abcdefghijklmnopqrstuv-1',
+                            'abcdefghijklmnopqrstuv-2'],
+                           ['abcdefghijklmnopqrstuv-3',
+                            'abcdefghijklmnopqrstuv-4',
+                            'abcdefghijklmnopqrstuv-5'],
+                           ['abcdefghijklmnopqrstuv-6',
+                            'abcdefghijklmnopqrstuv-7',
+                            'abcdefghijklmnopqrstuv-8'],
+                           ['abcdefghijklmnopqrstuv-9']]
+
+        tests = [f'abcdefghijklmnopqrstu-{i}' for i in range(10)]
+        chunks = chunk_test_list(tests, '\n', 100)
+        self.assertEqual(four_per_chunk, chunks)
+
+        tests = [f'abcdefghijklmnopqrstuv-{i}' for i in range(10)]
+        chunks = chunk_test_list(tests, '\r\n', 100)
+        self.assertEqual(three_per_chunk, chunks)
+
+        tests = [f'abcdefghijklmnopqrstuv-{i}' for i in range(10)]
+        chunks = chunk_test_list(tests, '\n', 100)
+        self.assertEqual(three_per_chunk, chunks)
+
+        tests = [f'abcdefghijklmnopqrstuvw-{i}' for i in range(10)]
+        chunks = chunk_test_list(tests, '\n', 100)
+        self.assertEqual([['abcdefghijklmnopqrstuvw-0',
+                           'abcdefghijklmnopqrstuvw-1',
+                           'abcdefghijklmnopqrstuvw-2'],
+                          ['abcdefghijklmnopqrstuvw-3',
+                           'abcdefghijklmnopqrstuvw-4',
+                           'abcdefghijklmnopqrstuvw-5'],
+                          ['abcdefghijklmnopqrstuvw-6',
+                           'abcdefghijklmnopqrstuvw-7',
+                           'abcdefghijklmnopqrstuvw-8'],
+                          ['abcdefghijklmnopqrstuvw-9']],
+                         chunks)
 
     def test_files(self):
         parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
