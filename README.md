@@ -15,7 +15,7 @@ Each failing test will produce an annotation with failure details:
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
-A comment is posted on the pull request page of that commit, if one exists.
+A comment is posted on the pull request of that commit, if one exists.
 In presence of failures or errors, the comment links to the respective check page with failure details:
 
 ![...](github-pull-request-comment.png)
@@ -28,6 +28,12 @@ and a link to the GitHub Actions section (here `Details`):
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
 changes in the number of runs as well.
+
+Changes in the existence of tests are highlighted in pull request comments to easily spot unintended test removal:
+
+![...](github-pull-request-comment-with-test-changes.png)
+
+***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 
 The symbols have the following meaning:
 
@@ -62,7 +68,7 @@ This way, the action is not build for every run of your workflow, and you are gu
   uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.6
 ```
 
-**Note:** GitHub Container Registry is currently in [beta phase](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry).
+***Note:** GitHub Container Registry is currently in [beta phase](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry).*
 This action may abandon GitHub Container Registry support when GitHub changes its conditions.
 
 ### Configuration
@@ -118,6 +124,13 @@ Use comma to set multiple values:
 These additional information are only added to the default branch of your repository, e.g. `main` or `master`.
 Use `check_run_annotations_branch` to enable this for multiple branches (comma separated list) or all branches (`"*"`).
 
+Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
+Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,
+which defaults to `5`. Listing these tests can be disabled entirely by setting this limit to `0`.
+This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
+and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
+`check_run_annotations_branch` to contain your default branch.
+
 See this complete list of configuration options for reference:
 ```yaml
   with:
@@ -127,6 +140,7 @@ See this complete list of configuration options for reference:
     comment_title: Unit Test Statistics
     hide_comments: all but latest
     comment_on_pr: true
+    test_changes_limit: 5
     files: test-results/**/*.xml
     report_individual_runs: true
     deduplicate_classes_by_file_name: false

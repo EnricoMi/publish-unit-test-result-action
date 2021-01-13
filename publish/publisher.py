@@ -1,5 +1,6 @@
 from github import Github
 from github.CheckRun import CheckRun
+from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
 from github_action import GithubAction
@@ -18,6 +19,7 @@ class Settings:
                  check_name,
                  comment_title,
                  comment_on_pr,
+                 test_changes_limit,
                  hide_comment_mode,
                  report_individual_runs,
                  dedup_classes_by_file_name,
@@ -31,6 +33,7 @@ class Settings:
         self.check_name = check_name
         self.comment_title = comment_title
         self.comment_on_pr = comment_on_pr
+        self.test_changes_limit = test_changes_limit
         self.hide_comment_mode = hide_comment_mode
         self.report_individual_runs = report_individual_runs
         self.dedup_classes_by_file_name = dedup_classes_by_file_name
@@ -55,7 +58,7 @@ class Publisher:
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -109,6 +112,10 @@ class Publisher:
         return pull
 
     def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
+        check_run = self.get_check_run(commit_sha)
+        return self.get_stats_from_check_run(check_run) if check_run is not None else None
+
+    def get_check_run(self, commit_sha: str) -> Optional[CheckRun]:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
@@ -124,7 +131,10 @@ class Publisher:
         if len(runs) != 1:
             return None
 
-        summary = runs[0].output.summary
+        return runs[0]
+
+    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
+        summary = check_run.output.summary
         if summary is None:
             return None
         for line in summary.split('\n'):
@@ -138,6 +148,12 @@ class Publisher:
             self._logger.debug('stats: {}'.format(stats))
             return stats
 
+    @staticmethod
+    def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
+        if annotation is None or not annotation.raw_details:
+            return None
+        return annotation.raw_details.split('\n')
+
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
@@ -146,14 +162,13 @@ class Publisher:
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
-        check_run = None
-
         error_annotations = get_error_annotations(stats.errors)
-        file_list_annotations = self.get_test_list_annotations(cases)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
-        all_annotations = error_annotations + file_list_annotations + case_annotations
+        file_list_annotations = self.get_test_list_annotations(cases)
+        all_annotations = error_annotations + case_annotations + file_list_annotations
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
+        check_run = None
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
@@ -170,6 +185,42 @@ class Publisher:
                                                     output=output)
         return check_run
 
+    @staticmethod
+    def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
+        if check_run is None:
+            return None, None
+
+        all_tests_annotation: Optional[CheckRunAnnotation] = None
+        skipped_tests_annotation: Optional[CheckRunAnnotation] = None
+
+        all_tests_title_regexp = re.compile('^\d+ test(s)? found$')
+        skipped_tests_title_regexp = re.compile('^\d+ skipped test(s)? found$')
+
+        all_tests_message_regexp = re.compile('^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
+        skipped_tests_message_regexp = re.compile('^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
+
+        for annotation in check_run.get_annotations():
+            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+                    all_tests_title_regexp.match(annotation.title) and \
+                    all_tests_message_regexp.match(annotation.message):
+                if all_tests_annotation is not None:
+                    if annotation:
+                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                    return None, None
+                all_tests_annotation = annotation
+
+            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+                    skipped_tests_title_regexp.match(annotation.title) and \
+                    skipped_tests_message_regexp.match(annotation.message):
+                if skipped_tests_annotation is not None:
+                    if annotation:
+                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                    return None, None
+                skipped_tests_annotation = annotation
+
+        return Publisher.get_test_list_from_annotation(all_tests_annotation), \
+               Publisher.get_test_list_from_annotation(skipped_tests_annotation)
+
     def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
         all_tests = get_all_tests_list_annotation(cases) \
             if all_tests_list in self._settings.check_run_annotation else []
@@ -181,18 +232,26 @@ class Publisher:
                         title: str,
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
-                        check_run: Optional[CheckRun] = None) -> None:
+                        check_run: Optional[CheckRun] = None,
+                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         self._logger.debug('comparing against base={}'.format(base_commit_sha))
-        base_stats = self.get_stats_from_commit(base_commit_sha)
+        base_check_run = self.get_check_run(base_commit_sha)
+        base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
+        # gather test lists from check run and cases
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
+        all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+        test_changes = TestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
+
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
+        summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(
-            '## {}\n{}'.format(title, get_long_summary_md(stats_with_delta, details_url))
+            '## {}\n{}'.format(title, summary)
         )
         return pull_request
 

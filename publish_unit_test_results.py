@@ -78,9 +78,6 @@ def get_annotations_config(event: Optional[dict]) -> List[str]:
     if annotations and branch and annotations_branches and \
             'refs/heads/*' not in annotations_branches and \
             branch not in annotations_branches:
-        branches = "', '".join(annotations_branches)
-        logger.info(f"Current branch '{branch}' not among branches '{branches}', "
-                    f"will not add annotations to the check run.")
         annotations = []
 
     return annotations
@@ -118,6 +115,8 @@ if __name__ == "__main__":
     with open(event, 'r') as f:
         event = json.load(f)
     api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
+    test_changes_limit = get_var('TEST_CHANGES_LIMIT')
+    test_changes_limit = int(test_changes_limit) if test_changes_limit else 5
 
     check_name = get_var('CHECK_NAME') or 'Unit Test Results'
     annotations = get_annotations_config(event)
@@ -132,6 +131,7 @@ if __name__ == "__main__":
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE') or check_name,
         comment_on_pr=get_var('COMMENT_ON_PR') != 'false',
+        test_changes_limit=test_changes_limit,
         hide_comment_mode=get_var('HIDE_COMMENTS') or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS') == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',

@@ -38,7 +38,8 @@ class TestPublisher(unittest.TestCase):
                         report_individual_runs=False,
                         dedup_classes_by_file_name=False,
                         check_run_annotation=default_annotations,
-                        before: Optional[str] = 'before'):
+                        before: Optional[str] = 'before',
+                        test_changes_limit: Optional[int] = 5):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -49,6 +50,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_on_pr=comment_on_pr,
+            test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
@@ -268,7 +270,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
@@ -291,7 +293,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
@@ -444,6 +446,81 @@ class TestPublisher(unittest.TestCase):
             self.get_stats('base')
         )
 
+    all_tests_annotation = mock.Mock()
+    all_tests_annotation.title = '1 test found'
+    all_tests_annotation.message = 'There is 1 test, see "Raw output" for the name of the test'
+    all_tests_annotation.raw_details = 'class ‑ test1'
+
+    skipped_tests_annotation = mock.Mock()
+    skipped_tests_annotation.title = '1 skipped test found'
+    skipped_tests_annotation.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+    skipped_tests_annotation.raw_details = 'class ‑ test4'
+
+    other_annotation = mock.Mock()
+    other_annotation.title = None
+    other_annotation.message = 'message one'
+    other_annotation.raw_details = None
+
+    all_annotations = [all_tests_annotation, skipped_tests_annotation, other_annotation]
+
+    def test_get_test_lists_from_none_check_run(self):
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(None))
+
+    def test_get_test_lists_from_check_run_single_test(self):
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=self.all_annotations)
+        self.assertEqual((['class ‑ test1'], ['class ‑ test4']), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_more_tests(self):
+        annotation1 = mock.Mock()
+        annotation1.title = None
+        annotation1.message = 'message one'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '3 tests found'
+        annotation2.message = 'There are 3 tests, see "Raw output" for the full list of tests.'
+        annotation2.raw_details = 'test one\ntest two\ntest three'
+
+        annotation3 = mock.Mock()
+        annotation3.title = '3 skipped tests found'
+        annotation3.message = 'There are 3 skipped tests, see "Raw output" for the full list of skipped tests.'
+        annotation3.raw_details = 'skip one\nskip two\nskip three'
+
+        annotations = [annotation1, annotation2, annotation3]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual(
+            (['test one', 'test two', 'test three'], ['skip one', 'skip two', 'skip three']),
+            Publisher.get_test_lists_from_check_run(check_run)
+        )
+
+    def test_get_test_lists_from_check_run_none_raw_details(self):
+        annotation1 = mock.Mock()
+        annotation1.title = '1 test found'
+        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '1 skipped test found'
+        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+        annotation2.raw_details = None
+
+        annotations = [annotation1, annotation2]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_multiple_all_tests(self):
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation, self.all_tests_annotation])
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_check_run_multiple_skipped_tests(self):
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=[self.skipped_tests_annotation, self.skipped_tests_annotation])
+        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
+
     def test_publish_check_without_annotations(self):
         self.do_test_publish_check_without_base_stats([], [none_list])
 
@@ -492,14 +569,14 @@ class TestPublisher(unittest.TestCase):
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
-                'annotations': error_annotations + ([
-                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
-                ] if skipped_tests_list in annotations else []) + ([
-                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
-                ] if all_tests_list in annotations else []) + [
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
-                ]
+                'annotations': error_annotations + [
+                        {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
+                        {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
+                    ] + ([
+                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
+                    ] if skipped_tests_list in annotations else []) + ([
+                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
+                    ] if all_tests_list in annotations else [])
             }
         )
         repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
@@ -546,10 +623,10 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': error_annotations + [
-                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
-                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'},
+                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
+                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
                 ]
             }
         )
@@ -606,16 +683,17 @@ class TestPublisher(unittest.TestCase):
                                '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                                'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
                     'annotations': ([
-                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 150 tests, see "Raw output" for the full list of tests.', 'title': '150 tests found', 'raw_details': '\n'.join(sorted([f'class ‑ test{i}' for i in range(1, 151)]))}
-                    ] if start == 1 else []) + [
                         {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
                         # for each batch starting at start we expect 50 annotations
-                        for i in range(start, start + (49 if start == 1 else 50 if start < 150 else 1))
-                    ]
+                        for i in range(start, start + 50)
+                    ] if start < 151 else [
+                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 150 tests, see "Raw output" for the full list of tests.', 'title': '150 tests found', 'raw_details': '\n'.join(sorted([f'class ‑ test{i}' for i in range(1, 151)]))}
+                    ])
                 }
             )
-            # we expect three calls, each batch starting at these starts
-            for start in [1, 50, 100, 150]
+            # we expect three calls, each batch starting at these starts,
+            # then a last batch with notice annotations
+            for start in [1, 51, 101, 151]
         ]
         repo.create_check_run.assert_has_calls(
             [mock.call(**create_check_run_kwargs)

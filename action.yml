@@ -32,6 +32,9 @@ inputs:
     description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
     required: false
     default: 'true'
+  test_changes_limit:
+    description: 'Limits the number of removed or skipped tests listed on PR comments. This can be disabled with a value of 0. The default is 5.'
+    required: false
   check_run_annotations:
     description: 'Adds additional information to the check run (comma-separated list): all tests - list all found tests, skipped tests - list all skipped tests, none - no extra annotations at all'
     required: false
