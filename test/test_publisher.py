@@ -39,8 +39,7 @@ class TestPublisher(unittest.TestCase):
                         dedup_classes_by_file_name=False,
                         check_run_annotation=default_annotations,
                         before: Optional[str] = 'before',
-                        comment_test_changes: Optional[List[str]] = default_test_changes,
-                        comment_test_changes_limit: Optional[int] = 5):
+                        test_changes_limit: Optional[int] = 5):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -51,8 +50,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_on_pr=comment_on_pr,
-            comment_test_changes=comment_test_changes,
-            comment_test_changes_limit=comment_test_changes_limit,
+            test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
@@ -546,7 +544,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_test_list_changes(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         annotation1 = mock.Mock()
@@ -569,97 +567,9 @@ class TestPublisher(unittest.TestCase):
                           'un-skips': ['class ‑ test4']},
                          {label: sorted(list) for label, list in changes.items()})
 
-    def test_get_test_list_changes_added(self):
-        settings = self.create_settings(comment_test_changes=[added_tests])
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
-
-        changes = publisher.get_test_list_changes(check_run, self.cases)
-        self.assertEqual({'adds': ['class ‑ test', 'class ‑ test2', 'class ‑ test3']},
-                         {label: sorted(list) for label, list in changes.items()})
-
-    def test_get_test_list_shanges_removed(self):
-        settings = self.create_settings(comment_test_changes=[removed_tests])
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
-
-        changes = publisher.get_test_list_changes(check_run, self.cases)
-        self.assertEqual({'removes': ['class ‑ test1']},
-                         {label: sorted(list) for label, list in changes.items()})
-
-    def test_get_test_list_changes_skipped(self):
-        settings = self.create_settings(comment_test_changes=[skipped_tests])
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
-
-        changes = publisher.get_test_list_changes(check_run, self.cases)
-        self.assertEqual({'skips': ['class ‑ test3']},
-                         {label: sorted(list) for label, list in changes.items()})
-
-    def test_get_test_list_changes_un_skipped(self):
-        settings = self.create_settings(comment_test_changes=[un_skipped_tests])
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
-
-        changes = publisher.get_test_list_changes(check_run, self.cases)
-        self.assertEqual({'un-skips': ['class ‑ test4']},
-                         {label: sorted(list) for label, list in changes.items()})
-
     def test_get_test_list_changes_all_list(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         annotation = mock.Mock()
@@ -677,7 +587,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_test_list_changes_skip_list(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         annotation = mock.Mock()
@@ -694,8 +604,8 @@ class TestPublisher(unittest.TestCase):
                          changes)
 
     def test_get_test_list_changes_disabled(self):
-        settings = self.create_settings(comment_test_changes=[no_test_changes])
-        gh, gha, req, repo, commit = self.create_mocks()
+        settings = self.create_settings(test_changes_limit=0)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         annotation1 = mock.Mock()
@@ -714,9 +624,9 @@ class TestPublisher(unittest.TestCase):
         changes = publisher.get_test_list_changes(check_run, self.cases)
         self.assertEqual({}, changes)
 
-    def test_get_test_list_changes_no_lists(self):
+    def test_get_test_list_changes_none_list(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         check_run = mock.Mock()
