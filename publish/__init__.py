@@ -1,26 +1,15 @@
 import base64
-import base64
 import gzip
 import json
 import logging
 import re
 from collections import defaultdict
-from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator
+from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set
 
 from dataclasses import dataclass
 
 from unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
-
-
-class CaseMessages(defaultdict):
-    def __init__(self, items=None):
-        if items is None:
-            items = []
-        super(CaseMessages, self).__init__(
-            lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))),
-            items
-        )
 
 
 logger = logging.getLogger('publish')
@@ -42,6 +31,81 @@ skipped_tests_list = 'skipped tests'
 none_list = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, none_list]
 default_annotations = [all_tests_list, skipped_tests_list]
+
+
+class CaseMessages(defaultdict):
+    def __init__(self, items=None):
+        if items is None:
+            items = []
+        super(CaseMessages, self).__init__(
+            lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))),
+            items
+        )
+
+
+class TestChanges:
+    def __init__(self,
+                 all_tests_before: Optional[List[str]],
+                 all_tests_current: Optional[List[str]],
+                 skipped_tests_before: Optional[List[str]],
+                 skipped_tests_current: Optional[List[str]]):
+        self._all_tests_before = set(all_tests_before) if all_tests_before is not None else None
+        self._all_tests_current = set(all_tests_current) if all_tests_current is not None else None
+        self._skipped_tests_before = set(skipped_tests_before) if skipped_tests_before is not None else None
+        self._skipped_tests_current = set(skipped_tests_current) if skipped_tests_current is not None else None
+
+    def adds(self) -> Optional[Set[str]]:
+        if self._all_tests_before is None or self._all_tests_current is None:
+            return None
+        return self._all_tests_current - self._all_tests_before
+
+    def removes(self) -> Optional[Set[str]]:
+        if self._all_tests_before is None or self._all_tests_current is None:
+            return None
+        return self._all_tests_before - self._all_tests_current
+
+    def remains(self) -> Optional[Set[str]]:
+        if self._all_tests_before is None or self._all_tests_current is None:
+            return None
+        return self._all_tests_before.intersection(self._all_tests_current)
+
+    def skips(self) -> Optional[Set[str]]:
+        if self._skipped_tests_before is None or self._skipped_tests_current is None:
+            return None
+        return self._skipped_tests_current - self._skipped_tests_before
+
+    def un_skips(self) -> Optional[Set[str]]:
+        if self._skipped_tests_before is None or self._skipped_tests_current is None:
+            return None
+        return self._skipped_tests_before - self._skipped_tests_current
+
+    def added_and_skipped(self) -> Optional[Set[str]]:
+        added = self.adds()
+        skipped = self.skips()
+        if added is None or skipped is None:
+            return None
+        return added.intersection(skipped)
+
+    def remaining_and_skipped(self) -> Optional[Set[str]]:
+        remaining = self.remains()
+        skipped = self.skips()
+        if remaining is None or skipped is None:
+            return None
+        return remaining.intersection(skipped)
+
+    def remaining_and_un_skipped(self) -> Optional[Set[str]]:
+        remaining = self.remains()
+        un_skipped = self.un_skips()
+        if remaining is None or un_skipped is None:
+            return None
+        return remaining.intersection(un_skipped)
+
+    def removed_skips(self) -> Optional[Set[str]]:
+        removed = self.removes()
+        skipped_before = self._skipped_tests_before
+        if removed is None or skipped_before is None:
+            return None
+        return skipped_before.intersection(removed)
 
 
 def utf8_character_length(c: int) -> int:
@@ -303,26 +367,85 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     return md
 
 
-def get_test_list_summary_md(label: str, test_list: List[str], list_limit: int) -> str:
-    if not test_list:
+def get_test_list_summary_md(label: str, tests: Set[str], list_limit: Optional[int]) -> str:
+    if not tests:
+        return ''
+    if list_limit is None:
+        list_limit = len(tests)
+
+    amount = len(tests)
+    quantity = 'All' if amount <= list_limit else f'The first {list_limit}'
+    return '\n'.join(
+        [f'**{quantity} {label} tests are:**', '```'] + sorted(tests)[:list_limit] + ['```']
+    )
+
+
+def get_test_changes_summary_md(changes: Optional[TestChanges], list_limit: Optional[int]) -> str:
+    if not changes:
         return ''
 
-    return ('\n'
-            '**This pull request {label} {len} test{s}{first}:**\n'
-            '```\n'
-            '{tests}\n'
-            '```\n'.format(
-                label=label,
-                len=len(test_list),
-                s='s' if len(test_list) > 1 else '',
-                first=f', the first {list_limit} tests are' if len(test_list) > list_limit else '',
-                tests='\n'.join(sorted(test_list[:list_limit]))
-            ))
+    test_changes_details = []
+    if changes.removes():
+        if changes.adds():
+            test_changes_details.append(
+                'This pull request **removes** {} and **adds** {} tests. '
+                '*Note that renamed tests count towards both.*'.format(
+                    len(changes.removes()),
+                    len(changes.adds()),
+                )
+            )
+        else:
+            test_changes_details.append(
+                'This pull request **removes** {} test{}.'.format(
+                    len(changes.removes()),
+                    's' if len(changes.removes()) > 1 else ''
+                )
+            )
+        test_changes_details.append('')
+        test_changes_details.append(get_test_list_summary_md('removed', changes.removes(), list_limit))
+
+    if changes.remaining_and_skipped():
+        if test_changes_details:
+            test_changes_details.append('')
+
+        if changes.remaining_and_un_skipped():
+            test_changes_details.append(
+                'This pull request **skips** {} and **un-skips** {} tests.'.format(
+                    len(changes.remaining_and_skipped()),
+                    len(changes.remaining_and_un_skipped())
+                )
+            )
+        else:
+            test_changes_details.append(
+                'This pull request **skips** {} test{}.'.format(
+                    len(changes.remaining_and_skipped()),
+                    's' if len(changes.remaining_and_skipped()) > 1 else ''
+                )
+            )
+        test_changes_details.append('')
+        test_changes_details.append(
+            get_test_list_summary_md('newly skipped', changes.remaining_and_skipped(), list_limit)
+        )
+
+    if changes.removed_skips() and changes.added_and_skipped():
+        test_changes_details.append('')
+        test_changes_details.append(
+            'This pull request **removes** {} skipped tests and **adds** {} skipped tests. '
+            '*Note that renamed tests count towards both.*'.format(
+                len(changes.removed_skips()),
+                len(changes.added_and_skipped())
+            )
+        )
+
+    if test_changes_details:
+        test_changes_details.append('')
+
+    return '\n'.join(test_changes_details)
 
 
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
                         details_url: Optional[str] = None,
-                        test_list_changes: Optional[Mapping[str, List[str]]] = None,
+                        test_changes: Optional[TestChanges] = None,
                         test_list_changes_limit: Optional[int] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
     hide_runs = stats.runs == stats.tests and \
@@ -382,9 +505,8 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         url=details_url
     )
 
-    test_changes = ''.join([get_test_list_summary_md(label, test_list, test_list_changes_limit or len(test_list))
-                            for label, test_list in (test_list_changes.items() if test_list_changes else [])
-                            if test_list])
+    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
+    test_changes_details = ('\n' + test_changes_details) if test_changes_details else ''
 
     commit_line = '\nResults for commit {commit}.{compare}\n'.format(
         commit=as_short_commit(commit),
@@ -394,13 +516,13 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         ) if reference_type and reference_commit else ''
     )
 
-    return '{misc}{tests}{runs}{details}{commit}{test_changes}'.format(
+    return '{misc}{tests}{runs}{details}{commit}{test_changes_details}'.format(
         misc=misc_line,
         tests=tests_line,
         runs=runs_line if not hide_runs else '',
         details=details_line if details_url and details_on else '',
         commit=commit_line,
-        test_changes=test_changes
+        test_changes_details=test_changes_details
     )
 
 
@@ -588,7 +710,7 @@ def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> Optional[Annota
         )
 
 
-def get_skipped_tests_list(cases: UnitTestCaseResults) -> List[str]:
+def get_skipped_tests_list(cases: UnitTestCaseResults) -> Optional[List[str]]:
     if cases is None:
         return None
     tests = [key
