@@ -78,9 +78,6 @@ def get_annotations_config(event: Optional[dict]) -> List[str]:
     if annotations and branch and annotations_branches and \
             'refs/heads/*' not in annotations_branches and \
             branch not in annotations_branches:
-        branches = "', '".join(annotations_branches)
-        logger.info(f"Current branch '{branch}' not among branches '{branches}', "
-                    f"will not add annotations to the check run.")
         annotations = []
 
     return annotations

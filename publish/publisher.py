@@ -163,9 +163,9 @@ class Publisher:
         self._logger.debug('stats with delta: {}'.format(stats_with_delta))
 
         error_annotations = get_error_annotations(stats.errors)
-        file_list_annotations = self.get_test_list_annotations(cases)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
-        all_annotations = error_annotations + file_list_annotations + case_annotations
+        file_list_annotations = self.get_test_list_annotations(cases)
+        all_annotations = error_annotations + case_annotations + file_list_annotations
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         check_run = None
