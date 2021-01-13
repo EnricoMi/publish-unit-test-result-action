@@ -446,29 +446,30 @@ class TestPublisher(unittest.TestCase):
             self.get_stats('base')
         )
 
+    all_tests_annotation = mock.Mock()
+    all_tests_annotation.title = '1 test found'
+    all_tests_annotation.message = 'There is 1 test, see "Raw output" for the name of the test'
+    all_tests_annotation.raw_details = 'class ‑ test1'
+
+    skipped_tests_annotation = mock.Mock()
+    skipped_tests_annotation.title = '1 skipped test found'
+    skipped_tests_annotation.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
+    skipped_tests_annotation.raw_details = 'class ‑ test4'
+
+    other_annotation = mock.Mock()
+    other_annotation.title = None
+    other_annotation.message = 'message one'
+    other_annotation.raw_details = None
+
+    all_annotations = [all_tests_annotation, skipped_tests_annotation, other_annotation]
+
     def test_get_test_lists_from_none_check_run(self):
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(None))
 
     def test_get_test_lists_from_check_run_single_test(self):
-        annotation1 = mock.Mock()
-        annotation1.title = None
-        annotation1.message = 'message one'
-        annotation1.raw_details = None
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 test found'
-        annotation2.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation2.raw_details = 'test one'
-
-        annotation3 = mock.Mock()
-        annotation3.title = '1 skipped test found'
-        annotation3.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation3.raw_details = 'skip one'
-
-        annotations = [annotation1, annotation2, annotation3]
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=annotations)
-        self.assertEqual((['test one'], ['skip one']), Publisher.get_test_lists_from_check_run(check_run))
+        check_run.get_annotations = mock.Mock(return_value=self.all_annotations)
+        self.assertEqual((['class ‑ test1'], ['class ‑ test4']), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_get_test_lists_from_check_run_more_tests(self):
         annotation1 = mock.Mock()
@@ -511,35 +512,13 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_get_test_lists_from_check_run_multiple_all_tests(self):
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'test one'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 test found'
-        annotation2.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation2.raw_details = 'test one'
-
-        annotations = [annotation1, annotation2]
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=annotations)
+        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation, self.all_tests_annotation])
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_get_test_lists_from_check_run_multiple_skipped_tests(self):
-        annotation1 = mock.Mock()
-        annotation1.title = '1 skipped test found'
-        annotation1.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation1.raw_details = 'skip one'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'skip one'
-
-        annotations = [annotation1, annotation2]
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=annotations)
+        check_run.get_annotations = mock.Mock(return_value=[self.skipped_tests_annotation, self.skipped_tests_annotation])
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_get_test_list_changes(self):
@@ -547,18 +526,8 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
+        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation, self.skipped_tests_annotation])
 
         changes = publisher.get_test_list_changes(check_run, self.cases)
         self.assertEqual({'adds': ['class ‑ test', 'class ‑ test2', 'class ‑ test3'],
@@ -572,13 +541,8 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
-        annotation = mock.Mock()
-        annotation.title = '1 test found'
-        annotation.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation.raw_details = 'class ‑ test1'
-
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation])
+        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation])
 
         changes = publisher.get_test_list_changes(check_run, self.cases)
         self.assertEqual({'adds': ['class ‑ test', 'class ‑ test2', 'class ‑ test3'],
@@ -590,13 +554,8 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
-        annotation = mock.Mock()
-        annotation.title = '1 skipped test found'
-        annotation.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation.raw_details = 'class ‑ test4'
-
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation])
+        check_run.get_annotations = mock.Mock(return_value=[self.skipped_tests_annotation])
 
         changes = publisher.get_test_list_changes(check_run, self.cases)
         self.assertEqual({'skips': ['class ‑ test3'],
@@ -608,18 +567,8 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
-        annotation1 = mock.Mock()
-        annotation1.title = '1 test found'
-        annotation1.message = 'There is 1 test, see "Raw output" for the name of the test'
-        annotation1.raw_details = 'class ‑ test1'
-
-        annotation2 = mock.Mock()
-        annotation2.title = '1 skipped test found'
-        annotation2.message = 'There is 1 skipped test, see "Raw output" for the name of the skipped test'
-        annotation2.raw_details = 'class ‑ test4'
-
         check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[annotation1, annotation2])
+        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation])
 
         changes = publisher.get_test_list_changes(check_run, self.cases)
         self.assertEqual({}, changes)
