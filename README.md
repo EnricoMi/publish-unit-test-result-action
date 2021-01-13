@@ -124,9 +124,9 @@ Use comma to set multiple values:
 These additional information are only added to the default branch of your repository, e.g. `main` or `master`.
 Use `check_run_annotations_branch` to enable this for multiple branches (comma separated list) or all branches (`"*"`).
 
-Pull request comments can provide lists of tests that are added, removed, skipped and un-skipped
-by the pull requests. The number of tests listed in each of these categories can be limited by
-`test_changes_limit`, which defaults to `5`. It can be disabled entirely by setting it to `0`.
+Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
+Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,
+which defaults to `5`. Listing these tests can be disabled entirely by setting this limit to `0`.
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
