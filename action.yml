@@ -37,9 +37,8 @@ inputs:
     required: false
     default: 'removed, skipped'
   comment_test_changes_limit:
-    description: 'Limits the number of added / removed / skipped / un-skipped tests listed on PR comments. The default is 10.'
+    description: 'Limits the number of added / removed / skipped / un-skipped tests listed on PR comments. The default is 5.'
     required: false
-    default: '10'
   check_run_annotations:
     description: 'Adds additional information to the check run (comma-separated list): all tests - list all found tests, skipped tests - list all skipped tests, none - no extra annotations at all'
     required: false
