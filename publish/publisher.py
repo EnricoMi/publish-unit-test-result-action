@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from github import Github
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
@@ -8,36 +10,22 @@ from publish import *
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
+@dataclass(frozen=True)
 class Settings:
-    def __init__(self,
-                 token,
-                 api_url,
-                 event,
-                 repo,
-                 commit,
-                 files_glob,
-                 check_name,
-                 comment_title,
-                 comment_on_pr,
-                 test_changes_limit,
-                 hide_comment_mode,
-                 report_individual_runs,
-                 dedup_classes_by_file_name,
-                 check_run_annotation):
-        self.token = token
-        self.api_url = api_url
-        self.event = event
-        self.repo = repo
-        self.commit = commit
-        self.files_glob = files_glob
-        self.check_name = check_name
-        self.comment_title = comment_title
-        self.comment_on_pr = comment_on_pr
-        self.test_changes_limit = test_changes_limit
-        self.hide_comment_mode = hide_comment_mode
-        self.report_individual_runs = report_individual_runs
-        self.dedup_classes_by_file_name = dedup_classes_by_file_name
-        self.check_run_annotation = check_run_annotation
+    token: str
+    api_url: str
+    event: dict
+    repo: str
+    commit: str
+    files_glob: str
+    check_name: str
+    comment_title: str
+    comment_on_pr: bool
+    test_changes_limit: int
+    hide_comment_mode: str
+    report_individual_runs: bool
+    dedup_classes_by_file_name: bool
+    check_run_annotation: List[str]
 
 
 class Publisher:
