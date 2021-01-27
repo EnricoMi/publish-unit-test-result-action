@@ -53,7 +53,8 @@ class Publisher:
 
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
         self._logger.info('publishing {} results for commit {}'.format(conclusion, self._settings.commit))
-        check_run = self.publish_check(stats, cases, conclusion)
+        #check_run = self.publish_check(stats, cases, conclusion)
+        check_run = None
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
