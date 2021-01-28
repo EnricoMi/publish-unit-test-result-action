@@ -28,9 +28,9 @@ class PublishTest(unittest.TestCase):
     old_locale = None
 
     def test_test_changes(self):
-        changes = TestChanges(['removed-test', 'removed-skip', 'remain-test', 'remain-skip', 'skip', 'unskip'],
-                              ['remain-test', 'remain-skip', 'skip', 'unskip', 'add-test', 'add-skip'],
-                              ['removed-skip', 'remain-skip', 'unskip'], ['remain-skip', 'skip', 'add-skip'])
+        changes = SomeTestChanges(['removed-test', 'removed-skip', 'remain-test', 'remain-skip', 'skip', 'unskip'],
+                                  ['remain-test', 'remain-skip', 'skip', 'unskip', 'add-test', 'add-skip'],
+                                  ['removed-skip', 'remain-skip', 'unskip'], ['remain-skip', 'skip', 'add-skip'])
         self.assertEqual({'add-test', 'add-skip'}, changes.adds())
         self.assertEqual({'removed-test', 'removed-skip'}, changes.removes())
         self.assertEqual({'remain-test', 'remain-skip', 'skip', 'unskip'}, changes.remains())
@@ -42,7 +42,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual({'removed-skip'}, changes.removed_skips())
 
     def test_test_changes_empty(self):
-        changes = TestChanges([], [], [], [])
+        changes = SomeTestChanges([], [], [], [])
         self.assertEqual(set(), changes.adds())
         self.assertEqual(set(), changes.removes())
         self.assertEqual(set(), changes.remains())
@@ -54,17 +54,17 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(set(), changes.removed_skips())
 
     def test_test_changes_with_nones(self):
-        self.do_test_test_changes_with_nones(TestChanges(None, None, None, None))
-        self.do_test_test_changes_with_nones(TestChanges(['test'], None, None, None))
-        self.do_test_test_changes_with_nones(TestChanges(None, ['test'], None, None))
-        self.do_test_test_changes_with_nones(TestChanges(None, None, ['test'], None))
-        self.do_test_test_changes_with_nones(TestChanges(None, None, None, ['test']))
-        self.do_test_test_changes_with_nones(TestChanges(['test'], None, ['test'], None))
-        self.do_test_test_changes_with_nones(TestChanges(None, ['test'], None, ['test']))
-        self.do_test_test_changes_with_nones(TestChanges(None, ['test'], ['test'], None))
-        self.do_test_test_changes_with_nones(TestChanges(['test'], None, None, ['test']))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, None, None, None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(['test'], None, None, None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, ['test'], None, None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, None, ['test'], None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, None, None, ['test']))
+        self.do_test_test_changes_with_nones(SomeTestChanges(['test'], None, ['test'], None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, ['test'], None, ['test']))
+        self.do_test_test_changes_with_nones(SomeTestChanges(None, ['test'], ['test'], None))
+        self.do_test_test_changes_with_nones(SomeTestChanges(['test'], None, None, ['test']))
 
-    def do_test_test_changes_with_nones(self, changes: TestChanges):
+    def do_test_test_changes_with_nones(self, changes: SomeTestChanges):
         self.assertIsNone(changes.adds())
         self.assertIsNone(changes.removes())
         self.assertIsNone(changes.remains())
@@ -642,7 +642,7 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/',
-            TestChanges(
+            SomeTestChanges(
                 ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
                 ['test2'], ['test5', 'test6']
             ),
@@ -682,7 +682,7 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/',
-            TestChanges(
+            SomeTestChanges(
                 ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
                 ['test2'], ['test5', 'test6']
             ),
@@ -884,7 +884,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual('**The first 3 label tests are:**\n```\ntest1\ntest2\ntest3\n```', get_test_list_summary_md('label', {'test1', 'test2', 'test3', 'test4'}, 3))
 
     def test_get_test_changes_summary_md(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test', 'test1', 'test2', 'test3'], ['test', 'test 1', 'test 2', 'test 3'],
             ['test1', 'test2'], ['test 1', 'test 2', 'test 3']
         )
@@ -904,7 +904,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_test_changes_summary_md_with_nones(self):
         expected = ''
-        changes = mock.Mock(TestChanges)
+        changes = mock.Mock(SomeTestChanges)
         changes.removes = mock.Mock(return_value=None)
         changes.adds = mock.Mock(return_value=None)
         changes.remaining_and_skipped = mock.Mock(return_value=None)
@@ -968,14 +968,14 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_add_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1'], ['test1', 'test2', 'test3'],
             [], []
         )
         self.assertEqual('', get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_remove_test(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1', 'test3'],
             [], []
         )
@@ -988,7 +988,7 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_remove_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1'],
             [], []
         )
@@ -1002,7 +1002,7 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_rename_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test 1', 'test 2', 'test 3'],
             [], []
         )
@@ -1018,7 +1018,7 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_skip_test(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             [], ['test1']
         )
@@ -1031,7 +1031,7 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_skip_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             [], ['test1', 'test3']
         )
@@ -1045,14 +1045,14 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_un_skip_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             ['test1', 'test3'], []
         )
         self.assertEqual('', get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_skip_and_un_skip_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             ['test1', 'test2'], ['test1', 'test3']
         )
@@ -1065,7 +1065,7 @@ class PublishTest(unittest.TestCase):
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_rename_skip_tests(self):
-        changes = TestChanges(
+        changes = SomeTestChanges(
             ['test1', 'test2', 'test3'], ['test 1', 'test 2', 'test 3'],
             ['test1', 'test2'], ['test 1', 'test 2']
         )

@@ -181,11 +181,11 @@ class Publisher:
         all_tests_annotation: Optional[CheckRunAnnotation] = None
         skipped_tests_annotation: Optional[CheckRunAnnotation] = None
 
-        all_tests_title_regexp = re.compile('^\d+ test(s)? found$')
-        skipped_tests_title_regexp = re.compile('^\d+ skipped test(s)? found$')
+        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found$')
+        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found$')
 
-        all_tests_message_regexp = re.compile('^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
-        skipped_tests_message_regexp = re.compile('^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
+        all_tests_message_regexp = re.compile(r'^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
+        skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
             if annotation and annotation.title and annotation.message and annotation.raw_data and \
@@ -233,7 +233,7 @@ class Publisher:
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-        test_changes = TestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
+        test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
