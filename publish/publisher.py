@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from github import Github
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
@@ -8,36 +10,22 @@ from publish import *
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
+@dataclass(frozen=True)
 class Settings:
-    def __init__(self,
-                 token,
-                 api_url,
-                 event,
-                 repo,
-                 commit,
-                 files_glob,
-                 check_name,
-                 comment_title,
-                 comment_on_pr,
-                 test_changes_limit,
-                 hide_comment_mode,
-                 report_individual_runs,
-                 dedup_classes_by_file_name,
-                 check_run_annotation):
-        self.token = token
-        self.api_url = api_url
-        self.event = event
-        self.repo = repo
-        self.commit = commit
-        self.files_glob = files_glob
-        self.check_name = check_name
-        self.comment_title = comment_title
-        self.comment_on_pr = comment_on_pr
-        self.test_changes_limit = test_changes_limit
-        self.hide_comment_mode = hide_comment_mode
-        self.report_individual_runs = report_individual_runs
-        self.dedup_classes_by_file_name = dedup_classes_by_file_name
-        self.check_run_annotation = check_run_annotation
+    token: str
+    api_url: str
+    event: dict
+    repo: str
+    commit: str
+    files_glob: str
+    check_name: str
+    comment_title: str
+    comment_on_pr: bool
+    test_changes_limit: int
+    hide_comment_mode: str
+    report_individual_runs: bool
+    dedup_classes_by_file_name: bool
+    check_run_annotation: List[str]
 
 
 class Publisher:
@@ -193,11 +181,11 @@ class Publisher:
         all_tests_annotation: Optional[CheckRunAnnotation] = None
         skipped_tests_annotation: Optional[CheckRunAnnotation] = None
 
-        all_tests_title_regexp = re.compile('^\d+ test(s)? found$')
-        skipped_tests_title_regexp = re.compile('^\d+ skipped test(s)? found$')
+        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found$')
+        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found$')
 
-        all_tests_message_regexp = re.compile('^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
-        skipped_tests_message_regexp = re.compile('^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
+        all_tests_message_regexp = re.compile(r'^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
+        skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
             if annotation and annotation.title and annotation.message and annotation.raw_data and \
@@ -245,7 +233,7 @@ class Publisher:
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-        test_changes = TestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
+        test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         self._logger.info('creating comment')
         details_url = check_run.html_url if check_run else None

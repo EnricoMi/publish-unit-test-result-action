@@ -55,7 +55,7 @@ def main(settings: Settings) -> None:
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
-def get_commit_sha(event: dict, event_name: str):
+def get_commit_sha(event: dict, event_name: str, options: dict):
     logger.debug("action triggered by '{}' event".format(event_name))
 
     # https://developer.github.com/webhooks/event-payloads/
@@ -63,17 +63,17 @@ def get_commit_sha(event: dict, event_name: str):
         return event.get('pull_request', {}).get('head', {}).get('sha')
 
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
-    return os.environ.get('GITHUB_SHA')
+    return options.get('GITHUB_SHA')
 
 
-def get_annotations_config(event: Optional[dict]) -> List[str]:
-    annotations = get_var('CHECK_RUN_ANNOTATIONS')
+def get_annotations_config(options: dict, event: Optional[dict]) -> List[str]:
+    annotations = get_var('CHECK_RUN_ANNOTATIONS', options)
     annotations = [annotation.strip() for annotation in annotations.split(',')] \
         if annotations else default_annotations
     default_branch = event.get('repository', {}).get('default_branch') if event else None
-    annotations_branch = get_var('CHECK_RUN_ANNOTATIONS_BRANCH') or default_branch or 'main, master'
+    annotations_branch = get_var('CHECK_RUN_ANNOTATIONS_BRANCH', options) or default_branch or 'main, master'
     annotations_branches = {f'refs/heads/{branch.strip()}' for branch in annotations_branch.split(',')}
-    branch = get_var('GITHUB_REF')
+    branch = get_var('GITHUB_REF', options)
 
     if annotations and branch and annotations_branches and \
             'refs/heads/*' not in annotations_branches and \
@@ -83,66 +83,78 @@ def get_annotations_config(event: Optional[dict]) -> List[str]:
     return annotations
 
 
-if __name__ == "__main__":
-    def get_var(name: str) -> str:
-        return os.environ.get('INPUT_{}'.format(name)) or os.environ.get(name)
-
-    logging.root.level = logging.INFO
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
-    log_level = get_var('LOG_LEVEL') or 'INFO'
-    logger.level = logging.getLevelName(log_level)
-
-    def check_var(var: Union[str, List[str]],
-                  name: str,
-                  label: str,
-                  allowed_values: Optional[List[str]] = None) -> None:
-        if var is None:
-            raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
-
-        if allowed_values:
-            if isinstance(var, str):
-                if var not in allowed_values:
-                    raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
-            if isinstance(var, list):
-                if any([v not in allowed_values for v in var]):
-                    raise RuntimeError('Some values in "{}" are not supported for variable {}, allowed: {}'.format(', '.join(var), name, ', '.join(allowed_values)))
+def get_var(name: str, options: dict) -> str:
+    """
+    Returns the value from the given dict with key 'INPUT_$key',
+    or if this does not exist, key 'key'.
+    """
+    return options.get('INPUT_{}'.format(name)) or options.get(name)
 
 
-    event = get_var('GITHUB_EVENT_PATH')
-    event_name = get_var('GITHUB_EVENT_NAME')
+def check_var(var: Union[str, List[str]],
+              name: str,
+              label: str,
+              allowed_values: Optional[List[str]] = None) -> None:
+    if var is None:
+        raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
+
+    if allowed_values:
+        if isinstance(var, str):
+            if var not in allowed_values:
+                raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
+        if isinstance(var, list):
+            if any([v not in allowed_values for v in var]):
+                raise RuntimeError('Some values in "{}" are not supported for variable {}, allowed: {}'.format(', '.join(var), name, ', '.join(allowed_values)))
+
+
+def get_settings(options: dict) -> Settings:
+    event = get_var('GITHUB_EVENT_PATH', options)
+    event_name = get_var('GITHUB_EVENT_NAME', options)
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'r') as f:
         event = json.load(f)
-    api_url = os.environ.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
-    test_changes_limit = get_var('TEST_CHANGES_LIMIT')
-    test_changes_limit = int(test_changes_limit) if test_changes_limit else 5
+    api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
+    test_changes_limit = get_var('TEST_CHANGES_LIMIT', options)
+    test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 5
 
-    check_name = get_var('CHECK_NAME') or 'Unit Test Results'
-    annotations = get_annotations_config(event)
+    check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
+    annotations = get_annotations_config(options, event)
 
     settings = Settings(
-        token=get_var('GITHUB_TOKEN'),
+        token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         event=event,
-        repo=get_var('GITHUB_REPOSITORY'),
-        commit=get_var('COMMIT') or get_commit_sha(event, event_name),
-        files_glob=get_var('FILES'),
+        repo=get_var('GITHUB_REPOSITORY', options),
+        commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
+        files_glob=get_var('FILES', options),
         check_name=check_name,
-        comment_title=get_var('COMMENT_TITLE') or check_name,
-        comment_on_pr=get_var('COMMENT_ON_PR') != 'false',
+        comment_title=get_var('COMMENT_TITLE', options) or check_name,
+        comment_on_pr=get_var('COMMENT_ON_PR', options) != 'false',
         test_changes_limit=test_changes_limit,
-        hide_comment_mode=get_var('HIDE_COMMENTS') or 'all but latest',
-        report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS') == 'true',
-        dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME') == 'true',
+        hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
+        report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS', options) == 'true',
+        dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options) == 'true',
         check_run_annotation=annotations
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
-    check_var(settings.commit, 'COMMIT or event file', 'Commit SHA')
+    check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.files_glob, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)
 
+    return settings
+
+
+if __name__ == "__main__":
+    options = dict(os.environ)
+
+    logging.root.level = logging.INFO
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+    log_level = get_var('LOG_LEVEL', options) or 'INFO'
+    logger.level = logging.getLevelName(log_level)
+
+    settings = get_settings(options)
     main(settings)

@@ -43,7 +43,7 @@ class CaseMessages(defaultdict):
         )
 
 
-class TestChanges:
+class SomeTestChanges:
     def __init__(self,
                  all_tests_before: Optional[List[str]],
                  all_tests_current: Optional[List[str]],
@@ -380,7 +380,7 @@ def get_test_list_summary_md(label: str, tests: Set[str], list_limit: Optional[i
     )
 
 
-def get_test_changes_summary_md(changes: Optional[TestChanges], list_limit: Optional[int]) -> str:
+def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
     if not changes:
         return ''
 
@@ -445,7 +445,7 @@ def get_test_changes_summary_md(changes: Optional[TestChanges], list_limit: Opti
 
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
                         details_url: Optional[str] = None,
-                        test_changes: Optional[TestChanges] = None,
+                        test_changes: Optional[SomeTestChanges] = None,
                         test_list_changes_limit: Optional[int] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
     hide_runs = stats.runs == stats.tests and \

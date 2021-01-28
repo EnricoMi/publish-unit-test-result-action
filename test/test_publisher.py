@@ -7,7 +7,7 @@ from github_action import GithubAction
 from publish import *
 from publish.publisher import Publisher, Settings
 from unittestresults import UnitTestCase, ParseError
-from collections import Collection
+from collections.abc import Collection
 
 
 errors = [ParseError('file', 'error', 1, 2)]
