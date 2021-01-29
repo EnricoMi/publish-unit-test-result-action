@@ -221,7 +221,7 @@ def as_delta(number: int, digits: int) -> str:
         sign = '+'
     else:
         sign = ' - '
-    return '{}{}'.format(sign, string)
+    return f'{sign}{string}'
 
 
 def as_stat_number(number: Optional[Union[int, Numeric]],
@@ -251,17 +251,17 @@ def as_stat_number(number: Optional[Union[int, Numeric]],
 
         return ''.join([
             as_stat_number(number.get('number'), number_digits, delta_digits, label),
-            ' {} '.format(extra) if extra != '' else ''
+            f' {extra} ' if extra != '' else ''
         ])
     else:
-        logger.warning('unsupported stats number type {}: {}'.format(type(number), number))
+        logger.warning(f'unsupported stats number type {type(number)}: {number}')
         return 'N/A'
 
 
 def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str:
     if duration is None:
         if label:
-            return 'N/A {}'.format(label)
+            return f'N/A {label}'
         return 'N/A'
     if isinstance(duration, float):
         duration = int(duration)
@@ -270,11 +270,11 @@ def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str
         strings = []
         for unit in ['s', 'm', 'h']:
             if unit == 's' or duration:
-                strings.insert(0, '{}{}'.format(duration % 60, unit))
+                strings.insert(0, f'{duration % 60}{unit}')
                 duration //= 60
         string = ' '.join(strings)
         if label:
-            return '{} {}'.format(string, label)
+            return f'{string} {label}'
         return string
     elif isinstance(duration, dict):
         delta = duration.get('delta')
@@ -282,12 +282,9 @@ def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str
         sign = '' if delta is None else '±' if delta == 0 else '+' if delta > 1 else '-'
         if delta and abs(delta) >= 60:
             sign += ' '
-        return as_stat_duration(duration, label) + (' {}{}'.format(
-            sign,
-            as_stat_duration(delta)
-        ) if delta is not None else '')
+        return as_stat_duration(duration, label) + (f' {sign}{as_stat_duration(delta)}' if delta is not None else '')
     else:
-        logger.warning('unsupported stats duration type {}: {}'.format(type(duration), duration))
+        logger.warning(f'unsupported stats duration type {type(duration)}: {duration}')
         return 'N/A'
 
 
@@ -325,7 +322,7 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
             if perrors == 0:
                 return 'No tests found'
             else:
-                return '{} parse errors'.format(perrors)
+                return f'{perrors} parse errors'
         if tests > 0:
             if (failure is None or failure == 0) and \
                     (error is None or error == 0) and perrors == 0:
@@ -337,7 +334,7 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
                         as_stat_number(skipped, 0, 0, 'skipped')
                     )
 
-            summary = ['{}'.format(as_stat_number(number, 0, 0, label))
+            summary = [as_stat_number(number, 0, 0, label)
                        for number, label in [(perrors, 'parse errors'),
                                              (error, 'errors'), (failure, 'fail'),
                                              (skipped, 'skipped'), (success, 'pass')]
@@ -346,13 +343,13 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 
             # when all except tests are None or 0
             if len(summary) == 0:
-                return '{} found'.format(as_stat_number(tests, 0, 0, 'tests'))
+                return f'{as_stat_number(tests, 0, 0, "tests")} found'
             return summary
 
     if tests is None or tests == 0 or duration is None:
         return get_test_summary()
 
-    return '{} in {}'.format(get_test_summary(), as_stat_duration(duration))
+    return f'{get_test_summary()} in {as_stat_duration(duration)}'
 
 
 def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
@@ -540,7 +537,7 @@ def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
         raise ValueError('stats must be UnitTestRunResults when no digest_stats is given')
     summary = get_long_summary_md(stats)
     digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
-    return '{}\n{}{}'.format(summary, digest_prefix, digest)
+    return f'{summary}\n{digest_prefix}{digest}'
 
 
 def get_case_messages(case_results: UnitTestCaseResults) -> CaseMessages:
@@ -550,7 +547,7 @@ def get_case_messages(case_results: UnitTestCaseResults) -> CaseMessages:
             for case in case_results[key][state]:
                 message = case.message if case.result == 'skipped' else case.content
                 messages[key][state][message].append(case)
-    return messages
+    return CaseMessages(messages)
 
 
 @dataclass(frozen=True)
@@ -605,7 +602,7 @@ def get_case_annotation(messages: CaseMessages,
     line = case.line or 0
     test_name = case.test_name if case.test_name else 'Unknown test'
     class_name = case.class_name
-    title = test_name if not class_name else '{} ({})'.format(test_name, class_name)
+    title = test_name if not class_name else f'{test_name} ({class_name})'
     title_state = \
         'pass' if state == 'success' else \
         'failed' if state == 'failure' else \
@@ -613,11 +610,11 @@ def get_case_annotation(messages: CaseMessages,
         'skipped'
     if all_cases > 1:
         if same_cases == all_cases:
-            title = 'All {} runs {}: {}'.format(all_cases, title_state, title)
+            title = f'All {all_cases} runs {title_state}: {title}'
         else:
-            title = '{} out of {} runs {}: {}'.format(same_cases, all_cases, title_state, title)
+            title = f'{same_cases} out of {all_cases} runs {title_state}: {title}'
     else:
-        title = '{} {}'.format(title, title_state)
+        title = f'{title} {title_state}'
 
     level = (
         'warning' if case.result == 'failure' else

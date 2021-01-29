@@ -192,16 +192,34 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
     def test_get_settings_missing_options(self):
-        with self.assertRaises(RuntimeError, msg='GitHub event file path must be provided via action input or environment variable GITHUB_EVENT_PATH'):
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
-        with self.assertRaises(RuntimeError, msg='GitHub token must be provided via action input or environment variable GITHUB_TOKEN'):
+        self.assertEqual('GitHub event file path must be provided via action input or environment variable GITHUB_EVENT_PATH', str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_TOKEN=None)
-        with self.assertRaises(RuntimeError, msg='GitHub repository must be provided via action input or environment variable GITHUB_REPOSITORY'):
+        self.assertEqual('GitHub token must be provided via action input or environment variable GITHUB_TOKEN', str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_REPOSITORY=None)
-        with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT or event file'):
+        self.assertEqual('GitHub repository must be provided via action input or environment variable GITHUB_REPOSITORY', str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None)
-        with self.assertRaises(RuntimeError, msg='Files pattern must be provided via action input or environment variable FILES'):
+        self.assertEqual('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(FILES=None)
+        self.assertEqual('Files pattern must be provided via action input or environment variable FILES', str(re.exception))
+
+    def test_get_settings_unknown_values(self):
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(HIDE_COMMENTS='hide')
+        self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation')
+        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def do_test_get_settings(self, event: dict = {}, expected: Settings = get_settings.__func__(), **kwargs):
         with tempfile.TemporaryDirectory() as path:
@@ -235,7 +253,10 @@ class Test(unittest.TestCase):
                 if arg.startswith('INPUT_'):
                     del options[arg[6:]]
 
-            with mock.patch('publish_unit_test_results.get_annotations_config', return_value=[]) as m:
+            # simplify functionality of get_annotations_config
+            annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
+                if 'CHECK_RUN_ANNOTATIONS' in options else []
+            with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
                 actual = get_settings(options)
                 m.assert_called_once_with(options, event)
 

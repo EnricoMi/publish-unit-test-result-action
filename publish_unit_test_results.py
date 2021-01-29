@@ -33,8 +33,8 @@ def main(settings: Settings) -> None:
     if len(files) == 0:
         gha.warning(f'Could not find any files for {settings.files_glob}')
     else:
-        logger.info('reading {}'.format(settings.files_glob))
-        logger.debug('reading {}'.format(list(files)))
+        logger.info(f'reading {settings.files_glob}')
+        logger.debug(f'reading {list(files)}')
 
     # get the unit test results
     parsed = parse_junit_xml_files(files).with_commit(settings.commit)
@@ -56,7 +56,7 @@ def main(settings: Settings) -> None:
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
-    logger.debug("action triggered by '{}' event".format(event_name))
+    logger.debug(f"action triggered by '{event_name}' event")
 
     # https://developer.github.com/webhooks/event-payloads/
     if event_name.startswith('pull_request'):
@@ -88,7 +88,7 @@ def get_var(name: str, options: dict) -> str:
     Returns the value from the given dict with key 'INPUT_$key',
     or if this does not exist, key 'key'.
     """
-    return options.get('INPUT_{}'.format(name)) or options.get(name)
+    return options.get(f'INPUT_{name}') or options.get(name)
 
 
 def check_var(var: Union[str, List[str]],
@@ -96,15 +96,18 @@ def check_var(var: Union[str, List[str]],
               label: str,
               allowed_values: Optional[List[str]] = None) -> None:
     if var is None:
-        raise RuntimeError('{} must be provided via action input or environment variable {}'.format(label, name))
+        raise RuntimeError(f'{label} must be provided via action input or environment variable {name}')
 
     if allowed_values:
         if isinstance(var, str):
             if var not in allowed_values:
-                raise RuntimeError('Value "{}" is not supported for variable {}, expected: {}'.format(var, name, ', '.join(allowed_values)))
+                raise RuntimeError(f"Value '{var}' is not supported for variable {name}, "
+                                   f"expected: {', '.join(allowed_values)}")
         if isinstance(var, list):
             if any([v not in allowed_values for v in var]):
-                raise RuntimeError('Some values in "{}" are not supported for variable {}, allowed: {}'.format(', '.join(var), name, ', '.join(allowed_values)))
+                raise RuntimeError(f"Some values in '{', '.join(var)}' "
+                                   f"are not supported for variable {name}, "
+                                   f"allowed: {', '.join(allowed_values)}")
 
 
 def get_settings(options: dict) -> Settings:
