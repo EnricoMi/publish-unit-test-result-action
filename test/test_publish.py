@@ -713,6 +713,44 @@ class PublishTest(unittest.TestCase):
             '*Note that renamed tests count towards both.*\n')
         )
 
+    def test_get_long_summary_md_with_all_tests_removed(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=0, errors=[], suites=0, duration=0,
+                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
+                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/',
+            SomeTestChanges(
+                ['test1', 'test2', 'test3', 'test4', 'test5'], [],
+                ['test2'], []
+            ),
+        ), ('0 files  0 suites   0s :stopwatch:\n'
+            '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_md_with_some_files_but_all_tests_removed(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=2, errors=[], suites=0, duration=0,
+                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
+                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/',
+            SomeTestChanges(
+                ['test1', 'test2', 'test3', 'test4', 'test5'], [],
+                ['test2'], []
+            ),
+        ), ('2 files  0 suites   0s :stopwatch:\n'
+            '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
     def test_get_long_summary_with_digest_md_with_single_run(self):
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):

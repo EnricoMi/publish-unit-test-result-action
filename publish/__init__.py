@@ -503,7 +503,7 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
     )
 
     test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
-    test_changes_details = ('\n' + test_changes_details) if test_changes_details else ''
+    test_changes_details = ('\n' + test_changes_details) if stats.tests and test_changes_details else ''
 
     commit_line = '\nResults for commit {commit}.{compare}\n'.format(
         commit=as_short_commit(commit),
