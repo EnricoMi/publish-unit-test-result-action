@@ -42,7 +42,6 @@ jobs:
       if: always()
       with:
         check_name: Unit Test Results
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         files: "test-results/*.xml"
         report_individual_runs: true
         deduplicate_classes_by_file_name: false
