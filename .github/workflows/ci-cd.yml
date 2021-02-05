@@ -67,10 +67,10 @@ jobs:
     name: Deploy to GitHub
     needs: build-and-test
 
-    # only deploy pushed tags, but not on forked repositories
+    # only deploy pushed version tags (no major versions), but not on forked repositories
     if: >
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v') &&
+      startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.') &&
       github.repository_owner == 'EnricoMi'
 
     runs-on: ubuntu-latest
