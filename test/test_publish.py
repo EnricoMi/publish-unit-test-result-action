@@ -668,14 +668,6 @@ class PublishTest(unittest.TestCase):
             '</details>\n'
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
-            '\n'
-            '```\n'
-            'test5\n'
-            '```\n'
-            '</details>\n'
-            '\n'
-            '<details>\n'
             '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
@@ -685,6 +677,14 @@ class PublishTest(unittest.TestCase):
             '\n'
             '```\n'
             'test6\n'
+            '```\n'
+            '</details>\n'
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
+            '```\n'
+            'test5\n'
             '```\n'
             '</details>\n')
         )
@@ -725,14 +725,6 @@ class PublishTest(unittest.TestCase):
             '</details>\n'
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
-            '\n'
-            '```\n'
-            'test5\n'
-            '```\n'
-            '</details>\n'
-            '\n'
-            '<details>\n'
             '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
@@ -742,6 +734,14 @@ class PublishTest(unittest.TestCase):
             '\n'
             '```\n'
             'test6\n'
+            '```\n'
+            '</details>\n'
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
+            '```\n'
+            'test5\n'
             '```\n'
             '</details>\n')
         )
@@ -1059,6 +1059,33 @@ class PublishTest(unittest.TestCase):
         expected = expected.replace('test1', 'test1\n```\n\n```\ntest2')
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
+        changes.removed_skips = mock.Mock(return_value=[])
+        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
+
+        changes.added_and_skipped = mock.Mock(return_value=[])
+        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
+
+        changes.removed_skips = mock.Mock(return_value=['test5'])
+        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
+
+        changes.added_and_skipped = mock.Mock(return_value=['test6'])
+        expected = expected + (
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
+            '\n'
+            '```\n'
+            'test5\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n'
+        )
+        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
+
         changes.remaining_and_skipped = mock.Mock(return_value=[])
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
@@ -1081,33 +1108,6 @@ class PublishTest(unittest.TestCase):
         changes.remaining_and_un_skipped = mock.Mock(return_value=['test4'])
         expected = expected.replace('This pull request <b>skips</b> 1 test.', 'This pull request <b>skips</b> 1 and <b>un-skips</b> 1 tests.')
         expected = expected.replace('test3', 'test3\n```\n\n```\ntest4')
-        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
-
-        changes.removed_skips = mock.Mock(return_value=[])
-        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
-
-        changes.added_and_skipped = mock.Mock(return_value=[])
-        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
-
-        changes.removed_skips = mock.Mock(return_value=['test5'])
-        self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
-
-        changes.added_and_skipped = mock.Mock(return_value=['test6'])
-        expected = expected + (
-                       '\n'
-                       '<details>\n'
-                       '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
-                       '<i>Note that renamed tests count towards both.</i></summary>\n'
-                       '\n'
-                       '```\n'
-                       'test5\n'
-                       '```\n'
-                       '\n'
-                       '```\n'
-                       'test6\n'
-                       '```\n'
-                       '</details>\n'
-                   )
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_add_tests(self):
