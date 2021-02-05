@@ -29,7 +29,8 @@ The result distinguishes between tests and runs. In some situations, tests run m
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
 changes in the number of runs as well.
 
-Changes in the existence of tests are highlighted in pull request comments to easily spot unintended test removal:
+The change statistics (e.g. 5 tests ±0) might sometimes hide test removal.
+Those are highlighted in pull request comments to easily spot unintended test removal:
 
 ![...](github-pull-request-comment-with-test-changes.png)
 
