@@ -749,6 +749,26 @@ class PublishTest(unittest.TestCase):
             '</details>\n')
         )
 
+    def test_get_long_summary_md_with_test_lists_and_zero_limit(self):
+        self.assertEqual(get_long_summary_md(
+            UnitTestRunResults(
+                files=1, errors=[], suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/',
+            SomeTestChanges(
+                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6', 'test7'],
+                ['test1', 'test2'], ['test5', 'test6', 'test7']
+            ),
+            0
+        ), ('1 files  2 suites   3s :stopwatch:\n'
+            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+            '\n'
+            'Results for commit commit.\n')
+        )
+
     def test_get_long_summary_md_with_all_tests_removed(self):
         self.assertEqual(get_long_summary_md(
             UnitTestRunResults(

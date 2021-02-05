@@ -119,7 +119,7 @@ def get_settings(options: dict) -> Settings:
         event = json.load(f)
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options)
-    test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 5
+    test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 10
 
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     annotations = get_annotations_config(options, event)

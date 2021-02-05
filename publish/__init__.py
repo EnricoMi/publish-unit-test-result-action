@@ -365,7 +365,7 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
 
 
 def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
-    if not changes:
+    if not changes or list_limit == 0:
         return ''
 
     test_changes_details = []
@@ -439,7 +439,7 @@ def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: 
     return '\n'.join(test_changes_details)
 
 
-def get_test_changes_md(summary: str, list_limit: int, *tests: Iterable[str]) -> str:
+def get_test_changes_md(summary: str, list_limit: Optional[int], *tests: Iterable[str]) -> str:
     tests = '\n'.join([get_test_changes_list_md(sorted(test), list_limit) for test in tests])
     return (
         f'<details>\n'
@@ -450,7 +450,7 @@ def get_test_changes_md(summary: str, list_limit: int, *tests: Iterable[str]) ->
     )
 
 
-def get_test_changes_list_md(tests: List[str], limit: int) -> str:
+def get_test_changes_list_md(tests: List[str], limit: Optional[int]) -> str:
     if limit:
         tests = tests[:limit] + (['…'] if len(tests) > limit else [])
     tests = '\n'.join(tests)

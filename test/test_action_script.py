@@ -153,10 +153,10 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA=None, expected=None)
 
     def test_get_settings_test_changes_limit_default(self):
-        self.do_test_get_settings(TEST_CHANGES_LIMIT=None, expected=self.get_settings(test_changes_limit=5))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='-10', expected=self.get_settings(test_changes_limit=5))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='10.0', expected=self.get_settings(test_changes_limit=5))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='string', expected=self.get_settings(test_changes_limit=5))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT=None, expected=self.get_settings(test_changes_limit=10))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT='-10', expected=self.get_settings(test_changes_limit=10))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT='10.0', expected=self.get_settings(test_changes_limit=10))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT='string', expected=self.get_settings(test_changes_limit=10))
 
     def test_get_settings_check_name_default(self):
         self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Unit Test Results'))
