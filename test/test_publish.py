@@ -651,10 +651,10 @@ class PublishTest(unittest.TestCase):
             '\n'
             'Results for commit commit.\n'
             '\n'
-            'This pull request **removes** 4 and **adds** 1 tests. '
-            '*Note that renamed tests count towards both.*\n'
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 1 tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
-            '**All removed tests are:**\n'
             '```\n'
             'test1\n'
             'test2\n'
@@ -662,15 +662,31 @@ class PublishTest(unittest.TestCase):
             'test4\n'
             '```\n'
             '\n'
-            'This pull request **skips** 1 test.\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n'
             '\n'
-            '**All newly skipped tests are:**\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
             '```\n'
             'test5\n'
             '```\n'
+            '</details>\n'
             '\n'
-            'This pull request **removes** 1 skipped tests and **adds** 1 skipped tests. '
-            '*Note that renamed tests count towards both.*\n')
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
+            '\n'
+            '```\n'
+            'test2\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n')
         )
 
     def test_get_long_summary_md_with_test_lists_and_limit(self):
@@ -692,25 +708,42 @@ class PublishTest(unittest.TestCase):
             '\n'
             'Results for commit commit.\n'
             '\n'
-            'This pull request **removes** 4 and **adds** 1 tests. '
-            '*Note that renamed tests count towards both.*\n'
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 1 tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
-            '**The first 3 removed tests are:**\n'
             '```\n'
             'test1\n'
             'test2\n'
             'test3\n'
+            '…\n'
             '```\n'
             '\n'
-            'This pull request **skips** 1 test.\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n'
             '\n'
-            '**All newly skipped tests are:**\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
             '```\n'
             'test5\n'
             '```\n'
+            '</details>\n'
             '\n'
-            'This pull request **removes** 1 skipped tests and **adds** 1 skipped tests. '
-            '*Note that renamed tests count towards both.*\n')
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
+            '\n'
+            '```\n'
+            'test2\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n')
         )
 
     def test_get_long_summary_md_with_all_tests_removed(self):
@@ -914,30 +947,81 @@ class PublishTest(unittest.TestCase):
             ))
         self.assertIn('stats must be UnitTestRunResults when no digest_stats is given', context.exception.args)
 
-    def test_get_test_list_summary_md(self):
-        self.assertEqual('', get_test_list_summary_md('label', set(), 3))
-        self.assertEqual('**All label tests are:**\n```\ntest1\n```', get_test_list_summary_md('label', {'test1'}, 3))
-        self.assertEqual('**All label tests are:**\n```\ntest1\ntest2\n```', get_test_list_summary_md('label', {'test1', 'test2'}, 3))
-        self.assertEqual('**All label tests are:**\n```\ntest1\ntest2\ntest3\n```', get_test_list_summary_md('label', {'test1', 'test2', 'test3'}, 3))
-        self.assertEqual('**The first 3 label tests are:**\n```\ntest1\ntest2\ntest3\n```', get_test_list_summary_md('label', {'test1', 'test2', 'test3', 'test4'}, 3))
+    def test_get_test_changes_md(self):
+        self.assertEqual(
+            '<details>\n'
+            '  <summary>the summary</summary>\n'
+            '\n'
+            '```\n'
+            'test1\n'
+            'test2\n'
+            '```\n'
+            '</details>\n',
+            get_test_changes_md('the summary', 3, ['test1', 'test2'])
+        )
+        self.assertEqual(
+            '<details>\n'
+            '  <summary>the summary</summary>\n'
+            '\n'
+            '```\n'
+            'test1\n'
+            'test2\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test3\n'
+            'test4\n'
+            'test5\n'
+            '…\n'
+            '```\n'
+            '</details>\n',
+            get_test_changes_md('the summary', 3, ['test1', 'test2'], ['test3', 'test4', 'test5', 'test6'])
+        )
+
+    def test_get_test_changes_list_md(self):
+        self.assertEqual('```\n\n```\n', get_test_changes_list_md([], 3))
+        self.assertEqual('```\ntest1\n```\n', get_test_changes_list_md(['test1'], 3))
+        self.assertEqual('```\ntest1\ntest2\n```\n', get_test_changes_list_md(['test1', 'test2'], 3))
+        self.assertEqual('```\ntest1\ntest2\ntest3\n```\n', get_test_changes_list_md(['test1', 'test2', 'test3'], 3))
+        self.assertEqual('```\ntest1\ntest2\ntest3\n…\n```\n', get_test_changes_list_md(['test1', 'test2', 'test3', 'test4'], 3))
 
     def test_get_test_changes_summary_md(self):
         changes = SomeTestChanges(
             ['test', 'test1', 'test2', 'test3'], ['test', 'test 1', 'test 2', 'test 3'],
             ['test1', 'test2'], ['test 1', 'test 2', 'test 3']
         )
-        self.assertEqual('This pull request **removes** 3 and **adds** 3 tests. '
-                         '*Note that renamed tests count towards both.*\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>removes</b> 3 and <b>adds</b> 3 tests. '
+                         '<i>Note that renamed tests count towards both.</i></summary>\n'
                          '\n'
-                         '**All removed tests are:**\n'
                          '```\n'
                          'test1\n'
                          'test2\n'
                          'test3\n'
                          '```\n'
                          '\n'
-                         'This pull request **removes** 2 skipped tests and **adds** 3 skipped tests. '
-                         '*Note that renamed tests count towards both.*\n',
+                         '```\n'
+                         'test 1\n'
+                         'test 2\n'
+                         'test 3\n'
+                         '```\n'
+                         '</details>\n'
+                         '\n'
+                         '<details>\n'
+                         '  <summary>This pull request <b>removes</b> 2 skipped tests and <b>adds</b> 3 skipped tests. '
+                         '<i>Note that renamed tests count towards both.</i></summary>\n'
+                         '\n'
+                         '```\n'
+                         'test1\n'
+                         'test2\n'
+                         '```\n'
+                         '\n'
+                         '```\n'
+                         'test 1\n'
+                         'test 2\n'
+                         'test 3\n'
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_with_nones(self):
@@ -955,39 +1039,48 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.removes = mock.Mock(return_value=['test1'])
-        expected = ('This pull request **removes** 1 test.\n'
-                    '\n'
-                    '**All removed tests are:**\n'
-                    '```\n'
-                    'test1\n'
-                    '```\n')
+        expected = (
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 1 test.</summary>\n'
+            '\n'
+            '```\n'
+            'test1\n'
+            '```\n'
+            '</details>\n'
+        )
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.adds = mock.Mock(return_value=[])
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.adds = mock.Mock(return_value=['test2'])
-        expected = expected.replace('1 test.', '1 and **adds** 1 tests. *Note that renamed tests count towards both.*')
+        expected = expected.replace('1 test.', '1 and <b>adds</b> 1 tests. '
+                                               '<i>Note that renamed tests count towards both.</i>')
+        expected = expected.replace('test1', 'test1\n```\n\n```\ntest2')
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.remaining_and_skipped = mock.Mock(return_value=[])
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.remaining_and_skipped = mock.Mock(return_value=['test3'])
-        expected = expected + '\n' \
-                              'This pull request **skips** 1 test.\n' \
-                              '\n' \
-                              '**All newly skipped tests are:**\n' \
-                              '```\n' \
-                              'test3\n' \
-                              '```\n'
+        expected = expected + (
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
+            '```\n'
+            'test3\n'
+            '```\n'
+            '</details>\n'
+        )
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.remaining_and_un_skipped = mock.Mock(return_value=[])
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.remaining_and_un_skipped = mock.Mock(return_value=['test4'])
-        expected = expected.replace('This pull request **skips** 1 test.', 'This pull request **skips** 1 and **un-skips** 1 tests.')
+        expected = expected.replace('This pull request <b>skips</b> 1 test.', 'This pull request <b>skips</b> 1 and <b>un-skips</b> 1 tests.')
+        expected = expected.replace('test3', 'test3\n```\n\n```\ntest4')
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.removed_skips = mock.Mock(return_value=[])
@@ -1000,9 +1093,21 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
         changes.added_and_skipped = mock.Mock(return_value=['test6'])
-        expected = expected + '\n' \
-                              'This pull request **removes** 1 skipped tests and **adds** 1 skipped tests. ' \
-                              '*Note that renamed tests count towards both.*\n'
+        expected = expected + (
+                       '\n'
+                       '<details>\n'
+                       '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+                       '<i>Note that renamed tests count towards both.</i></summary>\n'
+                       '\n'
+                       '```\n'
+                       'test5\n'
+                       '```\n'
+                       '\n'
+                       '```\n'
+                       'test6\n'
+                       '```\n'
+                       '</details>\n'
+                   )
         self.assertEqual(expected, get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_add_tests(self):
@@ -1017,12 +1122,13 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test1', 'test3'],
             [], []
         )
-        self.assertEqual('This pull request **removes** 1 test.\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>removes</b> 1 test.</summary>\n'
                          '\n'
-                         '**All removed tests are:**\n'
                          '```\n'
                          'test2\n'
-                         '```\n',
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_remove_tests(self):
@@ -1030,13 +1136,14 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test1'],
             [], []
         )
-        self.assertEqual('This pull request **removes** 2 tests.\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>removes</b> 2 tests.</summary>\n'
                          '\n'
-                         '**All removed tests are:**\n'
                          '```\n'
                          'test2\n'
                          'test3\n'
-                         '```\n',
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_rename_tests(self):
@@ -1044,15 +1151,22 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test 1', 'test 2', 'test 3'],
             [], []
         )
-        self.assertEqual('This pull request **removes** 3 and **adds** 3 tests. '
-                         '*Note that renamed tests count towards both.*\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>removes</b> 3 and <b>adds</b> 3 tests. '
+                         '<i>Note that renamed tests count towards both.</i></summary>\n'
                          '\n'
-                         '**All removed tests are:**\n'
                          '```\n'
                          'test1\n'
                          'test2\n'
                          'test3\n'
-                         '```\n',
+                         '```\n'
+                         '\n'
+                         '```\n'
+                         'test 1\n'
+                         'test 2\n'
+                         'test 3\n'
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_skip_test(self):
@@ -1060,12 +1174,13 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             [], ['test1']
         )
-        self.assertEqual('This pull request **skips** 1 test.\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
                          '\n'
-                         '**All newly skipped tests are:**\n'
                          '```\n'
                          'test1\n'
-                         '```\n',
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_skip_tests(self):
@@ -1073,13 +1188,14 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             [], ['test1', 'test3']
         )
-        self.assertEqual('This pull request **skips** 2 tests.\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>skips</b> 2 tests.</summary>\n'
                          '\n'
-                         '**All newly skipped tests are:**\n'
                          '```\n'
                          'test1\n'
                          'test3\n'
-                         '```\n',
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_un_skip_tests(self):
@@ -1094,12 +1210,17 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test1', 'test2', 'test3'],
             ['test1', 'test2'], ['test1', 'test3']
         )
-        self.assertEqual('This pull request **skips** 1 and **un-skips** 1 tests.\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>skips</b> 1 and <b>un-skips</b> 1 tests.</summary>\n'
                          '\n'
-                         '**All newly skipped tests are:**\n'
                          '```\n'
                          'test3\n'
-                         '```\n',
+                         '```\n'
+                         '\n'
+                         '```\n'
+                         'test2\n'
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_test_changes_summary_md_rename_skip_tests(self):
@@ -1107,18 +1228,37 @@ class PublishTest(unittest.TestCase):
             ['test1', 'test2', 'test3'], ['test 1', 'test 2', 'test 3'],
             ['test1', 'test2'], ['test 1', 'test 2']
         )
-        self.assertEqual('This pull request **removes** 3 and **adds** 3 tests. '
-                         '*Note that renamed tests count towards both.*\n'
+        self.assertEqual('<details>\n'
+                         '  <summary>This pull request <b>removes</b> 3 and <b>adds</b> 3 tests. '
+                         '<i>Note that renamed tests count towards both.</i></summary>\n'
                          '\n'
-                         '**All removed tests are:**\n'
                          '```\n'
                          'test1\n'
                          'test2\n'
                          'test3\n'
                          '```\n'
                          '\n'
-                         'This pull request **removes** 2 skipped tests and **adds** 2 skipped tests. '
-                         '*Note that renamed tests count towards both.*\n',
+                         '```\n'
+                         'test 1\n'
+                         'test 2\n'
+                         'test 3\n'
+                         '```\n'
+                         '</details>\n'
+                         '\n'
+                         '<details>\n'
+                         '  <summary>This pull request <b>removes</b> 2 skipped tests and <b>adds</b> 2 skipped tests. '
+                         '<i>Note that renamed tests count towards both.</i></summary>\n'
+                         '\n'
+                         '```\n'
+                         'test1\n'
+                         'test2\n'
+                         '```\n'
+                         '\n'
+                         '```\n'
+                         'test 1\n'
+                         'test 2\n'
+                         '```\n'
+                         '</details>\n',
                          get_test_changes_summary_md(changes, 3))
 
     def test_get_case_messages(self):
