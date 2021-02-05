@@ -4,7 +4,7 @@ import json
 import logging
 import re
 from collections import defaultdict
-from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set
+from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable
 
 from dataclasses import dataclass
 
@@ -364,19 +364,6 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     return md
 
 
-def get_test_list_summary_md(label: str, tests: Set[str], list_limit: Optional[int]) -> str:
-    if not tests:
-        return ''
-    if list_limit is None:
-        list_limit = len(tests)
-
-    amount = len(tests)
-    quantity = 'All' if amount <= list_limit else f'The first {list_limit}'
-    return '\n'.join(
-        [f'**{quantity} {label} tests are:**', '```'] + sorted(tests)[:list_limit] + ['```']
-    )
-
-
 def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
     if not changes:
         return ''
@@ -385,59 +372,89 @@ def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: 
     if changes.removes():
         if changes.adds():
             test_changes_details.append(
-                'This pull request **removes** {} and **adds** {} tests. '
-                '*Note that renamed tests count towards both.*'.format(
-                    len(changes.removes()),
-                    len(changes.adds()),
+                get_test_changes_md(
+                    'This pull request <b>removes</b> {} and <b>adds</b> {} tests. '
+                    '<i>Note that renamed tests count towards both.</i>'.format(
+                        len(changes.removes()),
+                        len(changes.adds()),
+                    ),
+                    list_limit,
+                    changes.removes(),
+                    changes.adds()
                 )
             )
         else:
             test_changes_details.append(
-                'This pull request **removes** {} test{}.'.format(
-                    len(changes.removes()),
-                    's' if len(changes.removes()) > 1 else ''
+                get_test_changes_md(
+                    'This pull request <b>removes</b> {} test{}.'.format(
+                        len(changes.removes()),
+                        's' if len(changes.removes()) > 1 else ''
+                    ),
+                    list_limit,
+                    list(changes.removes())
                 )
             )
-        test_changes_details.append('')
-        test_changes_details.append(get_test_list_summary_md('removed', changes.removes(), list_limit))
-
-    if changes.remaining_and_skipped():
-        if test_changes_details:
-            test_changes_details.append('')
-
-        if changes.remaining_and_un_skipped():
-            test_changes_details.append(
-                'This pull request **skips** {} and **un-skips** {} tests.'.format(
-                    len(changes.remaining_and_skipped()),
-                    len(changes.remaining_and_un_skipped())
-                )
-            )
-        else:
-            test_changes_details.append(
-                'This pull request **skips** {} test{}.'.format(
-                    len(changes.remaining_and_skipped()),
-                    's' if len(changes.remaining_and_skipped()) > 1 else ''
-                )
-            )
-        test_changes_details.append('')
-        test_changes_details.append(
-            get_test_list_summary_md('newly skipped', changes.remaining_and_skipped(), list_limit)
-        )
 
     if changes.removed_skips() and changes.added_and_skipped():
-        test_changes_details.append('')
         test_changes_details.append(
-            'This pull request **removes** {} skipped tests and **adds** {} skipped tests. '
-            '*Note that renamed tests count towards both.*'.format(
-                len(changes.removed_skips()),
-                len(changes.added_and_skipped())
+            get_test_changes_md(
+                'This pull request <b>removes</b> {} skipped test{} and <b>adds</b> {} skipped test{}. '
+                '<i>Note that renamed tests count towards both.</i>'.format(
+                    len(changes.removed_skips()),
+                    's' if len(changes.removed_skips()) > 1 else '',
+                    len(changes.added_and_skipped()),
+                    's' if len(changes.added_and_skipped()) > 1 else ''
+                ),
+                list_limit,
+                changes.removed_skips(),
+                changes.added_and_skipped()
             )
         )
 
-    if test_changes_details:
-        test_changes_details.append('')
+    if changes.remaining_and_skipped():
+        if changes.remaining_and_un_skipped():
+            test_changes_details.append(
+                get_test_changes_md(
+                    'This pull request <b>skips</b> {} and <b>un-skips</b> {} tests.'.format(
+                        len(changes.remaining_and_skipped()),
+                        len(changes.remaining_and_un_skipped())
+                    ),
+                    list_limit,
+                    changes.remaining_and_skipped(),
+                    changes.remaining_and_un_skipped()
+                )
+            )
+        else:
+            test_changes_details.append(
+                get_test_changes_md(
+                    'This pull request <b>skips</b> {} test{}.'.format(
+                        len(changes.remaining_and_skipped()),
+                        's' if len(changes.remaining_and_skipped()) > 1 else ''
+                    ),
+                    list_limit,
+                    changes.remaining_and_skipped()
+                )
+            )
 
     return '\n'.join(test_changes_details)
+
+
+def get_test_changes_md(summary: str, list_limit: int, *tests: Iterable[str]) -> str:
+    tests = '\n'.join([get_test_changes_list_md(sorted(test), list_limit) for test in tests])
+    return (
+        f'<details>\n'
+        f'  <summary>{summary}</summary>\n'
+        f'\n'
+        f'{tests}'
+        f'</details>\n'
+    )
+
+
+def get_test_changes_list_md(tests: List[str], limit: int) -> str:
+    if limit:
+        tests = tests[:limit] + (['…'] if len(tests) > limit else [])
+    tests = '\n'.join(tests)
+    return f'```\n{tests}\n```\n'
 
 
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
