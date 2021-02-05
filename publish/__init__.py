@@ -398,10 +398,12 @@ def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: 
     if changes.removed_skips() and changes.added_and_skipped():
         test_changes_details.append(
             get_test_changes_md(
-                'This pull request <b>removes</b> {} skipped tests and <b>adds</b> {} skipped tests. '
+                'This pull request <b>removes</b> {} skipped test{} and <b>adds</b> {} skipped test{}. '
                 '<i>Note that renamed tests count towards both.</i>'.format(
                     len(changes.removed_skips()),
-                    len(changes.added_and_skipped())
+                    's' if len(changes.removed_skips()) > 1 else '',
+                    len(changes.added_and_skipped()),
+                    's' if len(changes.added_and_skipped()) > 1 else ''
                 ),
                 list_limit,
                 changes.removed_skips(),

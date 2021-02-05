@@ -668,7 +668,7 @@ class PublishTest(unittest.TestCase):
             '</details>\n'
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '  <summary>This pull request <b>removes</b> 1 skipped test and <b>adds</b> 1 skipped test. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
             '```\n'
@@ -699,8 +699,8 @@ class PublishTest(unittest.TestCase):
             ),
             'https://details.url/',
             SomeTestChanges(
-                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
-                ['test2'], ['test5', 'test6']
+                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6', 'test7'],
+                ['test1', 'test2'], ['test5', 'test6', 'test7']
             ),
             3
         ), ('1 files  2 suites   3s :stopwatch:\n'
@@ -709,7 +709,7 @@ class PublishTest(unittest.TestCase):
             'Results for commit commit.\n'
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 1 tests. '
+            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 2 tests. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
             '```\n'
@@ -721,19 +721,22 @@ class PublishTest(unittest.TestCase):
             '\n'
             '```\n'
             'test6\n'
+            'test7\n'
             '```\n'
             '</details>\n'
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '  <summary>This pull request <b>removes</b> 2 skipped tests and <b>adds</b> 2 skipped tests. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
             '```\n'
+            'test1\n'
             'test2\n'
             '```\n'
             '\n'
             '```\n'
             'test6\n'
+            'test7\n'
             '```\n'
             '</details>\n'
             '\n'
@@ -1072,7 +1075,7 @@ class PublishTest(unittest.TestCase):
         expected = expected + (
             '\n'
             '<details>\n'
-            '  <summary>This pull request <b>removes</b> 1 skipped tests and <b>adds</b> 1 skipped tests. '
+            '  <summary>This pull request <b>removes</b> 1 skipped test and <b>adds</b> 1 skipped test. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
             '\n'
             '```\n'
