@@ -78,16 +78,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Docker meta
-        id: docker_meta
+      - name: Docker meta (major)
+        id: docker_meta_major
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
           tag-sha: true
-          tag-semver: |
-            {{raw}}
-            v{{major}}.{{minor}}
-            v{{major}}
+          tag-match: '^(v\d+)'
+          tag-match-group: '1'
+          tag-latest: false
+
+      - name: Docker meta (minor)
+        id: docker_meta_minor
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ghcr.io/EnricoMi/publish-unit-test-result-action
+          tag-sha: false
+          tag-match: '^(v\d+.\d+)'
+          tag-match-group: '1'
+          tag-latest: false
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -105,7 +114,11 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: |
+            ${{ steps.docker_meta_major.outputs.tags }}
+            ${{ steps.docker_meta_minor.outputs.tags }}
+          labels: |
+            ${{ steps.docker_meta_major.outputs.labels }}
+            ${{ steps.docker_meta_minor.outputs.labels }}
           pull: true
           push: true
