@@ -133,6 +133,7 @@ and removal, and `skipped tests` to detect new skipped and un-skipped tests, as 
 See this complete list of configuration options for reference:
 ```yaml
   with:
+    github_token: ${{ your-custom-pat }}
     commit: ${{ your-commit-sha }}
     check_name: Unit Test Results
     comment_title: Unit Test Statistics
