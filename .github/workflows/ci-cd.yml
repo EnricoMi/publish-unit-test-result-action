@@ -38,11 +38,10 @@ jobs:
         python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
     - name: Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@master
+      uses: ./
       if: always()
       with:
         check_name: Unit Test Results
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         files: "test-results/*.xml"
         report_individual_runs: true
         deduplicate_classes_by_file_name: false

@@ -55,7 +55,6 @@ You can add this action to your GitHub workflow as follows:
   uses: EnricoMi/publish-unit-test-result-action@v1.7
   if: always()
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     files: test-results/**/*.xml
 ```
 
@@ -135,7 +134,7 @@ and removal, and `skipped tests` to detect new skipped and un-skipped tests, as 
 See this complete list of configuration options for reference:
 ```yaml
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
+    github_token: ${{ your-custom-pat }}
     commit: ${{ your-commit-sha }}
     check_name: Unit Test Results
     comment_title: Unit Test Statistics
@@ -244,6 +243,5 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1.7
         with:
           check_name: Unit Test Results
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           files: pytest.xml
 ```

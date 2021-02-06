@@ -4,6 +4,7 @@ description: 'A GitHub Action that publishes unit test results on GitHub'
 inputs:
   github_token:
     description: 'GitHub API Access Token'
+    default: ${{ github.token }}
     required: true
   commit:
     description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
