@@ -5,9 +5,10 @@ from io import TextIOWrapper
 from typing import Mapping, Any, Optional
 
 
-class GithubAction:
+logger = logging.getLogger('github_action')
 
-    _logger = logging.getLogger('github_action')
+
+class GithubAction:
 
     def __init__(self, file: TextIOWrapper = sys.stdout):
         self._file = file
@@ -34,11 +35,11 @@ class GithubAction:
         return self._command(self._file, 'endgroup')
 
     def debug(self, message: str) -> str:
-        self._logger.debug(message)
+        logger.debug(message)
         return self._command(self._file, 'debug', message)
 
     def warning(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None) -> str:
-        self._logger.warning(message)
+        logger.warning(message)
 
         params = {}
         if file is not None:
@@ -50,7 +51,7 @@ class GithubAction:
         return self._command(self._file, 'warning', message, params)
 
     def error(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None) -> str:
-        self._logger.error(message)
+        logger.error(message)
 
         params = {}
         if file is not None:

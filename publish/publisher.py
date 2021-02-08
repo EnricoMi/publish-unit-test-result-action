@@ -10,6 +10,9 @@ from publish import *
 from unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
+logger = logging.getLogger('publish.publisher')
+
+
 @dataclass(frozen=True)
 class Settings:
     token: str
@@ -30,8 +33,6 @@ class Settings:
 
 class Publisher:
 
-    _logger = logging.getLogger('publish.publisher')
-
     def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
         self._settings = settings
         self._gh = gh
@@ -40,7 +41,7 @@ class Publisher:
         self._req = gh._Github__requester
 
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
-        self._logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
+        logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
         check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.comment_on_pr:
@@ -52,24 +53,24 @@ class Publisher:
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                     self.hide_all_but_latest_comments(pull)
                 else:
-                    self._logger.info('hide_comments disabled, not hiding any comments')
+                    logger.info('hide_comments disabled, not hiding any comments')
             else:
-                self._logger.info(f'there is no pull request for commit {self._settings.commit}')
+                logger.info(f'there is no pull request for commit {self._settings.commit}')
         else:
-            self._logger.info('comment_on_pr disabled, not commenting on any pull requests')
+            logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
     def get_pull(self, commit: str) -> Optional[PullRequest]:
         issues = self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}')
-        self._logger.debug(f'found {issues.totalCount} pull requests in repo {self._settings.repo} for commit {commit}')
+        logger.debug(f'found {issues.totalCount} pull requests in repo {self._settings.repo} for commit {commit}')
 
         if issues.totalCount == 0:
             return None
 
         for issue in issues:
             pr = issue.as_pull_request()
-            self._logger.debug(pr)
-            self._logger.debug(pr.raw_data)
-            self._logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
+            logger.debug(pr)
+            logger.debug(pr.raw_data)
+            logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
 
         # we can only publish the comment to PRs that are in the same repository as this action is executed in
         # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY / self._settings.repo
@@ -80,19 +81,19 @@ class Publisher:
                       if pr.base.repo.full_name == self._settings.repo])
 
         if len(pulls) == 0:
-            self._logger.debug(f'found no pull requests in repo {self._settings.repo} for commit {commit}')
+            logger.debug(f'found no pull requests in repo {self._settings.repo} for commit {commit}')
             return None
         if len(pulls) > 1:
             pulls = [pull for pull in pulls if pull.state == 'open']
         if len(pulls) == 0:
-            self._logger.debug(f'found no open pull request in repo {self._settings.repo} for commit {commit}')
+            logger.debug(f'found no open pull request in repo {self._settings.repo} for commit {commit}')
             return None
         if len(pulls) > 1:
             self._gha.error(f'Found multiple open pull requests for commit {commit}')
             return None
 
         pull = pulls[0]
-        self._logger.debug(f'found pull request #{pull.number} for commit {commit}')
+        logger.debug(f'found pull request #{pull.number} for commit {commit}')
         return pull
 
     def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
@@ -109,9 +110,9 @@ class Publisher:
             return None
 
         runs = commit.get_check_runs()
-        self._logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
+        logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
         runs = list([run for run in runs if run.name == self._settings.check_name])
-        self._logger.debug(f'found {len(runs)} check runs for commit {commit_sha} with title {self._settings.check_name}')
+        logger.debug(f'found {len(runs)} check runs for commit {commit_sha} with title {self._settings.check_name}')
         if len(runs) != 1:
             return None
 
@@ -122,14 +123,14 @@ class Publisher:
         if summary is None:
             return None
         for line in summary.split('\n'):
-            self._logger.debug(f'summary: {line}')
+            logger.debug(f'summary: {line}')
 
         pos = summary.index(digest_prefix) if digest_prefix in summary else None
         if pos:
             digest = summary[pos + len(digest_prefix):]
-            self._logger.debug(f'digest: {digest}')
+            logger.debug(f'digest: {digest}')
             stats = get_stats_from_digest(digest)
-            self._logger.debug(f'stats: {stats}')
+            logger.debug(f'stats: {stats}')
             return stats
 
     @staticmethod
@@ -141,10 +142,10 @@ class Publisher:
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
-        self._logger.debug(f'comparing against before={before_commit_sha}')
+        logger.debug(f'comparing against before={before_commit_sha}')
         before_stats = self.get_stats_from_commit(before_commit_sha)
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
-        self._logger.debug(f'stats with delta: {stats_with_delta}')
+        logger.debug(f'stats with delta: {stats_with_delta}')
 
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
@@ -161,7 +162,7 @@ class Publisher:
                 annotations=[annotation.to_dict() for annotation in annotations]
             )
 
-            self._logger.info('creating check')
+            logger.info('creating check')
             check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                     head_sha=self._settings.commit,
                                                     status='completed',
@@ -220,18 +221,18 @@ class Publisher:
                         cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
-        self._logger.debug(f'comparing against base={base_commit_sha}')
+        logger.debug(f'comparing against base={base_commit_sha}')
         base_check_run = self.get_check_run(base_commit_sha)
         base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
-        self._logger.debug(f'stats with delta: {stats_with_delta}')
+        logger.debug(f'stats with delta: {stats_with_delta}')
 
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        self._logger.info('creating comment')
+        logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(f'## {title}\n{summary}')
@@ -316,7 +317,7 @@ class Publisher:
 
         # hide all those comments
         for node_id, comment_commit_sha in comment_ids:
-            self._logger.info(f'hiding unit test result comment for commit {comment_commit_sha}')
+            logger.info(f'hiding unit test result comment for commit {comment_commit_sha}')
             self.hide_comment(node_id)
 
     def hide_all_but_latest_comments(self, pull: PullRequest) -> None:
@@ -333,5 +334,5 @@ class Publisher:
 
         # hide all those comments
         for node_id in comment_ids:
-            self._logger.info(f'hiding unit test result comment {node_id}')
+            logger.info(f'hiding unit test result comment {node_id}')
             self.hide_comment(node_id)

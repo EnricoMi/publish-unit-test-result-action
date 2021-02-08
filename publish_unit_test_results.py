@@ -6,11 +6,13 @@ from typing import List, Optional, Union
 
 import github
 
+import github_action
+import publish
+from github_action import GithubAction
 from junit import parse_junit_xml_files
-from publish import hide_comments_modes, available_annotations, default_annotations
+from publish import hide_comments_modes, available_annotations, default_annotations, publisher
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
-from github_action import GithubAction
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -158,6 +160,9 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
     log_level = get_var('LOG_LEVEL', options) or 'INFO'
     logger.level = logging.getLevelName(log_level)
+    github_action.logger.level = logging.getLevelName(log_level)
+    publish.logger.level = logging.getLevelName(log_level)
+    publisher.logger.level = logging.getLevelName(log_level)
 
     settings = get_settings(options)
     main(settings)
