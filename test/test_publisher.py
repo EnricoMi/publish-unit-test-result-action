@@ -44,6 +44,7 @@ class TestPublisher(unittest.TestCase):
             token=None,
             api_url='https://the-github-api-url',
             event=dict(before=before),
+            event_name='unit_test',
             repo='owner/repo',
             commit='commit',
             files_glob='*.xml',
@@ -208,10 +209,9 @@ class TestPublisher(unittest.TestCase):
         publisher.publish_check = mock.Mock(return_value=cr)
         Publisher.publish(publisher, stats, cases, 'success')
 
-        # return calls to mocked instance, except call to _logger
+        # return calls to mocked instance
         mock_calls = [(call[0], call.args, call.kwargs)
-                      for call in publisher.mock_calls
-                      if not call[0].startswith('_logger.')]
+                      for call in publisher.mock_calls]
         return mock_calls
 
     def test_publish_without_comment(self):
@@ -251,55 +251,33 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_hiding(self):
-        pr = object()
-        cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
+        self.do_test_publish_with_comment_with_hide(
+            hide_comments_mode_off,
+            None
+        )
 
-        self.assertEqual(3, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-    def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
-        pr = object()
-        cr = object()
+    def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: Optional[str]):
         settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
-        self.assertEqual(4, len(mock_calls))
+        # mock Publisher and call hide_comments
+        pull = mock.MagicMock()
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        Publisher.hide_comments(publisher, pull)
 
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
+        # get mock calls
+        mock_calls = [(call[0], call.args, call.kwargs)
+                      for call in publisher.mock_calls]
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
+        if hide_method:
+            self.assertEqual(1, len(mock_calls))
 
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[3]
-        self.assertEqual(hide_method, method)
-        self.assertEqual((pr, ), args)
-        self.assertEqual({}, kwargs)
+            (method, args, kwargs) = mock_calls[0]
+            self.assertEqual(hide_method, method)
+            self.assertEqual((pull, ), args)
+            self.assertEqual({}, kwargs)
+        else:
+            self.assertEqual(0, len(mock_calls))
 
     def test_publish_with_comment_hide_all_but_latest(self):
         self.do_test_publish_with_comment_with_hide(
