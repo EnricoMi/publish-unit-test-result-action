@@ -1,16 +1,11 @@
 name: CI/CD
 
-on: [push, pull_request_target]
+on: [push]
 
 jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
-    # for pull requests within the same repository, the pull event is sufficient
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
     - name: Setup Ubuntu
@@ -68,7 +63,6 @@ jobs:
 
     # only deploy pushed version tags (no major versions), but not on forked repositories
     if: >
-      github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.') &&
       github.repository_owner == 'EnricoMi'
 

@@ -1,0 +1,17 @@
+name: Fork
+
+on: [pull_request_target]
+
+jobs:
+  comment:
+    name: Unit Test Results from Fork
+    runs-on: ubuntu-latest
+    # Only run if pull request is coming from a fork
+    if: github.event.pull_request.head.repo.full_name != github.repository
+
+    steps:
+      - name: Post Pull Request Comment
+        uses: EnricoMi/publish-unit-test-result-action@branch-pull-request-target
+        with:
+          check_name: Unit Test Results
+          log_level: DEBUG
