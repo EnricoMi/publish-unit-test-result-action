@@ -127,6 +127,8 @@ class Publisher:
 
         runs = commit.get_check_runs()
         logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
+        for run in runs:
+            logger.debug(f'found check run {run.name}')
         runs = list([run for run in runs if run.name == self._settings.check_name])
         logger.debug(f'found {len(runs)} check runs for commit {commit_sha} with title {self._settings.check_name}')
         if len(runs) != 1:
@@ -265,7 +267,7 @@ class Publisher:
             check_run = self.get_check_run(commit_sha)
             if check_run is not None:
                 break
-            if datetime.utcnow() - start > timedelta(minutes=5):
+            if datetime.utcnow() - start > timedelta(minutes=15):
                 logger.debug(f'could not find a check run for commit {commit_sha}')
                 return
             time.sleep(30)
