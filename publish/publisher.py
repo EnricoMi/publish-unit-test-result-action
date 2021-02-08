@@ -5,6 +5,7 @@ from github import Github
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
+from github.Repository import Repository
 
 from github_action import GithubAction
 from publish import *
@@ -116,11 +117,14 @@ class Publisher:
         check_run = self.get_check_run(commit_sha)
         return self.get_stats_from_check_run(check_run) if check_run is not None else None
 
-    def get_check_run(self, commit_sha: str) -> Optional[CheckRun]:
+    def get_check_run(self, commit_sha: str, repo: Optional[Repository] = None) -> Optional[CheckRun]:
+        if repo is None:
+            repo = self._repo
+
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
-        commit = self._repo.get_commit(commit_sha)
+        commit = repo.get_commit(commit_sha)
         if commit is None:
             self._gha.error(f'Could not find commit {commit_sha}')
             return None
@@ -264,7 +268,7 @@ class Publisher:
         # get check run and stats for commit
         start = datetime.utcnow()
         while True:
-            check_run = self.get_check_run(commit_sha)
+            check_run = self.get_check_run(commit_sha, pull_request.head.repo)
             if check_run is not None:
                 break
             if datetime.utcnow() - start > timedelta(minutes=15):
