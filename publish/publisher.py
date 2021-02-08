@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+import time
+from datetime import datetime, timedelta
 
 from github import Github
 from github.CheckRun import CheckRun
@@ -18,6 +19,7 @@ class Settings:
     token: str
     api_url: str
     event: dict
+    event_name: str
     repo: str
     commit: str
     files_glob: str
@@ -48,16 +50,30 @@ class Publisher:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
                 self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
-                if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
-                    self.hide_orphaned_commit_comments(pull)
-                elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
-                    self.hide_all_but_latest_comments(pull)
-                else:
-                    logger.info('hide_comments disabled, not hiding any comments')
+                self.hide_comments(pull)
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
         else:
             logger.info('comment_on_pr disabled, not commenting on any pull requests')
+
+    def publish_pull_request_target(self):
+        if self._settings.comment_on_pr:
+            pull = self.get_pull(self._settings.commit)
+            if pull is not None:
+                self.publish_comment_pull_request_target(self._settings.comment_title, pull)
+                self.hide_comments(pull)
+            else:
+                logger.info(f'there is no pull request for commit {self._settings.commit}')
+        else:
+            logger.info('comment_on_pr disabled, not commenting on any pull requests')
+
+    def hide_comments(self, pull: PullRequest):
+        if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
+            self.hide_orphaned_commit_comments(pull)
+        elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
+            self.hide_all_but_latest_comments(pull)
+        else:
+            logger.info('hide_comments disabled, not hiding any comments')
 
     def get_pull(self, commit: str) -> Optional[PullRequest]:
         issues = self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}')
@@ -218,7 +234,7 @@ class Publisher:
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None):
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
         logger.debug(f'comparing against base={base_commit_sha}')
@@ -230,6 +246,46 @@ class Publisher:
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+        test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
+
+        logger.info('creating comment')
+        details_url = check_run.html_url if check_run else None
+        summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
+        pull_request.create_issue_comment(f'## {title}\n{summary}')
+
+    def publish_comment_pull_request_target(self,
+                                            title: str,
+                                            pull_request: PullRequest):
+        commit_sha = self._settings.commit
+        logger.info(f'publishing pull request comment for commit {commit_sha}')
+
+        # get check run and stats for commit
+        start = datetime.utcnow()
+        while True:
+            check_run = self.get_check_run(commit_sha)
+            if check_run is not None:
+                break
+            if datetime.utcnow() - start > timedelta(minutes=5):
+                logger.debug(f'could not find a check run for commit {commit_sha}')
+                return
+            time.sleep(30)
+
+        stats = self.get_stats_from_check_run(check_run)
+        if stats is None:
+            logger.debug(f'could not find stats in check run for commit {commit_sha}')
+            return
+
+        # compare them with earlier stats
+        base_commit_sha = pull_request.base.sha if pull_request else None
+        logger.debug(f'comparing against base={base_commit_sha}')
+        base_check_run = self.get_check_run(base_commit_sha)
+        base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
+        stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
+        logger.debug(f'stats with delta: {stats_with_delta}')
+
+        # gather test lists from check run and cases
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
+        all_tests, skipped_tests = self.get_test_lists_from_check_run(check_run)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         logger.info('creating comment')

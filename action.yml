@@ -17,8 +17,9 @@ inputs:
     description: 'Title of PR comments, defaults to value of check_name input'
     required: false
   files:
-    description: 'File pattern of test result files'
+    description: 'File pattern of test result files. Required unless action runs on pull_request_target event.'
     required: true
+    default: ''
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
     required: false

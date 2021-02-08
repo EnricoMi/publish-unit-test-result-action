@@ -30,31 +30,38 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
 def main(settings: Settings) -> None:
     gha = GithubAction()
 
-    # resolve the files_glob to files
-    files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
-    if len(files) == 0:
-        gha.warning(f'Could not find any files for {settings.files_glob}')
+    if settings.files_glob:
+        # resolve the files_glob to files
+        files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
+        if len(files) == 0:
+            gha.warning(f'Could not find any files for {settings.files_glob}')
+        else:
+            logger.info(f'reading {settings.files_glob}')
+            logger.debug(f'reading {list(files)}')
+
+        # get the unit test results
+        parsed = parse_junit_xml_files(files).with_commit(settings.commit)
+        [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+         for error in parsed.errors]
+
+        # process the parsed results
+        results = get_test_results(parsed, settings.dedup_classes_by_file_name)
+
+        # turn them into stats
+        stats = get_stats(results)
+
+        # derive check run conclusion from files
+        conclusion = get_conclusion(parsed)
+
+        # publish the delta stats
+        gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
+        Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+    elif settings.event_name == 'pull_request_target':
+        # publish pull request comment from existing check run
+        gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
+        Publisher(settings, gh, gha).publish_pull_request_target()
     else:
-        logger.info(f'reading {settings.files_glob}')
-        logger.debug(f'reading {list(files)}')
-
-    # get the unit test results
-    parsed = parse_junit_xml_files(files).with_commit(settings.commit)
-    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
-     for error in parsed.errors]
-
-    # process the parsed results
-    results = get_test_results(parsed, settings.dedup_classes_by_file_name)
-
-    # turn them into stats
-    stats = get_stats(results)
-
-    # derive check run conclusion from files
-    conclusion = get_conclusion(parsed)
-
-    # publish the delta stats
-    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+        raise ValueError(f'Files option must be given when not running on pull_request_target event: {settings.event_name}.')
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
@@ -130,6 +137,7 @@ def get_settings(options: dict) -> Settings:
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         event=event,
+        event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         files_glob=get_var('FILES', options),
@@ -146,7 +154,9 @@ def get_settings(options: dict) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.files_glob, 'FILES', 'Files pattern')
+    if event_name != 'pull_request_target':
+        # default of 'files' option is '', which we interpret as not given here (None)
+        check_var(settings.files_glob or None, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)
 
