@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import sys
 from typing import List, Optional, Union
 
 import github
@@ -175,4 +176,10 @@ if __name__ == "__main__":
     publisher.logger.level = logging.getLevelName(log_level)
 
     settings = get_settings(options)
-    main(settings)
+
+    try:
+        main(settings)
+    except Exception as e:
+        gha = GithubAction()
+        gha.error(str(e))
+        sys.exit(1)
