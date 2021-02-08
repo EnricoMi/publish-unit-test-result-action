@@ -148,35 +148,72 @@ See this complete list of configuration options for reference:
     check_run_annotations: all tests, skipped tests
 ```
 
+## On GitHub Events
+
+You can run your GitHub workflows on different events. Some may make your CI workflow do a slightly
+different thing.
+
+Assume your GitHub workflow checks out your sources, builds and runs some tests. A classic unit test workflow.
+
+Running this workflow on the following events has different implications:
+
+|Event |What the workflow does|
+|:-----|:---------------------|
+|`push`|The workflow runs on the **latest commit** of a branch pushed to GitHub.|
+|`pull_request`|The workflow runs on the **merge** of the latest commit of the branch and the target branch of the pull request. If an automatic merge has conflicts, then it runs on **latest commit** of a branch only.|
+|`pull_request_target`|The workflow runs on the **latest commit of the target branch** of the pull request. It does not test the contribution branch that the pull request wants to merge into the targte branch.|
+
+
+
 ## Support fork repositories
 
 This action posts a comment with test results to all pull requests that contain the commit and
 are part of the repository that the action runs in. It would not be able to post to pull requests
 in other repositories.
 
-When someone forks your repository, the `push` event will run in the fork repository and cannot post
-the results to a pull request in your repo. For that to work, you need to also trigger the workflow
-on the `pull_request_target` event, which is [equivalent](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
-to the `pull_request` event, except that it runs in the target repository of the pull request:
+When someone forks your repository, any event (e.g. `push` or `pull_request`) will run in the fork repository
+and cannot post the results to a pull request in your repo. For that to work, you need to run the
+action on the `pull_request_target` event, which is [similar](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
+to the `pull_request` event, except that it runs in the target repository of the pull request.
+
+The `pull_request_target` has some delicate implications. Firstly, it runs on the **latest commit
+of the target branch**, not of your contribution branch. This means,
+your workflow would compile and test the target branch, not the contribution of your pull request.
+This is probably not what you want.
+
+Secondly, your `pull_request_target` workflow should not execute code from a forked repository
+for [security reasons](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target),
+as that code would have access to your secrets. To minimize risk, you should only run *this action*
+on `pull_request_target` and keep it isolated from the workflow that generates unit test results.
+
+For this, create a workflow **additional** to your CI workflow,
+that runs this action on `pull_request_target`. It can then post the
+unit test results from the fork repository to the pull request in your repository.
+
+Create this file at `.github/workflow/fork.yml`:
 
 ```yaml
-on: [push, pull_request_target]
-```
+name: Fork
 
-However, both events would trigger on a pull request that merges within the same repository.
-This can be avoided by the following job `if` clause:
+on: [pull_request_target]
 
-```yaml
 jobs:
-  build-and-test:
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+  comment:
+    name: Unit Test Results from Fork
+    runs-on: ubuntu-latest
+    # Only run if pull request is coming from a fork
+    if: github.event.pull_request.head.repo.full_name != github.repository
+
+    steps:
+      - name: Post Pull Request Comment
+        uses: EnricoMi/publish-unit-test-result-action@v1
 ```
 
-Now your action runs on `push` events in your repository, and inside your repo
-for pull requests from forks into your repository, which is able to publish
-comments to your pull request.
+Note that this action has to be configured with the same value for `check_name` as used in your CI workflow.
+If you are using the default value, then this option can be omitted.
+
+Please [read and accept the risk](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
+running this action in your repo's context when using `pull_request_target`.
 
 ## Use with matrix strategy
 
@@ -190,17 +227,12 @@ You will need to use the `if: success() || failure()` clause when you [support f
 ```yaml
 name: CI
 
-on: [push, pull_request_target]
+on: [push]
 
 jobs:
   build-and-test:
     name: Build and Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
-    # for pull requests within the same repository, the pull event is sufficient
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
       fail-fast: false
