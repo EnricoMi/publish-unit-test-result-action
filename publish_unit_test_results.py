@@ -29,7 +29,9 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
 
 
 def main(settings: Settings) -> None:
+    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
     gha = GithubAction()
+    publisher = Publisher(settings, gh, gha)
 
     if settings.files_glob:
         # resolve the files_glob to files
@@ -55,12 +57,10 @@ def main(settings: Settings) -> None:
         conclusion = get_conclusion(parsed)
 
         # publish the delta stats
-        gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-        Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+        publisher.publish(stats, results.case_results, conclusion)
     elif settings.event_name == 'pull_request_target':
         # publish pull request comment from existing check run
-        gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
-        Publisher(settings, gh, gha).publish_pull_request_target()
+        publisher.publish_from_check_run()
     else:
         raise ValueError(f'Files option must be given when not running on pull_request_target event: {settings.event_name}.')
 

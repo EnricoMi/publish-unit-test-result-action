@@ -23,7 +23,7 @@ class Settings:
     event_name: str
     repo: str
     commit: str
-    files_glob: str
+    files_glob: Optional[str]
     check_name: str
     comment_title: str
     comment_on_pr: bool
@@ -57,11 +57,11 @@ class Publisher:
         else:
             logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
-    def publish_pull_request_target(self):
+    def publish_from_check_run(self):
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment_pull_request_target(self._settings.comment_title, pull)
+                self.publish_comment_from_check_run(self._settings.comment_title, pull)
                 self.hide_comments(pull)
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
@@ -140,7 +140,8 @@ class Publisher:
 
         return runs[0]
 
-    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
+    @staticmethod
+    def get_stats_from_check_run(check_run: CheckRun) -> Optional[UnitTestRunResults]:
         summary = check_run.output.summary
         if summary is None:
             return None
@@ -207,21 +208,21 @@ class Publisher:
         skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     all_tests_title_regexp.match(annotation.title) and \
                     all_tests_message_regexp.match(annotation.message):
                 if all_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 all_tests_annotation = annotation
 
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     skipped_tests_title_regexp.match(annotation.title) and \
                     skipped_tests_message_regexp.match(annotation.message):
                 if skipped_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 skipped_tests_annotation = annotation
 
@@ -259,11 +260,9 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(f'## {title}\n{summary}')
 
-    def publish_comment_pull_request_target(self,
-                                            title: str,
-                                            pull_request: PullRequest):
+    def publish_comment_from_check_run(self, title: str, pull_request: PullRequest):
         commit_sha = self._settings.commit
-        logger.info(f'publishing pull request comment for commit {commit_sha}')
+        logger.info(f'publishing pull request comment from check run of commit {commit_sha}')
 
         # get check run and stats for commit
         start = datetime.utcnow()
@@ -288,8 +287,8 @@ class Publisher:
         logger.debug(f'stats with delta: {stats_with_delta}')
 
         # gather test lists from check run and cases
-        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = self.get_test_lists_from_check_run(check_run)
+        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         logger.info('creating comment')

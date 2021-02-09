@@ -1,8 +1,10 @@
+import json
 import os
 import tempfile
 import unittest
+from typing import Optional
+
 import mock
-import json
 
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings
@@ -105,7 +107,7 @@ class Test(unittest.TestCase):
                      event_name='event name',
                      repo='repo',
                      commit='commit',
-                     files_glob='files',
+                     files_glob: Optional[str] = 'files',
                      check_name='check name',
                      comment_title='title',
                      comment_on_pr=True,
@@ -213,6 +215,8 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(FILES=None)
         self.assertEqual('Files pattern must be provided via action input or environment variable FILES', str(re.exception))
+        # files is not required when event_name is 'pull_request_target'
+        self.do_test_get_settings(FILES=None, expected=self.get_settings(files_glob=None, event_name='pull_request_target'), GITHUB_EVENT_NAME='pull_request_target')
 
     def test_get_settings_unknown_values(self):
         with self.assertRaises(RuntimeError) as re:
