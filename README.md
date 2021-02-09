@@ -160,12 +160,42 @@ Running this workflow on the following events has different implications:
 |Event |What the workflow does|
 |:-----|:---------------------|
 |`push`|The workflow runs on the **latest commit** of a branch pushed to GitHub.|
-|`pull_request`|The workflow runs on the **merge** of the latest commit of the branch and the target branch of the pull request. If an automatic merge has conflicts, then it runs on **latest commit** of a branch only.|
-|`pull_request_target`|The workflow runs on the **latest commit of the target branch** of the pull request. It does not test the contribution branch that the pull request wants to merge into the targte branch.|
-
-
+|`pull_request`|The workflow runs on the **merge** of the latest commit of the branch and the target branch of the pull request. If an automatic merge has conflicts, then it runs on **latest commit** of a branch only.<br/>The action cannot create a check run or pull request comment on this event for a fork repository. See [Support fork repositories](#support-fork-repositories) on how to handle this situation.|
+|`pull_request_target`|The workflow runs on the **latest commit of the target branch** of the pull request. It does not test the contribution branch that the pull request wants to merge into the target branch.|
 
 ## Support fork repositories
+
+Fork repositories are only supported when above action in your CI workflow is set up
+to run on a `push` event. Then, create a workflow **additional** to your CI workflow,
+that runs the action on `pull_request_target`. It can then post the
+unit test results from the `push` event run in the fork repository to the pull request in your repository.
+
+Create this file at `.github/workflow/fork.yml`:
+
+```yaml
+name: Fork
+
+on: [pull_request_target]
+
+jobs:
+  comment:
+    name: Unit Test Results from Fork
+    runs-on: ubuntu-latest
+    # Only run if pull request is coming from a fork
+    if: github.event.pull_request.head.repo.full_name != github.repository
+
+    steps:
+      - name: Post Pull Request Comment
+        uses: EnricoMi/publish-unit-test-result-action@branch-pull-request-target
+```
+
+Note that this action has to be configured with the same value for `check_name` as used in your CI workflow.
+If you are using the default value, then this option can be omitted.
+
+Please [read and accept the risk](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
+running this action in your repo's context when using `pull_request_target`.
+
+### Why are fork reposiories so complicated?
 
 This action posts a comment with test results to all pull requests that contain the commit and
 are part of the repository that the action runs in. It would not be able to post to pull requests
@@ -185,35 +215,6 @@ Secondly, your `pull_request_target` workflow should not execute code from a for
 for [security reasons](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target),
 as that code would have access to your secrets. To minimize risk, you should only run *this action*
 on `pull_request_target` and keep it isolated from the workflow that generates unit test results.
-
-For this, create a workflow **additional** to your CI workflow,
-that runs this action on `pull_request_target`. It can then post the
-unit test results from the fork repository to the pull request in your repository.
-
-Create this file at `.github/workflow/fork.yml`:
-
-```yaml
-name: Fork
-
-on: [pull_request_target]
-
-jobs:
-  comment:
-    name: Unit Test Results from Fork
-    runs-on: ubuntu-latest
-    # Only run if pull request is coming from a fork
-    if: github.event.pull_request.head.repo.full_name != github.repository
-
-    steps:
-      - name: Post Pull Request Comment
-        uses: EnricoMi/publish-unit-test-result-action@v1
-```
-
-Note that this action has to be configured with the same value for `check_name` as used in your CI workflow.
-If you are using the default value, then this option can be omitted.
-
-Please [read and accept the risk](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
-running this action in your repo's context when using `pull_request_target`.
 
 ## Use with matrix strategy
 

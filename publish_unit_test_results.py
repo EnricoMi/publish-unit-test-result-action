@@ -33,6 +33,14 @@ def main(settings: Settings) -> None:
     gha = GithubAction()
     publisher = Publisher(settings, gh, gha)
 
+    # we cannot create a check run or pull request comment
+    # when running on pull_request event from a fork
+    if settings.event_name == 'pull_request' and \
+            settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+        gha.warning(f'This action is running on a pull_request event for a fork repository. '
+                    f'It cannot do anything useful like creating check runs or pull request comments.')
+        return
+
     if settings.files_glob:
         # resolve the files_glob to files
         files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
