@@ -267,13 +267,15 @@ class Publisher:
         # get check run and stats for commit
         start = datetime.utcnow()
         while True:
-            check_run = self.get_check_run(commit_sha, pull_request.head.repo)
-            if check_run is not None:
+            check_run_base = self.get_check_run(commit_sha, pull_request.base.repo)
+            check_run_head = self.get_check_run(commit_sha, pull_request.head.repo)
+            if check_run_base is not None or check_run_head is not None:
                 break
             if datetime.utcnow() - start > timedelta(minutes=15):
                 raise RuntimeError(f'could not find a check run for commit {commit_sha}')
             time.sleep(30)
 
+        check_run = check_run_base or check_run_head
         stats = self.get_stats_from_check_run(check_run)
         if stats is None:
             raise RuntimeError(f'could not find stats in check run for commit {commit_sha}')

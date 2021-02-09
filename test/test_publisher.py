@@ -404,11 +404,40 @@ class TestPublisher(unittest.TestCase):
     def create_mock_annotation(title: str, message: str, raw_details: str):
         return mock.MagicMock(title=title, message=message, raw_details=raw_details)
 
-    def test_publish_comment_from_check_run(self):
+    def test_publish_comment_from_check_run_from_base(self):
+        self.do_test_publish_comment_from_check_run(base_has_check_run=True, head_has_check_run=False)
+
+    def test_publish_comment_from_check_run_from_head(self):
+        self.do_test_publish_comment_from_check_run(base_has_check_run=False, head_has_check_run=True)
+
+    def test_publish_comment_from_check_run_from_both(self):
+        self.do_test_publish_comment_from_check_run(base_has_check_run=True, head_has_check_run=True)
+
+    def test_publish_comment_from_check_run_from_none(self):
+        times = [datetime.fromtimestamp(0)]
+
+        def utcnow():
+            if times:
+                return times.pop()
+            return datetime.utcnow()
+
+        with mock.patch('publish.publisher.datetime') as dt:
+            dt.utcnow = mock.Mock(side_effect=utcnow)
+            with self.assertRaises(RuntimeError) as e:
+                self.do_test_publish_comment_from_check_run(base_has_check_run=False, head_has_check_run=False)
+            self.assertEqual('could not find a check run for commit commit', str(e.exception))
+
+    def do_test_publish_comment_from_check_run(self, base_has_check_run: bool, head_has_check_run: bool):
         # mock Publisher and call publish
         base_commit_sha = 'base commit'
+
+        base_repo = mock.MagicMock()
+        head_repo = mock.MagicMock()
+
         pr = mock.MagicMock()
         pr.base.sha = base_commit_sha
+        pr.base.repo = base_repo
+        pr.head.repo = head_repo
 
         settings = self.create_settings()
         tests_list_annotation = self.create_mock_annotation(
@@ -434,17 +463,29 @@ class TestPublisher(unittest.TestCase):
 
         cr = self.create_mock_check_run(id='cr', digest=self.past_digest, annotations=[tests_list_annotation, skipped_tests_list_annotation])
         base_cr = self.create_mock_check_run(id='base cr', digest=self.base_digest, annotations=[base_tests_list_annotation, base_skipped_tests_list_annotation])
-        check_runs = {settings.commit: cr, base_commit_sha: base_cr}
+        check_runs = {(base_commit_sha, ): base_cr}
+        if base_has_check_run:
+            check_runs.update({(settings.commit, ): cr})
+            check_runs.update({(settings.commit, base_repo): cr})
+        if head_has_check_run:
+            check_runs.update({(settings.commit, head_repo): cr})
+
+        def get_check_run(commit, repo=None):
+            if repo is None:
+                return check_runs.get((commit, ))
+            return check_runs.get((commit, repo))
 
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
-        publisher.get_check_run = mock.Mock(side_effect=check_runs.get)
+        publisher.get_check_run = mock.Mock(side_effect=get_check_run)
         publisher.get_stats_from_check_run = mock.Mock(side_effect=Publisher.get_stats_from_check_run)
         publisher.get_test_lists_from_check_run = mock.Mock(side_effect=Publisher.get_test_lists_from_check_run)
         res = Publisher.publish_comment_from_check_run(publisher, 'title', pr)
+        calls = [call
+                 for call in pr.mock_calls
+                 if '__' not in call[0]]
         self.assertEqual(
             [
-                mock.call.__bool__(),
                 mock.call.create_issue_comment(
                     '## title\n\u205f\u20041 files\u2004 ±0\u2002\u2003\u205f\u20042 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
                     '21 tests ±0\u2002\u200312 :heavy_check_mark: ±0\u2002\u20034 :zzz: ±0\u2002\u20032 :x: ±0\u2002\u20033 :fire: ±0\u2002\n'
@@ -491,7 +532,7 @@ class TestPublisher(unittest.TestCase):
                     '</details>\n'
                 )
             ],
-            pr.mock_calls)
+            calls)
         self.assertEqual(res, pr)
 
     def test_get_check_run(self):
