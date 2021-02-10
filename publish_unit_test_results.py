@@ -69,7 +69,8 @@ def main(settings: Settings) -> None:
         publisher.publish(stats, results.case_results, conclusion)
     elif settings.event_name == 'pull_request_target':
         # publish pull request comment from existing check run
-        publisher.publish_from_check_run()
+        repo_name = settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name', settings.repo)
+        publisher.publish_from_check_run(repo_name)
     else:
         raise ValueError(f'Files option must be given when not running on pull_request_target event: {settings.event_name}.')
 

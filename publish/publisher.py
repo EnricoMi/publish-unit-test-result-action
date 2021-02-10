@@ -48,22 +48,20 @@ class Publisher:
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
         check_run = self.publish_check(stats, cases, conclusion)
+        self.publish_comment_from_check_run(check_run)
 
+    def publish_from_check_run(self, repo_name: str):
+        logger.info(f'publishing from check run of commit {self._settings.commit}')
+        repo = self._gh.get_repo(repo_name)
+        check_run = self.pull_check_run_from(repo)
+        check_run = self.publish_check_from_check_run(check_run)
+        self.publish_comment_from_check_run(check_run)
+
+    def publish_comment_from_check_run(self, check_run: CheckRun):
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
-                self.hide_comments(pull)
-            else:
-                logger.info(f'there is no pull request for commit {self._settings.commit}')
-        else:
-            logger.info('comment_on_pr disabled, not commenting on any pull requests')
-
-    def publish_from_check_run(self):
-        if self._settings.comment_on_pr:
-            pull = self.get_pull(self._settings.commit)
-            if pull is not None:
-                self.publish_comment_from_check_run(self._settings.comment_title, pull)
+                self.publish_comment(self._settings.comment_title, pull, check_run)
                 self.hide_comments(pull)
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
@@ -164,6 +162,21 @@ class Publisher:
             return None
         return annotation.raw_details.split('\n')
 
+    def pull_check_run_from(self, repo: Repository) -> CheckRun:
+        commit_sha = self._settings.commit
+
+        # get check run and stats for commit
+        start = datetime.utcnow()
+        while True:
+            check_run = self.get_check_run(commit_sha, repo)
+            if check_run:
+                return check_run
+
+            if datetime.utcnow() - start > self._settings.pull_from_fork_timeout:
+                raise RuntimeError(f'could not find a check run for commit {commit_sha}')
+
+            time.sleep(self._settings.pull_from_fork_interval.total_seconds())
+
     def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
@@ -231,6 +244,29 @@ class Publisher:
         return Publisher.get_test_list_from_annotation(all_tests_annotation), \
                Publisher.get_test_list_from_annotation(skipped_tests_annotation)
 
+    def publish_check_from_check_run(self, source_check_run: CheckRun) -> CheckRun:
+        check_run = None
+
+        all_annotations = list(source_check_run.get_annotations())
+        all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
+        for annotations in all_annotations:
+            output = dict(
+                title=source_check_run.output.title,
+                summary=source_check_run.output.summary,
+                annotations=[{key: value
+                              for key, value in annotation.raw_data.items()
+                              if value is not None}
+                             for annotation in annotations]
+            )
+
+            logger.info('creating check')
+            check_run = self._repo.create_check_run(name=source_check_run.name,
+                                                    head_sha=source_check_run.head_sha,
+                                                    status='completed',
+                                                    conclusion=source_check_run.conclusion,
+                                                    output=output)
+        return check_run
+
     def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
         all_tests = get_all_tests_list_annotation(cases) \
             if all_tests_list in self._settings.check_run_annotation else []
@@ -240,47 +276,10 @@ class Publisher:
 
     def publish_comment(self,
                         title: str,
-                        stats: UnitTestRunResults,
                         pull_request: PullRequest,
-                        check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None):
-        # compare them with earlier stats
-        base_commit_sha = pull_request.base.sha if pull_request else None
-        logger.debug(f'comparing against base={base_commit_sha}')
-        base_check_run = self.get_check_run(base_commit_sha)
-        base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
-        stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
-        logger.debug(f'stats with delta: {stats_with_delta}')
-
-        # gather test lists from check run and cases
-        before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
-        all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-        test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
-
-        logger.info('creating comment')
-        details_url = check_run.html_url if check_run else None
-        summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
-        pull_request.create_issue_comment(f'## {title}\n{summary}')
-
-    def publish_comment_from_check_run(self, title: str, pull_request: PullRequest):
-        commit_sha = self._settings.commit
-        logger.info(f'publishing pull request comment from check run of commit {commit_sha}')
-
-        # get check run and stats for commit
-        start = datetime.utcnow()
-        while True:
-            check_run_base = self.get_check_run(commit_sha, pull_request.base.repo)
-            check_run_head = self.get_check_run(commit_sha, pull_request.head.repo)
-            if check_run_base is not None or check_run_head is not None:
-                break
-            if datetime.utcnow() - start > self._settings.pull_from_fork_timeout:
-                raise RuntimeError(f'could not find a check run for commit {commit_sha}')
-            time.sleep(self._settings.pull_from_fork_interval.total_seconds())
-
-        check_run = check_run_base or check_run_head
+                        check_run: CheckRun):
+        # get stats from check run
         stats = self.get_stats_from_check_run(check_run)
-        if stats is None:
-            raise RuntimeError(f'could not find stats in check run for commit {commit_sha}')
 
         # compare them with earlier stats
         base_commit_sha = pull_request.base.sha if pull_request else None
@@ -299,7 +298,6 @@ class Publisher:
         details_url = check_run.html_url if check_run else None
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(f'## {title}\n{summary}')
-        return pull_request
 
     def get_pull_request_comments(self, pull: PullRequest) -> List[Mapping[str, Any]]:
         query = dict(
