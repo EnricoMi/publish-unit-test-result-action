@@ -5,8 +5,9 @@ from typing import Callable, Optional, Mapping, List, Tuple, Any, Union
 
 import mock
 from github import Github
-from github.Repository import Repository
 from github.CheckRun import CheckRun
+from github.CheckRunAnnotation import CheckRunAnnotation
+from github.Repository import Repository
 
 from github_action import GithubAction
 from publish import digest_prefix, hide_comments_mode_off, hide_comments_mode_all_but_latest, \
@@ -45,7 +46,9 @@ class TestPublisher(unittest.TestCase):
                         dedup_classes_by_file_name=False,
                         check_run_annotation=default_annotations,
                         before: Optional[str] = 'before',
-                        test_changes_limit: Optional[int] = 5):
+                        test_changes_limit: Optional[int] = 5,
+                        pull_from_fork_timeout=timedelta(minutes=1),
+                        pull_from_fork_interval=timedelta(minutes=1)):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -62,8 +65,8 @@ class TestPublisher(unittest.TestCase):
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             check_run_annotation=check_run_annotation,
-            pull_from_fork_timeout=timedelta(minutes=1),
-            pull_from_fork_interval=timedelta(minutes=1)
+            pull_from_fork_timeout=pull_from_fork_timeout,
+            pull_from_fork_interval=pull_from_fork_interval
         )
 
     stats = UnitTestRunResults(
@@ -121,9 +124,8 @@ class TestPublisher(unittest.TestCase):
         repo.owner.login = repo_login
         repo.name = repo_name
         gh.get_repo = mock.Mock(return_value=repo)
-        cr = self.create_mock_check_run()
 
-        return gh, gha, gh._Github__requester, repo, commit, cr
+        return gh, gha, gh._Github__requester, repo, commit
 
     cases = UnitTestCaseResults([
         ((None, 'class', 'test'), dict(
@@ -202,200 +204,83 @@ class TestPublisher(unittest.TestCase):
         base_digest = get_digest_from_stats(get_stats.__func__('base'))
         past_digest = get_digest_from_stats(get_stats.__func__('past'))
 
-    @staticmethod
-    def call_mocked_publish(settings: Settings,
-                            stats: UnitTestRunResults = stats,
-                            cases: UnitTestCaseResults = cases,
-                            pr: object = None,
-                            cr: object = None):
-        # UnitTestCaseResults is mutable, always copy it
-        cases = UnitTestCaseResults(cases)
-
-        # mock Publisher and call publish
+    def do_test_hide_comments(self, hide_mode: str, hide_method: Optional[str]):
+        pr = object()
+        settings = self.create_settings(hide_comment_mode=hide_mode)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
-        publisher.get_pull = mock.Mock(return_value=pr)
-        publisher.publish_check = mock.Mock(return_value=cr)
-        publisher.hide_comments = mock.Mock(side_effect=lambda pull: Publisher.hide_comments(publisher, pull))
-        Publisher.publish(publisher, stats, cases, 'success')
+        Publisher.hide_comments(publisher, pr)
 
-        # return calls to mocked instance
-        mock_calls = [(call[0], call.args, call.kwargs)
-                      for call in publisher.mock_calls]
-        return mock_calls
-
-    def test_publish_without_comment(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=object())
-
-        self.assertEqual(1, len(mock_calls))
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-    def test_publish_without_comment_with_hiding(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_all_but_latest)
-        mock_calls = self.call_mocked_publish(settings, pr=object())
-
-        self.assertEqual(1, len(mock_calls))
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-    def test_publish_with_comment_without_pr(self):
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=None)
-
-        self.assertEqual(2, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
-
-    def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: Optional[str]):
-        pr = object()
-        cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
-
-        self.assertEqual(5 if hide_method else 4, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[3]
-        self.assertEqual('hide_comments', method)
-        self.assertEqual((pr, ), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual(1 if hide_method else 0, len(publisher.mock_calls))
 
         if hide_method:
-            (method, args, kwargs) = mock_calls[4]
+            (method, args, kwargs) = publisher.mock_calls[0]
             self.assertEqual(hide_method, method)
             self.assertEqual((pr, ), args)
             self.assertEqual({}, kwargs)
 
-    def test_publish_with_comment_without_hiding(self):
-        self.do_test_publish_with_comment_with_hide(
+    def test_hide_comments_without_hiding(self):
+        self.do_test_hide_comments(
             hide_comments_mode_off,
             None
         )
 
-    def test_publish_with_comment_hide_all_but_latest(self):
-        self.do_test_publish_with_comment_with_hide(
+    def test_hide_comments_hide_all_but_latest(self):
+        self.do_test_hide_comments(
             hide_comments_mode_all_but_latest,
             'hide_all_but_latest_comments'
         )
 
-    def test_publish_with_comment_hide_orphaned(self):
-        self.do_test_publish_with_comment_with_hide(
+    def test_hide_comments_hide_orphaned(self):
+        self.do_test_hide_comments(
             hide_comments_mode_orphaned,
             'hide_orphaned_commit_comments'
         )
 
-    @staticmethod
-    def call_mocked_publish_from_check_run(settings: Settings, pr: object = None):
+    def test_publish_from_check_run(self):
+        repo_name = 'the repo'
+        repo = object()
+        fork_cr = object()
+        cr = object()
+        settings = self.create_settings(comment_on_pr=True)
+
+        repos = {repo_name: repo}
+        fork_check_runs = {repo: fork_cr}
+
         # mock Publisher and call publish
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
-        publisher.get_pull = mock.Mock(return_value=pr)
-        Publisher.publish_from_check_run(publisher)
+        publisher._gh = mock.MagicMock(Github)
+        publisher._gh.get_repo = mock.Mock(side_effect=repos.get)
+        publisher.pull_check_run_from = mock.Mock(side_effect=fork_check_runs.get)
+        publisher.publish_check_from_check_run = mock.Mock(return_value=cr)
+        Publisher.publish_from_check_run(publisher, repo_name)
 
         # return calls to mocked instance
         mock_calls = [(call[0], call.args, call.kwargs)
                       for call in publisher.mock_calls]
-        return mock_calls
 
-    def test_publish_from_check_run(self):
-        pr = object()
-        settings = self.create_settings(comment_on_pr=True)
-        mock_calls = self.call_mocked_publish_from_check_run(settings, pr=pr)
-
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(4, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('get_pull', method)
-        self.assertEqual((settings.commit, ), args)
+        self.assertEqual('_gh.get_repo', method)
+        self.assertEqual((repo_name, ), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('publish_comment_from_check_run', method)
-        self.assertEqual((settings.comment_title, pr), args)
+        self.assertEqual('pull_check_run_from', method)
+        self.assertEqual((repo, ), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('hide_comments', method)
-        self.assertEqual((pr, ), args)
+        self.assertEqual('publish_check_from_check_run', method)
+        self.assertEqual((fork_cr, ), args)
         self.assertEqual({}, kwargs)
 
-    def test_publish_from_check_run_without_comment(self):
-        pr = object()
-        settings = self.create_settings(comment_on_pr=False)
-        mock_calls = self.call_mocked_publish_from_check_run(settings, pr=pr)
-
-        self.assertEqual(0, len(mock_calls))
-
-    def test_publish_from_check_run_without_pr(self):
-        settings = self.create_settings(comment_on_pr=True)
-        mock_calls = self.call_mocked_publish_from_check_run(settings, pr=None)
-
-        self.assertEqual(1, len(mock_calls))
-
-    def test_publish_comment_from_check_run_without_check_run(self):
-        times = [datetime.fromtimestamp(0)]
-
-        def utcnow():
-            if times:
-                return times.pop()
-            return datetime.utcnow()
-
-        # mock Publisher and call publish
-        pr = mock.MagicMock()
-        pr.head.repo = 'owner/repo'
-        settings = self.create_settings()
-        publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher.get_check_run = mock.Mock(return_value=None)
-        with mock.patch('publish.publisher.datetime') as dt:
-            dt.utcnow = mock.Mock(side_effect=utcnow)
-            with self.assertRaises(RuntimeError) as e:
-                Publisher.publish_comment_from_check_run(publisher, 'title', pr)
-            self.assertEqual('could not find a check run for commit commit', str(e.exception))
-
-    def test_publish_comment_from_check_run_without_check_run_stats(self):
-        # mock Publisher and call publish
-        settings = self.create_settings()
-        pr = mock.MagicMock()
-        pr.head.repo = 'owner/repo'
-        prs = {settings.commit: pr}
-
-        cr = mock.MagicMock(CheckRun)
-        publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher.get_pull = mock.Mock(side_effect=prs.get)
-        publisher.get_stats_from_check_run = mock.Mock(return_value=None)
-        with self.assertRaises(RuntimeError) as e:
-            Publisher.publish_comment_from_check_run(publisher, cr)
-        self.assertEqual('could not find stats in check run for commit commit', str(e.exception))
+        (method, args, kwargs) = mock_calls[3]
+        self.assertEqual('publish_comment_from_check_run', method)
+        self.assertEqual((cr, ), args)
+        self.assertEqual({}, kwargs)
 
     @staticmethod
     def create_mock_check_run(id: str = 'id', digest: str = base_digest, annotations=[]) -> mock.MagicMock:
@@ -410,154 +295,67 @@ class TestPublisher(unittest.TestCase):
     def create_mock_annotation(title: str, message: str, raw_details: str):
         return mock.MagicMock(title=title, message=message, raw_details=raw_details)
 
-    def test_publish_comment_from_check_run_from_base(self):
-        self.do_test_publish_comment_from_check_run(base_has_check_run=True, head_has_check_run=False)
-
-    def test_publish_comment_from_check_run_from_head(self):
-        self.do_test_publish_comment_from_check_run(base_has_check_run=False, head_has_check_run=True)
-
-    def test_publish_comment_from_check_run_from_both(self):
-        self.do_test_publish_comment_from_check_run(base_has_check_run=True, head_has_check_run=True)
-
-    def test_publish_comment_from_check_run_from_none(self):
-        times = [datetime.fromtimestamp(0)]
-
-        def utcnow():
-            if times:
-                return times.pop()
-            return datetime.utcnow()
-
-        with mock.patch('publish.publisher.datetime') as dt:
-            dt.utcnow = mock.Mock(side_effect=utcnow)
-            with self.assertRaises(RuntimeError) as e:
-                self.do_test_publish_comment_from_check_run(base_has_check_run=False, head_has_check_run=False)
-            self.assertEqual('could not find a check run for commit commit', str(e.exception))
-
-    def do_test_publish_comment_from_check_run(self, base_has_check_run: bool, head_has_check_run: bool):
+    def test_publish_comment_from_check_run(self):
         # mock Publisher and call publish
-        base_commit_sha = 'base commit'
-
-        base_repo = mock.MagicMock()
-        head_repo = mock.MagicMock()
-
-        pr = mock.MagicMock()
-        pr.base.sha = base_commit_sha
-        pr.base.repo = base_repo
-        pr.head.repo = head_repo
-
         settings = self.create_settings()
-        tests_list_annotation = self.create_mock_annotation(
-            title='3 tests found',
-            message='There are 3 tests, see "Raw output" for the full list of tests.',
-            raw_details='test one\ntest two\ntest three'
-        )
-        base_tests_list_annotation = self.create_mock_annotation(
-            title='3 tests found',
-            message='There are 3 tests, see "Raw output" for the full list of tests.',
-            raw_details='test two\ntest three\ntest four'
-        )
-        skipped_tests_list_annotation = self.create_mock_annotation(
-            title='2 skipped tests found',
-            message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.',
-            raw_details='test one\ntest three'
-        )
-        base_skipped_tests_list_annotation = self.create_mock_annotation(
-            title='2 skipped tests found',
-            message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.',
-            raw_details='test two\ntest four'
-        )
-
-        cr = self.create_mock_check_run(id='cr', digest=self.past_digest, annotations=[tests_list_annotation, skipped_tests_list_annotation])
-        base_cr = self.create_mock_check_run(id='base cr', digest=self.base_digest, annotations=[base_tests_list_annotation, base_skipped_tests_list_annotation])
-        check_runs = {(base_commit_sha, ): base_cr}
-        if base_has_check_run:
-            check_runs.update({(settings.commit, ): cr})
-            check_runs.update({(settings.commit, base_repo): cr})
-        if head_has_check_run:
-            check_runs.update({(settings.commit, head_repo): cr})
-
-        def get_check_run(commit, repo=None):
-            if repo is None:
-                return check_runs.get((commit, ))
-            return check_runs.get((commit, repo))
+        pr = object()
+        cr = object()
 
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
-        publisher.get_check_run = mock.Mock(side_effect=get_check_run)
-        publisher.get_stats_from_check_run = mock.Mock(side_effect=Publisher.get_stats_from_check_run)
-        publisher.get_test_lists_from_check_run = mock.Mock(side_effect=Publisher.get_test_lists_from_check_run)
-        res = Publisher.publish_comment_from_check_run(publisher, 'title', pr)
-        calls = [call
-                 for call in pr.mock_calls
-                 if '__' not in call[0]]
+        publisher.get_pull = mock.Mock(return_value=pr)
+        res = Publisher.publish_comment_from_check_run(publisher, cr)
         self.assertEqual(
-            [
-                mock.call.create_issue_comment(
-                    '## title\n\u205f\u20041 files\u2004 ±0\u2002\u2003\u205f\u20042 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-                    '21 tests ±0\u2002\u200312 :heavy_check_mark: ±0\u2002\u20034 :zzz: ±0\u2002\u20032 :x: ±0\u2002\u20033 :fire: ±0\u2002\n'
-                    '37 runs\u2006 ±0\u2002\u200325 :heavy_check_mark: ±0\u2002\u20037 :zzz: ±0\u2002\u20034 :x: ±0\u2002\u20031 :fire: ±0\u2002\n'
-                    '\n'
-                    'For more details on these failures and errors, see [this check](cr html url).\n'
-                    '\n'
-                    'Results for commit past.\u2003± Comparison against base commit base.\n'
-                    '\n'
-                    '<details>\n'
-                    '  <summary>This pull request <b>removes</b> 1 and <b>adds</b> 1 tests. <i>Note that renamed tests count towards both.</i></summary>\n'
-                    '\n'
-                    '```\n'
-                    'test four\n'
-                    '```\n'
-                    '\n'
-                    '```\n'
-                    'test one\n'
-                    '```\n'
-                    '</details>\n'
-                    '\n'
-                    '<details>\n'
-                    '  <summary>This pull request <b>removes</b> 1 skipped test and <b>adds</b> 1 skipped test. <i>Note that renamed tests count towards both.</i></summary>\n'
-                    '\n'
-                    '```\n'
-                    'test four\n'
-                    '```\n'
-                    '\n'
-                    '```\n'
-                    'test one\n'
-                    '```\n'
-                    '</details>\n'
-                    '\n'
-                    '<details>\n'
-                    '  <summary>This pull request <b>skips</b> 1 and <b>un-skips</b> 1 tests.</summary>\n'
-                    '\n'
-                    '```\n'
-                    'test three\n'
-                    '```\n'
-                    '\n'
-                    '```\n'
-                    'test two\n'
-                    '```\n'
-                    '</details>\n'
-                )
-            ],
-            calls)
-        self.assertEqual(res, pr)
+            [],
+            publisher.mock_calls
+        )
+
+    def test_publish_comment_from_check_run_without_comment(self):
+        # mock Publisher and call publish
+        settings = self.create_settings(comment_on_pr=False)
+        pr = object()
+        cr = object()
+
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_pull = mock.Mock(return_value=pr)
+        res = Publisher.publish_comment_from_check_run(publisher, cr)
+        self.assertEqual(
+            [],
+            publisher.mock_calls
+        )
+
+    def test_publish_comment_from_check_run_without_pr(self):
+        # mock Publisher and call publish
+        settings = self.create_settings()
+        cr = object()
+
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_pull = mock.Mock(return_value=None)
+        res = Publisher.publish_comment_from_check_run(publisher, cr)
+        self.assertEqual(
+            [],
+            publisher.mock_calls
+        )
 
     def test_get_check_run(self):
-        publisher, commit = self.do_test_get_check_run(lambda x: x, lambda l: l[0])
+        self.do_test_get_check_run(lambda x: x, lambda l: l[0])
 
     def test_get_check_run_no_match(self):
-        publisher, commit = self.do_test_get_check_run(lambda l: l[1], lambda l: None)
+        self.do_test_get_check_run(lambda l: l[1], lambda l: None)
 
     def test_get_check_run_empty(self):
-        publisher, commit = self.do_test_get_check_run(lambda l: [], lambda l: None)
+        self.do_test_get_check_run(lambda l: [], lambda l: None)
 
     def test_get_check_run_multiple(self):
-        publisher, commit = self.do_test_get_check_run(lambda l: l + l[0], lambda l: None)
+        self.do_test_get_check_run(lambda l: l + l[0], lambda l: None)
 
     def test_get_check_run_repo(self):
-        publisher, commit = self.do_test_get_check_run(lambda l: l + l[0], lambda l: None, repo_arg=True)
+        self.do_test_get_check_run(lambda l: l + l[0], lambda l: None, repo_arg=True)
 
     def test_get_check_run_none_commit(self):
-        publisher, commit = self.do_test_get_check_run(lambda l: l, lambda l: None, commit_sha=None)
+        self.do_test_get_check_run(lambda l: l, lambda l: None, commit_sha=None)
 
     def do_test_get_check_run(self,
                               check_runs_func: Callable[[List], List],
@@ -608,16 +406,103 @@ class TestPublisher(unittest.TestCase):
         return publisher, commit
 
     def test_pull_check_run_from(self):
-        self.fail()
+        repo = object
+        cr = object()
+        check_runs = [cr, None, None, None]  # values will be taken from the end
+        settings = self.create_settings(
+            pull_from_fork_timeout=timedelta(seconds=10),
+            pull_from_fork_interval=timedelta(milliseconds=100)
+        )
+        publisher = mock.MagicMock()
+        publisher._settings = settings
+        publisher.get_check_run = mock.Mock(side_effect=lambda commit_sha, repo: check_runs.pop())
+        result = Publisher.pull_check_run_from(publisher, repo)
+
+        self.assertEqual(cr, result)
+        self.assertEqual(
+            [mock.call.get_check_run(settings.commit, repo)] * 4,
+            publisher.mock_calls
+        )
+
+    def test_pull_check_run_from_no_cr(self):
+        repo = object
+        settings = self.create_settings(
+            pull_from_fork_timeout=timedelta(milliseconds=500),
+            pull_from_fork_interval=timedelta(milliseconds=100)
+        )
+        publisher = mock.MagicMock()
+        publisher._settings = settings
+        publisher.get_check_run = mock.Mock(return_value=None)
+        with self.assertRaises(RuntimeError) as e:
+            Publisher.pull_check_run_from(publisher, repo)
+        self.assertEqual('could not find a check run for commit commit', str(e.exception))
+        calls = publisher.mock_calls
+        for call in calls:
+            self.assertEqual(mock.call.get_check_run(settings.commit, repo), call)
+        self.assertGreaterEqual(len(calls), 1)
+        self.assertLessEqual(len(calls), 10)
 
     def test_publish_check_from_check_run(self):
-        self.fail()
+        settings = self.create_settings()
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        cr_attr = {
+            'url': 'url',
+            'name': 'name',
+            'head_sha': 'commit sha',
+            'status': 'status',
+            'conclusion': 'conclusion',
+            'output': {
+                'title': 'title'
+            }
+        }
+        anno_attr = {
+            'annotation_level': 'annotation_level',
+            'end_column': 'end_column',
+            'end_line': 'end_line',
+            'message': 'message',
+            'path': 'path',
+            'raw_details': 'raw_details',
+            'start_column': 'start_column',
+            'start_line': 'start_line',
+            'title': 'title'
+        }
+        source_cr = CheckRun(None, {}, cr_attr, True)
+        source_cr.get_annotations = mock.Mock(return_value=[CheckRunAnnotation(None, {}, anno_attr, True)])
+        cr = object()
+        publisher._repo = mock.MagicMock()
+        publisher._repo.create_check_run = mock.Mock(return_value=cr)
+        result = Publisher.publish_check_from_check_run(publisher, source_cr)
+
+        self.assertEqual(result, cr)
+        self.assertEqual(
+            [mock.call._repo.create_check_run(
+                name='name',
+                head_sha='commit sha',
+                status='completed',
+                conclusion='conclusion',
+                output={'title': 'title', 'summary': None, 'annotations': [
+                    {
+                        'annotation_level': 'annotation_level',
+                        'end_column': 'end_column',
+                        'end_line': 'end_line',
+                        'message': 'message',
+                        'path': 'path',
+                        'raw_details': 'raw_details',
+                        'start_column': 'start_column',
+                        'start_line': 'start_line',
+                        'title': 'title'
+                    }
+                ]}
+            )],
+            publisher.mock_calls
+        )
 
     def do_test_get_pull(self,
                          settings: Settings,
                          search_issues: mock.Mock,
                          expected: Optional[mock.Mock]) -> mock.Mock:
-        gh, gha, req, repo, commit, _ = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         gh.search_issues = mock.Mock(return_value=search_issues)
         publisher = Publisher(settings, gh, gha)
 
@@ -693,7 +578,7 @@ class TestPublisher(unittest.TestCase):
                                       digest: Optional[str],
                                       check_names: Optional[List[str]],
                                       expected: Optional[Union[UnitTestRunResults, mock.Mock]]):
-        gh, gha, req, repo, commit, _ = self.create_mocks(commit=commit, digest=digest, check_names=check_names)
+        gh, gha, req, repo, commit = self.create_mocks(commit=commit, digest=digest, check_names=check_names)
         publisher = Publisher(settings, gh, gha)
 
         actual = publisher.get_stats_from_commit(commit_sha)
@@ -841,7 +726,7 @@ class TestPublisher(unittest.TestCase):
 
     def do_test_publish_check_without_base_stats(self, errors: List[ParseError], annotations: List[str] = default_annotations):
         settings = self.create_settings(before=None, check_run_annotation=annotations)
-        gh, gha, req, repo, commit, _ = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
         # makes gzipped digest deterministic
@@ -894,7 +779,7 @@ class TestPublisher(unittest.TestCase):
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         earlier_commit = 'past'
         settings = self.create_settings(before=earlier_commit)
-        gh, gha, req, repo, commit, _ = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
         # makes gzipped digest deterministic
@@ -939,7 +824,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_check_with_multiple_annotation_pages(self):
         earlier_commit = 'past'
         settings = self.create_settings(before=earlier_commit)
-        gh, gha, req, repo, commit, _ = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
         # generate a lot cases
@@ -1009,92 +894,102 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, gha, req, repo, commit, cr = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
-        publisher = Publisher(settings, gh, gha)
+        cr = self.create_mock_check_run()
+        base_cr = self.create_mock_check_run()
+        check_runs = {base_commit: base_cr}
 
-        publisher.publish_comment(settings.comment_title, pr, cr)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_stats_from_check_run = mock.Mock(side_effect=Publisher.get_stats_from_check_run)
+        publisher.get_check_run = mock.Mock(side_effect=check_runs.get)
+        publisher.get_test_lists_from_check_run = mock.Mock(side_effect=Publisher.get_test_lists_from_check_run)
+        Publisher.publish_comment(publisher, settings.comment_title, pr, cr)
 
-        repo.get_commit.assert_called_once_with(base_commit)
-        pr.create_issue_comment.assert_called_once_with(
-            '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
-            '\n'
-            'Results for commit commit.\u2003± Comparison against base commit base.\n'
+        self.assertEqual(
+            [mock.call.create_issue_comment(
+                '## Comment Title\n'
+                '\u205f\u20041 files\u2004 ±0\u2002\u2003\u205f\u20042 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+                '21 tests ±0\u2002\u200312 :heavy_check_mark: ±0\u2002\u20034 :zzz: ±0\u2002\u20032 :x: ±0\u2002\u20033 :fire: ±0\u2002\n'
+                '37 runs\u2006 ±0\u2002\u200325 :heavy_check_mark: ±0\u2002\u20037 :zzz: ±0\u2002\u20034 :x: ±0\u2002\u20031 :fire: ±0\u2002\n'
+                '\n'
+                'For more details on these failures and errors, see [this check](id html url).\n'
+                '\n'
+                'Results for commit base.\u2003± Comparison against base commit base.\n'
+            )],
+            [call
+             for call in pr.mock_calls
+             if '__' not in call[0]]
         )
 
     def test_publish_comment_without_base(self):
         settings = self.create_settings()
-
-        gh, gha, req, repo, commit, _ = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
-        pr = self.create_github_pr(settings.repo)
-        publisher = Publisher(settings, gh, gha)
-
-        publisher.publish_comment(settings.comment_title, self.stats, pr)
-
-        repo.get_commit.assert_not_called()
-        pr.create_issue_comment.assert_called_once_with(
-            '## Comment Title\n'
-            '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
-            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
-            '\n'
-            'Results for commit commit.\n'
-        )
-
-    def test_publish_comment_with_check_run_with_annotations(self):
-        settings = self.create_settings()
         base_commit = 'base-commit'
 
-        gh, gha, req, repo, commit, _ = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
-        cr = mock.MagicMock(html_url='http://check-run.url')
-        publisher = Publisher(settings, gh, gha)
+        cr = self.create_mock_check_run()
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_stats_from_check_run = mock.Mock(side_effect=Publisher.get_stats_from_check_run)
+        publisher.get_test_lists_from_check_run = mock.Mock(side_effect=Publisher.get_test_lists_from_check_run)
+        Publisher.publish_comment(publisher, settings.comment_title, pr, cr)
 
-        repo.get_commit.assert_called_once_with(base_commit)
-        pr.create_issue_comment.assert_called_once_with(
-            '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
-            '\n'
-            'For more details on these failures and errors, see [this check](http://check-run.url).\n'
-            '\n'
-            'Results for commit commit.\u2003± Comparison against base commit base.\n'
+        self.assertEqual(
+            [mock.call.create_issue_comment(
+                '## Comment Title\n'
+                '\u205f\u20041 files\u2004\u2003\u205f\u20042 suites\u2004\u2003\u20023s :stopwatch:\n'
+                '21 tests\u200312 :heavy_check_mark:\u20034 :zzz:\u20032 :x:\u20033 :fire:\n'
+                '37 runs\u2006\u200325 :heavy_check_mark:\u20037 :zzz:\u20034 :x:\u20031 :fire:\n'
+                '\n'
+                'For more details on these failures and errors, see [this check](id html url).\n'
+                '\n'
+                'Results for commit base.\n'
+            )],
+            [call
+             for call in pr.mock_calls
+             if '__' not in call[0]]
         )
 
     def test_publish_comment_with_check_run_without_annotations(self):
-        settings = self.create_settings()
-        base_commit = 'base-commit'
-
-        gh, gha, req, repo, commit, _ = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
-        pr = self.create_github_pr(settings.repo, base_commit)
-        cr = mock.MagicMock(html_url='http://check-run.url')
-        publisher = Publisher(settings, gh, gha)
-
         stats = dict(self.stats.to_dict())
         stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)
         stats = UnitTestRunResults.from_dict(stats)
-        publisher.publish_comment(settings.comment_title, stats, pr, cr)
+        digest = get_digest_from_stats(stats)
 
-        repo.get_commit.assert_called_once_with(base_commit)
-        pr.create_issue_comment.assert_called_once_with(
-            '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u20030 :x: \u2006-\u200a2\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u20030 :x: \u2006-\u200a4\u2002\n'
-            '\n'
-            'Results for commit commit.\u2003± Comparison against base commit base.\n'
+        settings = self.create_settings()
+        base_commit = 'base-commit'
+
+        pr = self.create_github_pr(settings.repo, base_commit)
+        cr = self.create_mock_check_run(digest=digest)
+        base_cr = self.create_mock_check_run()
+        check_runs = {base_commit: base_cr}
+
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_stats_from_check_run = mock.Mock(side_effect=Publisher.get_stats_from_check_run)
+        publisher.get_check_run = mock.Mock(side_effect=check_runs.get)
+        publisher.get_test_lists_from_check_run = mock.Mock(side_effect=Publisher.get_test_lists_from_check_run)
+        Publisher.publish_comment(publisher, settings.comment_title, pr, cr)
+
+        self.assertEqual(
+            [mock.call.create_issue_comment(
+                '## Comment Title\n'
+                '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
+                '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u20030 :x: \u2006-\u200a2\u2002\n'
+                '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u20030 :x: \u2006-\u200a4\u2002\n'
+                '\n'
+                'Results for commit commit.\u2003± Comparison against base commit base.\n'
+            )],
+            [call
+             for call in pr.mock_calls
+             if '__' not in call[0]]
         )
 
     def test_get_pull_request_comments(self):
         settings = self.create_settings()
 
-        gh, gha, req, repo, commit, _ = self.create_mocks(repo_name=settings.repo, repo_login='login')
+        gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
         req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'repository': {'pullRequest': {'comments': {'nodes': ['node']}}}}})
         )
@@ -1179,7 +1074,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_action_comments(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit, _ = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         publisher = Publisher(settings, gh, gha)
 
         expected = [comment
@@ -1191,7 +1086,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_action_comments_not_minimized(self):
         settings = self.create_settings()
-        gh, gha, req, repo, commit, _ = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         publisher = Publisher(settings, gh, gha)
 
         expected = [comment
@@ -1205,7 +1100,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
         comment_node_id = 'node id'
 
-        gh, gha, req, repo, commit, _ = self.create_mocks()
+        gh, gha, req, repo, commit = self.create_mocks()
         req.requestJsonAndCheck = mock.Mock(
             return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
         )
