@@ -3,6 +3,7 @@ import logging
 import os
 import pathlib
 import sys
+from datetime import timedelta
 from typing import List, Optional, Union
 
 import github
@@ -142,6 +143,13 @@ def get_settings(options: dict) -> Settings:
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     annotations = get_annotations_config(options, event)
 
+    pull_from_fork_timeout_minutes = get_var('PULL_FROM_FORK_TIMEOUT_MINUTES', options)
+    pull_from_fork_timeout_minutes = int(pull_from_fork_timeout_minutes) \
+        if pull_from_fork_timeout_minutes and pull_from_fork_timeout_minutes.isdigit() else 30
+    pull_from_fork_interval_seconds = get_var('PULL_FROM_FORK_INTERVAL_SECONDS', options)
+    pull_from_fork_interval_seconds = int(pull_from_fork_interval_seconds) \
+        if pull_from_fork_interval_seconds and pull_from_fork_interval_seconds.isdigit() else 30
+
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
@@ -157,7 +165,9 @@ def get_settings(options: dict) -> Settings:
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS', options) == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options) == 'true',
-        check_run_annotation=annotations
+        check_run_annotation=annotations,
+        pull_from_fork_timeout=timedelta(minutes=pull_from_fork_timeout_minutes),
+        pull_from_fork_interval=timedelta(seconds=pull_from_fork_interval_seconds)
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')

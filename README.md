@@ -131,10 +131,15 @@ This feature requires `check_run_annotations` to contain `all tests` in order to
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
 
+Test results of a pull request from a fork cannot be published to your repository directly, so
+a second action run has to pull the results into your repository. This action looks for the results
+every `pull_from_fork_intervall_seconds` (default is 30).
+It gives up after `pull_from_fork_timeout_minutes` (default is 30).
+
 See this complete list of configuration options for reference:
 ```yaml
   with:
-    github_token: ${{ your-custom-pat }}
+    github_token: ${{ secrets.PAT }}
     commit: ${{ your-commit-sha }}
     check_name: Unit Test Results
     comment_title: Unit Test Statistics
@@ -146,6 +151,8 @@ See this complete list of configuration options for reference:
     deduplicate_classes_by_file_name: false
     check_run_annotations_branch: main, master, branch_one
     check_run_annotations: all tests, skipped tests
+    pull_from_fork_timeout_minutes: 30
+    pull_from_fork_intervall_seconds: 30
 ```
 
 ## On GitHub Events
@@ -195,7 +202,7 @@ If you are using the default value, then this option can be omitted.
 Please [read and accept the risk](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
 running this action in your repo's context when using `pull_request_target`.
 
-### Why are fork reposiories so complicated?
+### Why are fork repositories so complicated?
 
 This action posts a comment with test results to all pull requests that contain the commit and
 are part of the repository that the action runs in. It would not be able to post to pull requests

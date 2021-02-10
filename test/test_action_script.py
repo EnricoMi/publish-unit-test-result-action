@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import timedelta
 from typing import Optional
 
 import mock
@@ -115,7 +116,9 @@ class Test(unittest.TestCase):
                      hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
-                     check_run_annotation=[]):
+                     check_run_annotation=[],
+                     pull_from_fork_timeout=timedelta(minutes=1),
+                     pull_from_fork_interval=timedelta(minutes=1)):
         return Settings(
             token=token,
             api_url=api_url,
@@ -131,7 +134,9 @@ class Test(unittest.TestCase):
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
-            check_run_annotation=check_run_annotation.copy()
+            check_run_annotation=check_run_annotation.copy(),
+            pull_from_fork_timeout=pull_from_fork_timeout,
+            pull_from_fork_interval=pull_from_fork_interval
         )
 
     def test_get_settings(self):
@@ -195,6 +200,10 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
+    def test_get_settings_pull_from_fork_defaults(self):
+        self.do_test_get_settings(PULL_FROM_FORK_TIMEOUT_MINUTES=None, expected=self.get_settings(pull_from_fork_timeout=timedelta(minutes=30)))
+        self.do_test_get_settings(PULL_FROM_FORK_INTERVAL_SECONDS=None, expected=self.get_settings(pull_from_fork_interval=timedelta(seconds=30)))
+
     def test_get_settings_missing_options(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
@@ -252,6 +261,8 @@ class Test(unittest.TestCase):
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
+                PULL_FROM_FORK_TIMEOUT_MINUTES='1',
+                PULL_FROM_FORK_INTERVAL_SECONDS='60'
                 # annotations config tested in test_get_annotations_config*
             )
             options.update(**kwargs)

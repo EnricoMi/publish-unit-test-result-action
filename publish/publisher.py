@@ -32,6 +32,8 @@ class Settings:
     report_individual_runs: bool
     dedup_classes_by_file_name: bool
     check_run_annotation: List[str]
+    pull_from_fork_timeout: timedelta
+    pull_from_fork_interval: timedelta
 
 
 class Publisher:
@@ -271,9 +273,9 @@ class Publisher:
             check_run_head = self.get_check_run(commit_sha, pull_request.head.repo)
             if check_run_base is not None or check_run_head is not None:
                 break
-            if datetime.utcnow() - start > timedelta(minutes=15):
+            if datetime.utcnow() - start > self._settings.pull_from_fork_timeout:
                 raise RuntimeError(f'could not find a check run for commit {commit_sha}')
-            time.sleep(30)
+            time.sleep(self._settings.pull_from_fork_interval.total_seconds())
 
         check_run = check_run_base or check_run_head
         stats = self.get_stats_from_check_run(check_run)

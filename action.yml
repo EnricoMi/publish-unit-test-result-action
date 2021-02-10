@@ -45,6 +45,14 @@ inputs:
     description: 'Adds check run annotations only on given branches. If not given, this defaults to all branches. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
     required: false
     default: '*'
+  pull_from_fork_timeout_minutes:
+    description: 'Pulling the test results from a fork waits at most this number of minutes for the results to appear.'
+    required: false
+    default: '30'
+  pull_from_fork_intervall_seconds:
+    description: 'Pulling the test results from a fork checks for the results at an interval of this number of seconds.'
+    required: false
+    default: '30'
   log_level:
     description: 'Action logging level'
     required: false
