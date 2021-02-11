@@ -1,16 +1,16 @@
 name: CI/CD
 
-on: [push, pull_request_target]
+on: [push, pull_request]
 
 jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
+    # always run on push events, but only run on pull_request events when pull request pulls from fork repository
     # for pull requests within the same repository, the pull event is sufficient
     if: >
       github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
+      github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
     - name: Setup Ubuntu
@@ -39,7 +39,9 @@ jobs:
 
     - name: Unit Test Results
       uses: ./
-      if: always()
+      # the action is useless on pull_request
+      # (it can not create check runs or pull request comments)
+      if: always() && github.event_name == 'push'
       with:
         check_name: Unit Test Results
         files: "test-results/*.xml"

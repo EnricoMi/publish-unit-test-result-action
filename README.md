@@ -148,36 +148,6 @@ See this complete list of configuration options for reference:
     check_run_annotations: all tests, skipped tests
 ```
 
-## Support fork repositories
-
-This action posts a comment with test results to all pull requests that contain the commit and
-are part of the repository that the action runs in. It would not be able to post to pull requests
-in other repositories.
-
-When someone forks your repository, the `push` event will run in the fork repository and cannot post
-the results to a pull request in your repo. For that to work, you need to also trigger the workflow
-on the `pull_request_target` event, which is [equivalent](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target)
-to the `pull_request` event, except that it runs in the target repository of the pull request:
-
-```yaml
-on: [push, pull_request_target]
-```
-
-However, both events would trigger on a pull request that merges within the same repository.
-This can be avoided by the following job `if` clause:
-
-```yaml
-jobs:
-  build-and-test:
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
-```
-
-Now your action runs on `push` events in your repository, and inside your repo
-for pull requests from forks into your repository, which is able to publish
-comments to your pull request.
-
 ## Use with matrix strategy
 
 In a scenario where your unit tests run multiple times in different environments (e.g. a matrix strategy),
@@ -190,17 +160,12 @@ You will need to use the `if: success() || failure()` clause when you [support f
 ```yaml
 name: CI
 
-on: [push, pull_request_target]
+on: [push]
 
 jobs:
   build-and-test:
     name: Build and Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    # always run on push events, but only run on pull_request_target event when pull request pulls from fork repository
-    # for pull requests within the same repository, the pull event is sufficient
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
       fail-fast: false
