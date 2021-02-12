@@ -132,6 +132,7 @@ def get_settings(options: dict) -> Settings:
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         event=event,
+        event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         files_glob=get_var('FILES', options),
