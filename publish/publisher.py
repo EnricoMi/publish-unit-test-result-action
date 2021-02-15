@@ -188,21 +188,21 @@ class Publisher:
         skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     all_tests_title_regexp.match(annotation.title) and \
                     all_tests_message_regexp.match(annotation.message):
                 if all_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 all_tests_annotation = annotation
 
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     skipped_tests_title_regexp.match(annotation.title) and \
                     skipped_tests_message_regexp.match(annotation.message):
                 if skipped_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 skipped_tests_annotation = annotation
 
