@@ -31,6 +31,14 @@ def get_conclusion(parsed: ParsedUnitTestResults) -> str:
 def main(settings: Settings) -> None:
     gha = GithubAction()
 
+    # we cannot create a check run or pull request comment
+    # when running on pull_request event from a fork
+    if settings.event_name == 'pull_request' and \
+            settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+        gha.warning(f'This action is running on a pull_request event for a fork repository. '
+                    f'It cannot do anything useful like creating check runs or pull request comments.')
+        return
+
     # resolve the files_glob to files
     files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
     if len(files) == 0:
