@@ -5,6 +5,7 @@ import pathlib
 from typing import List, Optional, Union
 
 import github
+from urllib3.util.retry import Retry
 
 import github_action
 import publish
@@ -53,7 +54,8 @@ def main(settings: Settings) -> None:
     conclusion = get_conclusion(parsed)
 
     # publish the delta stats
-    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url)
+    retry = Retry(total=10, backoff_factor=1)
+    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url, retry=retry)
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
