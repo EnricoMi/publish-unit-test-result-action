@@ -40,6 +40,7 @@ class TestPublisher(unittest.TestCase):
                         check_run_annotation=default_annotations,
                         event: Optional[dict] = {'before': 'before'},
                         event_name: str = 'event name',
+                        pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5):
         return Settings(
             token=None,
@@ -52,6 +53,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_on_pr=comment_on_pr,
+            pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
@@ -805,6 +807,14 @@ class TestPublisher(unittest.TestCase):
             expected_sha='commit sha'
         )
 
+    def test_get_base_commit_sha_pull_request_event_commit_mode(self):
+        self.do_test_get_base_commit_sha(
+            event={'pull_request': {'base': {'sha': 'commit sha'}}},
+            event_name='pull_request',
+            pull_request_build='commit',
+            expected_sha='merge base commit sha'
+        )
+
     def test_get_base_commit_sha_workflow_run_event(self):
         self.do_test_get_base_commit_sha(
             event={'workflow_run': {}},
@@ -834,11 +844,15 @@ class TestPublisher(unittest.TestCase):
             publisher._repo.compare.mock_calls
         )
 
-    def do_test_get_base_commit_sha(self, event: Optional[dict], event_name: str, expected_sha: Optional[str]):
+    def do_test_get_base_commit_sha(self,
+                                    event: Optional[dict],
+                                    event_name: str,
+                                    pull_request_build: str = pull_request_build_mode_merge,
+                                    expected_sha: Optional[str] = None):
         pr = mock.MagicMock()
         pr.base.ref = 'master'
 
-        settings = self.create_settings(event=event, event_name=event_name)
+        settings = self.create_settings(event=event, event_name=event_name, pull_request_build=pull_request_build)
         publisher = mock.MagicMock()
         publisher._settings = settings
         compare = mock.MagicMock()

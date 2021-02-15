@@ -11,7 +11,7 @@ import github_action
 import publish
 from github_action import GithubAction
 from junit import parse_junit_xml_files
-from publish import hide_comments_modes, available_annotations, default_annotations, publisher
+from publish import hide_comments_modes, available_annotations, default_annotations, pull_request_build_modes, publisher
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
@@ -139,6 +139,7 @@ def get_settings(options: dict) -> Settings:
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_on_pr=get_var('COMMENT_ON_PR', options) != 'false',
+        pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=test_changes_limit,
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS', options) == 'true',
@@ -149,6 +150,7 @@ def get_settings(options: dict) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
+    check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.files_glob, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)

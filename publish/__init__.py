@@ -17,13 +17,20 @@ digest_prefix = '[test-results]:data:application/gzip;base64,'
 digit_space = '  '
 punctuation_space = ' '
 
-hide_comments_mode_off = "off"
-hide_comments_mode_all_but_latest = "all but latest"
-hide_comments_mode_orphaned = "orphaned commits"
+hide_comments_mode_off = 'off'
+hide_comments_mode_all_but_latest = 'all but latest'
+hide_comments_mode_orphaned = 'orphaned commits'
 hide_comments_modes = [
     hide_comments_mode_off,
     hide_comments_mode_all_but_latest,
     hide_comments_mode_orphaned
+]
+
+pull_request_build_mode_commit = 'commit'
+pull_request_build_mode_merge = 'merge'
+pull_request_build_modes = [
+    pull_request_build_mode_commit,
+    pull_request_build_mode_merge
 ]
 
 all_tests_list = 'all tests'

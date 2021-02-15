@@ -1,9 +1,11 @@
+import json
 import os
 import tempfile
 import unittest
-import mock
-import json
 
+import mock
+
+from publish import pull_request_build_mode_merge
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings
 from unittestresults import ParsedUnitTestResults, ParseError
@@ -125,6 +127,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_on_pr=comment_on_pr,
+            pull_request_build=pull_request_build_mode_merge,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,

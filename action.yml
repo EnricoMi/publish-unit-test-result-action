@@ -33,6 +33,10 @@ inputs:
     description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
     required: false
     default: 'true'
+  pull_request_build:
+    description: 'Pull request events build a merge of the branch and the target branch, not just the commit that has been pushed. When your workflow deviates from this behaviour and builds the actual commit, then set this option to "commit". Defaults to "merge".'
+    required: false
+    default: 'merge'
   test_changes_limit:
     description: 'Limits the number of removed or skipped tests listed on PR comments. This can be disabled with a value of 0. The default is 10.'
     required: false

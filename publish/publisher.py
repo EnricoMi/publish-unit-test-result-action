@@ -25,6 +25,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_on_pr: bool
+    pull_request_build: str
     test_changes_limit: int
     hide_comment_mode: str
     report_individual_runs: bool
@@ -241,14 +242,16 @@ class Publisher:
         return pull_request
 
     def get_base_commit_sha(self, pull_request: PullRequest) -> Optional[str]:
-        if self._settings.event:
-            # for pull request events we take the other parent of the merge commit (base)
-            if self._settings.event_name == 'pull_request':
-                return self._settings.event.get('pull_request', {}).get('base', {}).get('sha')
-            # for workflow run events we should take the same as for pull request events,
-            # but we have no way to figure out the actual merge commit and its parents
-            if self._settings.event_name == 'workflow_run':
-                return None
+        if self._settings.pull_request_build == pull_request_build_mode_merge:
+            if self._settings.event:
+                # for pull request events we take the other parent of the merge commit (base)
+                if self._settings.event_name == 'pull_request':
+                    return self._settings.event.get('pull_request', {}).get('base', {}).get('sha')
+                # for workflow run events we should take the same as for pull request events,
+                # but we have no way to figure out the actual merge commit and its parents
+                # we do not take the base sha from pull_request as it is not immutable
+                if self._settings.event_name == 'workflow_run':
+                    return None
 
         try:
             # we always fall back to where the branch merged off base ref
