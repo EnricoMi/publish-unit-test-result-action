@@ -65,7 +65,12 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 You can use a pre-built docker image from [GitHub Container Registry](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry) (Beta).
 This way, the action is not build for every run of your workflow, and you are guaranteed to get the exact same action build:
 ```yaml
+- name: Publish Unit Test Results
   uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
+  if: always()
+  with:
+    github_token: ${{ github.token }}
+    files: test-results/**/*.xml
 ```
 
 ***Note:** GitHub Container Registry is currently in [beta phase](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry).*
