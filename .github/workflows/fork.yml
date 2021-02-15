@@ -13,7 +13,7 @@ jobs:
     if: >
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion != 'skipped' &&
-      github.event.workflow_run.head_repository != github.repository
+      github.event.workflow_run.head_repository.full_name != github.repository
 
     steps:
       - name: Download Artifacts
@@ -48,10 +48,9 @@ jobs:
           done
 
       - name: Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
         with:
-          check_name: Unit Test Results
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           commit: ${{ github.event.workflow_run.head_sha }}
           files: "**/*.xml"
           log_level: DEBUG
