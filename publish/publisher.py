@@ -18,12 +18,14 @@ class Settings:
     token: str
     api_url: str
     event: dict
+    event_name: str
     repo: str
     commit: str
     files_glob: str
     check_name: str
     comment_title: str
     comment_on_pr: bool
+    pull_request_build: str
     test_changes_limit: int
     hide_comment_mode: str
     report_individual_runs: bool
@@ -186,21 +188,21 @@ class Publisher:
         skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
 
         for annotation in check_run.get_annotations():
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     all_tests_title_regexp.match(annotation.title) and \
                     all_tests_message_regexp.match(annotation.message):
                 if all_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 all_tests_annotation = annotation
 
-            if annotation and annotation.title and annotation.message and annotation.raw_data and \
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     skipped_tests_title_regexp.match(annotation.title) and \
                     skipped_tests_message_regexp.match(annotation.message):
                 if skipped_tests_annotation is not None:
                     if annotation:
-                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_data}')
+                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_details}')
                     return None, None
                 skipped_tests_annotation = annotation
 
@@ -221,7 +223,7 @@ class Publisher:
                         check_run: Optional[CheckRun] = None,
                         cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
-        base_commit_sha = pull_request.base.sha if pull_request else None
+        base_commit_sha = self.get_base_commit_sha(pull_request)
         logger.debug(f'comparing against base={base_commit_sha}')
         base_check_run = self.get_check_run(base_commit_sha)
         base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
@@ -238,6 +240,30 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         pull_request.create_issue_comment(f'## {title}\n{summary}')
         return pull_request
+
+    def get_base_commit_sha(self, pull_request: PullRequest) -> Optional[str]:
+        if self._settings.pull_request_build == pull_request_build_mode_merge:
+            if self._settings.event:
+                # for pull request events we take the other parent of the merge commit (base)
+                if self._settings.event_name == 'pull_request':
+                    return self._settings.event.get('pull_request', {}).get('base', {}).get('sha')
+                # for workflow run events we should take the same as for pull request events,
+                # but we have no way to figure out the actual merge commit and its parents
+                # we do not take the base sha from pull_request as it is not immutable
+                if self._settings.event_name == 'workflow_run':
+                    return None
+
+        try:
+            # we always fall back to where the branch merged off base ref
+            logger.debug(f'comparing {pull_request.base.ref} with {self._settings.commit}')
+            compare = self._repo.compare(pull_request.base.ref, self._settings.commit)
+            return compare.merge_base_commit.sha
+        except:
+            logger.warning(f'could not find best common ancestor '
+                           f'between base {pull_request.base.sha} '
+                           f'and commit {self._settings.commit}')
+
+        return None
 
     def get_pull_request_comments(self, pull: PullRequest) -> List[Mapping[str, Any]]:
         query = dict(

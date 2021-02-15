@@ -1,9 +1,11 @@
+import json
 import os
 import tempfile
 import unittest
-import mock
-import json
 
+import mock
+
+from publish import pull_request_build_mode_merge
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings
 from unittestresults import ParsedUnitTestResults, ParseError
@@ -102,6 +104,7 @@ class Test(unittest.TestCase):
     def get_settings(token='token',
                      api_url='http://github.api.url/',
                      event={},
+                     event_name='event name',
                      repo='repo',
                      commit='commit',
                      files_glob='files',
@@ -117,12 +120,14 @@ class Test(unittest.TestCase):
             token=token,
             api_url=api_url,
             event=event.copy(),
+            event_name=event_name,
             repo=repo,
             commit=commit,
             files_glob=files_glob,
             check_name=check_name,
             comment_title=comment_title,
             comment_on_pr=comment_on_pr,
+            pull_request_build=pull_request_build_mode_merge,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
@@ -142,11 +147,11 @@ class Test(unittest.TestCase):
 
     def test_get_settings_commit_default(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
-        self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event))
-        self.do_test_get_settings(COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event))
-        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event))
-        self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event))
-        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event))
+        self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request'))
+        self.do_test_get_settings(COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request'))
+        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
+        self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
+        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event, event_name='push'))
         with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event={}, GITHUB_SHA='default', expected=None)
         with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
@@ -222,6 +227,7 @@ class Test(unittest.TestCase):
         self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def do_test_get_settings(self, event: dict = {}, expected: Settings = get_settings.__func__(), **kwargs):
+        event = event.copy()
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'event.json')
             with open(filepath, 'wt') as w:

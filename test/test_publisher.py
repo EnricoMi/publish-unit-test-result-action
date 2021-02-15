@@ -38,18 +38,22 @@ class TestPublisher(unittest.TestCase):
                         report_individual_runs=False,
                         dedup_classes_by_file_name=False,
                         check_run_annotation=default_annotations,
-                        before: Optional[str] = 'before',
+                        event: Optional[dict] = {'before': 'before'},
+                        event_name: str = 'event name',
+                        pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
-            event=dict(before=before),
+            event=event,
+            event_name=event_name,
             repo='owner/repo',
             commit='commit',
             files_glob='*.xml',
             check_name='Check Name',
             comment_title='Comment Title',
             comment_on_pr=comment_on_pr,
+            pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
@@ -540,7 +544,7 @@ class TestPublisher(unittest.TestCase):
         self.do_test_publish_check_without_base_stats(errors)
 
     def do_test_publish_check_without_base_stats(self, errors: List[ParseError], annotations: List[str] = default_annotations):
-        settings = self.create_settings(before=None, check_run_annotation=annotations)
+        settings = self.create_settings(event={}, check_run_annotation=annotations)
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
         publisher = Publisher(settings, gh, gha)
 
@@ -593,7 +597,7 @@ class TestPublisher(unittest.TestCase):
 
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         earlier_commit = 'past'
-        settings = self.create_settings(before=earlier_commit)
+        settings = self.create_settings(event={'before': earlier_commit})
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
@@ -638,7 +642,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_check_with_multiple_annotation_pages(self):
         earlier_commit = 'past'
-        settings = self.create_settings(before=earlier_commit)
+        settings = self.create_settings(event={'before': earlier_commit})
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
 
@@ -706,7 +710,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({'check_run_for_kwargs': create_check_run_kwargss[-1]}, check_run)
 
     def test_publish_comment(self):
-        settings = self.create_settings()
+        settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
         base_commit = 'base-commit'
 
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
@@ -715,7 +719,6 @@ class TestPublisher(unittest.TestCase):
 
         publisher.publish_comment(settings.comment_title, self.stats, pr)
 
-        repo.get_commit.assert_called_once_with(base_commit)
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
             '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
@@ -732,9 +735,11 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo)
         publisher = Publisher(settings, gh, gha)
 
+        compare = mock.MagicMock()
+        compare.merge_base_commit.sha = None
+        repo.compare = mock.Mock(return_value=compare)
         publisher.publish_comment(settings.comment_title, self.stats, pr)
 
-        repo.get_commit.assert_not_called()
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
             '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
@@ -755,7 +760,6 @@ class TestPublisher(unittest.TestCase):
 
         publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
 
-        repo.get_commit.assert_called_once_with(base_commit)
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
             '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
@@ -781,7 +785,6 @@ class TestPublisher(unittest.TestCase):
         stats = UnitTestRunResults.from_dict(stats)
         publisher.publish_comment(settings.comment_title, stats, pr, cr)
 
-        repo.get_commit.assert_called_once_with(base_commit)
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
             '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
@@ -790,6 +793,90 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
         )
+
+    def test_get_base_commit_sha_none_event(self):
+        self.do_test_get_base_commit_sha(event=None, event_name='any', expected_sha='merge base commit sha')
+
+    def test_get_base_commit_sha_empty_event(self):
+        self.do_test_get_base_commit_sha(event={}, event_name='any', expected_sha='merge base commit sha')
+
+    def test_get_base_commit_sha_pull_request_event(self):
+        self.do_test_get_base_commit_sha(
+            event={'pull_request': {'base': {'sha': 'commit sha'}}},
+            event_name='pull_request',
+            expected_sha='commit sha'
+        )
+
+    def test_get_base_commit_sha_pull_request_event_commit_mode(self):
+        self.do_test_get_base_commit_sha(
+            event={'pull_request': {'base': {'sha': 'commit sha'}}},
+            event_name='pull_request',
+            pull_request_build='commit',
+            expected_sha='merge base commit sha'
+        )
+
+    def test_get_base_commit_sha_workflow_run_event(self):
+        self.do_test_get_base_commit_sha(
+            event={'workflow_run': {}},
+            event_name='workflow_run',
+            expected_sha=None
+        )
+
+    def test_get_base_commit_sha_push_event(self):
+        publisher = self.do_test_get_base_commit_sha(
+            event={},
+            event_name='push',
+            expected_sha='merge base commit sha'
+        )
+        self.assertEqual(
+            [mock.call('master', 'commit')],
+            publisher._repo.compare.mock_calls
+        )
+
+    def test_get_base_commit_sha_other_event(self):
+        publisher = self.do_test_get_base_commit_sha(
+            event={},
+            event_name='any',
+            expected_sha='merge base commit sha'
+        )
+        self.assertEqual(
+            [mock.call('master', 'commit')],
+            publisher._repo.compare.mock_calls
+        )
+
+    def do_test_get_base_commit_sha(self,
+                                    event: Optional[dict],
+                                    event_name: str,
+                                    pull_request_build: str = pull_request_build_mode_merge,
+                                    expected_sha: Optional[str] = None):
+        pr = mock.MagicMock()
+        pr.base.ref = 'master'
+
+        settings = self.create_settings(event=event, event_name=event_name, pull_request_build=pull_request_build)
+        publisher = mock.MagicMock()
+        publisher._settings = settings
+        compare = mock.MagicMock()
+        compare.merge_base_commit.sha = 'merge base commit sha'
+        publisher._repo.compare = mock.Mock(return_value=compare)
+        result = Publisher.get_base_commit_sha(publisher, pr)
+
+        self.assertEqual(expected_sha, result)
+
+        return publisher
+
+    def test_get_base_commit_sha_compare_exception(self):
+        pr = mock.MagicMock()
+
+        def exception(base, head):
+            raise Exception()
+
+        settings = self.create_settings(event={})
+        publisher = mock.MagicMock()
+        publisher._settings = settings
+        publisher._repo.compare = mock.Mock(side_effect=exception)
+        result = Publisher.get_base_commit_sha(publisher, pr)
+
+        self.assertEqual(None, result)
 
     def test_get_pull_request_comments(self):
         settings = self.create_settings()

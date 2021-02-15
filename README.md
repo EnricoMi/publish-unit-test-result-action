@@ -97,6 +97,12 @@ Each run of the action creates a new comment on the respective pull request with
 The title of the comment can be configured via the `comment_title` variable.
 It is optional and defaults to the `check_name` option.
 
+In the rare situation that your workflow builds and tests the actual commit, rather than the merge commit
+provided by GitHub via `GITHUB_SHA`, you can configure the action via `pull_request_build`.
+With `commit`, it assumes that the actual commit is being built,
+with `merge` it assumes the merge commit is being built.
+The default is `merge`.
+
 The `hide_comments` option allows hiding earlier comments to reduce the volume of comments.
 The default is `all but latest`, which hides all earlier comments of the action.
 Setting the option to `orphaned commits` will hide comments for orphaned commits only.
@@ -134,12 +140,13 @@ and removal, and `skipped tests` to detect new skipped and un-skipped tests, as 
 See this complete list of configuration options for reference:
 ```yaml
   with:
-    github_token: ${{ your-custom-pat }}
+    github_token: ${{ secrets.PAT }}
     commit: ${{ your-commit-sha }}
     check_name: Unit Test Results
     comment_title: Unit Test Statistics
     hide_comments: all but latest
     comment_on_pr: true
+    pull_request_build: commit
     test_changes_limit: 5
     files: test-results/**/*.xml
     report_individual_runs: true
