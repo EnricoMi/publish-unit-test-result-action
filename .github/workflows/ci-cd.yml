@@ -91,7 +91,7 @@ jobs:
           tag-sha: true
           tag-match: '^(v\d+)'
           tag-match-group: '1'
-          tag-latest: false
+          tag-latest: true
 
       - name: Docker meta (minor)
         id: docker_meta_minor
