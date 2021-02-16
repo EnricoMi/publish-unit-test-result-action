@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - branch-composite-action
+      - branch-composite-action-win
     tags:
       - '*'
   pull_request:
