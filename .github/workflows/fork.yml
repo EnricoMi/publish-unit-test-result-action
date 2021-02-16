@@ -2,7 +2,7 @@ name: Fork
 
 on:
   workflow_run:
-    workflows: ["CI/CD"]
+    workflows: ["CI"]
     types:
       - completed
 
