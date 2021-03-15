@@ -45,6 +45,7 @@ class TestPublisher(unittest.TestCase):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
+            graphql_url='https://the-github-graphql-url',
             event=event,
             event_name=event_name,
             repo='owner/repo',
@@ -892,7 +893,7 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(['node'], response)
         req.requestJsonAndCheck.assert_called_once_with(
-            'POST', 'https://the-github-api-url/graphql',
+            'POST', 'https://the-github-graphql-url',
             input={
                 'query': 'query ListComments {'
                 '  repository(owner:"login", name:"owner/repo") {'
@@ -1002,7 +1003,7 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(True, response)
         req.requestJsonAndCheck.assert_called_once_with(
-            'POST', 'https://the-github-api-url/graphql',
+            'POST', 'https://the-github-graphql-url',
             input={
                 'query': 'mutation MinimizeComment {'
                 '  minimizeComment(input: { subjectId: "node id", classifier: OUTDATED } ) {'

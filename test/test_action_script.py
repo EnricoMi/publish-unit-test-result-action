@@ -103,6 +103,7 @@ class Test(unittest.TestCase):
     @staticmethod
     def get_settings(token='token',
                      api_url='http://github.api.url/',
+                     graphql_url='http://github.graphql.url/',
                      event={},
                      event_name='event name',
                      repo='repo',
@@ -119,6 +120,7 @@ class Test(unittest.TestCase):
         return Settings(
             token=token,
             api_url=api_url,
+            graphql_url=graphql_url,
             event=event.copy(),
             event_name=event_name,
             repo=repo,
@@ -139,11 +141,14 @@ class Test(unittest.TestCase):
         options = self.do_test_get_settings()
         options = {f'INPUT_{key}': value
                    for key, value in options.items()
-                   if key not in {'GITHUB_API_URL', 'GITHUB_SHA'}}
+                   if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA'}}
         self.do_test_get_settings(**options)
 
     def test_get_settings_github_api_url_default(self):
         self.do_test_get_settings(GITHUB_API_URL=None, expected=self.get_settings(api_url='https://api.github.com'))
+
+    def test_get_settings_github_graphql_url_default(self):
+        self.do_test_get_settings(GITHUB_GRAPHQL_URL=None, expected=self.get_settings(graphql_url='https://api.github.com/graphql'))
 
     def test_get_settings_commit_default(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
@@ -241,6 +246,7 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_PATH=filepath,
                 GITHUB_EVENT_NAME='event name',
                 GITHUB_API_URL='http://github.api.url/',  #defaults to github
+                GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
                 TEST_CHANGES_LIMIT='10',  # not an int
                 CHECK_NAME='check name',  # defaults to 'Unit Test Results'
                 GITHUB_TOKEN='token',
