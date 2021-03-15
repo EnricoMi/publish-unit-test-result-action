@@ -17,6 +17,7 @@ logger = logging.getLogger('publish.publisher')
 class Settings:
     token: str
     api_url: str
+    graphql_url: str
     event: dict
     event_name: str
     repo: str
@@ -281,7 +282,7 @@ class Publisher:
         )
 
         headers, data = self._req.requestJsonAndCheck(
-            "POST", f'{self._settings.api_url}/graphql', input=query
+            "POST", self._settings.graphql_url, input=query
         )
 
         return data \
@@ -300,7 +301,7 @@ class Publisher:
                   r'}'
         )
         headers, data = self._req.requestJsonAndCheck(
-            "POST", f'{self._settings.api_url}/graphql', input=input
+            "POST", self._settings.graphql_url, input=input
         )
         return data \
             .get('data', {}) \

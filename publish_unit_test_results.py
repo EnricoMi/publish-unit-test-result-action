@@ -130,6 +130,7 @@ def get_settings(options: dict) -> Settings:
     with open(event, 'r') as f:
         event = json.load(f)
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
+    graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options)
     test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 10
 
@@ -139,6 +140,7 @@ def get_settings(options: dict) -> Settings:
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
+        graphql_url=graphql_url,
         event=event,
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
