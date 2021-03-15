@@ -169,8 +169,10 @@ def get_settings(options: dict) -> Settings:
 if __name__ == "__main__":
     options = dict(os.environ)
 
-    logging.root.level = logging.INFO
+    root_log_level = get_var('ROOT_LOG_LEVEL', options) or 'INFO'
+    logging.root.level = logging.getLevelName(root_log_level)
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+
     log_level = get_var('LOG_LEVEL', options) or 'INFO'
     logger.level = logging.getLevelName(log_level)
     github_action.logger.level = logging.getLevelName(log_level)
