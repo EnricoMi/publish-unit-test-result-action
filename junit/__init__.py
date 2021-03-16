@@ -58,7 +58,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
         )
         for result_file, suite in suites
         for case in suite
-        if case.classname is not None and case.name is not None
+        if case.classname is not None or case.name is not None
     ]
 
     return ParsedUnitTestResults(

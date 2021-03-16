@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="Test results" time="4.26" tests="173" failures="0">
+  <properties>
+    <property name="skipped" value="1" />
+    <property name="date" value="2021-03-05" />
+    <property name="nunit-version" value="xUnit.net 2.4.1.0" />
+    <property name="clr-version" value="64-bit .NET 4.0.30319.42000 [collection-per-class, parallel (8 threads)]" />
+    <property name="date" value="2021-03-05" />
+    <property name="result" value="Success" />
+  </properties>
+  <testsuite name="Rhino Collection" time="2.407" tests="2" failures="0">
+    <testcase name="mytestapp.Tests.AttriubteTests.SetTestNoFeature" time="0.4540354" />
+    <testcase name="mytestapp.Tests.AttriubteTests.GetTestNoFeature" time="0.0039778" />
+  </testsuite>
+</testsuites>

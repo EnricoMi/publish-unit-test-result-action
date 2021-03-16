@@ -297,6 +297,44 @@ class TestJunit(unittest.TestCase):
                 suites=1
             ))
 
+    def test_parse_xunit_xml_file(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/xunit.xml']),
+            ParsedUnitTestResults(
+                cases=[
+                    UnitTestCase(
+                        class_name=None,
+                        content=None,
+                        result_file='files/xunit.xml',
+                        test_file=None,
+                        line=None,
+                        message=None,
+                        result='success',
+                        test_name='mytestapp.Tests.AttriubteTests.SetTestNoFeature',
+                        time=0.4540354
+                    ),
+                    UnitTestCase(
+                        class_name=None,
+                        content=None,
+                        result_file='files/xunit.xml',
+                        test_file=None,
+                        line=None,
+                        message=None,
+                        result='success',
+                        test_name='mytestapp.Tests.AttriubteTests.GetTestNoFeature',
+                        time=0.0039778
+                    )
+                ],
+                files=1,
+                errors=[],
+                suite_errors=0,
+                suite_failures=0,
+                suite_skipped=0,
+                suite_tests=2,
+                suite_time=0,
+                suites=1
+            ))
+
     def test_parse_junit_xml_files_with_no_attributes_file(self):
         self.assertEqual(
             parse_junit_xml_files(['files/no-attributes.xml']),
