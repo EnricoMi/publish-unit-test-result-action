@@ -551,7 +551,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases)
 
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -559,7 +559,7 @@ class TestPublisher(unittest.TestCase):
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
-            conclusion='conclusion',
+            conclusion='success',
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
@@ -604,7 +604,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases)
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -612,7 +612,7 @@ class TestPublisher(unittest.TestCase):
             name=settings.check_name,
             head_sha=settings.commit,
             status='completed',
-            conclusion='conclusion',
+            conclusion='success',
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
@@ -664,7 +664,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, cases, 'conclusion')
+            check_run = publisher.publish_check(self.stats, cases)
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         # we expect multiple calls to create_check_run
@@ -673,7 +673,7 @@ class TestPublisher(unittest.TestCase):
                 name=settings.check_name,
                 head_sha=settings.commit,
                 status='completed',
-                conclusion='conclusion',
+                conclusion='success',
                 output={
                     'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
                     'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'

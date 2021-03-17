@@ -45,7 +45,7 @@ class Publisher:
 
     def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run = self.publish_check(stats, cases, conclusion)
+        check_run = self.publish_check(stats, cases)
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
@@ -142,7 +142,7 @@ class Publisher:
             return None
         return annotation.raw_details.split('\n')
 
-    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
+    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults) -> CheckRun:
         # get stats from earlier commits
         before_commit_sha = self._settings.event.get('before')
         logger.debug(f'comparing against before={before_commit_sha}')
@@ -169,7 +169,7 @@ class Publisher:
             check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                     head_sha=self._settings.commit,
                                                     status='completed',
-                                                    conclusion=conclusion,
+                                                    conclusion='success',
                                                     output=output)
             logger.debug(f'created check {check_run}')
         return check_run
