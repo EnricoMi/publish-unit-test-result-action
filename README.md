@@ -160,122 +160,12 @@ See this complete list of configuration options for reference:
     check_run_annotations: all tests, skipped tests
 ```
 
-## Support fork repositories
-
-Getting unit test results of pull requests from fork repositories requires some additional setup.
-
-1. Your CI workflow has to run on `pull_request` events.
-2. It has to upload unit test result files.
-3. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
-   downloads the unit test result files and runs this action on them.
-
-The following example defines a simple `CI` workflow and the additional `workflow_run` workflow called `Fork`.
-
-```yaml
-name: CI
-
-on: [push, pull_request]
-
-jobs:
-  build-and-test:
-    name: Build and Test
-    runs-on: ubuntu-latest
-    # always run on push events, but only run on pull_request events when pull request pulls from fork repository
-    # for pull requests within the same repository, the pull event is sufficient
-    if: >
-      github.event_name == 'push' ||
-      github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # run your tests here, produce unit test result files in ./test-results/
-
-      - name: Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        # the action is useless on pull_request events
-        # (it can not create check runs or pull request comments)
-        if: always() && github.event_name != 'pull_request'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: "test-results/*.xml"
-
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          path: test-results/*.xml
-```
-
-```yaml
-name: Fork
-
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
-
-jobs:
-  unit-test-results:
-    name: Unit Test Results from Fork
-    runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion != 'skipped'
-      github.event.workflow_run.head_repository.full_name != github.repository
-
-    steps:
-      - name: Download Artifacts
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{ github.event.workflow_run.id }},
-            });
-            for (const artifact of artifacts.data.artifacts) {
-               var download = await github.actions.downloadArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: artifact.id,
-                  archive_format: 'zip',
-               });
-               var fs = require('fs');
-               fs.writeFileSync(`${{github.workspace}}/artifact-${artifact.id}.zip`, Buffer.from(download.data));
-            }
-      - name: Extract Artifacts
-        run: |
-           for file in artifact-*.zip
-           do
-             if [ -e "$file" ]
-             then
-               dir="${file/%.zip/}"
-               mkdir -p "$dir"
-               unzip -d "$dir" "$file"
-             fi
-           done
-
-      - name: Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          commit: ${{ github.event.workflow_run.head_sha }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: "**/*.xml"
-```
-
-Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
-
 ## Use with matrix strategy
 
-In a scenario where your unit tests run multiple times in different environments (e.g. a matrix strategy),
+In a scenario where your unit tests run multiple times in different environments (e.g. a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix)),
 the action should run only once over all test results. For this, put the action into a separate job
 that depends on all your test environments. Those need to upload the test results as artifacts, which
 are then all downloaded by your publish job.
-
-You will need to use the `if: success() || failure()` clause when you [support fork repositories](#support-fork-repositories): 
 
 ```yaml
 name: CI
@@ -328,6 +218,99 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           check_name: Unit Test Results
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           files: pytest.xml
 ```
+
+## Support fork repositories and dependabot branches
+
+Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically) or
+by contributors from fork repositories requires some additional setup.
+
+1. Remove the publish-unit-test-result action from your CI workflow.
+2. Your CI workflow has to upload unit test result files.
+3. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
+   downloads the unit test result files and runs this action on them.
+
+Add the following action step to your CI workflow to upload unit test results as artifacts.
+Adjust the value of `path` to fit your setup:
+
+```yaml
+- name: Upload Test Results
+  if: always()
+  uses: actions/upload-artifact@v2
+  with:
+     name: Unit Test Results
+     path: |
+        test-results/*.xml
+```
+
+If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
+make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
+
+Add the following workflow that publishes unit test results. It downloads and extracts
+all artifacts into `artifact/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
+when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
+It then runs the action on files in `artifacts/*/`.
+Replace `*` with the name of your unit test artifacts if `*` does not work for you.
+Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
+
+
+```yaml
+name: Unit Test Results
+
+on:
+   workflow_run:
+      workflows: ["CI"]
+      types:
+         - completed
+
+jobs:
+   unit-test-results:
+      name: Unit Test Results
+      runs-on: ubuntu-latest
+      if: github.event.workflow_run.conclusion != 'skipped'
+
+      steps:
+         - name: Download Artifacts
+           uses: actions/github-script@v3.1.0
+           with:
+              script: |
+                 var fs = require('fs');
+                 var path = require('path');
+                 var artifacts_path = path.join('${{github.workspace}}', 'artifacts')
+                 fs.mkdirSync(artifacts_path, { recursive: true })
+
+                 var artifacts = await github.actions.listWorkflowRunArtifacts({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    run_id: ${{ github.event.workflow_run.id }},
+                 });
+
+                 for (const artifact of artifacts.data.artifacts) {
+                    var download = await github.actions.downloadArtifact({
+                       owner: context.repo.owner,
+                       repo: context.repo.repo,
+                       artifact_id: artifact.id,
+                       archive_format: 'zip',
+                    });
+                    var artifact_path = path.join(artifacts_path, `${artifact.name}.zip`)
+                    fs.writeFileSync(artifact_path, Buffer.from(download.data));
+                    console.log(`Downloaded ${artifact_path}`);
+                 }
+         - name: Extract Artifacts
+           run: |
+              for file in artifacts/*.zip
+              do
+                dir="${file/%.zip/}"
+                mkdir -p "$dir"
+                unzip -d "$dir" "$file"
+              done
+
+         - name: Publish Unit Test Results
+           uses: EnricoMi/publish-unit-test-result-action@v1
+           with:
+              commit: ${{ github.event.workflow_run.head_sha }}
+              files: "artifacts/*/**/*.xml"
+```
+
+Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).

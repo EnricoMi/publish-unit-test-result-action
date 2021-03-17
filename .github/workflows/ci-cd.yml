@@ -38,21 +38,6 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
-      - name: Unit Test Results
-        uses: ./
-        # the action is useless on pull_request events from fork repositories
-        # as it can not create check runs or pull request comments
-        if: >
-          ( success() || failure() ) &&
-          ( github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository )
-        with:
-          check_name: Unit Test Results
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: "test-results/*.xml"
-          report_individual_runs: true
-          deduplicate_classes_by_file_name: false
-          log_level: DEBUG
-
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v2
