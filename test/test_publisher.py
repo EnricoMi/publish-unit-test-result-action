@@ -226,7 +226,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual((self.stats, self.cases), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_without_comment_with_hiding(self):
@@ -236,7 +236,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual((self.stats, self.cases), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
@@ -247,7 +247,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual((self.stats, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -265,7 +265,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual((self.stats, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -288,7 +288,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual((self.stats, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
