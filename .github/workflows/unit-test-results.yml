@@ -1,4 +1,4 @@
-name: Fork
+name: Unit Test Results
 
 on:
   workflow_run:
@@ -8,23 +8,26 @@ on:
 
 jobs:
   unit-test-results:
-    name: Unit Test Results from Fork
+    name: Unit Test Results
     runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion != 'skipped' &&
-      github.event.workflow_run.head_repository.full_name != github.repository
+    if: github.event.workflow_run.conclusion != 'skipped'
 
     steps:
       - name: Download Artifacts
         uses: actions/github-script@v3.1.0
         with:
           script: |
+            var fs = require('fs');
+            var path = require('path');
+            var artifacts_path = path.join('${{github.workspace}}', 'artifacts')
+            fs.mkdirSync(artifacts_path, { recursive: true })
+
             var artifacts = await github.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
                run_id: ${{ github.event.workflow_run.id }},
             });
+
             for (const artifact of artifacts.data.artifacts) {
                var download = await github.actions.downloadArtifact({
                   owner: context.repo.owner,
@@ -32,25 +35,22 @@ jobs:
                   artifact_id: artifact.id,
                   archive_format: 'zip',
                });
-               var fs = require('fs');
-               fs.writeFileSync(`${{github.workspace}}/artifact-${artifact.id}.zip`, Buffer.from(download.data));
+               var artifact_path = path.join(artifacts_path, `${artifact.name}.zip`)
+               fs.writeFileSync(artifact_path, Buffer.from(download.data));
+               console.log(`Downloaded ${artifact_path}`);
             }
       - name: Extract Artifacts
         run: |
-          for file in artifact-*.zip
+          for file in artifacts/*.zip
           do
-            if [ -e "$file" ]
-            then
-              dir="${file/%.zip/}"
-              mkdir -p "$dir"
-              unzip -d "$dir" "$file"
-            fi
+            dir="${file/%.zip/}"
+            mkdir -p "$dir"
+            unzip -d "$dir" "$file"
           done
 
-      - name: Unit Test Results
+      - name: Publish Unit Test Results
         uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
         with:
           github_token: ${{ github.token }}
           commit: ${{ github.event.workflow_run.head_sha }}
-          files: "**/*.xml"
-          log_level: DEBUG
+          files: "artifacts/*/**/*.xml"
