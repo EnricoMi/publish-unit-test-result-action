@@ -320,9 +320,12 @@ jobs:
            run: |
               for file in artifacts/*.zip
               do
-                dir="${file/%.zip/}"
-                mkdir -p "$dir"
-                unzip -d "$dir" "$file"
+                if [ -f "$file" ]
+                then
+                  dir="${file/%.zip/}"
+                  mkdir -p "$dir"
+                  unzip -d "$dir" "$file"
+                fi
               done
 
          - name: Publish Unit Test Results
