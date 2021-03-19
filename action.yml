@@ -16,6 +16,10 @@ inputs:
   comment_title:
     description: 'Title of PR comments, defaults to value of check_name input'
     required: false
+  fail_on:
+    description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "never", fails only on errors when set to "errors". Default is "test failures".'
+    required: false
+    default: 'test failures'
   files:
     description: 'File pattern of test result files'
     required: true

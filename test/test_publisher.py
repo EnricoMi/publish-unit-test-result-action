@@ -50,6 +50,8 @@ class TestPublisher(unittest.TestCase):
             event_name=event_name,
             repo='owner/repo',
             commit='commit',
+            fail_on_errors=True,
+            fail_on_failures=True,
             files_glob='*.xml',
             check_name='Check Name',
             comment_title='Comment Title',

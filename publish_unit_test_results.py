@@ -11,19 +11,20 @@ import github_action
 import publish
 from github_action import GithubAction
 from junit import parse_junit_xml_files
-from publish import hide_comments_modes, available_annotations, default_annotations, pull_request_build_modes, publisher
+from publish import hide_comments_modes, available_annotations, default_annotations, \
+    pull_request_build_modes, publisher, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures
 from publish.publisher import Publisher, Settings
 from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
 logger = logging.getLogger('publish-unit-test-results')
 
 
-def get_conclusion(parsed: ParsedUnitTestResults) -> str:
+def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_errors) -> str:
     if parsed.files == 0:
         return 'neutral'
-    if len(parsed.errors) > 0:
+    if fail_on_errors and len(parsed.errors) > 0:
         return 'failure'
-    if parsed.suite_failures > 0 or parsed.suite_errors > 0:
+    if fail_on_failures and parsed.suite_failures > 0 or fail_on_errors and parsed.suite_errors > 0:
         return 'failure'
     return 'success'
 
@@ -59,7 +60,7 @@ def main(settings: Settings) -> None:
     stats = get_stats(results)
 
     # derive check run conclusion from files
-    conclusion = get_conclusion(parsed)
+    conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
     # publish the delta stats
     retry = Retry(total=10, backoff_factor=1)
@@ -137,6 +138,12 @@ def get_settings(options: dict) -> Settings:
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     annotations = get_annotations_config(options, event)
 
+    fail_on = get_var('FAIL_ON', options) or 'test failures'
+    check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
+    # here we decide that we want to fail on errors when we fail on test failures, like log level escalation
+    fail_on_failures = fail_on == fail_on_mode_failures
+    fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
+
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
@@ -145,6 +152,8 @@ def get_settings(options: dict) -> Settings:
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
+        fail_on_errors=fail_on_errors,
+        fail_on_failures=fail_on_failures,
         files_glob=get_var('FILES', options),
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
@@ -162,8 +171,8 @@ def get_settings(options: dict) -> Settings:
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.files_glob, 'FILES', 'Files pattern')
-    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'hide comments mode', hide_comments_modes)
-    check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'check run annotations', available_annotations)
+    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
+    check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
     return settings
 

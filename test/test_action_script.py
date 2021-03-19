@@ -5,7 +5,8 @@ import unittest
 
 import mock
 
-from publish import pull_request_build_mode_merge
+from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
+    fail_on_mode_nothing
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings
 from unittestresults import ParsedUnitTestResults, ParseError
@@ -16,74 +17,89 @@ event = dict(pull_request=dict(head=dict(sha='event_sha')))
 class Test(unittest.TestCase):
 
     def test_get_conclusion_success(self):
-        actual = get_conclusion(ParsedUnitTestResults(
-            files=1,
-            errors=[],
-            suites=1,
-            suite_tests=4,
-            suite_skipped=1,
-            suite_failures=0,
-            suite_errors=0,
-            suite_time=10,
-            cases=[]
-        ))
-        self.assertEqual('success', actual)
+        for fail_on_errors in [True, False]:
+            for fail_on_failures in [True, False]:
+                with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
+                    actual = get_conclusion(ParsedUnitTestResults(
+                        files=1,
+                        errors=[],
+                        suites=1,
+                        suite_tests=4,
+                        suite_skipped=1,
+                        suite_failures=0,
+                        suite_errors=0,
+                        suite_time=10,
+                        cases=[]
+                    ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
+                    self.assertEqual('success', actual)
 
     def test_get_conclusion_failures(self):
-        actual = get_conclusion(ParsedUnitTestResults(
-            files=1,
-            errors=[],
-            suites=1,
-            suite_tests=4,
-            suite_skipped=1,
-            suite_failures=1,
-            suite_errors=0,
-            suite_time=10,
-            cases=[]
-        ))
-        self.assertEqual('failure', actual)
+        for fail_on_errors in [True, False]:
+            for fail_on_failures in [True, False]:
+                with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
+                    actual = get_conclusion(ParsedUnitTestResults(
+                        files=1,
+                        errors=[],
+                        suites=1,
+                        suite_tests=4,
+                        suite_skipped=1,
+                        suite_failures=1,
+                        suite_errors=0,
+                        suite_time=10,
+                        cases=[]
+                    ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
+                    self.assertEqual('failure' if fail_on_failures else 'success', actual)
 
     def test_get_conclusion_errors(self):
-        actual = get_conclusion(ParsedUnitTestResults(
-            files=1,
-            errors=[],
-            suites=1,
-            suite_tests=4,
-            suite_skipped=1,
-            suite_failures=0,
-            suite_errors=1,
-            suite_time=10,
-            cases=[]
-        ))
-        self.assertEqual('failure', actual)
+        for fail_on_errors in [True, False]:
+            for fail_on_failures in [True, False]:
+                with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
+                    actual = get_conclusion(ParsedUnitTestResults(
+                        files=1,
+                        errors=[],
+                        suites=1,
+                        suite_tests=4,
+                        suite_skipped=1,
+                        suite_failures=0,
+                        suite_errors=1,
+                        suite_time=10,
+                        cases=[]
+                    ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
+                    self.assertEqual('failure'if fail_on_errors else 'success', actual)
 
     def test_get_conclusion_no_files(self):
-        actual = get_conclusion(ParsedUnitTestResults(
-            files=0,
-            errors=[],
-            suites=0,
-            suite_tests=0,
-            suite_skipped=0,
-            suite_failures=0,
-            suite_errors=0,
-            suite_time=0,
-            cases=[]
-        ))
-        self.assertEqual('neutral', actual)
+        for fail_on_errors in [True, False]:
+            for fail_on_failures in [True, False]:
+                with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
+                    actual = get_conclusion(ParsedUnitTestResults(
+                        files=0,
+                        errors=[],
+                        suites=0,
+                        suite_tests=0,
+                        suite_skipped=0,
+                        suite_failures=0,
+                        suite_errors=0,
+                        suite_time=0,
+                        cases=[]
+                    ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
+                    self.assertEqual('neutral', actual)
 
     def test_get_conclusion_parse_errors(self):
-        actual = get_conclusion(ParsedUnitTestResults(
-            files=2,
-            errors=[ParseError(file='file', message='error', line=None, column=None)],
-            suites=1,
-            suite_tests=4,
-            suite_skipped=1,
-            suite_failures=1,
-            suite_errors=1,
-            suite_time=10,
-            cases=[]
-        ))
-        self.assertEqual('failure', actual)
+        for fail_on_errors in [True, False]:
+            for fail_on_failures in [True, False]:
+                with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
+                    actual = get_conclusion(ParsedUnitTestResults(
+                        files=2,
+                        errors=[ParseError(file='file', message='error', line=None, column=None)],
+                        suites=1,
+                        suite_tests=4,
+                        suite_skipped=1,
+                        suite_failures=0,
+                        suite_errors=0,
+                        suite_time=10,
+                        cases=[]
+                    ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
+                    self.assertEqual('failure' if fail_on_errors else 'success', actual)
 
     def test_env_sha_events(self):
         options = dict(GITHUB_SHA='env_sha')
@@ -108,6 +124,8 @@ class Test(unittest.TestCase):
                      event_name='event name',
                      repo='repo',
                      commit='commit',
+                     fail_on_errors=True,
+                     fail_on_failures=True,
                      files_glob='files',
                      check_name='check name',
                      comment_title='title',
@@ -125,6 +143,8 @@ class Test(unittest.TestCase):
             event_name=event_name,
             repo=repo,
             commit=commit,
+            fail_on_errors=fail_on_errors,
+            fail_on_failures=fail_on_failures,
             files_glob=files_glob,
             check_name=check_name,
             comment_title=comment_title,
@@ -161,6 +181,12 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event={}, GITHUB_SHA='default', expected=None)
         with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA=None, expected=None)
+
+    def test_get_settings_fail_on_default(self):
+        self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_failures, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_errors, expected=self.get_settings(fail_on_errors=True, fail_on_failures=False))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_nothing, expected=self.get_settings(fail_on_errors=False, fail_on_failures=False))
 
     def test_get_settings_test_changes_limit_default(self):
         self.do_test_get_settings(TEST_CHANGES_LIMIT=None, expected=self.get_settings(test_changes_limit=10))

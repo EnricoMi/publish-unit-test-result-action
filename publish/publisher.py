@@ -22,6 +22,8 @@ class Settings:
     event_name: str
     repo: str
     commit: str
+    fail_on_errors: bool
+    fail_on_failures: bool
     files_glob: str
     check_name: str
     comment_title: str
