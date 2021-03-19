@@ -13,7 +13,7 @@ Unit test results are published in the GitHub Actions section of the respective 
 ![checks comment example](github-checks-comment.png)
 
 ***Note:** This action does not fail if unit tests failed. The action that executed the unit tests should
-fail on test failure. The published results however indicate failure if test results fail or errors occur.
+fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
 
 Each failing test will produce an annotation with failure details:
@@ -110,8 +110,8 @@ It is optional and defaults to the `check_name` option.
 
 The created test result check has failure state if any test fails or test errors occur.
 This behaviour can be configured via `fail_on`, which defaults to `test failures`.
-When set to `never` the check state is always `success`, unless there are no test files which results in `neutral` state.
-Set to `errors` the check state only fails on test errors.
+When set to `nothing` the check state is always `success`, unless there are no test files which results in `neutral` state.
+When set to `errors` the check state only fails on test errors.
 
 In the rare situation that your workflow builds and tests the actual commit, rather than the merge commit
 provided by GitHub via `GITHUB_SHA`, you can configure the action via `pull_request_build`.

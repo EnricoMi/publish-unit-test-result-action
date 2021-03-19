@@ -65,7 +65,7 @@ class Test(unittest.TestCase):
                         suite_time=10,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
-                    self.assertEqual('failure'if fail_on_errors else 'success', actual)
+                    self.assertEqual('failure' if fail_on_errors else 'success', actual)
 
     def test_get_conclusion_no_files(self):
         for fail_on_errors in [True, False]:
