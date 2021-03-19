@@ -7,6 +7,14 @@ on:
       - completed
 
 jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Debug Action
+        uses: hmarr/debug-action@v1.0.0
+
   unit-test-results:
     name: Unit Test Results
     runs-on: ubuntu-latest
