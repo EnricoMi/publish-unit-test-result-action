@@ -10,7 +10,11 @@ jobs:
   unit-test-results:
     name: Unit Test Results
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion != 'skipped'
+    if: >
+      github.event.workflow_run.conclusion != 'skipped' && (
+        startsWith(github.event.workflow_run.head_branch, 'dependabot/') ||
+        github.event.workflow_run.head_repository.full_name != github.repository
+      )
 
     steps:
       - name: Download Artifacts

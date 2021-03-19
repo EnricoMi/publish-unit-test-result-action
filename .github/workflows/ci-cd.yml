@@ -38,6 +38,17 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
+      - name: Publish Unit Test Results
+        # we run the action from this branch whenever we can (when it runs in our repo's context)
+        uses: ./
+        if: >
+          always() && ! startsWith(github.ref, 'refs/heads/dependabot/') && (
+            github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+          )
+        with:
+          check_name: Unit Test Results (this branch)
+          files: "test-results/*.xml"
+
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v2

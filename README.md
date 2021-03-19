@@ -228,13 +228,23 @@ jobs:
 
 ## Support fork repositories and dependabot branches
 
-Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically) or
-by contributors from fork repositories requires some additional setup.
+Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
+or by contributors from fork repositories requires some additional setup.
 
-1. Remove the publish-unit-test-result action from your CI workflow.
+1. Condition the publish-unit-test-result action in your CI workflow to only publish test results
+   when the action runs in your repository's context.
 2. Your CI workflow has to upload unit test result files.
 3. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
    downloads the unit test result files and runs this action on them.
+
+Add this condition to your publish test results step in your CI workflow:
+
+```yaml
+if: >
+  always() && ! startsWith(github.ref, 'refs/heads/dependabot/') && (
+    github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+  )
+```
 
 Add the following action step to your CI workflow to upload unit test results as artifacts.
 Adjust the value of `path` to fit your setup:
@@ -273,7 +283,11 @@ jobs:
    unit-test-results:
       name: Unit Test Results
       runs-on: ubuntu-latest
-      if: github.event.workflow_run.conclusion != 'skipped'
+      if: >
+         github.event.workflow_run.conclusion != 'skipped' && (
+           startsWith(github.event.workflow_run.head_branch, 'dependabot/') ||
+           github.event.workflow_run.head_repository.full_name != github.repository
+         )
 
       steps:
          - name: Download Artifacts
