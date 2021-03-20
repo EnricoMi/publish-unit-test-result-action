@@ -17,6 +17,15 @@ digest_prefix = '[test-results]:data:application/gzip;base64,'
 digit_space = '  '
 punctuation_space = ' '
 
+fail_on_mode_nothing = 'nothing'
+fail_on_mode_errors = 'errors'
+fail_on_mode_failures = 'test failures'
+fail_on_modes = [
+    fail_on_mode_nothing,
+    fail_on_mode_errors,
+    fail_on_mode_failures
+]
+
 hide_comments_mode_off = 'off'
 hide_comments_mode_all_but_latest = 'all but latest'
 hide_comments_mode_orphaned = 'orphaned commits'
