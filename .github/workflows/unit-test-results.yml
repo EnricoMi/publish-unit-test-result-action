@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event.workflow_run.conclusion != 'skipped' && (
-        startsWith(github.event.workflow_run.head_branch, 'dependabot/') ||
+        github.event.sender.login == 'dependabot[bot]' ||
         github.event.workflow_run.head_repository.full_name != github.repository
       )
 

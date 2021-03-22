@@ -248,9 +248,9 @@ Add this condition to your publish test results step in your CI workflow:
 
 ```yaml
 if: >
-  always() && ! startsWith(github.ref, 'refs/heads/dependabot/') && (
-    github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-  )
+  always() &&
+  github.event.sender.login != 'dependabot[bot]' &&
+  ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
 ```
 
 Add the following action step to your CI workflow to upload unit test results as artifacts.
@@ -292,8 +292,8 @@ jobs:
       runs-on: ubuntu-latest
       if: >
          github.event.workflow_run.conclusion != 'skipped' && (
-           startsWith(github.event.workflow_run.head_branch, 'dependabot/') ||
-           github.event.workflow_run.head_repository.full_name != github.repository
+            github.event.sender.login == 'dependabot[bot]' ||
+            github.event.workflow_run.head_repository.full_name != github.repository
          )
 
       steps:
