@@ -1,7 +1,21 @@
 import unittest
+from typing import Optional
+from distutils.version import LooseVersion
 
-from junit import parse_junit_xml_files
+from junitparser import JUnitXml, Element, version
+
+from junit import parse_junit_xml_files, get_results, get_result, get_content, get_message
 from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+
+
+class TestElement(Element):
+    __test__ = False
+
+    def __init__(self, tag: str, message: Optional[str] = None, content: Optional[str] = None):
+        super().__init__(tag)
+        self._tag = tag
+        self.message = message
+        self._elem.text = content
 
 
 class TestJunit(unittest.TestCase):
@@ -424,3 +438,95 @@ class TestJunit(unittest.TestCase):
                 suite_time=0,
                 suites=0
             ))
+
+    # tests https://github.com/weiwei/junitparser/issues/64
+    def test_junitparser_locale(self):
+        junit = JUnitXml.fromfile('files/junit.spark.integration.1.xml')
+        self.assertAlmostEqual(162.933, junit.time, 3)
+
+    @unittest.skipIf(LooseVersion(version) < LooseVersion('2.0.0'),
+                     'multiple results per test case not supported by junitparser')
+    def test_parse_junit_xml_file_with_multiple_results(self):
+        junit = parse_junit_xml_files(['files/junit.multiresult.xml'])
+        self.assertEqual(4, len(junit.cases))
+        self.assertEqual("error", junit.cases[0].result)
+        self.assertEqual("failure", junit.cases[1].result)
+        self.assertEqual("skipped", junit.cases[2].result)
+        self.assertEqual("success", junit.cases[3].result)
+
+    def test_get_results(self):
+        success = TestElement('success')
+        skipped = TestElement('skipped')
+        failure = TestElement('failure')
+        error = TestElement('error')
+        tests = [
+            ([], []),
+            ([success], [success]),
+            ([skipped], [skipped]),
+            ([failure], [failure]),
+            ([error], [error]),
+            ([success, success], [success, success]),
+            ([success, success, skipped], [success, success]),
+            ([success, success, failure], [failure]),
+            ([success, success, failure, failure], [failure, failure]),
+            ([success, success, failure, failure, error], [error]),
+            ([success, success, failure, failure, error, error], [error, error]),
+            ([success, success, skipped, failure, failure, error, error], [error, error]),
+            ([skipped, skipped], [skipped, skipped]),
+        ]
+        for results, expected in tests:
+            with self.subTest(results=results):
+                actual = get_results(results)
+                self.assertEqual(expected, actual)
+
+    def test_get_result(self):
+        success = TestElement('success')
+        skipped = TestElement('skipped')
+        failure = TestElement('failure')
+        error = TestElement('error')
+        tests = [
+            ([], 'success'),
+            ([success], 'success'),
+            ([skipped], 'skipped'),
+            ([failure], 'failure'),
+            ([error], 'error'),
+            ([success, success], 'success'),
+            ([skipped, skipped], 'skipped'),
+            ([failure, failure], 'failure'),
+            ([error, error], 'error'),
+            (success, 'success'),
+            (skipped, 'skipped'),
+            (failure, 'failure'),
+            (error, 'error'),
+            (None, 'success')
+        ]
+        for results, expected in tests:
+            with self.subTest(results=results):
+                actual = get_result(results)
+                self.assertEqual(expected, actual)
+
+    def test_get_message(self):
+        tests = [
+            ([], None),
+            ([TestElement('failure', message=None)], None),
+            ([TestElement('failure', message='failure')], 'failure'),
+            ([TestElement('failure', message='failure one'), TestElement('failure', message=None)], 'failure one'),
+            ([TestElement('failure', message='failure one'), TestElement('failure', message='failure two')], 'failure one\nfailure two'),
+        ]
+        for results, expected in tests:
+            with self.subTest(results=results):
+                actual = get_message(results)
+                self.assertEqual(expected, actual)
+
+    def test_get_content(self):
+        tests = [
+            ([], None),
+            ([TestElement('failure', content=None)], None),
+            ([TestElement('failure', content='failure')], 'failure'),
+            ([TestElement('failure', content='failure one'), TestElement('failure', content=None)], 'failure one'),
+            ([TestElement('failure', content='failure one'), TestElement('failure', content='failure two')], 'failure one\nfailure two'),
+        ]
+        for results, expected in tests:
+            with self.subTest(results=results):
+                actual = get_content(results)
+                self.assertEqual(expected, actual)

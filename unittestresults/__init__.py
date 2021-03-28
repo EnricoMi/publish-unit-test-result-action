@@ -249,6 +249,13 @@ class UnitTestRunDeltaResults:
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]
 
 
+def aggregate_states(states: List[str]) -> str:
+    return 'error' if 'error' in states else \
+           'failure' if 'failure' in states else \
+           'success' if 'success' in states else \
+           'skipped'
+
+
 def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
                      dedup_classes_by_file_name: bool) -> UnitTestResults:
     """
@@ -274,11 +281,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
 
     test_results = dict()
     for test, states in cases_results.items():
-        test_results[test] = \
-            'error' if 'error' in states else \
-            'failure' if 'failure' in states else \
-            'success' if 'success' in states else \
-            'skipped'
+        test_results[test] = aggregate_states(states)
 
     tests = len(test_results)
     tests_skipped = len([test for test, state in test_results.items() if state == 'skipped'])

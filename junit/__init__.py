@@ -1,10 +1,73 @@
 import os
 from html import unescape
-from typing import Optional, Iterable, Union, Any
-
+from typing import Optional, Iterable, Union, Any, List
+from collections import defaultdict
 from junitparser import *
-
 from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+
+
+def get_results(results: Union[Element, List[Element]]) -> List[Element]:
+    """
+    Returns the results with the most severe state.
+    For example: If there are failures and succeeded tests, returns only the failures.
+    """
+    if isinstance(results, List):
+        d = defaultdict(list)
+        for result in results:
+            if result:
+                d[get_result(result)].append(result)
+
+        for state in ['error', 'failure', 'success', 'skipped']:
+            if state in d:
+                return d[state]
+        return []
+
+    return [results]
+
+
+def get_result(results: Union[Element, List[Element]]) -> str:
+    """
+    Returns the result of the given results.
+    All results are expected to be of the same state.
+    :param results:
+    :return:
+    """
+    if isinstance(results, List):
+        return get_result(results[0]) if results else 'success'
+    return results._tag if results else 'success'
+
+
+def get_message(results: Union[Element, List[Element]]) -> str:
+    """
+    Returns an aggregated message from all given results.
+    :param results:
+    :return:
+    """
+    if isinstance(results, List):
+        messages = [result.message
+                    for result in results
+                    if result and result.message]
+        message = '\n'.join(messages) if messages else None
+    else:
+        message = results.message if results else None
+    return unescape(message) if message is not None else None
+
+
+def get_content(results: Union[Element, List[Element]]) -> str:
+    """
+    Returns an aggregated content form all given results.
+    :param results:
+    :return:
+    """
+    if isinstance(results, List):
+        contents = [result._elem.text
+                    for result in results
+                    if result is not None and result._elem is not None and result._elem.text is not None]
+        content = '\n'.join(contents) if contents else None
+    else:
+        content = results._elem.text \
+            if results and results._elem and results._elem.text is not None else None
+    return unescape(content) if content is not None else None
 
 
 def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
@@ -51,14 +114,15 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
             line=int_opt(case._elem.get('line')),
             class_name=case.classname,
             test_name=case.name,
-            result=case.result._tag if case.result else 'success',
-            message=unescape(case.result.message) if case.result and case.result.message is not None else None,
-            content=unescape(case.result._elem.text) if case.result and case.result._elem.text is not None else None,
+            result=get_result(results),
+            message=get_message(results),
+            content=get_content(results),
             time=case.time
         )
         for result_file, suite in suites
         for case in suite
         if case.classname is not None or case.name is not None
+        for results in [get_results(case.result)]
     ]
 
     return ParsedUnitTestResults(
