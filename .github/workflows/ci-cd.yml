@@ -81,7 +81,7 @@ jobs:
 
       - name: Docker meta (major)
         id: docker_meta_major
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: crazy-max/ghaction-docker-meta@v2.1.1
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
           tag-sha: true
@@ -91,7 +91,7 @@ jobs:
 
       - name: Docker meta (minor)
         id: docker_meta_minor
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: crazy-max/ghaction-docker-meta@v2.1.1
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
           tag-sha: false
