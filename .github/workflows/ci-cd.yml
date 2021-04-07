@@ -119,6 +119,14 @@ jobs:
             type=semver,pattern=v{{major}},value=${{ needs.build-and-test.outputs.image-version }}.0
             type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.build-and-test.outputs.image-version }}.0
 
+      - name: Debug Docker Meta
+        run: |
+          echo tags:
+          echo "${{ steps.docker-meta.outputs.tags }}"
+          echo labels:
+          echo "${{ steps.docker-meta.outputs.labels }}"
+        shell: bash
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -140,4 +148,4 @@ jobs:
           labels: |
             ${{ steps.docker-meta.outputs.labels }}
           pull: true
-          push: true
+          push: false
