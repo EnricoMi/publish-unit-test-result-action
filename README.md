@@ -67,22 +67,6 @@ You can add this action to your GitHub workflow as follows:
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
-### Using pre-build Docker images
-
-You can use a pre-built docker image from [GitHub Container Registry](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry) (Beta).
-This way, the action is not build for every run of your workflow, and you are guaranteed to get the exact same action build:
-```yaml
-- name: Publish Unit Test Results
-  uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
-  if: always()
-  with:
-    github_token: ${{ github.token }}
-    files: test-results/**/*.xml
-```
-
-***Note:** GitHub Container Registry is currently in [beta phase](https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/about-github-container-registry).*
-This action may abandon GitHub Container Registry support when GitHub changes its conditions.
-
 ### Configuration
 
 The action publishes results to the commit that it has been triggered on.
