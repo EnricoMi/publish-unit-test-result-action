@@ -9,6 +9,18 @@
 This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
 publishes the results on GitHub. It supports the JUnit XML file format.
 
+You can add this action to your GitHub workflow as follows:
+
+```yaml
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v1
+  if: always()
+  with:
+    files: test-results/**/*.xml
+```
+
+The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
+
 Unit test results are published in the GitHub Actions section of the respective commit:
 
 ![checks comment example](github-checks-comment.png)
@@ -53,109 +65,37 @@ The symbols have the following meaning:
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
 
-## Using this Action
+## Configuration
 
-You can add this action to your GitHub workflow as follows:
+The action con be configured by the following options. They are all optional except for `files`.
 
-```yaml
-- name: Publish Unit Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
-  if: always()
-  with:
-    files: test-results/**/*.xml
-```
-
-The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
-
-### Configuration
-
-The action publishes results to the commit that it has been triggered on.
-Depending on the [workflow event](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push)
-this can be different kinds of commits.
-See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows)
-for which commit the `GITHUB_SHA` environment variable actually refers to.
-
-Pull request related events refer to the merge commit, which is not your pushed commit and is not part of the commit history shown
-at GitHub. Therefore, the actual pushed commit SHA is used, provided by the [event payload](https://developer.github.com/webhooks/event-payloads/#pull_request).
-
-If you need the action to use a different commit SHA than those described above,
-you can set it via the `commit` option:
-
-```yaml
-with:
-  commit: ${{ your-commit-sha }}
-```
-
-The job name in the GitHub Actions section that provides the test results can be configured via the
-`check_name` option. It is optional and defaults to `"Unit Test Results"`, as shown in above screenshot.
-
-Each run of the action creates a new comment on the respective pull request with unit test results.
-The title of the comment can be configured via the `comment_title` variable.
-It is optional and defaults to the `check_name` option.
-
-The created test result check has failure state if any test fails or test errors occur.
-This behaviour can be configured via `fail_on`, which defaults to `test failures`.
-When set to `nothing` the check state is always `success`, unless there are no test files which results in `neutral` state.
-When set to `errors` the check state only fails on test errors.
-
-In the rare situation that your workflow builds and tests the actual commit, rather than the merge commit
-provided by GitHub via `GITHUB_SHA`, you can configure the action via `pull_request_build`.
-With `commit`, it assumes that the actual commit is being built,
-with `merge` it assumes the merge commit is being built.
-The default is `merge`.
-
-The `hide_comments` option allows hiding earlier comments to reduce the volume of comments.
-The default is `all but latest`, which hides all earlier comments of the action.
-Setting the option to `orphaned commits` will hide comments for orphaned commits only.
-These are commits that do no longer belong to the pull request (due to commit history rewrite).
-Hiding comments can be disabled all together with value `off`.
-
-To disable comments on pull requests completely, set the option `comment_on_pr` to `false`.
-Pull request comments are enabled by default.
+|Option|Default Value|Description|
+|:-----|:-----:|:----------|
+|`files`| |A file pattern to select the test result XML files, e.g. `test-results/**/*.xml`|
+|`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
+|`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
+|`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
+|`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
+|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
+|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"off"` - no hiding<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest|
+|`comment_on_pr`|`true`|The action posts comments to a pull request that is associated with a commit if set to `true`.|
+|`pull_request_build`|`"merge"`|GitHub builds a merge commit, not the actual pushed commit. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
+|`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
+|`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
+|`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
+|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run (comma-separated list):<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests,<br>`none` - no extra annotations at all|
+|`check_run_annotations_branch`|default branch|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 
 Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
 It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
 [directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
 
-If multiple runs exist for a test, only the first failure is reported, unless `report_individual_runs` is `true`.
-
-In the rare situation where a project contains test class duplicates with the same name in different files,
-you may want to set `deduplicate_classes_by_file_name` to `true`.
-
-With `check_run_annotations`, the check run provides additional information.
-Use comma to set multiple values:
-
-- All found tests are displayed with `all tests`.
-- All skipped tests are listed with `skipped tests`.
-
-These additional information are only added to the default branch of your repository, e.g. `main` or `master`.
-Use `check_run_annotations_branch` to enable this for multiple branches (comma separated list) or all branches (`"*"`).
-
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
 Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,
-which defaults to `5`. Listing these tests can be disabled entirely by setting this limit to `0`.
+which defaults to `10`. Listing these tests can be disabled entirely by setting this limit to `0`.
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
-
-See this complete list of configuration options for reference:
-```yaml
-  with:
-    github_token: ${{ secrets.PAT }}
-    commit: ${{ your-commit-sha }}
-    check_name: Unit Test Results
-    comment_title: Unit Test Statistics
-    fail_on: errors
-    hide_comments: all but latest
-    comment_on_pr: true
-    pull_request_build: commit
-    test_changes_limit: 5
-    files: test-results/**/*.xml
-    report_individual_runs: true
-    deduplicate_classes_by_file_name: false
-    check_run_annotations_branch: main, master, branch_one
-    check_run_annotations: all tests, skipped tests
-```
 
 ## Use with matrix strategy
 
@@ -214,8 +154,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          check_name: Unit Test Results
-          files: pytest.xml
+          files: artifacts/**/*.xml
 ```
 
 ## Support fork repositories and dependabot branches
