@@ -283,7 +283,7 @@ jobs:
 
       steps:
          - name: Download Artifacts
-           uses: actions/github-script@v3.1.0
+           uses: actions/github-script@v3
            with:
               script: |
                  var fs = require('fs');
