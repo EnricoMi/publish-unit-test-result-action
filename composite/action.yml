@@ -54,9 +54,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Check Python
+    - name: Check for Python3
       run: |
-        echo '##[group]Check Python3'
+        echo '##[group]Check for Python3'
         if ! which python3
         then
           if ! which python || [[ $(python -V) != *"python 3."* ]]
