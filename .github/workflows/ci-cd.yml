@@ -72,7 +72,7 @@ jobs:
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
 
       - name: Publish Unit Test Results
-        if: steps.prepare-publish.outcome != 'skipped'
+        if: always() && steps.prepare-publish.outcome != 'skipped'
         uses: ./
         with:
           check_name: Unit Test Results (this branch)
