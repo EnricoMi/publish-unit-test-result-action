@@ -13,13 +13,18 @@ from unittestresults import get_stats, UnitTestCase, ParseError
 @contextlib.contextmanager
 def temp_locale(encoding: str) -> Any:
     old_locale = locale.getlocale()
-    encodings = [f'{encoding}.utf8', f'{encoding}.utf-8', f'{encoding}.UTF8', f'{encoding}.UTF-8', encoding]
+    encodings = [
+        f'{encoding}.utf8', f'{encoding}.utf-8',
+        f'{encoding}.UTF8', f'{encoding}.UTF-8',
+        encoding
+    ]
+
     for encoding in encodings:
         try:
             locale.setlocale(locale.LC_ALL, encoding)
             break
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f'Failed to set locale {encoding}', exc_info=e)
         raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
     try:
         res = yield

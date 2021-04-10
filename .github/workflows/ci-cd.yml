@@ -58,7 +58,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd test
-          python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
+          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
       - name: Prepare publish action from this branch
         id: prepare-publish

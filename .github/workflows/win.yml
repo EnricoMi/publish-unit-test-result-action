@@ -33,7 +33,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd test
-          python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
+          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
       - name: Upload Test Results
         if: always()
