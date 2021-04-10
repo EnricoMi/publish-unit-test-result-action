@@ -19,14 +19,16 @@ def temp_locale(encoding: str) -> Any:
         encoding
     ]
 
+    locale_set = False
     for encoding in encodings:
         try:
             locale.setlocale(locale.LC_ALL, encoding)
+            locale_set = True
             break
         except:
             pass
 
-    if locale.getlocale() == old_locale:
+    if not locale_set:
         raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
 
     try:
