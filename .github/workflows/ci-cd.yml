@@ -60,14 +60,20 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
-      - name: Publish Unit Test Results
+      - name: Prepare to publish action from this branch
+        id: prepare-publish
         # we run the action from this branch whenever we can (when it runs in our repo's context)
-        uses: ./
         if: >
           always() &&
           ( steps.action.outputs.image == 'Dockerfile' || steps.image.outputs.exists == 'true' ) &&
           github.event.sender.login != 'dependabot[bot]' &&
           ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        if: steps.prepare-publish.outcome != 'skipped'
+        uses: ./
         with:
           check_name: Unit Test Results (this branch)
           files: "test-results/*.xml"
