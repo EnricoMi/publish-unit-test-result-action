@@ -1,0 +1,51 @@
+name: Win
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: windows-latest
+
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade --force --no-cache-dir pip
+          pip install --force --no-cache-dir -r requirements.txt
+          pip install --force --no-cache-dir pytest mock
+
+      - name: PyTest
+        env:
+          PYTHONPATH: ..
+        run: |
+          cd test
+          python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          check_name: Unit Test Results (Win)
+          files: test-results\*.xml
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results
+          path: |
+            test-results\*.xml
+            unit-test-results.json
