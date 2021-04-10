@@ -9,15 +9,41 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
-    name: Build and Test (os=${{ matrix.os }}, py=${{ matrix.python-version }})
+  test:
+    name: Test (os=${{ matrix.os }}, py=${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       max-parallel: 20
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.6, 3.7, 3.8]
+        os:
+          - macos-10.15
+          - macos-11.0
+          - macos-latest
+          - ubuntu-16.04
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - ubuntu-latest
+          - windows-2016
+          - windows-2019
+          - windows-latest
+        python-version: [3.6]
+
+        include:
+          - os: macos-latest
+            python-version: 3.7
+          - os: macos-latest
+            python-version: 3.8
+
+          - os: ubuntu-latest
+            python-version: 3.7
+          - os: ubuntu-latest
+            python-version: 3.8
+
+          - os: windows-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.8
 
     steps:
       - name: Setup Ubuntu
@@ -54,17 +80,24 @@ jobs:
             test-results/*.xml
             unit-test-results.json
 
+  test-build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Set up Docker Buildx
-        if: startsWith(matrix.os, 'ubuntu')
         uses: docker/setup-buildx-action@v1
 
       - name: Run Buildx
-        if: startsWith(matrix.os, 'ubuntu')
         run: docker buildx build --output "type=image,push=false" .
 
   publish:
-    name: Publish
-    needs: build-and-test
+    name: Publish Unit Test Results
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -92,7 +125,7 @@ jobs:
           files: "artifacts/**/*.xml"
 
   config-deploy:
-    name: Configure
+    name: Configure Deployment
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.action.outputs.image }}
@@ -125,7 +158,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [build-and-test, config-deploy]
+    needs: [test, config-deploy]
 
     # deploy image actions from commits pushed to master and
     # deploy Dockerfile actions from pushed version tags (no major versions)
