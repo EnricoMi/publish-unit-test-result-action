@@ -116,8 +116,98 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./
         with:
-          check_name: Unit Test Results (this branch)
+          check_name: Unit Test Results (Dockerfile)
           files: "artifacts/**/*.xml"
+
+  publish-linux:
+    name: Publish Unit Test Results (Linux)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (Mac)
+          files: "artifacts/**/*.xml"
+
+  publish-mac:
+    name: Publish Unit Test Results (Mac)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (Mac)
+          files: "artifacts/**/*.xml"
+
+  publish-win:
+    name: Publish Unit Test Results (Win)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (Win)
+          files: "artifacts\\**\\*.xml"
 
   config-deploy:
     name: Configure Deployment
