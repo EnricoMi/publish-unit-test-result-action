@@ -23,9 +23,12 @@ def temp_locale(encoding: str) -> Any:
         try:
             locale.setlocale(locale.LC_ALL, encoding)
             break
-        except Exception as e:
-            logger.warning(f'Failed to set locale {encoding}', exc_info=e)
+        except:
+            pass
+
+    if locale.getlocale() == old_locale:
         raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
+
     try:
         res = yield
     finally:
