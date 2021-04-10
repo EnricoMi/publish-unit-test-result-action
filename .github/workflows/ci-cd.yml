@@ -26,19 +26,18 @@ jobs:
 
         include:
           - os: macos-latest
-            python-version: 3.6
+            python-version: 3.7
+          - os: ubuntu-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.7
+
           - os: macos-latest
-            python-version: 3.7
-
-          - os: ubuntu-latest
             python-version: 3.6
           - os: ubuntu-latest
-            python-version: 3.7
-
-          - os: windows-latest
             python-version: 3.6
           - os: windows-latest
-            python-version: 3.7
+            python-version: 3.6
 
     steps:
       - name: Setup Ubuntu
@@ -135,7 +134,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
           - os: macos-latest
-            os-label: Mac
+            os-label: MacOS
           - os: ubuntu-latest
             os-label: Linux
           - os: windows-latest

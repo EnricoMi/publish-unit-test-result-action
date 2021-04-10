@@ -54,15 +54,36 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check Python
+      run: |
+        echo '##[group]Check Python3'
+        if ! which python3
+        then
+          if ! which python || [[ $(python -V) != *"python 3."* ]]
+          then
+            echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
+            exit 1
+          fi
+
+          interpreter="$(which python)"
+          interpreter3="${interpreter}3"
+          if [[ ! -e "$interpreter3" ]]
+          then
+            ln -s $interpreter3 $interpreter
+          fi
+        fi
+        echo '##[endgroup]'
+      shell: bash
+
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        python -m pip install --upgrade --force --no-cache-dir pip
-        pip install --upgrade --force --no-cache-dir virtualenv
-        virtualenv venv
+        python3 -m pip install --upgrade --force --no-cache-dir pip
+        python3 -m pip install --upgrade --force --no-cache-dir virtualenv
+        python3 -m virtualenv -p python3 venv
         [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
-        python -m pip install --upgrade --force --no-cache-dir pip
-        pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/../requirements.txt
+        python3 -m pip install --upgrade --force --no-cache-dir pip
+        python3 -m pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/../requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -70,7 +91,7 @@ runs:
       run: |
         echo '##[group]Publish Unit Test Results'
         [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
-        python $GITHUB_ACTION_PATH/../publish_unit_test_results.py
+        python3 $GITHUB_ACTION_PATH/../publish_unit_test_results.py
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
