@@ -122,6 +122,7 @@ jobs:
   config-deploy:
     name: Configure Deployment
     needs: test
+    if: github.event_name == 'push' && github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.action.outputs.image }}
