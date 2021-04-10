@@ -14,15 +14,16 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Setup MacOS
-        run: |
-          sudo localedef -i en_US -f UTF-8 en_US.UTF-8
-          sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
-
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.6
+
+      - name: debug
+        run: |
+          python -c "import sys; print(sys.platform)"
+          locale -a
+          locale
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -40,9 +41,17 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
+      - name: Prepare publish action from this branch
+        id: prepare-publish
+        if: always()
+        run: |
+          sed "s/image: .*/image: 'Dockerfile'/" action.yml > action.yml.tmp
+          mv action.yml.tmp action.yml
+          cat action.yml
+
       - name: Publish Unit Test Results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: ./
         with:
           check_name: Unit Test Results (Win)
           files: test-results/*.xml

@@ -19,6 +19,12 @@ jobs:
         with:
           python-version: 3.6
 
+      - name: debug
+        run: |
+          python -c "import sys; print(sys.platform)"
+          locale -a
+          locale
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -35,9 +41,16 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
+      - name: Prepare publish action from this branch
+        id: prepare-publish
+        if: always()
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+          cat action.yml
+
       - name: Publish Unit Test Results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: ./
         with:
           check_name: Unit Test Results (Win)
           files: test-results\*.xml
