@@ -10,38 +10,35 @@ on:
 
 jobs:
   test:
-    name: Test (${{ matrix.os }}, ${{ matrix.python-version }})
+    name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       max-parallel: 20
       matrix:
         os:
-          - macos-10.15
           - macos-latest
           - ubuntu-16.04
           - ubuntu-18.04
-          - ubuntu-20.04
           - ubuntu-latest
-          - windows-2019
           - windows-latest
-        python-version: [3.6]
+        python-version: [3.8]
 
         include:
           - os: macos-latest
-            python-version: 3.7
+            python-version: 3.6
           - os: macos-latest
-            python-version: 3.8
+            python-version: 3.7
 
           - os: ubuntu-latest
-            python-version: 3.7
+            python-version: 3.6
           - os: ubuntu-latest
-            python-version: 3.8
+            python-version: 3.7
 
           - os: windows-latest
-            python-version: 3.7
+            python-version: 3.6
           - os: windows-latest
-            python-version: 3.8
+            python-version: 3.7
 
     steps:
       - name: Setup Ubuntu
@@ -73,7 +70,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: Unit Test Results (${{ matrix.os }}, ${{ matrix.python-version }})
+          name: Unit Test Results (python-${{ matrix.python-version }}, ${{ matrix.os }})
           path: |
             test-results/*.xml
             unit-test-results.json
