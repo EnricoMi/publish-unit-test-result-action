@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 20
+      max-parallel: 10
       matrix:
         os:
           - macos-latest
@@ -76,7 +76,7 @@ jobs:
             unit-test-results.json
 
   test-build:
-    name: Build
+    name: Test Docker Build
     needs: test
     runs-on: ubuntu-latest
 
@@ -90,8 +90,8 @@ jobs:
       - name: Run Buildx
         run: docker buildx build --output "type=image,push=false" .
 
-  publish:
-    name: Publish Unit Test Results
+  publish-dockerfile:
+    name: Publish Unit Test Results (Dockerfile)
     needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
@@ -119,15 +119,27 @@ jobs:
           check_name: Unit Test Results (Dockerfile)
           files: "artifacts/**/*.xml"
 
-  publish-linux:
-    name: Publish Unit Test Results (Linux)
+  publish-composite:
+    name: Publish Unit Test Results (${{ matrix.os-label }})
     needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            os-label: Mac
+          - os: ubuntu-latest
+            os-label: Linux
+          - os: windows-latest
+            os-label: Windows
 
     steps:
       - name: Checkout
@@ -138,35 +150,10 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-
-      - name: Publish Unit Test Results
-        uses: ./composite
-        with:
-          check_name: Unit Test Results (Linux)
-          files: "artifacts/**/*.xml"
-
-  publish-mac:
-    name: Publish Unit Test Results (Mac)
-    needs: test
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+      - name: Detect OS
+        id: os
+        run: |
+          python -c "import os; print(f'::set-output name=path-sep::{os.path.sep}')"
 
       - name: Download Artifacts
         uses: actions/download-artifact@v2
@@ -176,38 +163,8 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./composite
         with:
-          check_name: Unit Test Results (Mac)
-          files: "artifacts/**/*.xml"
-
-  publish-win:
-    name: Publish Unit Test Results (Win)
-    needs: test
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-
-      - name: Publish Unit Test Results
-        uses: ./composite
-        with:
-          check_name: Unit Test Results (Win)
-          files: "artifacts\\**\\*.xml"
+          check_name: Unit Test Results (${{ matrix.os-label }})
+          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
   config-deploy:
     name: Configure Deployment
