@@ -60,7 +60,7 @@ runs:
         python -m pip install --upgrade --force --no-cache-dir pip
         pip install --upgrade --force --no-cache-dir virtualenv
         virtualenv venv
-        source venv/bin/activate
+        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
         python -m pip install --upgrade --force --no-cache-dir pip
         pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/../requirements.txt
         echo '##[endgroup]'
@@ -69,7 +69,7 @@ runs:
     - name: Publish Unit Test Results
       run: |
         echo '##[group]Publish Unit Test Results'
-        source venv/bin/activate
+        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
         python $GITHUB_ACTION_PATH/../publish_unit_test_results.py
         echo '##[endgroup]'
       env:

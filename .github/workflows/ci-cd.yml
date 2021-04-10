@@ -146,7 +146,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./composite
         with:
-          check_name: Unit Test Results (Mac)
+          check_name: Unit Test Results (Linux)
           files: "artifacts/**/*.xml"
 
   publish-mac:
