@@ -11,9 +11,16 @@ from unittestresults import get_stats, UnitTestCase, ParseError
 
 
 @contextlib.contextmanager
-def temp_locale(encoding) -> Any:
+def temp_locale(encoding: str) -> Any:
     old_locale = locale.getlocale()
-    locale.setlocale(locale.LC_ALL, encoding)
+    encodings = [f'{encoding}.utf8', f'{encoding}.utf-8', f'{encoding}.UTF8', f'{encoding}.UTF-8', encoding]
+    for encoding in encodings:
+        try:
+            locale.setlocale(locale.LC_ALL, encoding)
+            break
+        except:
+            pass
+        raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
     try:
         res = yield
     finally:
@@ -292,9 +299,9 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_formatted_digits(10), (2, 0))
         self.assertEqual(get_formatted_digits(100), (3, 0))
         self.assertEqual(get_formatted_digits(1234, 123, 0), (5, 0))
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(get_formatted_digits(1234, 123, 0), (5, 0))
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(get_formatted_digits(1234, 123, 0), (5, 0))
 
         self.assertEqual(get_formatted_digits(dict()), (3, 3))
@@ -302,9 +309,9 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_formatted_digits(dict(number=12)), (2, 3))
         self.assertEqual(get_formatted_digits(dict(number=123)), (3, 3))
         self.assertEqual(get_formatted_digits(dict(number=1234)), (5, 3))
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(get_formatted_digits(dict(number=1234)), (5, 3))
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(get_formatted_digits(dict(number=1234)), (5, 3))
 
         self.assertEqual(get_formatted_digits(dict(delta=1)), (3, 1))
@@ -312,9 +319,9 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_formatted_digits(dict(number=1, delta=12)), (1, 2))
         self.assertEqual(get_formatted_digits(dict(number=1, delta=123)), (1, 3))
         self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(get_formatted_digits(dict(number=1, delta=1234)), (1, 5))
 
     def test_get_magnitude(self):
@@ -368,11 +375,11 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_delta(1234, 6), '+  1 234')
         self.assertEqual(as_delta(123, 6), '+     123')
 
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
             self.assertEqual(as_delta(1234, 6), '+  1 234')
             self.assertEqual(as_delta(123, 6), '+     123')
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
             self.assertEqual(as_delta(1234, 6), '+  1 234')
             self.assertEqual(as_delta(123, 6), '+     123')
@@ -386,11 +393,11 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
         self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
             self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
             self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
@@ -404,10 +411,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_stat_number(dict(number=3, delta=+1), 2, 2, label), '  3 unit +  1 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
-        with temp_locale('en_US.utf8'):
+        with temp_locale('en_US'):
             self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
             self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
-        with temp_locale('de_DE.utf8'):
+        with temp_locale('de_DE'):
             self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
             self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
 
