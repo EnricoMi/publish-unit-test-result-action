@@ -64,8 +64,7 @@ jobs:
           done
 
       - name: Publish Unit Test Results
-        uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
+        uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          github_token: ${{ github.token }}
           commit: ${{ github.event.workflow_run.head_sha }}
           files: "artifacts/*/**/*.xml"

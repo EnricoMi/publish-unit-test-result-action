@@ -60,7 +60,7 @@ jobs:
           cd test
           python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
 
-      - name: Prepare to publish action from this branch
+      - name: Prepare publish action from this branch
         id: prepare-publish
         # we run the action from this branch whenever we can (when it runs in our repo's context)
         if: >
