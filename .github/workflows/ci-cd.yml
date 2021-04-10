@@ -12,10 +12,6 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.action.outputs.image }}
-      image-exists: ${{ steps.image.outputs.exists }}
-      image-version: ${{ steps.action.outputs.version }}
 
     steps:
       - name: Setup Ubuntu
@@ -29,24 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Extract action image and version
-        id: action
-        run: |
-          image=$(grep -A 10 "^runs:" action.yml | grep -E "\s+image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
-          version=$(cut -d : -f 2 <<< "$image")
-          echo "::set-output name=image::$image"
-          echo "::set-output name=version::$version"
-        shell: bash
-
-      - name: Check action image existence
-        id: image
-        run: |
-          if docker pull '${{ steps.action.outputs.image }}'
-          then
-            echo "::set-output name=exists::true"
-          fi
-        shell: bash
-
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade --force --no-cache-dir pip
@@ -59,24 +37,6 @@ jobs:
         run: |
           cd test
           python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
-
-      - name: Prepare publish action from this branch
-        id: prepare-publish
-        # we run the action from this branch whenever we can (when it runs in our repo's context)
-        if: >
-          always() &&
-          ( steps.action.outputs.image == 'Dockerfile' || steps.image.outputs.exists == 'true' ) &&
-          github.event.sender.login != 'dependabot[bot]' &&
-          ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-        run: |
-          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
-
-      - name: Publish Unit Test Results
-        if: always() && steps.prepare-publish.outcome != 'skipped'
-        uses: ./
-        with:
-          check_name: Unit Test Results (this branch)
-          files: "test-results/*.xml"
 
       - name: Upload Test Results
         if: always()
@@ -93,17 +53,78 @@ jobs:
       - name: Run Buildx
         run: docker buildx build --output "type=image,push=false" .
 
+  publish:
+    name: Publish
+    needs: build-and-test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (this branch)
+          files: "artifacts/**/*.xml"
+
+  config-deploy:
+    name: Configure
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.action.outputs.image }}
+      image-exists: ${{ steps.image.outputs.exists }}
+      image-version: ${{ steps.action.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Extract action image and version
+        id: action
+        run: |
+          image=$(grep -A 10 "^runs:" action.yml | grep -E "\s+image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
+          version=$(cut -d : -f 2 <<< "$image")
+          echo "::set-output name=image::$image"
+          echo "::set-output name=version::$version"
+        shell: bash
+
+      - name: Check action image existence
+        id: image
+        env:
+          DOCKER_CLI_EXPERIMENTAL: enabled
+        run: |
+          if docker manifest inspect '${{ steps.action.outputs.image }}'
+          then
+            echo "::set-output name=exists::true"
+          fi
+        shell: bash
+
   deploy:
     name: Deploy to GitHub
-    needs: build-and-test
+    needs: [build-and-test, config-deploy]
 
     # deploy image actions from commits pushed to master and
     # deploy Dockerfile actions from pushed version tags (no major versions)
     # but not on forked repositories
     if: >
       github.event_name == 'push' && (
-        needs.build-and-test.outputs.image != 'Dockerfile' && needs.build-and-test.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
-        needs.build-and-test.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
+        needs.config.outputs.image != 'Dockerfile' && needs.config.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
+        needs.config.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
       ) &&
       github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
@@ -122,8 +143,8 @@ jobs:
             type=match,pattern=(v\d+),group=1
             type=match,pattern=(v\d+.\d+),group=1
             type=match,pattern=(v\d+.\d+.\d+),group=1
-            type=semver,pattern=v{{major}},value=${{ needs.build-and-test.outputs.image-version }}.0
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.build-and-test.outputs.image-version }}.0
+            type=semver,pattern=v{{major}},value=${{ needs.config.outputs.image-version }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config.outputs.image-version }}.0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
