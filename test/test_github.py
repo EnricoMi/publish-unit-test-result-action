@@ -58,7 +58,8 @@ class TestGitHub(unittest.TestCase):
                 try:
                     with self.assertRaises(requests.exceptions.RetryError) as context:
                         self.gh.get_repo('owner/repo')
-                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo (Caused by ResponseError('too many {status} error responses'))", context.exception.args[0].args[0])
+                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
+                    self.assertIn(f"Caused by ResponseError('too many {status} error responses'", context.exception.args[0].args[0])
 
                 finally:
                     self.stop_api(server)
@@ -104,7 +105,8 @@ class TestGitHub(unittest.TestCase):
                                               status='completed',
                                               conclusion='success',
                                               output={})
-                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/check-runs (Caused by ResponseError('too many {status} error responses'))", context.exception.args[0].args[0])
+                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/check-runs", context.exception.args[0].args[0])
+                    self.assertIn(f"Caused by ResponseError('too many {status} error responses'", context.exception.args[0].args[0])
 
                     pr = repo.get_pull(1)
                     expected = {'id': 12345, 'number': 1, 'issue_url': 'http://localhost:12380/api/repos/owner/repo/issues/1'}
@@ -112,13 +114,15 @@ class TestGitHub(unittest.TestCase):
 
                     with self.assertRaises(requests.exceptions.RetryError) as context:
                         pr.create_issue_comment('issue comment body')
-                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/issues/1/comments (Caused by ResponseError('too many {status} error responses'))", context.exception.args[0].args[0])
+                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/issues/1/comments", context.exception.args[0].args[0])
+                    self.assertIn(f"Caused by ResponseError('too many {status} error responses'", context.exception.args[0].args[0])
 
                     with self.assertRaises(requests.exceptions.RetryError) as context:
                         self.gh._Github__requester.requestJsonAndCheck(
                             "POST", '/'.join([self.base_url, 'graphql']), input={}
                         )
-                    self.assertIn(f"Max retries exceeded with url: /api/graphql (Caused by ResponseError('too many {status} error responses'))", context.exception.args[0].args[0])
+                    self.assertIn(f"Max retries exceeded with url: /api/graphql", context.exception.args[0].args[0])
+                    self.assertIn(f"Caused by ResponseError('too many {status} error responses'", context.exception.args[0].args[0])
 
                 finally:
                     self.stop_api(server)
