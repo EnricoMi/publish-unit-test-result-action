@@ -269,7 +269,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, config-deploy]
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, config-deploy]
 
     # deploy image actions from commits pushed to master and
     # deploy Dockerfile actions from pushed version tags (no major versions)
