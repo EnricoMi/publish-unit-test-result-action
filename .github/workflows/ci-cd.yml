@@ -208,9 +208,7 @@ jobs:
       max-parallel: 3
       matrix:
         include:
-          - label: Run in Venv
-            run-in-venv: true
-          - label: With Python3
+          - label: setup-python
             with-python: true
 
     steps:
