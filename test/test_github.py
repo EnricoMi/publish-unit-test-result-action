@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 import unittest
 from multiprocessing import Process
@@ -9,6 +10,7 @@ from flask import Flask
 from publish_unit_test_results import get_github
 
 
+@unittest.skipIf(sys.platform != 'linux', 'Pickling the mock REST endpoint only works Linux')
 class TestGitHub(unittest.TestCase):
 
     base_url = f'http://localhost:12380/api'
