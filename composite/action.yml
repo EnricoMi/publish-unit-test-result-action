@@ -94,10 +94,20 @@ runs:
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}
+        COMMENT_TITLE: ${{ inputs.comment_title }}
+        FAIL_ON: ${{ inputs.fail_on }}
         FILES: ${{ inputs.files }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
+        HIDE_COMMENTS: ${{ inputs.hide_comments }}
+        COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
+        PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
+        TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}
+        CHECK_RUN_ANNOTATIONS: ${{ inputs.check_run_annotations }}
+        CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
+        ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
 branding:
