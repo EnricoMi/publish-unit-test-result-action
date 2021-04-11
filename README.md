@@ -11,7 +11,7 @@
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
 
 This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
-publishes the results on GitHub. It supports the JUnit XML file format.
+publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, maxOS and Windows.
 
 You can add this action to your GitHub workflow for Ubuntu runners (e.g. `runs-on: ubuntu-latest`) as follows:
 
