@@ -29,6 +29,14 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
     return 'success'
 
 
+def get_github(token: str, url: str, retries: int, backoff_factor: float) -> github.Github:
+    retry = Retry(total=retries,
+                  backoff_factor=backoff_factor,
+                  method_whitelist=Retry.DEFAULT_METHOD_WHITELIST.union({'GET', 'POST'}),
+                  status_forcelist=range(500, 600))
+    return github.Github(login_or_token=token, base_url=url, retry=retry)
+
+
 def main(settings: Settings) -> None:
     gha = GithubAction()
 
@@ -63,8 +71,7 @@ def main(settings: Settings) -> None:
     conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
     # publish the delta stats
-    retry = Retry(total=10, backoff_factor=1)
-    gh = github.Github(login_or_token=settings.token, base_url=settings.api_url, retry=retry)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
