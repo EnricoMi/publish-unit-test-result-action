@@ -161,7 +161,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
           - os: macos-latest
-            os-label: MacOS
+            os-label: macOS
           - os: ubuntu-latest
             os-label: Linux
           - os: windows-latest
