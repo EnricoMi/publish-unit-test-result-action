@@ -171,15 +171,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
       - name: Detect OS
         id: os
         run: |
-          python -c "import os; print(f'::set-output name=path-sep::{os.path.sep}')"
+          case "$OS" in
+            macos*) echo "::set-output name=path-sep::/";;
+            ubuntu*) echo "::set-output name=path-sep::/";;
+            windows*) echo "::set-output name=path-sep::\\";;
+          esac
+        shell: bash
+        env:
+          OS: ${{ matrix.os }}
 
       - name: Download Artifacts
         uses: actions/download-artifact@v2
