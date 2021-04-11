@@ -194,6 +194,39 @@ jobs:
           check_name: Unit Test Results (${{ matrix.os-label }})
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
+  publish-composite-extra:
+    name: Publish Unit Test Results (${{ matrix.label }})
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - label: Linux Venv
+            run-in-venv: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          run_in_venv: ${{ matrix.run-in-venv }}
+          check_name: Unit Test Results (${{ matrix.label }})
+          files: "artifacts/**/*.xml"
+
   config-deploy:
     name: Configure Deployment
     needs: test

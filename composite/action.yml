@@ -51,6 +51,10 @@ inputs:
   check_run_annotations_branch:
     description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
     required: false
+  run_in_venv:
+    description: 'Run the composite action in an virtual environment to isolate its modifications to the Python environment.'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -78,22 +82,32 @@ runs:
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        python3 -m pip install --upgrade --force --no-cache-dir pip
-        python3 -m pip install --upgrade --force --no-cache-dir virtualenv
-        python3 -m virtualenv -p python3 venv
-        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
-        python3 -m pip install --upgrade --force --no-cache-dir pip
+        if [[ "$RUN_IN_VENV" == "true" ]]
+        then
+          python3 -m pip install --upgrade --force --no-cache-dir pip
+          python3 -m pip install --upgrade --force --no-cache-dir virtualenv
+          python3 -m virtualenv -p python3 venv
+          [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
+        fi
+
         python3 -m pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/../requirements.txt
         echo '##[endgroup]'
+      env:
+        RUN_IN_VENV: ${{ inputs.run_in_venv }}
       shell: bash
 
     - name: Publish Unit Test Results
       run: |
         echo '##[group]Publish Unit Test Results'
-        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
+        if [[ "$RUN_IN_VENV" == "true" ]]
+        then
+          [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
+        fi
+
         python3 $GITHUB_ACTION_PATH/../publish_unit_test_results.py
         echo '##[endgroup]'
       env:
+        RUN_IN_VENV: ${{ inputs.run_in_venv }}
         GITHUB_TOKEN: ${{ inputs.github_token }}
         CHECK_NAME: ${{ inputs.check_name }}
         FILES: ${{ inputs.files }}
