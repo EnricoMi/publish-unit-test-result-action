@@ -1,3 +1,6 @@
+flask
 mock
 pytest
 pyyaml>=5.1
+requests
+urllib3<2.0.0
