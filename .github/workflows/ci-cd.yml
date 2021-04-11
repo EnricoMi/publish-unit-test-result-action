@@ -9,8 +9,225 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  test:
+    name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-16.04
+          - ubuntu-18.04
+          - ubuntu-latest
+          - windows-latest
+        python-version: [3.8]
+
+        include:
+          - os: macos-latest
+            python-version: 3.7
+          - os: ubuntu-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.7
+
+          - os: macos-latest
+            python-version: 3.6
+          - os: ubuntu-latest
+            python-version: 3.6
+          - os: windows-latest
+            python-version: 3.6
+
+    steps:
+      - name: Setup Ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
+        run: sudo apt-get install language-pack-en language-pack-de
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade --force --no-cache-dir pip
+          pip install --force --no-cache-dir -r requirements.txt
+          pip install --force --no-cache-dir -r test/requirements.txt
+
+      - name: PyTest
+        env:
+          PYTHONPATH: ..
+        run: |
+          cd test
+          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results (python-${{ matrix.python-version }}, ${{ matrix.os }})
+          path: |
+            test-results/*.xml
+            unit-test-results.json
+
+  publish-dockerfile:
+    name: Publish Unit Test Results (Dockerfile)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (Dockerfile)
+          files: "artifacts/**/*.xml"
+
+  publish-docker-image:
+    name: Publish Unit Test Results (Docker Image)
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: enricomi/publish-unit-test-result-action:latest
+          outputs: type=docker
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        # we run the action from this branch whenever we can (when it runs in our repo's context)
+        if: >
+          always() &&
+          github.event.sender.login != 'dependabot[bot]' &&
+          ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+        run: |
+          echo $GITHUB_EVENT_PATH
+          docker run --workdir $GITHUB_WORKSPACE --rm -e INPUT_CHECK_NAME -e INPUT_FILES -e INPUT_GITHUB_TOKEN -e INPUT_COMMIT -e INPUT_COMMENT_TITLE -e INPUT_FAIL_ON -e INPUT_REPORT_INDIVIDUAL_RUNS -e INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME -e INPUT_HIDE_COMMENTS -e INPUT_COMMENT_ON_PR -e INPUT_PULL_REQUEST_BUILD -e INPUT_TEST_CHANGES_LIMIT -e INPUT_CHECK_RUN_ANNOTATIONS -e INPUT_CHECK_RUN_ANNOTATIONS_BRANCH -e HOME -e GITHUB_JOB -e GITHUB_REF -e GITHUB_SHA -e GITHUB_REPOSITORY -e GITHUB_REPOSITORY_OWNER -e GITHUB_RUN_ID -e GITHUB_RUN_NUMBER -e GITHUB_RETENTION_DAYS -e GITHUB_ACTOR -e GITHUB_WORKFLOW -e GITHUB_HEAD_REF -e GITHUB_BASE_REF -e GITHUB_EVENT_NAME -e GITHUB_SERVER_URL -e GITHUB_API_URL -e GITHUB_GRAPHQL_URL -e GITHUB_WORKSPACE -e GITHUB_ACTION -e GITHUB_EVENT_PATH -e GITHUB_ACTION_REPOSITORY -e GITHUB_ACTION_REF -e GITHUB_PATH -e GITHUB_ENV -e RUNNER_OS -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE -e ACTIONS_RUNTIME_URL -e ACTIONS_RUNTIME_TOKEN -e ACTIONS_CACHE_URL -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "$RUNNER_TEMP":"$RUNNER_TEMP" -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" enricomi/publish-unit-test-result-action:latest
+        env:
+          INPUT_GITHUB_TOKEN: ${{ github.token }}
+          INPUT_CHECK_NAME: Unit Test Results (Docker Image)
+          INPUT_FILES: "artifacts/**/*.xml"
+
+  publish-composite:
+    name: Publish Unit Test Results (${{ matrix.os-label }})
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            os-label: macOS
+          - os: ubuntu-latest
+            os-label: Linux
+          - os: windows-latest
+            os-label: Windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Detect OS
+        id: os
+        run: |
+          case "$OS" in
+            macos*) echo "::set-output name=path-sep::/";;
+            ubuntu*) echo "::set-output name=path-sep::/";;
+            windows*) echo "::set-output name=path-sep::\\";;
+          esac
+        shell: bash
+        env:
+          OS: ${{ matrix.os }}
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (${{ matrix.os-label }})
+          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+
+  publish-composite-extra:
+    name: Publish Unit Test Results (setup-python)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (setup-python)
+          files: "artifacts/**/*.xml"
+
+  config-deploy:
+    name: Configure Deployment
+    needs: test
+    if: github.event_name == 'push' && github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.action.outputs.image }}
@@ -18,14 +235,6 @@ jobs:
       image-version: ${{ steps.action.outputs.version }}
 
     steps:
-      - name: Setup Ubuntu
-        run: sudo apt-get install language-pack-en language-pack-de
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.6
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -40,70 +249,26 @@ jobs:
 
       - name: Check action image existence
         id: image
+        env:
+          DOCKER_CLI_EXPERIMENTAL: enabled
         run: |
-          if docker pull '${{ steps.action.outputs.image }}'
+          if docker manifest inspect '${{ steps.action.outputs.image }}'
           then
             echo "::set-output name=exists::true"
           fi
         shell: bash
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade --force --no-cache-dir pip
-          pip install --force --no-cache-dir -r requirements.txt
-          pip install --force --no-cache-dir pytest mock
-
-      - name: PyTest
-        env:
-          PYTHONPATH: ..
-        run: |
-          cd test
-          python -m pytest --continue-on-collection-errors --junit-xml ../test-results/pytest.xml
-
-      - name: Prepare publish action from this branch
-        id: prepare-publish
-        # we run the action from this branch whenever we can (when it runs in our repo's context)
-        if: >
-          always() &&
-          ( steps.action.outputs.image == 'Dockerfile' || steps.image.outputs.exists == 'true' ) &&
-          github.event.sender.login != 'dependabot[bot]' &&
-          ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-        run: |
-          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
-
-      - name: Publish Unit Test Results
-        if: always() && steps.prepare-publish.outcome != 'skipped'
-        uses: ./
-        with:
-          check_name: Unit Test Results (this branch)
-          files: "test-results/*.xml"
-
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: Unit Test Results
-          path: |
-            test-results/*.xml
-            unit-test-results.json
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Run Buildx
-        run: docker buildx build --output "type=image,push=false" .
-
   deploy:
     name: Deploy to GitHub
-    needs: build-and-test
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, config-deploy]
 
     # deploy image actions from commits pushed to master and
     # deploy Dockerfile actions from pushed version tags (no major versions)
     # but not on forked repositories
     if: >
       github.event_name == 'push' && (
-        needs.build-and-test.outputs.image != 'Dockerfile' && needs.build-and-test.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
-        needs.build-and-test.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
+        needs.config.outputs.image != 'Dockerfile' && needs.config.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
+        needs.config.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
       ) &&
       github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
@@ -122,8 +287,8 @@ jobs:
             type=match,pattern=(v\d+),group=1
             type=match,pattern=(v\d+.\d+),group=1
             type=match,pattern=(v\d+.\d+.\d+),group=1
-            type=semver,pattern=v{{major}},value=${{ needs.build-and-test.outputs.image-version }}.0
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.build-and-test.outputs.image-version }}.0
+            type=semver,pattern=v{{major}},value=${{ needs.config.outputs.image-version }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config.outputs.image-version }}.0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -146,4 +311,4 @@ jobs:
           labels: |
             ${{ steps.docker-meta.outputs.labels }}
           pull: true
-          push: true
+          push: false

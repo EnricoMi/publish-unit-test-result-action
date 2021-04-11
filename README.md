@@ -6,14 +6,28 @@
 [![GitHub Workflows badge](https://badgen.net/runkit/enricom/605360cab46642001a8d33cf)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
 [![Docker pulls badge](https://badgen.net/runkit/enricom/60537dac094960001a30c2a7)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
 
-This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
-publishes the results on GitHub. It supports the JUnit XML file format.
+![Ubuntu badge](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label)
+![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
+![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
 
-You can add this action to your GitHub workflow as follows:
+This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
+publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
+
+You can add this action to your GitHub workflow for Ubuntu runners (e.g. `runs-on: ubuntu-latest`) as follows:
 
 ```yaml
 - name: Publish Unit Test Results
   uses: EnricoMi/publish-unit-test-result-action@v1
+  if: always()
+  with:
+    files: test-results/**/*.xml
+```
+
+Use this for macOS (e.g. `runs-on: macos-latest`) and Windows (e.g. `runs-on: windows-latest`) runners:
+
+```yaml
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action/composite@v1
   if: always()
   with:
     files: test-results/**/*.xml
