@@ -195,7 +195,7 @@ jobs:
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
   publish-composite-extra:
-    name: Publish Unit Test Results (${{ matrix.label }})
+    name: Publish Unit Test Results (setup-python)
     needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
@@ -203,20 +203,12 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        include:
-          - label: setup-python
-            with-python: true
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Python
-        if: matrix.with-python
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
@@ -229,8 +221,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./composite
         with:
-          run_in_venv: ${{ matrix.run-in-venv }}
-          check_name: Unit Test Results (${{ matrix.label }})
+          check_name: Unit Test Results (setup-python)
           files: "artifacts/**/*.xml"
 
   config-deploy:
