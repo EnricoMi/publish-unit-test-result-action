@@ -1,14 +1,13 @@
 import unittest
+from collections.abc import Collection
 
 import mock
 from github import Github
-from github_action import GithubAction
 
 from publish import *
+from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings
-from unittestresults import UnitTestCase, ParseError
-from collections.abc import Collection
-
+from publish.unittestresults import UnitTestCase, ParseError
 
 errors = [ParseError('file', 'error', 1, 2)]
 

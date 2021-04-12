@@ -1,13 +1,14 @@
-import mock
 import contextlib
 import locale
 import unittest
 
+import mock
+
 from publish import *
-from unittestresults import get_test_results
-from junit import parse_junit_xml_files
+from publish.junit import parse_junit_xml_files
+from publish.unittestresults import get_stats, UnitTestCase, ParseError
+from publish.unittestresults import get_test_results
 from test import d, n
-from unittestresults import get_stats, UnitTestCase, ParseError
 
 
 @contextlib.contextmanager

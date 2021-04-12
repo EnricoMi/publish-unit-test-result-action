@@ -4,13 +4,11 @@ import json
 import logging
 import re
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable
 
-from dataclasses import dataclass
-
-from unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
+from publish.unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
-
 
 logger = logging.getLogger('publish')
 digest_prefix = '[test-results]:data:application/gzip;base64,'

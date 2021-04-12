@@ -1,11 +1,11 @@
 import unittest
-from typing import Optional
 from distutils.version import LooseVersion
+from typing import Optional
 
 from junitparser import JUnitXml, Element, version
 
-from junit import parse_junit_xml_files, get_results, get_result, get_content, get_message
-from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+from publish.junit import parse_junit_xml_files, get_results, get_result, get_content, get_message
+from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 
 class TestElement(Element):

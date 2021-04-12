@@ -37,26 +37,26 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 
 Unit test results are published in the GitHub Actions section of the respective commit:
 
-![checks comment example](github-checks-comment.png)
+![checks comment example](misc/github-checks-comment.png)
 
 ***Note:** This action does not fail if unit tests failed. The action that executed the unit tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
 
 Each failing test will produce an annotation with failure details:
-![annotations example](github-checks-annotation.png)
+![annotations example](misc/github-checks-annotation.png)
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
 A comment is posted on the pull request of that commit, if one exists.
 In presence of failures or errors, the comment links to the respective check page with failure details:
 
-![pull request comment example](github-pull-request-comment.png)
+![pull request comment example](misc/github-pull-request-comment.png)
 
 The checks section of the pull request also lists a short summary (here `1 fail, 1 skipped, 17 pass in 12s`),
 and a link to the GitHub Actions section (here `Details`):
 
-![pull request checks example](github-pull-request-checks.png)
+![pull request checks example](misc/github-pull-request-checks.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
@@ -65,7 +65,7 @@ changes in the number of runs as well.
 The change statistics (e.g. 5 tests ±0) might sometimes hide test removal.
 Those are highlighted in pull request comments to easily spot unintended test removal:
 
-![pull request comment example with test changes](github-pull-request-comment-with-test-changes.png)
+![pull request comment example with test changes](misc/github-pull-request-comment-with-test-changes.png)
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 

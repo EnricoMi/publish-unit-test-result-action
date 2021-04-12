@@ -1,11 +1,11 @@
 import unittest
 from xml.etree.ElementTree import ParseError as XmlParseError
 
-from test import d, n
-from unittestresults import get_test_results, get_stats, get_stats_delta, \
+from publish.unittestresults import get_test_results, get_stats, get_stats_delta, \
     ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
     UnitTestCase, UnitTestResults, UnitTestCaseResults, \
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
+from test import d, n
 
 errors = [ParseError('file', 'error', None, None)]
 

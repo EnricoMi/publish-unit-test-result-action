@@ -1,7 +1,7 @@
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import Optional, List, Mapping, Any, Union, Dict
 from xml.etree.ElementTree import ParseError as XmlParseError
-from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
