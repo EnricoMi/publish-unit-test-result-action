@@ -9,10 +9,10 @@ LABEL com.github.actions.description="A GitHub Action to publish unit test resul
 LABEL com.github.actions.icon="check-circle"
 LABEL com.github.actions.color="green"
 
-COPY requirements.txt /action/
+COPY python/requirements.txt /action/
 RUN pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --force --no-cache-dir -r /action/requirements.txt
 
-COPY publish /action/publish
-COPY publish_unit_test_results.py /action/
+COPY python/publish /action/publish
+COPY python/publish_unit_test_results.py /action/
 
 ENTRYPOINT ["python", "/action/publish_unit_test_results.py"]
