@@ -36,6 +36,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_on_pr: bool
+    compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
     hide_comment_mode: str
@@ -53,14 +54,18 @@ class Publisher:
         self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
 
-    def publish(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str):
+    def publish(self,
+                stats: UnitTestRunResults,
+                cases: UnitTestCaseResults,
+                compare_earlier: bool,
+                conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run = self.publish_check(stats, cases, conclusion)
+        check_run = self.publish_check(stats, cases, compare_earlier, conclusion)
 
         if self._settings.comment_on_pr:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases, compare_earlier)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -152,11 +157,17 @@ class Publisher:
             return None
         return annotation.raw_details.split('\n')
 
-    def publish_check(self, stats: UnitTestRunResults, cases: UnitTestCaseResults, conclusion: str) -> CheckRun:
+    def publish_check(self,
+                      stats: UnitTestRunResults,
+                      cases: UnitTestCaseResults,
+                      compare_earlier: bool,
+                      conclusion: str) -> CheckRun:
         # get stats from earlier commits
-        before_commit_sha = self._settings.event.get('before')
-        logger.debug(f'comparing against before={before_commit_sha}')
-        before_stats = self.get_stats_from_commit(before_commit_sha)
+        before_stats = None
+        if compare_earlier:
+            before_commit_sha = self._settings.event.get('before')
+            logger.debug(f'comparing against before={before_commit_sha}')
+            before_stats = self.get_stats_from_commit(before_commit_sha)
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         logger.debug(f'stats with delta: {stats_with_delta}')
 
@@ -232,11 +243,14 @@ class Publisher:
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None,
+                        compare_earlier: bool = True) -> PullRequest:
         # compare them with earlier stats
-        base_commit_sha = self.get_base_commit_sha(pull_request)
-        logger.debug(f'comparing against base={base_commit_sha}')
-        base_check_run = self.get_check_run(base_commit_sha)
+        base_check_run = None
+        if compare_earlier:
+            base_commit_sha = self.get_base_commit_sha(pull_request)
+            logger.debug(f'comparing against base={base_commit_sha}')
+            base_check_run = self.get_check_run(base_commit_sha)
         base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, base_stats, 'base') if base_stats is not None else stats
         logger.debug(f'stats with delta: {stats_with_delta}')
