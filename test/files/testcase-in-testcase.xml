@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Project Test Suite" tests="5" assertions="12" errors="0" warnings="0" failures="0" skipped="0" time="4.807419">
+    <testsuite name="TestSuite1" file="path/" tests="2" assertions="7" errors="0" warnings="0" failures="0" skipped="0" time="2.642909">
+      <testcase name="TestCase1" class="someName" classname="someName" file="/somepath" line="34" assertions="3" time="1.321590"/>
+      <testcase name="TestCase2" class="someName" classname="someName" file="/somepath" line="65" assertions="4" time="1.321319"/>
+    </testsuite>
+    <testsuite name="TestSuite2" file="path/" tests="2" assertions="4" errors="0" warnings="0" failures="0" skipped="0" time="2.07634">
+      <testsuite name="TestSuite2.1" file="path/path2" tests="1" assertions="2" errors="0" warnings="0" failures="0" skipped="0" time="1.088170">
+        <testcase name="TestCase3" class="someName" classname="someName" file="/somepath" line="40" assertions="2" time="1.088170"/>
+      </testsuite>
+      <testcase name="TestCase4" class="someName" classname="someName" file="/somepath" line="40" assertions="2" time="0.988170"/>
+    </testsuite>
+    <testcase name="TestCase5" class="someName" classname="someName" file="/somepath" line="40" assertions="1" time="0.088170"/>
+  </testsuite>
+</testsuites>

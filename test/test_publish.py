@@ -1802,6 +1802,16 @@ class PublishTest(unittest.TestCase):
                               '\n'
                               'Results for commit a commit.\n'))
 
+    def test_files_with_testcase_in_testcase(self):
+        parsed = parse_junit_xml_files(['files/testcase-in-testcase.xml']).with_commit('example')
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        md = get_long_summary_md(stats)
+        self.assertEqual(md, ('1 files  1 suites   4s :stopwatch:\n'
+                              '5 tests 5 :heavy_check_mark: 0 :zzz: 0 :x:\n'
+                              '\n'
+                              'Results for commit example.\n'))
+
 
 if __name__ == '__main__':
     unittest.main()

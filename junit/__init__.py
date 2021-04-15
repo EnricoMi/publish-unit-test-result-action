@@ -107,6 +107,19 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
         except ValueError:
             return None
 
+    def get_cases(suite: TestSuite) -> List[TestCase]:
+        """
+        JUnit seems to allow for testsuite tags inside testsuite tags, potentially at any depth.
+        https://llg.cubic.org/docs/junit/
+
+        This skips all inner testsuite tags and returns a list of all contained testcase tags.
+        """
+        suites = list(suite.iterchildren(TestSuite))
+        cases = list(suite.iterchildren(TestCase))
+        return [case
+                for suite in suites
+                for case in get_cases(suite)] + cases
+
     cases = [
         UnitTestCase(
             result_file=result_file,
@@ -120,7 +133,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
             time=case.time
         )
         for result_file, suite in suites
-        for case in suite
+        for case in get_cases(suite)
         if case.classname is not None or case.name is not None
         for results in [get_results(case.result)]
     ]
