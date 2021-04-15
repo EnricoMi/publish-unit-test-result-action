@@ -3,7 +3,7 @@ from collections import defaultdict
 from html import unescape
 from typing import Optional, Iterable, Union, Any, List
 
-from junitparser import Element, JUnitXml
+from junitparser import Element, JUnitXml, TestCase, TestSuite
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
