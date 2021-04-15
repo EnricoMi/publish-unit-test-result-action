@@ -72,7 +72,7 @@ def main(settings: Settings) -> None:
 
     # publish the delta stats
     gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
-    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+    Publisher(settings, gh, gha).publish(stats, results.case_results, settings.compare_earlier, conclusion)
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
@@ -165,6 +165,7 @@ def get_settings(options: dict) -> Settings:
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_on_pr=get_var('COMMENT_ON_PR', options) != 'false',
+        compare_earlier=get_var('COMPARE_TO_EARLIER_COMMIT', options) != 'false',
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=test_changes_limit,
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',

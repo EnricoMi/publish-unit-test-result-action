@@ -130,6 +130,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_on_pr=True,
+                     compare_earlier=True,
                      test_changes_limit=10,
                      hide_comment_mode='off',
                      report_individual_runs=True,
@@ -149,6 +150,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_on_pr=comment_on_pr,
+            compare_earlier=compare_earlier,
             pull_request_build=pull_request_build_mode_merge,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
@@ -207,6 +209,14 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_ON_PR='True', expected=self.get_settings(comment_on_pr=True))
         self.do_test_get_settings(COMMENT_ON_PR='foo', expected=self.get_settings(comment_on_pr=True))
         self.do_test_get_settings(COMMENT_ON_PR=None, expected=self.get_settings(comment_on_pr=True))
+
+    def test_get_settings_compare_to_earlier_commit(self):
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='false', expected=self.get_settings(compare_earlier=False))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='True', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
     def test_get_settings_hide_comment_default(self):
         self.do_test_get_settings(HIDE_COMMENTS=None, expected=self.get_settings(hide_comment_mode='all but latest'))

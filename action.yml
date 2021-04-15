@@ -37,6 +37,10 @@ inputs:
     description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
     required: false
     default: 'true'
+  compare_to_earlier_commit:
+    description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
+    required: false
+    default: 'true'
   pull_request_build:
     description: 'Pull request events build a merge of the branch and the target branch, not just the commit that has been pushed. When your workflow deviates from this behaviour and builds the actual commit, then set this option to "commit". Defaults to "merge".'
     required: false
