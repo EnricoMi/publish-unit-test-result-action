@@ -3,7 +3,7 @@ import os
 import unittest
 from contextlib import contextmanager
 
-from github_action import GithubAction
+from publish.github_action import GithubAction
 
 
 @contextmanager

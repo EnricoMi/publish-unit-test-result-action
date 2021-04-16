@@ -7,9 +7,9 @@ import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing
+from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings
-from unittestresults import ParsedUnitTestResults, ParseError
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 

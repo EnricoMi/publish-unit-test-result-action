@@ -1,4 +1,3 @@
-import logging
 import re
 from dataclasses import dataclass
 from typing import List, Any, Optional, Tuple, Mapping
@@ -8,17 +7,15 @@ from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
-from github_action import GithubAction
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
     get_stats_from_digest, digest_prefix, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
     get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
     Annotation, SomeTestChanges
-from unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
-
-
-logger = logging.getLogger('publish.publisher')
+from publish import logger
+from publish.github_action import GithubAction
+from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
 @dataclass(frozen=True)

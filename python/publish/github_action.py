@@ -1,11 +1,9 @@
-import logging
 import os
 import sys
 from io import TextIOWrapper
 from typing import Mapping, Any, Optional
 
-
-logger = logging.getLogger('github_action')
+from publish import logger
 
 
 class GithubAction:

@@ -7,14 +7,13 @@ from typing import List, Optional, Union
 import github
 from urllib3.util.retry import Retry
 
-import github_action
 import publish
-from github_action import GithubAction
-from junit import parse_junit_xml_files
 from publish import hide_comments_modes, available_annotations, default_annotations, \
-    pull_request_build_modes, publisher, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures
+    pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures
+from publish.github_action import GithubAction
+from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
-from unittestresults import get_test_results, get_stats, ParsedUnitTestResults
+from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -194,9 +193,7 @@ if __name__ == "__main__":
 
     log_level = get_var('LOG_LEVEL', options) or 'INFO'
     logger.level = logging.getLevelName(log_level)
-    github_action.logger.level = logging.getLevelName(log_level)
     publish.logger.level = logging.getLevelName(log_level)
-    publisher.logger.level = logging.getLevelName(log_level)
 
     settings = get_settings(options)
     main(settings)

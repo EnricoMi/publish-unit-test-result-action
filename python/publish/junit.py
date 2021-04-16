@@ -1,9 +1,11 @@
 import os
+from collections import defaultdict
 from html import unescape
 from typing import Optional, Iterable, Union, Any, List
-from collections import defaultdict
-from junitparser import *
-from unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+
+from junitparser import Element, JUnitXml, TestCase, TestSuite
+
+from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 
 def get_results(results: Union[Element, List[Element]]) -> List[Element]:
