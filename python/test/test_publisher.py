@@ -2,7 +2,7 @@ import unittest
 from collections.abc import Collection
 
 import mock
-from github import Github
+from github import Github, GithubException
 
 from publish import *
 from publish.github_action import GithubAction
@@ -481,6 +481,20 @@ class TestPublisher(unittest.TestCase):
             [settings.check_name, 'other check', 'more checks'],
             self.get_stats('base')
         )
+
+    def test_get_stats_from_commit_not_exists(self):
+        def exception(commit: str):
+            raise GithubException(422, {'message': f"No commit found for SHA: {commit}"})
+
+        settings = self.create_settings()
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+        repo.get_commit = mock.Mock(side_effect=exception)
+        publisher = Publisher(settings, gh, gha)
+
+        actual = publisher.get_stats_from_commit('commitsha')
+        self.assertEqual(None, actual)
+        gha.warning.assert_called_once_with("{'message': 'No commit found for SHA: commitsha'}")
+        gha.error.assert_called_once_with("Could not find commit commitsha")
 
     all_tests_annotation = mock.Mock()
     all_tests_annotation.title = '1 test found'

@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Any, Optional, Tuple, Mapping
 
-from github import Github
+from github import Github, GithubException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
@@ -119,7 +119,15 @@ class Publisher:
         if commit_sha is None or commit_sha == '0000000000000000000000000000000000000000':
             return None
 
-        commit = self._repo.get_commit(commit_sha)
+        commit = None
+        try:
+            commit = self._repo.get_commit(commit_sha)
+        except GithubException as e:
+            if e.status == 422:
+                self._gha.warning(str(e.data))
+            else:
+                raise e
+
         if commit is None:
             self._gha.error(f'Could not find commit {commit_sha}')
             return None
