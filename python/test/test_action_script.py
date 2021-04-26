@@ -437,7 +437,11 @@ class Test(unittest.TestCase):
                         self.assertEqual(['file1.txt', 'file3.bin'], sorted(files))
 
     def test_get_files_subdir_and_wildcard(self):
-        filenames = ['sub/file1.txt', 'sub/file2.txt', 'sub/file3.bin', 'sub2/file4.txt', 'file5.txt']
+        filenames = [os.path.join('sub', 'file1.txt'),
+                     os.path.join('sub', 'file2.txt'),
+                     os.path.join('sub', 'file3.bin'),
+                     os.path.join('sub2', 'file4.txt'),
+                     'file5.txt']
         with tempfile.TemporaryDirectory() as path:
             with chdir(path):
                 os.mkdir('sub')
@@ -447,10 +451,15 @@ class Test(unittest.TestCase):
                         pass
 
                 files = get_files('sub/*.txt')
-                self.assertEqual(['sub/file1.txt', 'sub/file2.txt'], sorted(files))
+                self.assertEqual([os.path.join('sub', 'file1.txt'),
+                                  os.path.join('sub', 'file2.txt')], sorted(files))
 
     def test_get_files_recursive_wildcard(self):
-        filenames = ['sub/file1.txt', 'sub/file2.txt', 'sub/file3.bin', 'sub2/file4.txt', 'file5.txt']
+        filenames = [os.path.join('sub', 'file1.txt'),
+                     os.path.join('sub', 'file2.txt'),
+                     os.path.join('sub', 'file3.bin'),
+                     os.path.join('sub2', 'file4.txt'),
+                     'file5.txt']
         with tempfile.TemporaryDirectory() as path:
             with chdir(path):
                 os.mkdir('sub')
@@ -460,7 +469,10 @@ class Test(unittest.TestCase):
                         pass
 
                 files = get_files('**/*.txt')
-                self.assertEqual(['file5.txt', 'sub/file1.txt', 'sub/file2.txt', 'sub2/file4.txt'], sorted(files))
+                self.assertEqual(sorted(['file5.txt',
+                                         os.path.join('sub', 'file1.txt'),
+                                         os.path.join('sub', 'file2.txt'),
+                                         os.path.join('sub2', 'file4.txt')]), sorted(files))
 
     def test_get_files_character_range(self):
         filenames = ['file1.txt', 'file2.txt', 'file3.bin']
