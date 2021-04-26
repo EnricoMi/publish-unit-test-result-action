@@ -9,7 +9,8 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     fail_on_mode_nothing
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
-    get_settings, get_annotations_config, Settings
+    get_settings, get_annotations_config, Settings, get_files
+from test import chdir
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
@@ -172,6 +173,11 @@ class Test(unittest.TestCase):
     def test_get_settings_github_graphql_url_default(self):
         self.do_test_get_settings(GITHUB_GRAPHQL_URL=None, expected=self.get_settings(graphql_url='https://api.github.com/graphql'))
 
+    def test_get_settings_files(self):
+        self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
+        self.do_test_get_settings(FILES='file\nfile2', expected=self.get_settings(files_glob='file\nfile2'))
+        self.do_test_get_settings(FILES=None, expected=self.get_settings(files_glob='*.xml'))
+
     def test_get_settings_commit_default(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
         self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request'))
@@ -253,10 +259,6 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None)
         self.assertEqual('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', str(re.exception))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(FILES=None)
-        self.assertEqual('Files pattern must be provided via action input or environment variable FILES', str(re.exception))
 
     def test_get_settings_unknown_values(self):
         with self.assertRaises(RuntimeError) as re:
@@ -383,3 +385,134 @@ class Test(unittest.TestCase):
     def test_get_annotations_config_default(self):
         config = get_annotations_config({}, None)
         self.assertEqual(['all tests', 'skipped tests'], config)
+
+    def test_get_files_single(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('file1.txt')
+                self.assertEqual(['file1.txt'], sorted(files))
+
+    def test_get_files_multi(self):
+        for sep in ['\n', '\r\n', '\n\r', '\n\n', '\r\n\r\n']:
+            with self.subTest(sep=sep):
+                filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+                with tempfile.TemporaryDirectory() as path:
+                    with chdir(path):
+                        for filename in filenames:
+                            with open(filename, mode='w'):
+                                pass
+
+                        files = get_files(f'file1.txt{sep}file2.txt')
+                        self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
+
+    def test_get_files_single_wildcard(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        for wildcard in ['*.txt', 'file?.txt']:
+            with self.subTest(wildcard=wildcard):
+                with tempfile.TemporaryDirectory() as path:
+                    with chdir(path):
+                        for filename in filenames:
+                            with open(filename, mode='w'):
+                                pass
+
+                        files = get_files(wildcard)
+                        self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
+
+    def test_get_files_multi_wildcard(self):
+        for sep in ['\n', '\r\n', '\n\r', '\n\n', '\r\n\r\n']:
+            with self.subTest(sep=sep):
+                filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+                with tempfile.TemporaryDirectory() as path:
+                    with chdir(path):
+                        for filename in filenames:
+                            with open(filename, mode='w'):
+                                pass
+
+                        files = get_files(f'*1.txt{sep}*3.bin')
+                        self.assertEqual(['file1.txt', 'file3.bin'], sorted(files))
+
+    def test_get_files_subdir_and_wildcard(self):
+        filenames = ['sub/file1.txt', 'sub/file2.txt', 'sub/file3.bin', 'sub2/file4.txt', 'file5.txt']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                os.mkdir('sub')
+                os.mkdir('sub2')
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('sub/*.txt')
+                self.assertEqual(['sub/file1.txt', 'sub/file2.txt'], sorted(files))
+
+    def test_get_files_recursive_wildcard(self):
+        filenames = ['sub/file1.txt', 'sub/file2.txt', 'sub/file3.bin', 'sub2/file4.txt', 'file5.txt']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                os.mkdir('sub')
+                os.mkdir('sub2')
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('**/*.txt')
+                self.assertEqual(['file5.txt', 'sub/file1.txt', 'sub/file2.txt', 'sub2/file4.txt'], sorted(files))
+
+    def test_get_files_character_range(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('file[0-2].*')
+                self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
+
+    def test_get_files_multi_match(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('*.txt\nfile*.txt\nfile2.*')
+                self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
+
+    def test_get_files_absolute_path_and_wildcard(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files(os.path.join(path, '*'))
+                self.assertEqual([os.path.join(path, file) for file in filenames], sorted(files))
+
+    def test_get_files_exclude_only(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('!file*.txt')
+                self.assertEqual([], sorted(files))
+
+    def test_get_files_include_and_exclude(self):
+        filenames = ['file1.txt', 'file2.txt', 'file3.bin']
+        with tempfile.TemporaryDirectory() as path:
+            with chdir(path):
+                for filename in filenames:
+                    with open(filename, mode='w'):
+                        pass
+
+                files = get_files('*.txt\n!file1.txt')
+                self.assertEqual(['file2.txt'], sorted(files))
