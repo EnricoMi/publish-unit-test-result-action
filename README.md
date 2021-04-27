@@ -85,7 +85,7 @@ The action can be configured by the following options. They are all optional exc
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|`**/*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
+|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
