@@ -85,7 +85,7 @@ The action can be configured by the following options. They are all optional exc
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`| |A file pattern to select the test result XML files, e.g. `test-results/**/*.xml`|
+|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
@@ -101,9 +101,18 @@ The action can be configured by the following options. They are all optional exc
 |`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run (comma-separated list):<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests,<br>`none` - no extra annotations at all|
 |`check_run_annotations_branch`|default branch|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 
-Files can be selected via the `files` variable, which is optional and defaults to the current working directory.
-It supports wildcards like `*`, `**`, `?` and `[]`. The `**` wildcard matches
-[directories recursively](https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob): `./`, `./*/`, `./*/*/`, etc.
+Files can be selected via the `files` variable, which is optional and defaults to `*.xml` in the current working directory.
+[It supports wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
+The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
+You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
+There have to be at least one pattern starting without a `!`:
+
+```yaml
+with:
+  files: |
+    *.xml
+    !config.xml
+```
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
 Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,
