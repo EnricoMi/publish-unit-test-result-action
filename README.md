@@ -291,3 +291,38 @@ jobs:
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
+
+## Using Caching with the Composite Action
+
+The composite version of the action
+(`EnricoMi/publish-unit-test-result-action/composite@v1`) creates a Python
+virtual environment. Setting it up can take quite a long time, slowing down
+your builds. Unfortunately, a GitHub composite action cannot use the `action/cache`
+action, so to accelerate things you'll have to take care of caching the `venv/`
+directory yourself. E.g.:
+
+```yaml
+- name: Setup Python 3.8
+  id: setup_python
+  uses: actions/setup-python@v2
+  with:
+    architecture: "x64"
+    python-version: "3.8"
+- name: Restore Python venv from cache
+  uses: actions/cache@v2
+  with:
+    path: ${{ github.workspace }}/venv
+    key: |
+      ${{ runner.os }}-venv-pub@v1.13-py${{ steps.setup_python.outputs.python-version }}-invalidate"
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action/composite@v1.13
+  if: always()
+  with:
+    files: test-results/**/*.xml
+```
+
+Make sure that the cache `key` is unique to the setup. E.g. when using a
+`matrix` strategy that switches between different Python versions and
+architectures, that should be part of the key. Also, the `key` should depend on
+the exact version number of this action so that when you update to a newer
+version that the cache gets invalidated.
