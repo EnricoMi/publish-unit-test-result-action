@@ -59,9 +59,11 @@ runs:
   using: 'composite'
   steps:
     - name: Check for Python3
+      id: python-check
       run: |
         echo '##[group]Check for Python3'
-        if ! which python3
+        interpreter=python3
+        if ! which $interpreter
         then
           if ! which python || [[ $(python -V) != *"python 3."* ]]
           then
@@ -71,20 +73,25 @@ runs:
 
           interpreter="$(which python)"
           interpreter3="${interpreter}3"
-          if [[ ! -e "$interpreter3" ]]
+          if [[ -e "$interpreter3" ]]
           then
-            ln -s $interpreter3 $interpreter
+            interpreter="$interpreter3"
           fi
+        else
+          interpreter="$(which python3)"
         fi
+        if command -v realpath &> /dev/null
+        then
+          interpreter="$(realpath $interpreter)"
+        fi
+        echo "::set-output name=interpreter::$interpreter"
         echo '##[endgroup]'
       shell: bash
 
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        # venv module fails if run through a symlink,
-        # see https://github.com/actions/virtual-environments/issues/2690
-        PY=$(realpath $(which python3))
+        PY="${{ steps.python-check.outputs.interpreter }}"
         "$PY" -m venv venv
         [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/activate
         python -m pip install --upgrade --no-cache-dir wheel
