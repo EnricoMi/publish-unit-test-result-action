@@ -12,10 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-from contextlib import contextmanager
-
-
 def n(number, delta=None):
     if delta is None:
         return dict(number=number)
@@ -26,13 +22,3 @@ def d(duration, delta=None):
     if delta is None:
         return dict(duration=duration)
     return dict(duration=duration, delta=delta)
-
-
-@contextmanager
-def chdir(path: str):
-    cwd = os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(cwd)
