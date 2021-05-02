@@ -21,7 +21,7 @@ inputs:
     required: false
     default: 'test failures'
   files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
+    description: 'File pattern of test result files'
     required: true
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
