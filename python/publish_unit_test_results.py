@@ -41,12 +41,12 @@ def get_files(multiline_files_globs: str) -> List[str]:
     multiline_files_globs = re.split('\r?\n\r?', multiline_files_globs)
     included = {str(file)
                 for files_glob in multiline_files_globs
-                for file in glob(files_glob, recursive=True)
-                if not files_glob.startswith('!')}
+                if not files_glob.startswith('!')
+                for file in glob(files_glob, recursive=True)}
     excluded = {str(file)
                 for files_glob in multiline_files_globs
-                for file in glob(files_glob[1:], recursive=True)
-                if files_glob.startswith('!')}
+                if files_glob.startswith('!')
+                for file in glob(files_glob[1:], recursive=True)}
     return list(included - excluded)
 
 

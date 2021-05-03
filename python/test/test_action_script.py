@@ -455,24 +455,48 @@ class Test(unittest.TestCase):
                                   os.path.join('sub', 'file2.txt')], sorted(files))
 
     def test_get_files_recursive_wildcard(self):
-        filenames = [os.path.join('sub', 'file1.txt'),
-                     os.path.join('sub', 'file2.txt'),
-                     os.path.join('sub', 'file3.bin'),
-                     os.path.join('sub2', 'file4.txt'),
-                     'file5.txt']
-        with tempfile.TemporaryDirectory() as path:
-            with chdir(path):
-                os.mkdir('sub')
-                os.mkdir('sub2')
-                for filename in filenames:
-                    with open(filename, mode='w'):
-                        pass
+        for pattern, expected in [('**/*.txt', ['file6.txt', os.path.join('sub', 'file1.txt'), os.path.join('sub', 'file2.txt'), os.path.join('sub2', 'file4.txt'), os.path.join('sub2', 'sub3', 'sub4', 'file5.txt')]),
+                                  ('./**/*.txt', [os.path.join('.', 'file6.txt'), os.path.join('.', 'sub', 'file1.txt'), os.path.join('.', 'sub', 'file2.txt'), os.path.join('.', 'sub2', 'file4.txt'), os.path.join('.', 'sub2', 'sub3', 'sub4', 'file5.txt')]),
+                                  ('*/**/*.txt', [os.path.join('sub', 'file1.txt'), os.path.join('sub', 'file2.txt'), os.path.join('sub2', 'file4.txt'), os.path.join('sub2', 'sub3', 'sub4', 'file5.txt')])]:
+            with self.subTest(pattern=pattern):
+                filenames = [os.path.join('sub', 'file1.txt'),
+                             os.path.join('sub', 'file2.txt'),
+                             os.path.join('sub', 'file3.bin'),
+                             os.path.join('sub2', 'file4.txt'),
+                             os.path.join('sub2', 'sub3', 'sub4', 'file5.txt'),
+                             'file6.txt']
+                with tempfile.TemporaryDirectory() as path:
+                    with chdir(path):
+                        os.mkdir('sub')
+                        os.mkdir('sub2')
+                        os.mkdir(os.path.join('sub2', 'sub3'))
+                        os.mkdir(os.path.join('sub2', 'sub3', 'sub4'))
+                        for filename in filenames:
+                            with open(filename, mode='w'):
+                                pass
 
-                files = get_files('**/*.txt')
-                self.assertEqual(sorted(['file5.txt',
-                                         os.path.join('sub', 'file1.txt'),
-                                         os.path.join('sub', 'file2.txt'),
-                                         os.path.join('sub2', 'file4.txt')]), sorted(files))
+                        files = get_files(pattern)
+                        self.assertEqual(sorted(expected), sorted(files))
+
+    def test_get_files_symlinks(self):
+        for pattern, expected in [('**/*.txt', [os.path.join('sub1', 'file1.txt'), os.path.join('sub2', 'file2.txt'), os.path.join('sub1', 'sub2', 'file2.txt')]),
+                                  ('./**/*.txt', [os.path.join('.', 'sub1', 'file1.txt'), os.path.join('.', 'sub2', 'file2.txt'), os.path.join('.', 'sub1', 'sub2', 'file2.txt')]),
+                                  ('*/*.txt', [os.path.join('sub1', 'file1.txt'), os.path.join('sub2', 'file2.txt')])]:
+            with self.subTest(pattern=pattern):
+                with tempfile.TemporaryDirectory() as path:
+                    print(path)
+                    filenames = [os.path.join('sub1', 'file1.txt'),
+                                 os.path.join('sub2', 'file2.txt')]
+                    with chdir(path):
+                        os.mkdir('sub1')
+                        os.mkdir('sub2')
+                        for filename in filenames:
+                            with open(filename, mode='w'):
+                                pass
+                        os.symlink(os.path.join(path, 'sub2'), os.path.join(path, 'sub1', 'sub2'), target_is_directory=True)
+
+                        files = get_files(pattern)
+                        self.assertEqual(sorted(expected), sorted(files))
 
     def test_get_files_character_range(self):
         filenames = ['file1.txt', 'file2.txt', 'file3.bin']
@@ -528,3 +552,9 @@ class Test(unittest.TestCase):
 
                 files = get_files('*.txt\n!file1.txt')
                 self.assertEqual(['file2.txt'], sorted(files))
+
+    def test_get_files_with_mock(self):
+        with mock.patch('publish_unit_test_results.glob') as m:
+            files = get_files('*.txt\n!file1.txt')
+            self.assertEqual([], files)
+            self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
