@@ -85,8 +85,7 @@ runs:
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        python3 -m pip install --upgrade --force pip
-        python3 -m pip install --upgrade --force -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
