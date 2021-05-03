@@ -85,12 +85,6 @@ runs:
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        if [ "${{ runner.os }}" == "Windows" ]
-        then
-          # windows needs wheel to build some dependencies
-          # where those wheel packages can then be cached
-          python3 -m pip install wheel
-        fi
         python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash

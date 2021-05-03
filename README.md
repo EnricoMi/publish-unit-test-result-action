@@ -250,7 +250,7 @@ publish-test-results:
 
 In situations where downloading the action's dependency packages and building wheel files takes very long,
 you can [cache files downloaded and built by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip).
-This is especially useful for Windows runner:
+This is especially useful for *Windows* runners:
 
 ```yaml
 - name: Cache PIP Packages
@@ -260,6 +260,12 @@ This is especially useful for Windows runner:
     key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, 'composite/action.yml') }}
     restore-keys: |
       ${{ runner.os }}-pip-
+
+- name: Install package wheel
+  # only needed on Windows, and only when on cache miss
+  if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
+  run: python3 -m pip install wheel
+
 - name: Publish Unit Test Results
   uses: EnricoMi/publish-unit-test-result-action/composite@v1
 …
