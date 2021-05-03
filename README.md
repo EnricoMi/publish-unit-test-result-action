@@ -205,8 +205,10 @@ Self-hosted runners may require setting up a Python environment first:
     python-version: 3.8
 ```
 
+### Isolating composite action from your workflow
+
 Note that the composite action modifies this Python environment by upgrading PIP and installing dependency packages.
-If this conflicts with actions that later run Python in the same workflow, it is recommended to run this action in an isolated workflow.
+If this conflicts with actions that later run Python in the same workflow (rare case), it is recommended to run this action in an isolated workflow.
 This is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
 
 Your CI workflow should upload all test result XML files:
@@ -248,22 +250,43 @@ publish-test-results:
        files: artifacts/**/*.xml
 ```
 
-In situations where downloading the action's dependency packages and building wheel files takes very long,
-you can [cache files downloaded and built by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip).
-This is especially useful for *Windows* runners:
+### Slow startup of composite action
+
+In some environments, the composite action startup can be slow due to installing Python dependencies.
+This is usually the case for **Windows** runners (in this example 35 seconds startup time):
+
+```
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Run ./composite
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Check for Python3
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Install Python dependencies
+Mon, 03 May 2021 11:57:35 GMT   ⏵ Publish Unit Test Results
+```
+
+This can be improved by caching the PIP cache directory. If you see the following warning in
+the composite action output, then installing the `wheel` package can also be beneficial (see further below):
+
+```
+Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
+```
+
+You can [cache files downloaded and built by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip)
+using the `actions/cache` action, and conditionally install the `wheel`package as follows:
 
 ```yaml
 - name: Cache PIP Packages
   uses: actions/cache@v2
+  id: cache
   with:
     path: ~\AppData\Local\pip\Cache
     key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, 'composite/action.yml') }}
     restore-keys: |
       ${{ runner.os }}-pip-
 
+# only needed if you see this warning in action log output otherwise:
+#   Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
 - name: Install package wheel
-  # only needed on Windows, and only when on cache miss
-  if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
+  # only needed on cache miss
+  if: steps.cache.outputs.cache-hit != 'true'
   run: python3 -m pip install wheel
 
 - name: Publish Unit Test Results
@@ -275,6 +298,15 @@ Use the correct `path:`, depending on your action runner's OS:
 - macOS: `~/Library/Caches/pip`
 - Windows: `~\AppData\Local\pip\Cache`
 - Ubuntu: `~/.cache/pip`
+
+With a cache populated by an earlier run, we can see startup time improvement (in this example down to 11 seconds):
+
+```
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Run ./composite
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
+Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
+```
 
 ## Support fork repositories and dependabot branches
 
