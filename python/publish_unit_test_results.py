@@ -1,7 +1,8 @@
 import json
 import logging
 import os
-import pathlib
+import re
+from glob import glob
 from typing import List, Optional, Union
 
 import github
@@ -36,6 +37,19 @@ def get_github(token: str, url: str, retries: int, backoff_factor: float) -> git
     return github.Github(login_or_token=token, base_url=url, retry=retry)
 
 
+def get_files(multiline_files_globs: str) -> List[str]:
+    multiline_files_globs = re.split('\r?\n\r?', multiline_files_globs)
+    included = {str(file)
+                for files_glob in multiline_files_globs
+                if not files_glob.startswith('!')
+                for file in glob(files_glob, recursive=True)}
+    excluded = {str(file)
+                for files_glob in multiline_files_globs
+                if files_glob.startswith('!')
+                for file in glob(files_glob[1:], recursive=True)}
+    return list(included - excluded)
+
+
 def main(settings: Settings) -> None:
     gha = GithubAction()
 
@@ -48,7 +62,7 @@ def main(settings: Settings) -> None:
         return
 
     # resolve the files_glob to files
-    files = [str(file) for file in pathlib.Path().glob(settings.files_glob)]
+    files = get_files(settings.files_glob)
     if len(files) == 0:
         gha.warning(f'Could not find any files for {settings.files_glob}')
     else:
@@ -160,7 +174,7 @@ def get_settings(options: dict) -> Settings:
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
-        files_glob=get_var('FILES', options),
+        files_glob=get_var('FILES', options) or '*.xml',
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_on_pr=get_var('COMMENT_ON_PR', options) != 'false',
@@ -177,7 +191,6 @@ def get_settings(options: dict) -> Settings:
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
-    check_var(settings.files_glob, 'FILES', 'Files pattern')
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
