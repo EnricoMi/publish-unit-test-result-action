@@ -85,18 +85,14 @@ runs:
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        python3 -m pip install --upgrade --force --no-cache-dir pip
-        python3 -m pip install --upgrade --force --no-cache-dir virtualenv
-        python3 -m virtualenv -p python3 venv
-        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
-        python3 -m pip install --upgrade --force --no-cache-dir -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install --upgrade --force pip
+        python3 -m pip install --upgrade --force -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
     - name: Publish Unit Test Results
       run: |
         echo '##[group]Publish Unit Test Results'
-        [ -f venv/bin/activate ] && source venv/bin/activate || source venv/Scripts/Activate
         python3 $GITHUB_ACTION_PATH/../python/publish_unit_test_results.py
         echo '##[endgroup]'
       env:

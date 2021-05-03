@@ -177,20 +177,37 @@ jobs:
 
       - name: Detect OS
         id: os
-        run: |
-          case "$OS" in
-            macos*) echo "::set-output name=path-sep::/";;
-            ubuntu*) echo "::set-output name=path-sep::/";;
-            windows*) echo "::set-output name=path-sep::\\";;
-          esac
-        shell: bash
         env:
           OS: ${{ matrix.os }}
+        run: |
+          case "$OS" in
+            ubuntu*)
+              echo "::set-output name=path-sep::/"
+              echo "::set-output name=pip-cache::~/.cache/pip"
+              ;;
+            macos*)
+              echo "::set-output name=path-sep::/"
+              echo "::set-output name=pip-cache::~/Library/Caches/pip"
+              ;;
+            windows*)
+              echo "::set-output name=path-sep::\\"
+              echo "::set-output name=pip-cache::~\\AppData\\Local\\pip\\Cache"
+              ;;
+          esac
+        shell: bash
 
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
           path: artifacts
+
+      - name: Cache PIP Packages
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.os.outputs.pip-cache }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Publish Unit Test Results
         uses: ./composite
@@ -211,6 +228,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Cache PIP Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-extra-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-extra-
+            ${{ runner.os }}-pip-
 
       - name: Setup Python
         uses: actions/setup-python@v2
