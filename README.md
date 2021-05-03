@@ -33,6 +33,9 @@ Use this for macOS (e.g. `runs-on: macos-latest`) and Windows (e.g. `runs-on: wi
     files: test-results/**/*.xml
 ```
 
+See the [notes on running this action as a composite action](#running-as-a-composite-action) if you
+run it on Windows or macOS.
+
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
 Unit test results are published in the GitHub Actions section of the respective commit:
@@ -185,6 +188,88 @@ jobs:
         with:
           files: artifacts/**/*.xml
 ```
+
+## Running as a composite action
+
+Running this action as a composite action allows to run it on various operating systems as it
+does not require Docker. The composite action, however, requires a Python3 environment to be setup
+on the action runner. All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
+Python3 environment out-of-the-box.
+
+Self-hosted runners may require setting up a Python environment first:
+
+```yaml
+- name: Setup Python
+  uses: actions/setup-python@v2
+  with:
+    python-version: 3.8
+```
+
+Note that the composite action modifies this Python environment by upgrading PIP and installing dependency packages.
+If this conflicts with actions that later run Python in the same workflow, it is recommended to run this action in an isolated workflow.
+This is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
+
+Your CI workflow should upload all test result XML files:
+
+```yaml
+build-and-test:
+   name: "Build and Test"
+   runs-on: macos-latest
+
+   steps:
+   - …
+   - name: Upload Unit Test Results
+     if: always()
+     uses: actions/upload-artifact@v2
+     with:
+       name: Unit Test Results
+       path: test-results/**/*.xml
+```
+
+Your dedicated publish-unit-test-result-workflow then downloads these files and runs the action there:
+
+```yaml
+publish-test-results:
+ name: "Publish Unit Tests Results"
+ needs: build-and-test
+ runs-on: macos-latest
+ # the build-and-test job might be skipped, we don't need to run this job then
+ if: success() || failure()
+
+ steps:
+   - name: Download Artifacts
+     uses: actions/download-artifact@v2
+     with:
+       path: artifacts
+
+   - name: Publish Unit Test Results
+     uses: EnricoMi/publish-unit-test-result-action/composite@v1
+     with:
+       files: artifacts/**/*.xml
+```
+
+In situations where downloading the action's dependency packages takes very long, you can [cache
+files downloaded by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip):
+
+```yaml
+- name: Cache PIP Packages
+  uses: actions/cache@v2
+  with:
+    path: ~/.cache/pip
+    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    restore-keys: |
+      ${{ runner.os }}-pip-
+
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+…
+```
+
+Use the correct `path:`, depending on your action runner's OS:
+
+- Ubuntu: `~/.cache/pip`
+- Windows: `~\AppData\Local\pip\Cache`
+- macOS: `~/Library/Caches/pip`
 
 ## Support fork repositories and dependabot branches
 
