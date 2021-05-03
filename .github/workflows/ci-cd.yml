@@ -205,7 +205,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('composite/action.yml') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 

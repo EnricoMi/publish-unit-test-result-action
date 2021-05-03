@@ -248,8 +248,27 @@ publish-test-results:
        files: artifacts/**/*.xml
 ```
 
-In situations where downloading the action's dependency packages takes very long,
-you can [cache files downloaded by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip).
+In situations where downloading the action's dependency packages and building wheel files takes very long,
+you can [cache files downloaded and built by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip).
+This is especially useful for Windows runner:
+
+```yaml
+- name: Cache PIP Packages
+  uses: actions/cache@v2
+  with:
+    path: ~\AppData\Local\pip\Cache
+    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, 'composite/action.yml') }}
+    restore-keys: |
+      ${{ runner.os }}-pip-
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+…
+```
+
+Use the correct `path:`, depending on your action runner's OS:
+- macOS: `~/Library/Caches/pip`
+- Windows: `~\AppData\Local\pip\Cache`
+- Ubuntu: `~/.cache/pip`
 
 ## Support fork repositories and dependabot branches
 
