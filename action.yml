@@ -57,7 +57,7 @@ inputs:
     required: false
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.14'
+  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.15'
 branding:
   icon: 'check-circle'
   color: 'green'
