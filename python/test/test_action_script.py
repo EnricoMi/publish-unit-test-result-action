@@ -516,7 +516,6 @@ class Test(unittest.TestCase):
                                   ('*/*.txt', [os.path.join('sub1', 'file1.txt'), os.path.join('sub2', 'file2.txt')])]:
             with self.subTest(pattern=pattern):
                 with tempfile.TemporaryDirectory() as path:
-                    print(path)
                     filenames = [os.path.join('sub1', 'file1.txt'),
                                  os.path.join('sub2', 'file2.txt')]
                     with chdir(path):
