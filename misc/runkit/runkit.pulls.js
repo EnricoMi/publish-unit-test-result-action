@@ -14,7 +14,7 @@ exports.endpoint = async function(request, response) {
   var resp = await require("got")("https://api.github.com/users/EnricoMi/packages/container/publish-unit-test-result-action/versions", opts);
   var counts = resp.body
                  .filter(version => version.metadata.package_type == "container")
-                 .filter(version => version.metadata.container.tags.filter(tag => tag.startsWith("v") && tag.includes(".") && ["v1.7","v1.8","v1.9"].indexOf(tag) == -1).length > 0)
+                 .filter(version => version.metadata.container.tags.filter(tag => tag.startsWith("v") && tag.includes(".") && ["v1.7","v1.8","v1.9","v1.13","v1.14"].indexOf(tag) == -1).length > 0)
                  .slice(0, 10)
                  .map(version => version.html_url)
                  .map(url => get_count(url));
