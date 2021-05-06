@@ -207,11 +207,12 @@ Self-hosted runners may require setting up a Python environment first:
 
 ### Isolating composite action from your workflow
 
-Note that the composite action modifies this Python environment by upgrading PIP and installing dependency packages.
-If this conflicts with actions that later run Python in the same workflow (rare case), it is recommended to run this action in an isolated workflow.
-This is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
+Note that the composite action modifies this Python environment by installing dependency packages.
+If this conflicts with actions that later run Python in the same workflow (which is a rare case),
+it is recommended to run this action as the last step in your workflow, or to run it in an isolated workflow.
+Running it in an isolated workflow is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
 
-Your CI workflow should upload all test result XML files:
+To run the composite action in an isolated workflow, your CI workflow should upload all test result XML files:
 
 ```yaml
 build-and-test:
@@ -234,7 +235,7 @@ Your dedicated publish-unit-test-result-workflow then downloads these files and 
 publish-test-results:
  name: "Publish Unit Tests Results"
  needs: build-and-test
- runs-on: macos-latest
+ runs-on: windows-latest
  # the build-and-test job might be skipped, we don't need to run this job then
  if: success() || failure()
 
@@ -252,7 +253,7 @@ publish-test-results:
 
 ### Slow startup of composite action
 
-In some environments, the composite action startup can be slow due to installing Python dependencies.
+In some environments, the composite action startup can be slow due to the installation of Python dependencies.
 This is usually the case for **Windows** runners (in this example 35 seconds startup time):
 
 ```
@@ -263,7 +264,7 @@ Mon, 03 May 2021 11:57:35 GMT   ⏵ Publish Unit Test Results
 ```
 
 This can be improved by caching the PIP cache directory. If you see the following warning in
-the composite action output, then installing the `wheel` package can also be beneficial (see further below):
+the composite action output, then installing the `wheel` package can also be beneficial (see further down):
 
 ```
 Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
@@ -283,7 +284,7 @@ using the `actions/cache` action, and conditionally install the `wheel`package a
       ${{ runner.os }}-pip-
 
 # only needed if you see this warning in action log output otherwise:
-#   Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
+# Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
 - name: Install package wheel
   # only needed on cache miss
   if: steps.cache.outputs.cache-hit != 'true'
