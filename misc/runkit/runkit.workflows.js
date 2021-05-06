@@ -4,8 +4,7 @@ var search = query => require("got")(`https://api.github.com/search/code?${query
 exports.endpoint = async function(request, response) {
   var query = q => `q=%22${q}%22+path%3A.github%2Fworkflows%2F+language%3AYAML&type=Code`;
   var build_count = search(query('publish-unit-test-result-action'));
-  var docker_count = search(query('enricomi%2Fpublish-unit-test-result-action'));
-  var count = Promise.all([build_count, docker_count])
+  var count = Promise.all([build_count])
                      .then((counts) => counts.map(c => c.body.total_count))
                      .then((counts) => counts.reduce((a, b) => a + b, 0));
 
