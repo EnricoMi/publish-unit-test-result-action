@@ -292,7 +292,7 @@ class Publisher:
             return False
 
         # edit last comment
-        comment_id = comments[-1].get("id")
+        comment_id = comments[-1].get("databaseId")
         logger.info(f'editing comment {comment_id}')
 
         try:
@@ -334,7 +334,7 @@ class Publisher:
                   r'    pullRequest(number: ' + str(pull.number) + r') {'
                   r'      comments(last: 100) {'
                   r'        nodes {'
-                  r'          id, author { login }, body, isMinimized'
+                  r'          id, databaseId, author { login }, body, isMinimized'
                   r'        }'
                   r'      }'
                   r'    }'
