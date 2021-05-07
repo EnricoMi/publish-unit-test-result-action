@@ -198,7 +198,6 @@ jobs:
         uses: ./composite
         with:
           check_name: Unit Test Results (${{ matrix.os-label }})
-          comment_on_pr: true
           comment_mode: update last
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
