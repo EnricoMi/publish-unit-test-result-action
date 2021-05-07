@@ -1027,7 +1027,7 @@ class TestPublisher(unittest.TestCase):
                 '    pullRequest(number: 1234) {'
                 '      comments(last: 100) {'
                 '        nodes {'
-                '          id, author { login }, body, isMinimized'
+                '          id, databaseId, author { login }, body, isMinimized'
                 '        }'
                 '      }'
                 '    }'
