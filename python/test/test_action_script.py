@@ -6,7 +6,7 @@ import unittest
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing
+    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings, get_files
@@ -130,7 +130,7 @@ class Test(unittest.TestCase):
                      files_glob='files',
                      check_name='check name',
                      comment_title='title',
-                     comment_on_pr=True,
+                     comment_mode=comment_mode_create,
                      compare_earlier=True,
                      test_changes_limit=10,
                      hide_comment_mode='off',
@@ -150,7 +150,7 @@ class Test(unittest.TestCase):
             files_glob=files_glob,
             check_name=check_name,
             comment_title=comment_title,
-            comment_on_pr=comment_on_pr,
+            comment_mode=comment_mode,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build_mode_merge,
             test_changes_limit=test_changes_limit,
@@ -209,14 +209,21 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE=None, expected=self.get_settings(comment_title='check name'))
 
     def test_get_settings_comment_on_pr_default(self):
-        self.do_test_get_settings(COMMENT_ON_PR='false', expected=self.get_settings(comment_on_pr=False))
-        self.do_test_get_settings(COMMENT_ON_PR='False', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='true', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='True', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='foo', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR=None, expected=self.get_settings(comment_on_pr=True))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_create))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=comment_mode_create))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=comment_mode_create))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_create))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_create))
 
-    def test_get_settings_compare_to_earlier_commit(self):
+    def test_get_settings_comment_on_pr_deprecated(self):
+        pass
+
+    def test_get_settings_comment_mode_default(self):
+        # test together with comemnt_on_pr None or set
+        pass
+
+    def test_get_settings_compare_to_earlier_commit_default(self):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='false', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
@@ -291,8 +298,8 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='files',
-                COMMENT_TITLE='title',  # defaulst to check name
-                COMMENT_ON_PR='true',  # true unless 'false'
+                COMMENT_TITLE='title',  # defaults to check name
+                COMMENT_MODE='create new',  # true unless 'false'
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'

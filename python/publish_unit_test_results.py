@@ -10,7 +10,8 @@ from urllib3.util.retry import Retry
 
 import publish
 from publish import hide_comments_modes, available_annotations, default_annotations, \
-    pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures
+    pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
+    comment_mode_off, comment_mode_create, comment_mode_update
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
@@ -50,9 +51,7 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
-def main(settings: Settings) -> None:
-    gha = GithubAction()
-
+def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment
     # when running on pull_request event from a fork
     if settings.event_name == 'pull_request' and \
@@ -85,7 +84,14 @@ def main(settings: Settings) -> None:
 
     # publish the delta stats
     gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
-    Publisher(settings, gh, gha).publish(stats, results.case_results, settings.compare_earlier, conclusion)
+    Publisher(settings, gh, gha). \
+        publish(
+            stats,
+            results.case_results,
+            settings.compare_earlier,
+            settings.comment_mode == comment_mode_update,
+            conclusion
+        )
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
@@ -116,7 +122,7 @@ def get_annotations_config(options: dict, event: Optional[dict]) -> List[str]:
     return annotations
 
 
-def get_var(name: str, options: dict) -> str:
+def get_var(name: str, options: dict) -> Optional[str]:
     """
     Returns the value from the given dict with key 'INPUT_$key',
     or if this does not exist, key 'key'.
@@ -143,7 +149,17 @@ def check_var(var: Union[str, List[str]],
                                    f"allowed: {', '.join(allowed_values)}")
 
 
-def get_settings(options: dict) -> Settings:
+def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
+    if not val:
+        message = f'Option {deprecated_var} is deprecated! As an equivalent replacement, use {replacement_var}'
+
+        if gha is None:
+            logger.debug(message)
+        else:
+            gha.warning(message)
+
+
+def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     event = get_var('GITHUB_EVENT_PATH', options)
     event_name = get_var('GITHUB_EVENT_NAME', options)
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
@@ -177,7 +193,7 @@ def get_settings(options: dict) -> Settings:
         files_glob=get_var('FILES', options) or '*.xml',
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_on_pr=get_var('COMMENT_ON_PR', options) != 'false',
+        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_create if get_var('COMMENT_ON_PR', options) != 'false' else comment_mode_off),
         compare_earlier=get_var('COMPARE_TO_EARLIER_COMMIT', options) != 'false',
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=test_changes_limit,
@@ -194,6 +210,8 @@ def get_settings(options: dict) -> Settings:
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
+    deprecate_var(get_var('COMMENT_ON_PR', options), 'COMMENT_ON_PR', 'comment_mode: create new', gha)
+
     return settings
 
 
@@ -208,5 +226,6 @@ if __name__ == "__main__":
     logger.level = logging.getLevelName(log_level)
     publish.logger.level = logging.getLevelName(log_level)
 
-    settings = get_settings(options)
-    main(settings)
+    gha = GithubAction()
+    settings = get_settings(options, gha)
+    main(settings, gha)

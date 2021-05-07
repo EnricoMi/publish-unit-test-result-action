@@ -32,7 +32,7 @@ class TestPublisher(unittest.TestCase):
         return pr
 
     @staticmethod
-    def create_settings(comment_on_pr=False,
+    def create_settings(comment_mode=comment_mode_create,
                         compare_earlier=True,
                         hide_comment_mode=hide_comments_mode_off,
                         report_individual_runs=False,
@@ -55,7 +55,7 @@ class TestPublisher(unittest.TestCase):
             files_glob='*.xml',
             check_name='Check Name',
             comment_title='Comment Title',
-            comment_on_pr=comment_on_pr,
+            comment_mode=comment_mode,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -214,7 +214,10 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
         publisher.publish_check = mock.Mock(return_value=cr)
-        Publisher.publish(publisher, stats, cases, settings.compare_earlier, 'success')
+        Publisher.publish(publisher, stats, cases,
+                          settings.compare_earlier,
+                          settings.comment_mode == comment_mode_update,
+                          'success')
 
         # return calls to mocked instance, except call to _logger
         mock_calls = [(call[0], call.args, call.kwargs)
@@ -223,7 +226,7 @@ class TestPublisher(unittest.TestCase):
         return mock_calls
 
     def test_publish_without_comment(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=object())
 
         self.assertEqual(1, len(mock_calls))
@@ -233,7 +236,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_without_comment_with_hiding(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_all_but_latest)
+        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_all_but_latest)
         mock_calls = self.call_mocked_publish(settings, pr=object())
 
         self.assertEqual(1, len(mock_calls))
@@ -243,7 +246,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=None)
 
         self.assertEqual(2, len(mock_calls))
@@ -261,7 +264,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_with_comment_without_hiding(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(3, len(mock_calls))
@@ -278,13 +281,13 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, True), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
+        self.assertEqual({'compare_earlier': True, 'edit_comment': False}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_mode)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(4, len(mock_calls))
@@ -301,8 +304,8 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, True), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
+        self.assertEqual({'compare_earlier': True, 'edit_comment': False}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual(hide_method, method)
@@ -324,7 +327,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_without_compare(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(4, len(mock_calls))
@@ -341,13 +344,31 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, False), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
+        self.assertEqual({'compare_earlier': False, 'edit_comment': False}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual('hide_all_but_latest_comments', method)
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
+
+    def test_publish_with_reuse_comment_none_existing(self):
+        pass
+
+    def test_publish_with_reuse_comment_one_existing(self):
+        pass
+
+    def test_publish_with_reuse_comment_multiple_existing(self):
+        pass
+
+    def test_publish_with_reuse_comment_multiple_hidden_one_visible(self):
+        pass
+
+    def test_publish_with_reuse_comment_multiple_hidden_multiple_visible(self):
+        pass
+
+    def test_reuse_comment(self):
+        pass
 
     def do_test_get_pull(self,
                          settings: Settings,
