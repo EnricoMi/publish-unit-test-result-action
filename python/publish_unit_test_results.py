@@ -151,7 +151,7 @@ def check_var(var: Union[str, List[str]],
 
 def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
     if not val:
-        message = f'Option {deprecated_var} is deprecated! As an equivalent replacement, use {replacement_var}'
+        message = f'Option {deprecated_var.lower()} is deprecated!{replacement_var}'
 
         if gha is None:
             logger.debug(message)
@@ -210,7 +210,12 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
-    deprecate_var(get_var('COMMENT_ON_PR', options), 'COMMENT_ON_PR', 'comment_mode: create new', gha)
+    deprecate_var(get_var('COMMENT_ON_PR', options), 'COMMENT_ON_PR',
+                  ' Instead, use:\n'
+                  '- comment_mode: off           instead of   comment_on_pr: false\n'
+                  '- comment_mode: create new    instead of   comment_on_pr: true\n'
+                  '- comment_mode: update last   if you want only one comment per pull request\n',
+                  gha)
 
     return settings
 
