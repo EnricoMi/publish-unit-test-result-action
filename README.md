@@ -96,10 +96,15 @@ with:
 ```
 
 If you want the action to create only a single comment and update it on later runs, use `comment_mode: update last`:
+
 ```yaml
 with:
   comment_mode: update last
 ```
+
+This will edit the comment on every action run. You can access earlier results in the comment edit history:
+
+![checks comment example](misc/github-pull-request-comment-update-history.png)
 
 See the complete list of options below.
 
