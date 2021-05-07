@@ -33,6 +33,9 @@ inputs:
     description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
     required: false
     default: 'all but latest'
+  comment_on_pr:
+    description: 'Deprecated, please use comment_mode instead!'
+    required: false
   comment_mode:
     description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
     required: false
