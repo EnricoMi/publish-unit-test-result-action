@@ -298,8 +298,8 @@ class Publisher:
         try:
             pull.get_issue_comment(comment_id).edit(body)
         except Exception as e:
-            logger.warning(f'Failed to edit existing comment #{comment_id}: {str(e)}')
-            logger.debug(e)
+            self._gha.warning(f'Failed to edit existing comment #{comment_id}')
+            logger.debug('editing existing comment failed', exc_info=e)
 
         return True
 
@@ -321,7 +321,7 @@ class Publisher:
             compare = self._repo.compare(pull_request.base.ref, self._settings.commit)
             return compare.merge_base_commit.sha
         except:
-            logger.warning(f'Could not find best common ancestor '
+            logger.warning(f'could not find best common ancestor '
                            f'between base {pull_request.base.sha} '
                            f'and commit {self._settings.commit}')
 

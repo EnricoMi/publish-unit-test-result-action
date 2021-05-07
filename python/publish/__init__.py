@@ -277,7 +277,7 @@ def as_stat_number(number: Optional[Union[int, Numeric]],
             f' {extra} ' if extra != '' else ''
         ])
     else:
-        logger.warning(f'Unsupported stats number type {type(number)}: {number}')
+        logger.warning(f'unsupported stats number type {type(number)}: {number}')
         return 'N/A'
 
 
@@ -307,7 +307,7 @@ def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str
             sign += ' '
         return as_stat_duration(duration, label) + (f' {sign}{as_stat_duration(delta)}' if delta is not None else '')
     else:
-        logger.warning(f'Unsupported stats duration type {type(duration)}: {duration}')
+        logger.warning(f'unsupported stats duration type {type(duration)}: {duration}')
         return 'N/A'
 
 
