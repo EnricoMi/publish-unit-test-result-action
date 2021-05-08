@@ -349,23 +349,85 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
 
-    def test_publish_with_reuse_comment_none_existing(self):
-        pass
+    def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
+        pr = mock.MagicMock()
+        cr = mock.MagicMock()
+        stats = self.stats
+        cases = UnitTestCaseResults(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.reuse_comment = mock.Mock(return_value=one_exists)
+        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
 
-    def test_publish_with_reuse_comment_one_existing(self):
-        pass
+        self.assertEqual(2, len(mock_calls))
 
-    def test_publish_with_reuse_comment_multiple_existing(self):
-        pass
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((None, ), args)
+        self.assertEqual({}, kwargs)
 
-    def test_publish_with_reuse_comment_multiple_hidden_one_visible(self):
-        pass
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('reuse_comment', method)
+        self.assertEqual((pr, '## title\nbody'), args)
+        self.assertEqual({}, kwargs)
 
-    def test_publish_with_reuse_comment_multiple_hidden_multiple_visible(self):
-        pass
+        mock_calls = pr.mock_calls
+        self.assertEqual(0 if one_exists else 1, len(mock_calls))
 
-    def test_reuse_comment(self):
-        pass
+        if not one_exists:
+            (method, args, kwargs) = mock_calls[0]
+            self.assertEqual('create_issue_comment', method)
+            self.assertEqual(('## title\nbody', ), args)
+            self.assertEqual({}, kwargs)
+
+    def test_publish_comment_with_reuse_comment_none_existing(self):
+        self.do_test_publish_comment_with_reuse_comment(one_exists=False)
+
+    def test_publish_comment_with_reuse_comment_one_existing(self):
+        self.do_test_publish_comment_with_reuse_comment(one_exists=True)
+
+    def do_test_reuse_comment(self, pull_request_comments: List[Any], action_comments: List[Mapping[str, int]]):
+        pr = mock.MagicMock()
+        comment = mock.MagicMock()
+        pr.get_issue_comment = mock.Mock(return_value=comment)
+        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_pull_request_comments = mock.Mock(return_value=pull_request_comments)
+        publisher.get_action_comments = mock.Mock(return_value=action_comments)
+
+        body = "body"
+        Publisher.reuse_comment(publisher, pr, body)
+
+        mock_calls = publisher.mock_calls
+        self.assertEqual(2, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_pull_request_comments', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_action_comments', method)
+        self.assertEqual((pull_request_comments, ), args)
+        self.assertEqual({}, kwargs)
+
+        if action_comments:
+            pr.get_issue_comment.assert_called_once_with(action_comments[-1].get('databaseId'))
+            comment.edit.assert_called_once_with(body)
+
+    def test_reuse_comment_non_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[])
+
+    def test_reuse_comment_one_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}])
+
+    def test_reuse_comment_multiple_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}, {'databaseId': 2}, {'databaseId': 3}])
 
     def do_test_get_pull(self,
                          settings: Settings,

@@ -143,7 +143,7 @@ def check_var(var: Union[str, List[str]],
 
 
 def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
-    if not val:
+    if val is not None:
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
 
         if gha is None:
