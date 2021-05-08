@@ -7,7 +7,8 @@ from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
-from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, comment_mode_off, \
+from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
+    comment_mode_off, comment_mode_create, comment_mode_update, \
     get_stats_from_digest, digest_prefix, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -54,17 +55,14 @@ class Publisher:
     def publish(self,
                 stats: UnitTestRunResults,
                 cases: UnitTestCaseResults,
-                compare_earlier: bool,
-                edit_comment: bool,
                 conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run = self.publish_check(stats, cases, compare_earlier, conclusion)
+        check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.comment_mode != comment_mode_off:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases,
-                                     compare_earlier=compare_earlier, edit_comment=edit_comment)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -167,11 +165,10 @@ class Publisher:
     def publish_check(self,
                       stats: UnitTestRunResults,
                       cases: UnitTestCaseResults,
-                      compare_earlier: bool,
                       conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_stats = None
-        if compare_earlier:
+        if self._settings.compare_earlier:
             before_commit_sha = self._settings.event.get('before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_stats = self.get_stats_from_commit(before_commit_sha)
@@ -250,12 +247,10 @@ class Publisher:
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None,
-                        compare_earlier: bool = True,
-                        edit_comment: bool = False) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
         base_check_run = None
-        if compare_earlier:
+        if self._settings.compare_earlier:
             base_commit_sha = self.get_base_commit_sha(pull_request)
             logger.debug(f'comparing against base={base_commit_sha}')
             base_check_run = self.get_check_run(base_commit_sha)
@@ -272,9 +267,9 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # reuse existing commend when edit_comment
-        # if none exists or not edit_comment, create new comment
-        if not edit_comment or not self.reuse_comment(pull_request, body):
+        # reuse existing commend when comment_mode == comment_mode_update
+        # if none exists or comment_mode != comment_mode_update, create new comment
+        if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
             logger.info('creating comment')
             pull_request.create_issue_comment(body)
 

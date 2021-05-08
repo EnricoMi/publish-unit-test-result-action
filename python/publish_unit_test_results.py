@@ -84,14 +84,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
-    Publisher(settings, gh, gha). \
-        publish(
-            stats,
-            results.case_results,
-            settings.compare_earlier,
-            settings.comment_mode == comment_mode_update,
-            conclusion
-        )
+    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):

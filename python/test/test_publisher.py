@@ -214,10 +214,7 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
         publisher.publish_check = mock.Mock(return_value=cr)
-        Publisher.publish(publisher, stats, cases,
-                          settings.compare_earlier,
-                          settings.comment_mode == comment_mode_update,
-                          'success')
+        Publisher.publish(publisher, stats, cases, 'success')
 
         # return calls to mocked instance, except call to _logger
         mock_calls = [(call[0], call.args, call.kwargs)
@@ -232,7 +229,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_without_comment_with_hiding(self):
@@ -242,7 +239,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
@@ -253,7 +250,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -271,7 +268,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -282,7 +279,7 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({'compare_earlier': True, 'edit_comment': False}, kwargs)
+        self.assertEqual({}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
         pr = object()
@@ -294,7 +291,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -305,7 +302,7 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({'compare_earlier': True, 'edit_comment': False}, kwargs)
+        self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual(hide_method, method)
@@ -334,7 +331,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, False, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -345,7 +342,7 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({'compare_earlier': False, 'edit_comment': False}, kwargs)
+        self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual('hide_all_but_latest_comments', method)
@@ -617,7 +614,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -670,7 +667,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -715,7 +712,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases, settings.compare_earlier, 'conclusion')
+            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         create_check_run_kwargs = dict(
@@ -772,7 +769,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         # we expect multiple calls to create_check_run
@@ -859,14 +856,14 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_comment_without_compare(self):
-        settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
+        settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request', compare_earlier=False)
         base_commit = 'base-commit'
 
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         publisher = Publisher(settings, gh, gha)
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr, compare_earlier=False)
+        publisher.publish_comment(settings.comment_title, self.stats, pr)
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
