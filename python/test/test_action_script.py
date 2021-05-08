@@ -286,6 +286,14 @@ class Test(unittest.TestCase):
 
     def test_get_settings_unknown_values(self):
         with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(COMMENT_MODE='mode')
+        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(PULL_REQUEST_BUILD='build')
+        self.assertEqual("Value 'build' is not supported for variable PULL_REQUEST_BUILD, expected: commit, merge", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(HIDE_COMMENTS='hide')
         self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
 

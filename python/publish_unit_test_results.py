@@ -11,7 +11,7 @@ from urllib3.util.retry import Retry
 import publish
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_create, comment_mode_update
+    comment_mode_off, comment_mode_update, comment_modes
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
@@ -199,6 +199,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Commit mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
