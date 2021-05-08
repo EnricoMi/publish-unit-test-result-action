@@ -277,7 +277,7 @@ class Publisher:
 
     def reuse_comment(self, pull: PullRequest, body: str) -> bool:
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull)
+        comments = self.get_pull_request_comments(pull, order_by_updated=True)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
@@ -322,12 +322,16 @@ class Publisher:
 
         return None
 
-    def get_pull_request_comments(self, pull: PullRequest) -> List[Mapping[str, Any]]:
+    def get_pull_request_comments(self, pull: PullRequest, order_by_updated: bool) -> List[Mapping[str, Any]]:
+        order = ''
+        if order_by_updated:
+            order = ', orderBy: { direction: ASC, field: UPDATED_AT }'
+
         query = dict(
             query=r'query ListComments {'
                   r'  repository(owner:"' + self._repo.owner.login + r'", name:"' + self._repo.name + r'") {'
                   r'    pullRequest(number: ' + str(pull.number) + r') {'
-                  r'      comments(last: 100) {'
+                  f'      comments(last: 100{order}) {{'
                   r'        nodes {'
                   r'          id, databaseId, author { login }, body, isMinimized'
                   r'        }'
@@ -380,7 +384,7 @@ class Publisher:
         commit_shas = set([commit.sha for commit in pull.get_commits()])
 
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull)
+        comments = self.get_pull_request_comments(pull, order_by_updated=False)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
@@ -408,7 +412,7 @@ class Publisher:
         # we want to reduce the number of shown comments to a minimum
 
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull)
+        comments = self.get_pull_request_comments(pull, order_by_updated=False)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)

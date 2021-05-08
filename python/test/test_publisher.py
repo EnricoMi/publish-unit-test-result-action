@@ -409,7 +409,7 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_pull_request_comments', method)
         self.assertEqual((pr, ), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual({'order_by_updated': True}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
         self.assertEqual('get_action_comments', method)
@@ -1065,7 +1065,7 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(None, result)
 
-    def test_get_pull_request_comments(self):
+    def do_test_get_pull_request_comments(self, order_updated: bool):
         settings = self.create_settings()
 
         gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
@@ -1075,23 +1075,45 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, number=1234)
         publisher = Publisher(settings, gh, gha)
 
-        response = publisher.get_pull_request_comments(pr)
-
+        response = publisher.get_pull_request_comments(pr, order_by_updated=order_updated)
         self.assertEqual(['node'], response)
+        return req
+
+    def test_get_pull_request_comments(self):
+        req = self.do_test_get_pull_request_comments(order_updated=False)
         req.requestJsonAndCheck.assert_called_once_with(
             'POST', 'https://the-github-graphql-url',
             input={
                 'query': 'query ListComments {'
-                '  repository(owner:"login", name:"owner/repo") {'
-                '    pullRequest(number: 1234) {'
-                '      comments(last: 100) {'
-                '        nodes {'
-                '          id, databaseId, author { login }, body, isMinimized'
-                '        }'
-                '      }'
-                '    }'
-                '  }'
-                '}'
+                         '  repository(owner:"login", name:"owner/repo") {'
+                         '    pullRequest(number: 1234) {'
+                         '      comments(last: 100) {'
+                         '        nodes {'
+                         '          id, databaseId, author { login }, body, isMinimized'
+                         '        }'
+                         '      }'
+                         '    }'
+                         '  }'
+                         '}'
+            }
+        )
+
+    def test_get_pull_request_comments_order_updated(self):
+        req = self.do_test_get_pull_request_comments(order_updated=True)
+        req.requestJsonAndCheck.assert_called_once_with(
+            'POST', 'https://the-github-graphql-url',
+            input={
+                'query': 'query ListComments {'
+                         '  repository(owner:"login", name:"owner/repo") {'
+                         '    pullRequest(number: 1234) {'
+                         '      comments(last: 100, orderBy: { direction: ASC, field: UPDATED_AT }) {'
+                         '        nodes {'
+                         '          id, databaseId, author { login }, body, isMinimized'
+                         '        }'
+                         '      }'
+                         '    }'
+                         '  }'
+                         '}'
             }
         )
 
@@ -1265,7 +1287,7 @@ class TestPublisher(unittest.TestCase):
         Publisher.hide_orphaned_commit_comments(publisher, pr)
 
         pr.get_commits.assert_called_once_with()
-        publisher.get_pull_request_comments.assert_called_once_with(pr)
+        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
         publisher.get_action_comments(self.hide_comments)
         publisher.hide_comment.assert_called_once_with('comment three')
 
@@ -1290,7 +1312,7 @@ class TestPublisher(unittest.TestCase):
         )
         Publisher.hide_all_but_latest_comments(publisher, pr)
 
-        publisher.get_pull_request_comments.assert_called_once_with(pr)
+        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
         publisher.get_action_comments(self.hide_comments)
         publisher.hide_comment.assert_has_calls(
             [mock.call('comment one'), mock.call('comment two')], any_order=False
