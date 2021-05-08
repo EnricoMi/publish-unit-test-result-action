@@ -101,7 +101,6 @@ jobs:
         uses: ./
         with:
           check_name: Unit Test Results (Dockerfile)
-          comment_mode: update last
           files: "artifacts/**/*.xml"
 
   publish-docker-image:
@@ -148,7 +147,6 @@ jobs:
         env:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
           INPUT_CHECK_NAME: Unit Test Results (Docker Image)
-          INPUT_COMMENT_MODE: update last
           INPUT_FILES: "artifacts/**/*.xml"
 
   publish-composite:
@@ -198,7 +196,6 @@ jobs:
         uses: ./composite
         with:
           check_name: Unit Test Results (${{ matrix.os-label }})
-          comment_mode: update last
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
   publish-composite-extra:

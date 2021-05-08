@@ -48,10 +48,14 @@ Each failing test will produce an annotation with failure details:
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
-A comment is posted on the pull request of that commit, if one exists.
+A comment is posted on the pull request of that commit.
 In presence of failures or errors, the comment links to the respective check page with failure details:
 
 ![pull request comment example](misc/github-pull-request-comment.png)
+
+Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
+
+![checks comment example](misc/github-pull-request-comment-update-history.png)
 
 The checks section of the pull request also lists a short summary (here `1 fail, 1 skipped, 17 pass in 12s`),
 and a link to the GitHub Actions section (here `Details`):
@@ -95,17 +99,6 @@ with:
     !config.xml
 ```
 
-If you want the action to create only a single comment and update it on later runs, use `comment_mode: update last`:
-
-```yaml
-with:
-  comment_mode: update last
-```
-
-This will edit the comment on every action run. You can access earlier results in the comment edit history:
-
-![checks comment example](misc/github-pull-request-comment-update-history.png)
-
 See the complete list of options below.
 
 |Option|Default Value|Description|
@@ -113,7 +106,7 @@ See the complete list of options below.
 |`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
-|`comment_mode`|`create new`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
+|`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
 |`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|

@@ -186,7 +186,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         files_glob=get_var('FILES', options) or '*.xml',
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_create if get_var('COMMENT_ON_PR', options) != 'false' else comment_mode_off),
+        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if get_var('COMMENT_ON_PR', options) != 'false' else comment_mode_off),
         compare_earlier=get_var('COMPARE_TO_EARLIER_COMMIT', options) != 'false',
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=test_changes_limit,
