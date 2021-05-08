@@ -33,6 +33,9 @@ Use this for macOS (e.g. `runs-on: macos-latest`) and Windows (e.g. `runs-on: wi
     files: test-results/**/*.xml
 ```
 
+See the [notes on running this action as a composite action](#running-as-a-composite-action) if you
+run it on Windows or macOS.
+
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
 Unit test results are published in the GitHub Actions section of the respective commit:
@@ -184,6 +187,126 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           files: artifacts/**/*.xml
+```
+
+## Running as a composite action
+
+Running this action as a composite action allows to run it on various operating systems as it
+does not require Docker. The composite action, however, requires a Python3 environment to be setup
+on the action runner. All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
+Python3 environment out-of-the-box.
+
+Self-hosted runners may require setting up a Python environment first:
+
+```yaml
+- name: Setup Python
+  uses: actions/setup-python@v2
+  with:
+    python-version: 3.8
+```
+
+### Isolating composite action from your workflow
+
+Note that the composite action modifies this Python environment by installing dependency packages.
+If this conflicts with actions that later run Python in the same workflow (which is a rare case),
+it is recommended to run this action as the last step in your workflow, or to run it in an isolated workflow.
+Running it in an isolated workflow is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
+
+To run the composite action in an isolated workflow, your CI workflow should upload all test result XML files:
+
+```yaml
+build-and-test:
+   name: "Build and Test"
+   runs-on: macos-latest
+
+   steps:
+   - …
+   - name: Upload Unit Test Results
+     if: always()
+     uses: actions/upload-artifact@v2
+     with:
+       name: Unit Test Results
+       path: test-results/**/*.xml
+```
+
+Your dedicated publish-unit-test-result-workflow then downloads these files and runs the action there:
+
+```yaml
+publish-test-results:
+ name: "Publish Unit Tests Results"
+ needs: build-and-test
+ runs-on: windows-latest
+ # the build-and-test job might be skipped, we don't need to run this job then
+ if: success() || failure()
+
+ steps:
+   - name: Download Artifacts
+     uses: actions/download-artifact@v2
+     with:
+       path: artifacts
+
+   - name: Publish Unit Test Results
+     uses: EnricoMi/publish-unit-test-result-action/composite@v1
+     with:
+       files: artifacts/**/*.xml
+```
+
+### Slow startup of composite action
+
+In some environments, the composite action startup can be slow due to the installation of Python dependencies.
+This is usually the case for **Windows** runners (in this example 35 seconds startup time):
+
+```
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Run ./composite
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Check for Python3
+Mon, 03 May 2021 11:57:00 GMT   ⏵ Install Python dependencies
+Mon, 03 May 2021 11:57:35 GMT   ⏵ Publish Unit Test Results
+```
+
+This can be improved by caching the PIP cache directory. If you see the following warning in
+the composite action output, then installing the `wheel` package can also be beneficial (see further down):
+
+```
+Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
+```
+
+You can [cache files downloaded and built by PIP](https://github.com/actions/cache/blob/main/examples.md#python---pip)
+using the `actions/cache` action, and conditionally install the `wheel`package as follows:
+
+```yaml
+- name: Cache PIP Packages
+  uses: actions/cache@v2
+  id: cache
+  with:
+    path: ~\AppData\Local\pip\Cache
+    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, 'composite/action.yml') }}
+    restore-keys: |
+      ${{ runner.os }}-pip-
+
+# only needed if you see this warning in action log output otherwise:
+# Using legacy 'setup.py install' for …, since package 'wheel' is not installed.
+- name: Install package wheel
+  # only needed on cache miss
+  if: steps.cache.outputs.cache-hit != 'true'
+  run: python3 -m pip install wheel
+
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+…
+```
+
+Use the correct `path:`, depending on your action runner's OS:
+- macOS: `~/Library/Caches/pip`
+- Windows: `~\AppData\Local\pip\Cache`
+- Ubuntu: `~/.cache/pip`
+
+With a cache populated by an earlier run, we can see startup time improvement (in this example down to 11 seconds):
+
+```
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Run ./composite
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
+Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
+Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
 ```
 
 ## Support fork repositories and dependabot branches
