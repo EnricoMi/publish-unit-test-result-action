@@ -101,7 +101,6 @@ jobs:
         uses: ./
         with:
           check_name: Unit Test Results (Dockerfile)
-          comment_mode: create new
           files: "artifacts/**/*.xml"
 
   publish-docker-image:
