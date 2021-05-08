@@ -390,7 +390,11 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_with_reuse_comment_one_existing(self):
         self.do_test_publish_comment_with_reuse_comment(one_exists=True)
 
-    def do_test_reuse_comment(self, pull_request_comments: List[Any], action_comments: List[Mapping[str, int]]):
+    def do_test_reuse_comment(self,
+                              pull_request_comments: List[Any],
+                              action_comments: List[Mapping[str, int]],
+                              body='body',
+                              expected_body='body\n:recycle: This comment has been updated with latest results.'):
         pr = mock.MagicMock()
         comment = mock.MagicMock()
         pr.get_issue_comment = mock.Mock(return_value=comment)
@@ -399,8 +403,6 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pull_request_comments = mock.Mock(return_value=pull_request_comments)
         publisher.get_action_comments = mock.Mock(return_value=action_comments)
-
-        body = "body"
         Publisher.reuse_comment(publisher, pr, body)
 
         mock_calls = publisher.mock_calls
@@ -418,7 +420,7 @@ class TestPublisher(unittest.TestCase):
 
         if action_comments:
             pr.get_issue_comment.assert_called_once_with(action_comments[-1].get('databaseId'))
-            comment.edit.assert_called_once_with(body)
+            comment.edit.assert_called_once_with(expected_body)
 
     def test_reuse_comment_non_existing(self):
         self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[])
@@ -428,6 +430,18 @@ class TestPublisher(unittest.TestCase):
 
     def test_reuse_comment_multiple_existing(self):
         self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}, {'databaseId': 2}, {'databaseId': 3}])
+
+    def test_reuse_comment_existing_not_updated(self):
+        # we do not expect the body to be extended by the recycle message
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
+                                   body='a new comment',
+                                   expected_body='a new comment\n:recycle: This comment has been updated with latest results.')
+
+    def test_reuse_comment_existing_updated(self):
+        # we do not expect the body to be extended by the recycle message
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
+                                   body='comment already updated\n:recycle: Has been updated',
+                                   expected_body='comment already updated\n:recycle: Has been updated')
 
     def do_test_get_pull(self,
                          settings: Settings,

@@ -289,6 +289,8 @@ class Publisher:
         # edit last comment
         comment_id = comments[-1].get("databaseId")
         logger.info(f'editing comment {comment_id}')
+        if ':recycle:' not in body:
+            body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
         try:
             pull.get_issue_comment(comment_id).edit(body)
