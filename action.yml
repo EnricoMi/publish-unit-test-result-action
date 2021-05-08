@@ -34,9 +34,12 @@ inputs:
     required: false
     default: 'all but latest'
   comment_on_pr:
-    description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
+    description: 'Deprecated, please use comment_mode instead!'
     required: false
-    default: 'true'
+  comment_mode:
+    description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
+    required: false
+    default: 'update last'
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
     required: false

@@ -2,11 +2,13 @@ import json
 import os
 import tempfile
 import unittest
+from typing import Optional
 
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing
+    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update
+from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
     get_settings, get_annotations_config, Settings, get_files
@@ -130,7 +132,7 @@ class Test(unittest.TestCase):
                      files_glob='files',
                      check_name='check name',
                      comment_title='title',
-                     comment_on_pr=True,
+                     comment_mode=comment_mode_create,
                      compare_earlier=True,
                      test_changes_limit=10,
                      hide_comment_mode='off',
@@ -150,7 +152,7 @@ class Test(unittest.TestCase):
             files_glob=files_glob,
             check_name=check_name,
             comment_title=comment_title,
-            comment_on_pr=comment_on_pr,
+            comment_mode=comment_mode,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build_mode_merge,
             test_changes_limit=test_changes_limit,
@@ -209,14 +211,36 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE=None, expected=self.get_settings(comment_title='check name'))
 
     def test_get_settings_comment_on_pr_default(self):
-        self.do_test_get_settings(COMMENT_ON_PR='false', expected=self.get_settings(comment_on_pr=False))
-        self.do_test_get_settings(COMMENT_ON_PR='False', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='true', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='True', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR='foo', expected=self.get_settings(comment_on_pr=True))
-        self.do_test_get_settings(COMMENT_ON_PR=None, expected=self.get_settings(comment_on_pr=True))
+        default_comment_mode = comment_mode_update
 
-    def test_get_settings_compare_to_earlier_commit(self):
+        gha = mock.MagicMock()
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', gha=gha, expected=self.get_settings(comment_mode=comment_mode_off))
+        gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_update))
+
+        gha = mock.MagicMock()
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', gha=gha, expected=self.get_settings(comment_mode=default_comment_mode))
+        gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode))
+
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=default_comment_mode))
+
+        gha = mock.MagicMock()
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, gha=gha, expected=self.get_settings(comment_mode=default_comment_mode))
+        gha.warning.assert_not_called()
+
+    def test_get_settings_comment_mode_default(self):
+        for mode in [comment_mode_off, comment_mode_create, comment_mode_update]:
+            with self.subTest(mode=mode):
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
+
+                gha = mock.MagicMock()
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true' if mode == comment_mode_off else 'false', gha=gha, expected=self.get_settings(comment_mode=mode))
+                gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
+
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
+
+    def test_get_settings_compare_to_earlier_commit_default(self):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='false', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
@@ -262,6 +286,14 @@ class Test(unittest.TestCase):
 
     def test_get_settings_unknown_values(self):
         with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(COMMENT_MODE='mode')
+        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(PULL_REQUEST_BUILD='build')
+        self.assertEqual("Value 'build' is not supported for variable PULL_REQUEST_BUILD, expected: commit, merge", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(HIDE_COMMENTS='hide')
         self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
 
@@ -269,7 +301,7 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation')
         self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
-    def do_test_get_settings(self, event: dict = {}, expected: Settings = get_settings.__func__(), **kwargs):
+    def do_test_get_settings(self, event: dict = {}, gha: Optional[GithubAction] = None, expected: Settings = get_settings.__func__(), **kwargs):
         event = event.copy()
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'event.json')
@@ -291,8 +323,8 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='files',
-                COMMENT_TITLE='title',  # defaulst to check name
-                COMMENT_ON_PR='true',  # true unless 'false'
+                COMMENT_TITLE='title',  # defaults to check name
+                COMMENT_MODE='create new',  # true unless 'false'
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
@@ -307,7 +339,7 @@ class Test(unittest.TestCase):
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
                 if 'CHECK_RUN_ANNOTATIONS' in options else []
             with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
-                actual = get_settings(options)
+                actual = get_settings(options, gha)
                 m.assert_called_once_with(options, event)
 
             self.assertEqual(expected, actual)

@@ -34,9 +34,12 @@ inputs:
     required: false
     default: 'all but latest'
   comment_on_pr:
-    description: 'Control PR comments: false - disable PR comments, true - comment on PRs'
+    description: 'Deprecated, please use comment_mode instead!'
     required: false
-    default: 'true'
+  comment_mode:
+    description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
+    required: false
+    default: 'update last'
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
     required: false
@@ -107,6 +110,7 @@ runs:
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
         HIDE_COMMENTS: ${{ inputs.hide_comments }}
         COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
+        COMMENT_MODE: ${{ inputs.comment_mode }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
         TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}

@@ -48,10 +48,14 @@ Each failing test will produce an annotation with failure details:
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
-A comment is posted on the pull request of that commit, if one exists.
+A comment is posted on the pull request of that commit.
 In presence of failures or errors, the comment links to the respective check page with failure details:
 
 ![pull request comment example](misc/github-pull-request-comment.png)
+
+Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
+
+![checks comment example](misc/github-pull-request-comment-update-history.png)
 
 The checks section of the pull request also lists a short summary (here `1 fail, 1 skipped, 17 pass in 12s`),
 and a link to the GitHub Actions section (here `Details`):
@@ -81,29 +85,10 @@ The symbols have the following meaning:
 
 ## Configuration
 
-The action can be configured by the following options. They are all optional except for `files`.
-
-|Option|Default Value|Description|
-|:-----|:-----:|:----------|
-|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
-|`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
-|`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
-|`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
-|`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
-|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
-|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
-|`comment_on_pr`|`true`|The action posts comments to a pull request that is associated with the commit if set to `true`.|
-|`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
-|`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
-|`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
-|`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
-|`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
-|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run (comma-separated list):<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests,<br>`none` - no extra annotations at all|
-|`check_run_annotations_branch`|default branch|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
-
-Files can be selected via the `files` variable, which is optional and defaults to `*.xml` in the current working directory.
+Files can be selected via the `files` option, which is optional and defaults to `*.xml` in the current working directory.
 [It supports wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
 The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
+
 You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
 There have to be at least one pattern starting without a `!`:
 
@@ -113,6 +98,26 @@ with:
     *.xml
     !config.xml
 ```
+
+See the complete list of options below.
+
+|Option|Default Value|Description|
+|:-----|:-----:|:----------|
+|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
+|`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
+|`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
+|`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
+|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
+|`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
+|`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
+|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
+|`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
+|`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
+|`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
+|`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
+|`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
+|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run (comma-separated list):<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests,<br>`none` - no extra annotations at all|
+|`check_run_annotations_branch`|default branch|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
 Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,

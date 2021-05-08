@@ -15,6 +15,15 @@ digest_prefix = '[test-results]:data:application/gzip;base64,'
 digit_space = '  '
 punctuation_space = ' '
 
+comment_mode_off = 'off'
+comment_mode_create = 'create new'
+comment_mode_update = 'update last'
+comment_modes = [
+    comment_mode_off,
+    comment_mode_create,
+    comment_mode_update
+]
+
 fail_on_mode_nothing = 'nothing'
 fail_on_mode_errors = 'errors'
 fail_on_mode_failures = 'test failures'

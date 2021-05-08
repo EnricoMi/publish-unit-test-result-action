@@ -32,7 +32,7 @@ class TestPublisher(unittest.TestCase):
         return pr
 
     @staticmethod
-    def create_settings(comment_on_pr=False,
+    def create_settings(comment_mode=comment_mode_create,
                         compare_earlier=True,
                         hide_comment_mode=hide_comments_mode_off,
                         report_individual_runs=False,
@@ -55,7 +55,7 @@ class TestPublisher(unittest.TestCase):
             files_glob='*.xml',
             check_name='Check Name',
             comment_title='Comment Title',
-            comment_on_pr=comment_on_pr,
+            comment_mode=comment_mode,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -214,7 +214,7 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pull = mock.Mock(return_value=pr)
         publisher.publish_check = mock.Mock(return_value=cr)
-        Publisher.publish(publisher, stats, cases, settings.compare_earlier, 'success')
+        Publisher.publish(publisher, stats, cases, 'success')
 
         # return calls to mocked instance, except call to _logger
         mock_calls = [(call[0], call.args, call.kwargs)
@@ -223,34 +223,34 @@ class TestPublisher(unittest.TestCase):
         return mock_calls
 
     def test_publish_without_comment(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=object())
 
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_without_comment_with_hiding(self):
-        settings = self.create_settings(comment_on_pr=False, hide_comment_mode=hide_comments_mode_all_but_latest)
+        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_all_but_latest)
         mock_calls = self.call_mocked_publish(settings, pr=object())
 
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=None)
 
         self.assertEqual(2, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -261,14 +261,14 @@ class TestPublisher(unittest.TestCase):
     def test_publish_with_comment_without_hiding(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(3, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -278,20 +278,20 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, True), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_mode)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_mode)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(4, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, True, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -301,7 +301,7 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, True), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
@@ -324,14 +324,14 @@ class TestPublisher(unittest.TestCase):
     def test_publish_without_compare(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_on_pr=True, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
+        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
         mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
 
         self.assertEqual(4, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, False, 'success'), args)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -341,13 +341,107 @@ class TestPublisher(unittest.TestCase):
 
         (method, args, kwargs) = mock_calls[2]
         self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases, False), args)
+        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual('hide_all_but_latest_comments', method)
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
+
+    def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
+        pr = mock.MagicMock()
+        cr = mock.MagicMock()
+        stats = self.stats
+        cases = UnitTestCaseResults(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.reuse_comment = mock.Mock(return_value=one_exists)
+        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
+
+        self.assertEqual(2, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((None, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('reuse_comment', method)
+        self.assertEqual((pr, '## title\nbody'), args)
+        self.assertEqual({}, kwargs)
+
+        mock_calls = pr.mock_calls
+        self.assertEqual(0 if one_exists else 1, len(mock_calls))
+
+        if not one_exists:
+            (method, args, kwargs) = mock_calls[0]
+            self.assertEqual('create_issue_comment', method)
+            self.assertEqual(('## title\nbody', ), args)
+            self.assertEqual({}, kwargs)
+
+    def test_publish_comment_with_reuse_comment_none_existing(self):
+        self.do_test_publish_comment_with_reuse_comment(one_exists=False)
+
+    def test_publish_comment_with_reuse_comment_one_existing(self):
+        self.do_test_publish_comment_with_reuse_comment(one_exists=True)
+
+    def do_test_reuse_comment(self,
+                              pull_request_comments: List[Any],
+                              action_comments: List[Mapping[str, int]],
+                              body='body',
+                              expected_body='body\n:recycle: This comment has been updated with latest results.'):
+        pr = mock.MagicMock()
+        comment = mock.MagicMock()
+        pr.get_issue_comment = mock.Mock(return_value=comment)
+        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_pull_request_comments = mock.Mock(return_value=pull_request_comments)
+        publisher.get_action_comments = mock.Mock(return_value=action_comments)
+        Publisher.reuse_comment(publisher, pr, body)
+
+        mock_calls = publisher.mock_calls
+        self.assertEqual(2, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_pull_request_comments', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({'order_by_updated': True}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_action_comments', method)
+        self.assertEqual((pull_request_comments, ), args)
+        self.assertEqual({}, kwargs)
+
+        if action_comments:
+            pr.get_issue_comment.assert_called_once_with(action_comments[-1].get('databaseId'))
+            comment.edit.assert_called_once_with(expected_body)
+
+    def test_reuse_comment_non_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[])
+
+    def test_reuse_comment_one_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}])
+
+    def test_reuse_comment_multiple_existing(self):
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}, {'databaseId': 2}, {'databaseId': 3}])
+
+    def test_reuse_comment_existing_not_updated(self):
+        # we do not expect the body to be extended by the recycle message
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
+                                   body='a new comment',
+                                   expected_body='a new comment\n:recycle: This comment has been updated with latest results.')
+
+    def test_reuse_comment_existing_updated(self):
+        # we do not expect the body to be extended by the recycle message
+        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
+                                   body='comment already updated\n:recycle: Has been updated',
+                                   expected_body='comment already updated\n:recycle: Has been updated')
 
     def do_test_get_pull(self,
                          settings: Settings,
@@ -596,7 +690,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -649,7 +743,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -694,7 +788,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases, settings.compare_earlier, 'conclusion')
+            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         create_check_run_kwargs = dict(
@@ -751,7 +845,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, cases, True, 'conclusion')
+            check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         # we expect multiple calls to create_check_run
@@ -838,14 +932,14 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_comment_without_compare(self):
-        settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
+        settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request', compare_earlier=False)
         base_commit = 'base-commit'
 
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit)
         publisher = Publisher(settings, gh, gha)
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr, compare_earlier=False)
+        publisher.publish_comment(settings.comment_title, self.stats, pr)
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -985,7 +1079,7 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(None, result)
 
-    def test_get_pull_request_comments(self):
+    def do_test_get_pull_request_comments(self, order_updated: bool):
         settings = self.create_settings()
 
         gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
@@ -995,23 +1089,45 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, number=1234)
         publisher = Publisher(settings, gh, gha)
 
-        response = publisher.get_pull_request_comments(pr)
-
+        response = publisher.get_pull_request_comments(pr, order_by_updated=order_updated)
         self.assertEqual(['node'], response)
+        return req
+
+    def test_get_pull_request_comments(self):
+        req = self.do_test_get_pull_request_comments(order_updated=False)
         req.requestJsonAndCheck.assert_called_once_with(
             'POST', 'https://the-github-graphql-url',
             input={
                 'query': 'query ListComments {'
-                '  repository(owner:"login", name:"owner/repo") {'
-                '    pullRequest(number: 1234) {'
-                '      comments(last: 100) {'
-                '        nodes {'
-                '          id, author { login }, body, isMinimized'
-                '        }'
-                '      }'
-                '    }'
-                '  }'
-                '}'
+                         '  repository(owner:"login", name:"owner/repo") {'
+                         '    pullRequest(number: 1234) {'
+                         '      comments(last: 100) {'
+                         '        nodes {'
+                         '          id, databaseId, author { login }, body, isMinimized'
+                         '        }'
+                         '      }'
+                         '    }'
+                         '  }'
+                         '}'
+            }
+        )
+
+    def test_get_pull_request_comments_order_updated(self):
+        req = self.do_test_get_pull_request_comments(order_updated=True)
+        req.requestJsonAndCheck.assert_called_once_with(
+            'POST', 'https://the-github-graphql-url',
+            input={
+                'query': 'query ListComments {'
+                         '  repository(owner:"login", name:"owner/repo") {'
+                         '    pullRequest(number: 1234) {'
+                         '      comments(last: 100, orderBy: { direction: ASC, field: UPDATED_AT }) {'
+                         '        nodes {'
+                         '          id, databaseId, author { login }, body, isMinimized'
+                         '        }'
+                         '      }'
+                         '    }'
+                         '  }'
+                         '}'
             }
         )
 
@@ -1185,7 +1301,7 @@ class TestPublisher(unittest.TestCase):
         Publisher.hide_orphaned_commit_comments(publisher, pr)
 
         pr.get_commits.assert_called_once_with()
-        publisher.get_pull_request_comments.assert_called_once_with(pr)
+        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
         publisher.get_action_comments(self.hide_comments)
         publisher.hide_comment.assert_called_once_with('comment three')
 
@@ -1210,7 +1326,7 @@ class TestPublisher(unittest.TestCase):
         )
         Publisher.hide_all_but_latest_comments(publisher, pr)
 
-        publisher.get_pull_request_comments.assert_called_once_with(pr)
+        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
         publisher.get_action_comments(self.hide_comments)
         publisher.hide_comment.assert_has_calls(
             [mock.call('comment one'), mock.call('comment two')], any_order=False

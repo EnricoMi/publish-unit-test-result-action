@@ -8,6 +8,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
+    comment_mode_off, comment_mode_create, comment_mode_update, \
     get_stats_from_digest, digest_prefix, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -32,7 +33,7 @@ class Settings:
     files_glob: str
     check_name: str
     comment_title: str
-    comment_on_pr: bool
+    comment_mode: str
     compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
@@ -54,15 +55,14 @@ class Publisher:
     def publish(self,
                 stats: UnitTestRunResults,
                 cases: UnitTestCaseResults,
-                compare_earlier: bool,
                 conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run = self.publish_check(stats, cases, compare_earlier, conclusion)
+        check_run = self.publish_check(stats, cases, conclusion)
 
-        if self._settings.comment_on_pr:
+        if self._settings.comment_mode != comment_mode_off:
             pull = self.get_pull(self._settings.commit)
             if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases, compare_earlier)
+                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                 if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                     self.hide_orphaned_commit_comments(pull)
                 elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
@@ -165,11 +165,10 @@ class Publisher:
     def publish_check(self,
                       stats: UnitTestRunResults,
                       cases: UnitTestCaseResults,
-                      compare_earlier: bool,
                       conclusion: str) -> CheckRun:
         # get stats from earlier commits
         before_stats = None
-        if compare_earlier:
+        if self._settings.compare_earlier:
             before_commit_sha = self._settings.event.get('before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_stats = self.get_stats_from_commit(before_commit_sha)
@@ -248,11 +247,10 @@ class Publisher:
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None,
-                        compare_earlier: bool = True) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
         # compare them with earlier stats
         base_check_run = None
-        if compare_earlier:
+        if self._settings.compare_earlier:
             base_commit_sha = self.get_base_commit_sha(pull_request)
             logger.debug(f'comparing against base={base_commit_sha}')
             base_check_run = self.get_check_run(base_commit_sha)
@@ -265,11 +263,42 @@ class Publisher:
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        logger.info('creating comment')
         details_url = check_run.html_url if check_run else None
         summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
-        pull_request.create_issue_comment(f'## {title}\n{summary}')
+        body = f'## {title}\n{summary}'
+
+        # reuse existing commend when comment_mode == comment_mode_update
+        # if none exists or comment_mode != comment_mode_update, create new comment
+        if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
+            logger.info('creating comment')
+            pull_request.create_issue_comment(body)
+
         return pull_request
+
+    def reuse_comment(self, pull: PullRequest, body: str) -> bool:
+        # get comments of this pull request
+        comments = self.get_pull_request_comments(pull, order_by_updated=True)
+
+        # get all comments that come from this action and are not hidden
+        comments = self.get_action_comments(comments)
+
+        # if there is no such comment, stop here
+        if len(comments) == 0:
+            return False
+
+        # edit last comment
+        comment_id = comments[-1].get("databaseId")
+        logger.info(f'editing comment {comment_id}')
+        if ':recycle:' not in body:
+            body = f'{body}\n:recycle: This comment has been updated with latest results.'
+
+        try:
+            pull.get_issue_comment(comment_id).edit(body)
+        except Exception as e:
+            self._gha.warning(f'Failed to edit existing comment #{comment_id}')
+            logger.debug('editing existing comment failed', exc_info=e)
+
+        return True
 
     def get_base_commit_sha(self, pull_request: PullRequest) -> Optional[str]:
         if self._settings.pull_request_build == pull_request_build_mode_merge:
@@ -295,14 +324,18 @@ class Publisher:
 
         return None
 
-    def get_pull_request_comments(self, pull: PullRequest) -> List[Mapping[str, Any]]:
+    def get_pull_request_comments(self, pull: PullRequest, order_by_updated: bool) -> List[Mapping[str, Any]]:
+        order = ''
+        if order_by_updated:
+            order = ', orderBy: { direction: ASC, field: UPDATED_AT }'
+
         query = dict(
             query=r'query ListComments {'
                   r'  repository(owner:"' + self._repo.owner.login + r'", name:"' + self._repo.name + r'") {'
                   r'    pullRequest(number: ' + str(pull.number) + r') {'
-                  r'      comments(last: 100) {'
+                  f'      comments(last: 100{order}) {{'
                   r'        nodes {'
-                  r'          id, author { login }, body, isMinimized'
+                  r'          id, databaseId, author { login }, body, isMinimized'
                   r'        }'
                   r'      }'
                   r'    }'
@@ -338,7 +371,7 @@ class Publisher:
             .get('minimizedComment', {}) \
             .get('isMinimized', {})
 
-    def get_action_comments(self, comments: List, is_minimized: Optional[bool] = False):
+    def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
         return list([comment for comment in comments
                      if comment.get('author', {}).get('login') == 'github-actions'
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
@@ -353,7 +386,7 @@ class Publisher:
         commit_shas = set([commit.sha for commit in pull.get_commits()])
 
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull)
+        comments = self.get_pull_request_comments(pull, order_by_updated=False)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
@@ -381,7 +414,7 @@ class Publisher:
         # we want to reduce the number of shown comments to a minimum
 
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull)
+        comments = self.get_pull_request_comments(pull, order_by_updated=False)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
