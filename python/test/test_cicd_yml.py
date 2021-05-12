@@ -7,10 +7,10 @@ from yaml import Loader
 class TestActionYml(unittest.TestCase):
 
     def test_cicd_workflow(self):
-        with open('../../action.yml') as r:
+        with open('../../action.yml', encoding='utf-8') as r:
             action = yaml.load(r, Loader=Loader)
 
-        with open('../../.github/workflows/ci-cd.yml') as r:
+        with open('../../.github/workflows/ci-cd.yml', encoding='utf-8') as r:
             cicd = yaml.load(r, Loader=Loader)
 
         docker_image_steps = cicd.get('jobs', []).get('publish-docker-image', {}).get('steps', [])
