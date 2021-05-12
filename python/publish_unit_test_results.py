@@ -204,7 +204,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
-    deprecate_var(get_var('COMMENT_ON_PR', options), 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
+    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
 
     return settings
 
