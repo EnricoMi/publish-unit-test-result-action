@@ -305,7 +305,7 @@ class Test(unittest.TestCase):
         event = event.copy()
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'event.json')
-            with open(filepath, 'wt') as w:
+            with open(filepath, 'wt', encoding='utf-8') as w:
                 w.write(json.dumps(event))
 
             for key in ['GITHUB_EVENT_PATH', 'INPUT_GITHUB_EVENT_PATH']:

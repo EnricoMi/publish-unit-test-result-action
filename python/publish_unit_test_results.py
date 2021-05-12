@@ -157,7 +157,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     event_name = get_var('GITHUB_EVENT_NAME', options)
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
-    with open(event, 'r') as f:
+    with open(event, 'rt', encoding='utf-8') as f:
         event = json.load(f)
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
