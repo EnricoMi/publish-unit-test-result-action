@@ -373,43 +373,18 @@ jobs:
       )
 
     steps:
-      - name: Download Artifacts
-        uses: actions/github-script@v3
-        with:
-          script: |
-            var fs = require('fs');
-            var path = require('path');
-            var artifacts_path = path.join('${{github.workspace}}', 'artifacts')
-            fs.mkdirSync(artifacts_path, { recursive: true })
-
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: ${{ github.event.workflow_run.id }},
-            });
-
-            for (const artifact of artifacts.data.artifacts) {
-              var download = await github.actions.downloadArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: artifact.id,
-                  archive_format: 'zip',
-              });
-              var artifact_path = path.join(artifacts_path, `${artifact.name}.zip`)
-              fs.writeFileSync(artifact_path, Buffer.from(download.data));
-              console.log(`Downloaded ${artifact_path}`);
-            }
-      - name: Extract Artifacts
+      - name: Download and Extract Artifacts
         run: |
-          for file in artifacts/*.zip
+          mkdir artifacts && cd artifacts
+          IFS=$'\n'
+          for artifact in $(gh api ${{ github.event.workflow_run.artifacts_url }} -q '.artifacts[] | {name: .name, url: .archive_download_url}')
           do
-            if [ -f "$file" ]
-            then
-              dir="${file/%.zip/}"
-              mkdir -p "$dir"
-              unzip -d "$dir" "$file"
-            fi
+            name="$(jq -r .name <<<$artifact)"
+            gh api "$(jq -r .url <<<$artifact)" > "$name.zip"
+            unzip -d "$name" "$name.zip"
           done
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
