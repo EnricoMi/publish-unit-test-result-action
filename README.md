@@ -216,39 +216,39 @@ To run the composite action in an isolated workflow, your CI workflow should upl
 
 ```yaml
 build-and-test:
-   name: "Build and Test"
-   runs-on: macos-latest
+  name: "Build and Test"
+  runs-on: macos-latest
 
-   steps:
-   - …
-   - name: Upload Unit Test Results
-     if: always()
-     uses: actions/upload-artifact@v2
-     with:
-       name: Unit Test Results
-       path: test-results/**/*.xml
+  steps:
+  - …
+  - name: Upload Unit Test Results
+    if: always()
+    uses: actions/upload-artifact@v2
+    with:
+      name: Unit Test Results
+      path: test-results/**/*.xml
 ```
 
 Your dedicated publish-unit-test-result-workflow then downloads these files and runs the action there:
 
 ```yaml
 publish-test-results:
- name: "Publish Unit Tests Results"
- needs: build-and-test
- runs-on: windows-latest
- # the build-and-test job might be skipped, we don't need to run this job then
- if: success() || failure()
+  name: "Publish Unit Tests Results"
+  needs: build-and-test
+  runs-on: windows-latest
+  # the build-and-test job might be skipped, we don't need to run this job then
+  if: success() || failure()
 
- steps:
-   - name: Download Artifacts
-     uses: actions/download-artifact@v2
-     with:
-       path: artifacts
+  steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: artifacts
 
-   - name: Publish Unit Test Results
-     uses: EnricoMi/publish-unit-test-result-action/composite@v1
-     with:
-       files: artifacts/**/*.xml
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      with:
+        files: artifacts/**/*.xml
 ```
 
 ### Slow startup of composite action
@@ -337,19 +337,19 @@ Adjust the value of `path` to fit your setup:
   if: always()
   uses: actions/upload-artifact@v2
   with:
-     name: Unit Test Results
-     path: |
-        test-results/*.xml
+    name: Unit Test Results
+    path: |
+      test-results/*.xml
 ```
 
 If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
 make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
 
 Add the following workflow that publishes unit test results. It downloads and extracts
-all artifacts into `artifact/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
+all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
-It then runs the action on files in `artifacts/*/`.
-Replace `*` with the name of your unit test artifacts if `*` does not work for you.
+It then runs the action on files matching `artifacts/**/*.xml`.
+Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
 Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 
@@ -357,65 +357,45 @@ Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 name: Unit Test Results
 
 on:
-   workflow_run:
-      workflows: ["CI"]
-      types:
-         - completed
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
 
 jobs:
-   unit-test-results:
-      name: Unit Test Results
-      runs-on: ubuntu-latest
-      if: >
-         github.event.workflow_run.conclusion != 'skipped' && (
-            github.event.sender.login == 'dependabot[bot]' ||
-            github.event.workflow_run.head_repository.full_name != github.repository
-         )
+  unit-test-results:
+    name: Unit Test Results
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion != 'skipped' && (
+        github.event.sender.login == 'dependabot[bot]' ||
+        github.event.workflow_run.head_repository.full_name != github.repository
+      )
 
-      steps:
-         - name: Download Artifacts
-           uses: actions/github-script@v3
-           with:
-              script: |
-                 var fs = require('fs');
-                 var path = require('path');
-                 var artifacts_path = path.join('${{github.workspace}}', 'artifacts')
-                 fs.mkdirSync(artifacts_path, { recursive: true })
+    steps:
+      - name: Download and Extract Artifacts
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          mkdir artifacts && cd artifacts
 
-                 var artifacts = await github.actions.listWorkflowRunArtifacts({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    run_id: ${{ github.event.workflow_run.id }},
-                 });
+          artifacts_url=${{ github.event.workflow_run.artifacts_url }}
+          artifacts=$(gh api $artifacts_url -q '.artifacts[] | {name: .name, url: .archive_download_url}')
 
-                 for (const artifact of artifacts.data.artifacts) {
-                    var download = await github.actions.downloadArtifact({
-                       owner: context.repo.owner,
-                       repo: context.repo.repo,
-                       artifact_id: artifact.id,
-                       archive_format: 'zip',
-                    });
-                    var artifact_path = path.join(artifacts_path, `${artifact.name}.zip`)
-                    fs.writeFileSync(artifact_path, Buffer.from(download.data));
-                    console.log(`Downloaded ${artifact_path}`);
-                 }
-         - name: Extract Artifacts
-           run: |
-              for file in artifacts/*.zip
-              do
-                if [ -f "$file" ]
-                then
-                  dir="${file/%.zip/}"
-                  mkdir -p "$dir"
-                  unzip -d "$dir" "$file"
-                fi
-              done
+          IFS=$'\n'
+          for artifact in $artifacts
+          do
+            name=$(jq -r .name <<<$artifact)
+            url=$(jq -r .url <<<$artifact)
+            gh api $url > "$name.zip"
+            unzip -d "$name" "$name.zip"
+          done
 
-         - name: Publish Unit Test Results
-           uses: EnricoMi/publish-unit-test-result-action@v1
-           with:
-              commit: ${{ github.event.workflow_run.head_sha }}
-              files: "artifacts/*/**/*.xml"
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_sha }}
+          files: "artifacts/**/*.xml"
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
