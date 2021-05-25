@@ -346,10 +346,10 @@ If you run tests in a [strategy matrix](https://docs.github.com/en/actions/refer
 make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
 
 Add the following workflow that publishes unit test results. It downloads and extracts
-all artifacts into `artifact/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
+all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
-It then runs the action on files in `artifacts/*/`.
-Replace `*` with the name of your unit test artifacts if `*` does not work for you.
+It then runs the action on files matching `artifacts/**/*.xml`.
+Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
 Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 
@@ -374,23 +374,28 @@ jobs:
 
     steps:
       - name: Download and Extract Artifacts
-        run: |
-          mkdir artifacts && cd artifacts
-          IFS=$'\n'
-          for artifact in $(gh api ${{ github.event.workflow_run.artifacts_url }} -q '.artifacts[] | {name: .name, url: .archive_download_url}')
-          do
-            name="$(jq -r .name <<<$artifact)"
-            gh api "$(jq -r .url <<<$artifact)" > "$name.zip"
-            unzip -d "$name" "$name.zip"
-          done
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          IFS=$'\n'
+
+          artifacts_url=${{ github.event.workflow_run.artifacts_url }}
+          artifacts=($(gh api $artifacts_url -q '.artifacts[] | {name: .name, url: .archive_download_url}'))
+
+          mkdir artifacts && cd artifacts
+          for artifact in ${artifacts[@]}
+          do
+            name=$(jq -r .name <<<$artifact)
+            url=$(jq -r .url <<<$artifact)
+            gh api $url > "$name.zip"
+            unzip -d "$name" "$name.zip"
+          done
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
-          files: "artifacts/*/**/*.xml"
+          files: "artifacts/**/*.xml"
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
