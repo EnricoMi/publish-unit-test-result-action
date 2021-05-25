@@ -204,36 +204,45 @@ class Publisher:
         if check_run is None:
             return None, None
 
-        all_tests_annotation: Optional[CheckRunAnnotation] = None
-        skipped_tests_annotation: Optional[CheckRunAnnotation] = None
+        all_tests_annotations: List[CheckRunAnnotation] = []
+        skipped_tests_annotations: List[CheckRunAnnotation] = []
 
-        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found$')
-        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found$')
+        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(tests \d+ to \d+\))?$')
+        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(tests \d+ to \d+\))?$')
 
-        all_tests_message_regexp = re.compile(r'^(There is 1 test, see "Raw output" for the name of the test)|(There are \d+ tests, see "Raw output" for the full list of tests)\.$')
-        skipped_tests_message_regexp = re.compile(r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)\.$')
+        all_tests_message_regexp = re.compile(
+            r'^(There is 1 test, see "Raw output" for the name of the test)|'
+            r'(There are \d+ tests, see "Raw output" for the full list of tests)|'
+            r'(There are \d+ tests, see "Raw output" for the list of tests \d+ to \d+)\.$')
+        skipped_tests_message_regexp = re.compile(
+            r'^(There is 1 skipped test, see "Raw output" for the name of the skipped test)|'
+            r'(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)|'
+            r'(There are \d+ skipped tests, see "Raw output" for the list of skipped tests \d+ to \d+)\.$')
 
         for annotation in check_run.get_annotations():
             if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     all_tests_title_regexp.match(annotation.title) and \
                     all_tests_message_regexp.match(annotation.message):
-                if all_tests_annotation is not None:
-                    if annotation:
-                        logger.error(f'Found multiple annotation with all tests in check run {check_run.id}: {annotation.raw_details}')
-                    return None, None
-                all_tests_annotation = annotation
+                all_tests_annotations.append(annotation)
 
             if annotation and annotation.title and annotation.message and annotation.raw_details and \
                     skipped_tests_title_regexp.match(annotation.title) and \
                     skipped_tests_message_regexp.match(annotation.message):
-                if skipped_tests_annotation is not None:
-                    if annotation:
-                        logger.error(f'Found multiple annotation with skipped tests in check run {check_run.id}: {annotation.raw_details}')
-                    return None, None
-                skipped_tests_annotation = annotation
+                skipped_tests_annotations.append(annotation)
 
-        return Publisher.get_test_list_from_annotation(all_tests_annotation), \
-               Publisher.get_test_list_from_annotation(skipped_tests_annotation)
+        all_tests_lists = [Publisher.get_test_list_from_annotation(all_tests_annotation)
+                           for all_tests_annotation in all_tests_annotations]
+        all_tests_list = [test
+                          for all_tests_list in all_tests_lists
+                          if all_tests_list
+                          for test in all_tests_list]
+        skipped_tests_lists = [Publisher.get_test_list_from_annotation(skipped_tests_annotation)
+                           for skipped_tests_annotation in skipped_tests_annotations]
+        skipped_tests_list = [test
+                              for skipped_tests_list in skipped_tests_lists
+                              if skipped_tests_list
+                              for test in skipped_tests_list]
+        return all_tests_list or None, skipped_tests_list or None
 
     def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
         all_tests = get_all_tests_list_annotation(cases) \

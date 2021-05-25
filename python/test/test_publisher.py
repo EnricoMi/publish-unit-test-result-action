@@ -639,6 +639,40 @@ class TestPublisher(unittest.TestCase):
             Publisher.get_test_lists_from_check_run(check_run)
         )
 
+    def test_get_test_lists_from_check_run_chunked_tests(self):
+        annotation1 = mock.Mock()
+        annotation1.title = None
+        annotation1.message = 'message one'
+        annotation1.raw_details = None
+
+        annotation2 = mock.Mock()
+        annotation2.title = '4 tests found (tests 1 to 2)'
+        annotation2.message = 'There are 4 tests, see "Raw output" for the list of tests 1 to 2.'
+        annotation2.raw_details = 'test one\ntest two'
+
+        annotation3 = mock.Mock()
+        annotation3.title = '4 tests found (tests 3 to 4)'
+        annotation3.message = 'There are 4 tests, see "Raw output" for the list of tests 3 to 4.'
+        annotation3.raw_details = 'test three\ntest four'
+
+        annotation4 = mock.Mock()
+        annotation4.title = '4 skipped tests found (tests 1 to 2)'
+        annotation4.message = 'There are 4 skipped tests, see "Raw output" for the list of skipped tests 1 to 2.'
+        annotation4.raw_details = 'skip one\nskip two'
+
+        annotation5 = mock.Mock()
+        annotation5.title = '4 skipped tests found (tests 3 to 4)'
+        annotation5.message = 'There are 4 skipped tests, see "Raw output" for the list of skipped tests 3 to 4.'
+        annotation5.raw_details = 'skip three\nskip four'
+
+        annotations = [annotation1, annotation2, annotation3, annotation4, annotation5]
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual(
+            (['test one', 'test two', 'test three', 'test four'], ['skip one', 'skip two', 'skip three', 'skip four']),
+            Publisher.get_test_lists_from_check_run(check_run)
+        )
+
     def test_get_test_lists_from_check_run_none_raw_details(self):
         annotation1 = mock.Mock()
         annotation1.title = '1 test found'
@@ -653,16 +687,6 @@ class TestPublisher(unittest.TestCase):
         annotations = [annotation1, annotation2]
         check_run = mock.Mock()
         check_run.get_annotations = mock.Mock(return_value=annotations)
-        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
-
-    def test_get_test_lists_from_check_run_multiple_all_tests(self):
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[self.all_tests_annotation, self.all_tests_annotation])
-        self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
-
-    def test_get_test_lists_from_check_run_multiple_skipped_tests(self):
-        check_run = mock.Mock()
-        check_run.get_annotations = mock.Mock(return_value=[self.skipped_tests_annotation, self.skipped_tests_annotation])
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_publish_check_without_annotations(self):
