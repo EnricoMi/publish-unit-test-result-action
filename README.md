@@ -377,13 +377,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          IFS=$'\n'
+          mkdir artifacts && cd artifacts
 
           artifacts_url=${{ github.event.workflow_run.artifacts_url }}
-          artifacts=($(gh api $artifacts_url -q '.artifacts[] | {name: .name, url: .archive_download_url}'))
+          artifacts=$(gh api $artifacts_url -q '.artifacts[] | {name: .name, url: .archive_download_url}')
 
-          mkdir artifacts && cd artifacts
-          for artifact in ${artifacts[@]}
+          IFS=$'\n'
+          for artifact in $artifacts
           do
             name=$(jq -r .name <<<$artifact)
             url=$(jq -r .url <<<$artifact)
