@@ -1685,6 +1685,37 @@ class PublishTest(unittest.TestCase):
         del results[('file', 'class1', 'test2')]
         self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 test, see "Raw output" for the name of the test.', title='1 test found', raw_details='class1 ‑ test2')], get_all_tests_list_annotation(results))
 
+    def test_get_all_tests_list_annotation_chunked(self):
+        results = UnitTestCaseResults([
+            ((None, 'class1', 'test2'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ])),
+            ((None, 'class1', 'test1'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                ])),
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                ])),
+            ])),
+            (('file', 'class1', 'test2'), dict([
+                ('success', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ]))
+        ])
+
+        self.assertEqual([], get_all_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual(
+            [
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class1 ‑ test1\nclass1 ‑ test2'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='file ‑ class1 ‑ test2')
+            ],
+            get_all_tests_list_annotation(results, max_chunk_size=40)
+        )
+
     def test_get_skipped_tests_list_annotation(self):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test2'), dict([
@@ -1711,6 +1742,34 @@ class PublishTest(unittest.TestCase):
         self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class1 ‑ test2')], get_skipped_tests_list_annotation(results))
         del results[(None, 'class1', 'test1')]['success']
         self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2')], get_skipped_tests_list_annotation(results))
+
+    def test_get_skipped_tests_list_annotation_chunked(self):
+        results = UnitTestCaseResults([
+            ((None, 'class1', 'test2'), dict([
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ])),
+            ((None, 'class1', 'test1'), dict([
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ])),
+            (('file', 'class1', 'test2'), dict([
+                ('skipped', list([
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                ])),
+            ]))
+        ])
+
+        self.assertEqual([], get_skipped_tests_list_annotation(UnitTestCaseResults()))
+        self.assertEqual(
+            [
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 skipped tests, see "Raw output" for the list of skipped tests 1 to 2.', title='3 skipped tests found (test 1 to 2)', raw_details='class1 ‑ test1\nclass1 ‑ test2'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 skipped tests, see "Raw output" for the list of skipped tests 3 to 3.', title='3 skipped tests found (test 3 to 3)', raw_details='file ‑ class1 ‑ test2')
+            ],
+            get_skipped_tests_list_annotation(results, max_chunk_size=40)
+        )
 
     def test_chunk(self):
         self.assertEqual([], chunk_test_list([], '\n', 100))

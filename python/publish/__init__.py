@@ -750,7 +750,7 @@ def chunk_test_list(tests: List[str], delimiter: str, max_chunk_size: int) -> Li
     return chunks
 
 
-def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation]:
+def get_all_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
     if not cases:
         return []
 
@@ -761,9 +761,31 @@ def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation
         message = f'There are {len(test_list)} tests, see "Raw output" for the full list of tests.'
 
     # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
-    test_chunks = chunk_test_list(sorted(test_list), '\n', 64000)
-    return [
-        Annotation(
+    test_chunks = chunk_test_list(sorted(test_list), '\n', max_chunk_size)
+    if len(test_chunks) == 0:
+        return []
+
+    if len(test_chunks) == 1:
+        return [
+            Annotation(
+                path='.github',
+                start_line=0,
+                end_line=0,
+                start_column=None,
+                end_column=None,
+                annotation_level='notice',
+                message=message,
+                title=f'{len(cases)} test{"s" if len(cases) > 1 else ""} found',
+                raw_details='\n'.join(test_chunks[0])
+            )
+        ]
+
+    first = 1
+    annotations = []
+    for chunk in test_chunks:
+        last = first + len(chunk) - 1
+        message = f'There are {len(test_list)} tests, see "Raw output" for the list of tests {first} to {last}.'
+        annotation = Annotation(
             path='.github',
             start_line=0,
             end_line=0,
@@ -771,11 +793,13 @@ def get_all_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation
             end_column=None,
             annotation_level='notice',
             message=message,
-            title=f'{len(cases)} test{"s" if len(cases) > 1 else ""} found',
+            title=f'{len(cases)} test{"s" if len(cases) > 1 else ""} found (test {first} to {last})',
             raw_details='\n'.join(chunk)
         )
-        for chunk in test_chunks
-    ]
+        annotations.append(annotation)
+        first = last + 1
+
+    return annotations
 
 
 def get_skipped_tests_list(cases: UnitTestCaseResults) -> Optional[List[str]]:
@@ -788,7 +812,7 @@ def get_skipped_tests_list(cases: UnitTestCaseResults) -> Optional[List[str]]:
             for (file_name, class_name, test_name) in tests]
 
 
-def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annotation]:
+def get_skipped_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
     skipped_tests = get_skipped_tests_list(cases)
     if not skipped_tests:
         return []
@@ -799,9 +823,31 @@ def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annota
         message = f'There are {len(skipped_tests)} skipped tests, see "Raw output" for the full list of skipped tests.'
 
     # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
-    test_chunks = chunk_test_list(sorted(skipped_tests), '\n', 64000)
-    return [
-        Annotation(
+    test_chunks = chunk_test_list(sorted(skipped_tests), '\n', max_chunk_size)
+    if len(test_chunks) == 0:
+        return []
+
+    if len(test_chunks) == 1:
+        return [
+            Annotation(
+                path='.github',
+                start_line=0,
+                end_line=0,
+                start_column=None,
+                end_column=None,
+                annotation_level='notice',
+                message=message,
+                title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found',
+                raw_details='\n'.join(test_chunks[0])
+            )
+        ]
+
+    first = 1
+    annotations = []
+    for chunk in test_chunks:
+        last = first + len(chunk) - 1
+        message = f'There are {len(skipped_tests)} skipped tests, see "Raw output" for the list of skipped tests {first} to {last}.'
+        annotation = Annotation(
             path='.github',
             start_line=0,
             end_line=0,
@@ -809,8 +855,10 @@ def get_skipped_tests_list_annotation(cases: UnitTestCaseResults) -> List[Annota
             end_column=None,
             annotation_level='notice',
             message=message,
-            title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found',
+            title=f'{len(skipped_tests)} skipped test{"s" if len(skipped_tests) > 1 else ""} found (test {first} to {last})',
             raw_details='\n'.join(chunk)
         )
-        for chunk in test_chunks
-    ]
+        annotations.append(annotation)
+        first = last + 1
+
+    return annotations
