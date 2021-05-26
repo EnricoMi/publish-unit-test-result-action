@@ -225,8 +225,7 @@ class Publisher:
 
     @staticmethod
     def get_test_list_from_annotations(annotations: List[CheckRunAnnotation],
-                                       title_regexp: re.Pattern,
-                                       message_regexp: re.Pattern) -> List[str]:
+                                       title_regexp, message_regexp) -> List[str]:
         test_annotations: List[CheckRunAnnotation] = []
 
         for annotation in annotations:
