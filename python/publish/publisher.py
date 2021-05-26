@@ -141,7 +141,8 @@ class Publisher:
 
         return runs[0]
 
-    def get_stats_from_check_run(self, check_run: CheckRun) -> Optional[UnitTestRunResults]:
+    @staticmethod
+    def get_stats_from_check_run(check_run: CheckRun) -> Optional[UnitTestRunResults]:
         summary = check_run.output.summary
         if summary is None:
             return None
@@ -204,9 +205,6 @@ class Publisher:
         if check_run is None:
             return None, None
 
-        all_tests_annotations: List[CheckRunAnnotation] = []
-        skipped_tests_annotations: List[CheckRunAnnotation] = []
-
         all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(tests \d+ to \d+\))?$')
         skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(tests \d+ to \d+\))?$')
 
@@ -219,30 +217,31 @@ class Publisher:
             r'(There are \d+ skipped tests, see "Raw output" for the full list of skipped tests)|'
             r'(There are \d+ skipped tests, see "Raw output" for the list of skipped tests \d+ to \d+)\.$')
 
-        for annotation in check_run.get_annotations():
-            if annotation and annotation.title and annotation.message and annotation.raw_details and \
-                    all_tests_title_regexp.match(annotation.title) and \
-                    all_tests_message_regexp.match(annotation.message):
-                all_tests_annotations.append(annotation)
+        annotations = list(check_run.get_annotations())
+        all_tests_list = Publisher.get_test_list_from_annotations(annotations, all_tests_title_regexp, all_tests_message_regexp)
+        skipped_tests_list = Publisher.get_test_list_from_annotations(annotations, skipped_tests_title_regexp, skipped_tests_message_regexp)
 
-            if annotation and annotation.title and annotation.message and annotation.raw_details and \
-                    skipped_tests_title_regexp.match(annotation.title) and \
-                    skipped_tests_message_regexp.match(annotation.message):
-                skipped_tests_annotations.append(annotation)
-
-        all_tests_lists = [Publisher.get_test_list_from_annotation(all_tests_annotation)
-                           for all_tests_annotation in all_tests_annotations]
-        all_tests_list = [test
-                          for all_tests_list in all_tests_lists
-                          if all_tests_list
-                          for test in all_tests_list]
-        skipped_tests_lists = [Publisher.get_test_list_from_annotation(skipped_tests_annotation)
-                           for skipped_tests_annotation in skipped_tests_annotations]
-        skipped_tests_list = [test
-                              for skipped_tests_list in skipped_tests_lists
-                              if skipped_tests_list
-                              for test in skipped_tests_list]
         return all_tests_list or None, skipped_tests_list or None
+
+    @staticmethod
+    def get_test_list_from_annotations(annotations: List[CheckRunAnnotation],
+                                       title_regexp: re.Pattern,
+                                       message_regexp: re.Pattern) -> List[str]:
+        test_annotations: List[CheckRunAnnotation] = []
+
+        for annotation in annotations:
+            if annotation and annotation.title and annotation.message and annotation.raw_details and \
+                    title_regexp.match(annotation.title) and \
+                    message_regexp.match(annotation.message):
+                test_annotations.append(annotation)
+
+        test_lists = [Publisher.get_test_list_from_annotation(test_annotation)
+                      for test_annotation in test_annotations]
+        test_list = [test
+                     for test_list in test_lists
+                     if test_list
+                     for test in test_list]
+        return test_list
 
     def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
         all_tests = get_all_tests_list_annotation(cases) \
