@@ -2,4 +2,4 @@
 dataclasses;python_version<"3.7"
 junitparser==1.6.3
 PyGithub==1.54.1
-urllib3==1.26.4
+urllib3==1.26.5
