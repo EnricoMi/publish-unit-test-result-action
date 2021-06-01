@@ -311,7 +311,7 @@ jobs:
     steps:
       - name: Docker meta
         id: docker-meta
-        uses: crazy-max/ghaction-docker-meta@v2
+        uses: crazy-max/ghaction-docker-meta@v3.3.0
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
           tags: |
