@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import tempfile
 import unittest
@@ -11,7 +12,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
-    get_settings, get_annotations_config, Settings, get_files
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw
 from test import chdir
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
@@ -625,3 +626,48 @@ class Test(unittest.TestCase):
             files = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
+
+    def test_throttle_gh_request_raw(self):
+        logging.root.level = logging.getLevelName('INFO')
+        logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+
+        method = mock.Mock(return_value='response')
+        throttled_method = throttle_gh_request_raw(2, 5, method)
+
+        def test_request(verb: str, expected_sleep: Optional[float]):
+            with mock.patch('publish_unit_test_results.time.sleep') as sleep:
+                response = throttled_method('cnx', verb, 'url', 'headers', 'input')
+
+                self.assertEqual('response', response)
+                method.assert_called_once_with('cnx', verb, 'url', 'headers', 'input')
+                method.reset_mock()
+
+                if expected_sleep is not None:
+                    sleep.assert_called_once()
+                    slept = sleep.call_args[0][0]
+                    self.assertLessEqual(slept, expected_sleep)
+                    self.assertGreater(slept, expected_sleep - 0.5)
+                else:
+                    sleep.assert_not_called()
+
+        test_request('GET', None)
+        test_request('GET', 2.0)
+        test_request('GET', 2.0)
+        test_request('POST', 2.0)
+        test_request('POST', 5.0)
+        test_request('POST', 5.0)
+        test_request('GET', 2.0)
+        # these five seconds are since last write, and they include the 2 seconds of last read,
+        # but those 2 seconds have not been waited so it still sleeps 5 seconds
+        test_request('POST', 5.0)
+
+    def test_throttle_gh_request_raw_exception(self):
+        def exc(*args, **kwargs):
+            raise RuntimeError('request fails')
+
+        method = mock.Mock(side_effect=exc)
+        throttled_method = throttle_gh_request_raw(2, 5, method)
+
+        with self.assertRaises(RuntimeError) as re:
+            throttled_method('cnx', 'GET', 'url', 'headers', 'input')
+        self.assertIn('request fails', re.exception.args)
