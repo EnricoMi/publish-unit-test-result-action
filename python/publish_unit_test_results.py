@@ -1,7 +1,10 @@
+from datetime import datetime
 import json
 import logging
 import os
 import re
+import time
+from collections import defaultdict
 from glob import glob
 from typing import List, Optional, Union
 
@@ -84,7 +87,40 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=settings.api_backoff_seconds)
+    gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(2, 5, gh._Github__requester._Requester__requestRaw)
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+
+def throttle_gh_request_raw(seconds_between_requests: int, seconds_between_writes: int, gh_request_raw):
+    last_requests = defaultdict(lambda: 0.0)
+
+    def throttled_gh_request_raw(cnx, verb, url, requestHeaders, input):
+        now = datetime.utcnow().timestamp()
+        requests = last_requests.values()
+        writes = [l for v, l in last_requests.items() if v != 'GET']
+        last_request = max(requests) if requests else 0
+        last_write = max(writes) if writes else 0
+        next_request = last_request + seconds_between_requests
+        next_write = last_write + seconds_between_writes
+
+        if last_request:
+            logging.info(f'last request: {now - last_request}s ago, next request: in {next_request - now}s')
+        if last_write:
+            logging.info(f'last write: {now - last_write}s ago, next write: in {next_write - now}s')
+
+        next = next_request if verb == 'GET' else max(next_request, next_write)
+        defer = max(next - datetime.utcnow().timestamp(), 0)
+        if defer > 0:
+            logging.info(f'sleeping {defer}s before next request')
+            time.sleep(defer)
+
+        logging.info(f'requesting {verb} {url}')
+        try:
+            return gh_request_raw(cnx, verb, url, requestHeaders, input)
+        finally:
+            last_requests[verb] = datetime.utcnow().timestamp()
+
+    return throttled_gh_request_raw
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
