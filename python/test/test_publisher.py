@@ -581,7 +581,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_get_stats_from_commit_not_exists(self):
         def exception(commit: str):
-            raise GithubException(422, {'message': f"No commit found for SHA: {commit}"})
+            raise GithubException(422, {'message': f"No commit found for SHA: {commit}"}, headers=None)
 
         settings = self.create_settings()
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])

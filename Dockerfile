@@ -10,7 +10,9 @@ LABEL com.github.actions.icon="check-circle"
 LABEL com.github.actions.color="green"
 
 COPY python/requirements.txt /action/
-RUN pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --force --no-cache-dir -r /action/requirements.txt
+RUN apk add --no-cache build-base libffi-dev; \
+    pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --force --no-cache-dir -r /action/requirements.txt; \
+    apk del build-base libffi-dev
 
 COPY python/publish /action/publish
 COPY python/publish_unit_test_results.py /action/
