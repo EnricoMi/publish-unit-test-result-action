@@ -46,6 +46,8 @@ class TestPublisher(unittest.TestCase):
             token=None,
             api_url='https://the-github-api-url',
             graphql_url='https://the-github-graphql-url',
+            api_retries=1,
+            api_backoff_seconds=1,
             event=event,
             event_name=event_name,
             repo='owner/repo',

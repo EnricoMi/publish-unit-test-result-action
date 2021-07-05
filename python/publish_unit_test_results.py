@@ -83,7 +83,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
     # publish the delta stats
-    gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=settings.api_backoff_seconds)
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
@@ -142,6 +142,11 @@ def check_var(var: Union[str, List[str]],
                                    f"allowed: {', '.join(allowed_values)}")
 
 
+def check_var_condition(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
 def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
     if val is not None:
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
@@ -173,10 +178,17 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     fail_on_failures = fail_on == fail_on_mode_failures
     fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
 
+    retries = get_var('GITHUB_RETRIES', options) or '10'
+    backoff_seconds = get_var('GITHUB_RETRY_BACKOFF_SECONDS', options) or '2'
+    check_var_condition(retries.isnumeric(), f'GITHUB_RETRIES must be a positive integer or 0: {retries}')
+    check_var_condition(backoff_seconds.isnumeric(), f'GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: {backoff_seconds}')
+
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         graphql_url=graphql_url,
+        api_retries=int(retries),
+        api_backoff_seconds=int(backoff_seconds),
         event=event,
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
@@ -203,6 +215,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
+
+    check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
+    check_var_condition(settings.api_backoff_seconds > 0, f'GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: {settings.api_backoff_seconds}')
 
     deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
 

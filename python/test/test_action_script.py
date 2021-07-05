@@ -123,6 +123,8 @@ class Test(unittest.TestCase):
     def get_settings(token='token',
                      api_url='http://github.api.url/',
                      graphql_url='http://github.graphql.url/',
+                     retries=2,
+                     backoff_seconds=1,
                      event={},
                      event_name='event name',
                      repo='repo',
@@ -143,6 +145,8 @@ class Test(unittest.TestCase):
             token=token,
             api_url=api_url,
             graphql_url=graphql_url,
+            api_retries=retries,
+            api_backoff_seconds=backoff_seconds,
             event=event.copy(),
             event_name=event_name,
             repo=repo,
@@ -169,11 +173,39 @@ class Test(unittest.TestCase):
                    if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA'}}
         self.do_test_get_settings(**options)
 
-    def test_get_settings_github_api_url_default(self):
+    def test_get_settings_github_api_url(self):
+        self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
         self.do_test_get_settings(GITHUB_API_URL=None, expected=self.get_settings(api_url='https://api.github.com'))
 
-    def test_get_settings_github_graphql_url_default(self):
+    def test_get_settings_github_graphql_url(self):
+        self.do_test_get_settings(GITHUB_GRAPHQL_URL='https://api.github.onpremise.com/graphql', expected=self.get_settings(graphql_url='https://api.github.onpremise.com/graphql'))
         self.do_test_get_settings(GITHUB_GRAPHQL_URL=None, expected=self.get_settings(graphql_url='https://api.github.com/graphql'))
+
+    def test_get_settings_github_retries(self):
+        self.do_test_get_settings(GITHUB_RETRIES='0', expected=self.get_settings(retries=0))
+        self.do_test_get_settings(GITHUB_RETRIES='1', expected=self.get_settings(retries=1))
+        self.do_test_get_settings(GITHUB_RETRIES='123', expected=self.get_settings(retries=123))
+        self.do_test_get_settings(GITHUB_RETRIES=None, expected=self.get_settings(retries=10))
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRIES='-1', expected=None)
+        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: -1', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRIES='none', expected=None)
+        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: none', re.exception.args)
+
+    def test_get_settings_github_retry_backoff_default(self):
+        self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS='1', expected=self.get_settings(backoff_seconds=1))
+        self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS='4', expected=self.get_settings(backoff_seconds=4))
+        self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS=None, expected=self.get_settings(backoff_seconds=2))
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS='0', expected=None)
+        self.assertIn('GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: 0', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS='-1', expected=None)
+        self.assertIn('GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: -1', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRY_BACKOFF_SECONDS='none', expected=None)
+        self.assertIn('GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: none', re.exception.args)
 
     def test_get_settings_files(self):
         self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
@@ -187,10 +219,12 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
         self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
         self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event, event_name='push'))
-        with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event={}, GITHUB_SHA='default', expected=None)
-        with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
+        self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA=None, expected=None)
+        self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
 
     def test_get_settings_fail_on_default(self):
         self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
@@ -317,6 +351,8 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_NAME='event name',
                 GITHUB_API_URL='http://github.api.url/',  #defaults to github
                 GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
+                GITHUB_RETRIES='2',
+                GITHUB_RETRY_BACKOFF_SECONDS='1',
                 TEST_CHANGES_LIMIT='10',  # not an int
                 CHECK_NAME='check name',  # defaults to 'Unit Test Results'
                 GITHUB_TOKEN='token',

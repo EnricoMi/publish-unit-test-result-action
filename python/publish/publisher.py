@@ -24,6 +24,8 @@ class Settings:
     token: str
     api_url: str
     graphql_url: str
+    api_retries: int
+    api_backoff_seconds: int
     event: dict
     event_name: str
     repo: str
