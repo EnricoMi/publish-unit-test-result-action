@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3.6-slim-buster
 
 LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
 LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
