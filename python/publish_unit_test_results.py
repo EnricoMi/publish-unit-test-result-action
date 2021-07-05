@@ -86,16 +86,20 @@ def main(settings: Settings, gha: GithubAction) -> None:
     conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
     # publish the delta stats
-    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=settings.api_backoff_seconds)
-    gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(2, 5, gh._Github__requester._Requester__requestRaw)
+    backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor)
+    gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(
+        settings.seconds_between_github_reads,
+        settings.seconds_between_github_writes,
+        gh._Github__requester._Requester__requestRaw
+    )
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
 
-def throttle_gh_request_raw(seconds_between_requests: int, seconds_between_writes: int, gh_request_raw):
+def throttle_gh_request_raw(seconds_between_requests: float, seconds_between_writes: float, gh_request_raw):
     last_requests = defaultdict(lambda: 0.0)
 
     def throttled_gh_request_raw(cnx, verb, url, requestHeaders, input):
-        now = datetime.utcnow().timestamp()
         requests = last_requests.values()
         writes = [l for v, l in last_requests.items() if v != 'GET']
         last_request = max(requests) if requests else 0
@@ -103,18 +107,13 @@ def throttle_gh_request_raw(seconds_between_requests: int, seconds_between_write
         next_request = last_request + seconds_between_requests
         next_write = last_write + seconds_between_writes
 
-        if last_request:
-            logging.info(f'last request: {now - last_request}s ago, next request: in {next_request - now}s')
-        if last_write:
-            logging.info(f'last write: {now - last_write}s ago, next write: in {next_write - now}s')
-
         next = next_request if verb == 'GET' else max(next_request, next_write)
         defer = max(next - datetime.utcnow().timestamp(), 0)
         if defer > 0:
-            logging.info(f'sleeping {defer}s before next request')
+            logging.debug(f'sleeping {defer}s before next GitHub request')
             time.sleep(defer)
 
-        logging.info(f'requesting {verb} {url}')
+        logging.debug(f'GitHub request: {verb} {url}')
         try:
             return gh_request_raw(cnx, verb, url, requestHeaders, input)
         finally:
@@ -193,6 +192,10 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
             gha.warning(message)
 
 
+def is_float(text: str) -> bool:
+    return re.match('[+-]?([0-9]*.[0-9]+)|([0-9]+(.[0-9]?)?)', text) is not None
+
+
 def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     event = get_var('GITHUB_EVENT_PATH', options)
     event_name = get_var('GITHUB_EVENT_NAME', options)
@@ -215,16 +218,17 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
 
     retries = get_var('GITHUB_RETRIES', options) or '10'
-    backoff_seconds = get_var('GITHUB_RETRY_BACKOFF_SECONDS', options) or '2'
+    seconds_between_github_reads = get_var('SECONDS_BETWEEN_GITHUB_READS', options) or '1'
+    seconds_between_github_writes = get_var('SECONDS_BETWEEN_GITHUB_WRITES', options) or '2'
     check_var_condition(retries.isnumeric(), f'GITHUB_RETRIES must be a positive integer or 0: {retries}')
-    check_var_condition(backoff_seconds.isnumeric(), f'GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: {backoff_seconds}')
+    check_var_condition(is_float(seconds_between_github_reads), f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
+    check_var_condition(is_float(seconds_between_github_writes), f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         graphql_url=graphql_url,
         api_retries=int(retries),
-        api_backoff_seconds=int(backoff_seconds),
         event=event,
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
@@ -241,7 +245,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS', options) == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options) == 'true',
-        check_run_annotation=annotations
+        check_run_annotation=annotations,
+        seconds_between_github_reads=float(seconds_between_github_reads),
+        seconds_between_github_writes=float(seconds_between_github_writes)
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
@@ -253,7 +259,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
-    check_var_condition(settings.api_backoff_seconds > 0, f'GITHUB_RETRY_BACKOFF_SECONDS must be an integer larger than zero: {settings.api_backoff_seconds}')
+    check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
+    check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
     deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
 
