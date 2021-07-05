@@ -1,17 +1,17 @@
-from datetime import datetime
 import json
 import logging
 import os
 import re
 import time
 from collections import defaultdict
+from datetime import datetime
 from glob import glob
 from typing import List, Optional, Union
 
 import github
 from urllib3.util.retry import Retry
 
-import publish
+import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes
@@ -110,10 +110,10 @@ def throttle_gh_request_raw(seconds_between_requests: float, seconds_between_wri
         next = next_request if verb == 'GET' else max(next_request, next_write)
         defer = max(next - datetime.utcnow().timestamp(), 0)
         if defer > 0:
-            logging.debug(f'sleeping {defer}s before next GitHub request')
+            logger.debug(f'sleeping {defer}s before next GitHub request')
             time.sleep(defer)
 
-        logging.debug(f'GitHub request: {verb} {url}')
+        logger.debug(f'GitHub request: {verb} {url}')
         try:
             return gh_request_raw(cnx, verb, url, requestHeaders, input)
         finally:
