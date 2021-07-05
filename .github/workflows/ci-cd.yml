@@ -102,6 +102,7 @@ jobs:
         with:
           check_name: Unit Test Results (Dockerfile)
           files: "artifacts/**/*.xml"
+          LOG_LEVEL: DEBUG
 
   publish-docker-image:
     name: Publish Unit Test Results (Docker Image)
