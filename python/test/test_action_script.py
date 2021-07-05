@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import tempfile
 import unittest
@@ -11,7 +12,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, \
-    get_settings, get_annotations_config, Settings, get_files
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float
 from test import chdir
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
@@ -123,6 +124,7 @@ class Test(unittest.TestCase):
     def get_settings(token='token',
                      api_url='http://github.api.url/',
                      graphql_url='http://github.graphql.url/',
+                     retries=2,
                      event={},
                      event_name='event name',
                      repo='repo',
@@ -138,11 +140,14 @@ class Test(unittest.TestCase):
                      hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
-                     check_run_annotation=[]):
+                     check_run_annotation=[],
+                     seconds_between_github_reads=1.5,
+                     seconds_between_github_writes=2.5):
         return Settings(
             token=token,
             api_url=api_url,
             graphql_url=graphql_url,
+            api_retries=retries,
             event=event.copy(),
             event_name=event_name,
             repo=repo,
@@ -159,7 +164,9 @@ class Test(unittest.TestCase):
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
-            check_run_annotation=check_run_annotation.copy()
+            check_run_annotation=check_run_annotation.copy(),
+            seconds_between_github_reads=seconds_between_github_reads,
+            seconds_between_github_writes=seconds_between_github_writes
         )
 
     def test_get_settings(self):
@@ -169,11 +176,25 @@ class Test(unittest.TestCase):
                    if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA'}}
         self.do_test_get_settings(**options)
 
-    def test_get_settings_github_api_url_default(self):
+    def test_get_settings_github_api_url(self):
+        self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
         self.do_test_get_settings(GITHUB_API_URL=None, expected=self.get_settings(api_url='https://api.github.com'))
 
-    def test_get_settings_github_graphql_url_default(self):
+    def test_get_settings_github_graphql_url(self):
+        self.do_test_get_settings(GITHUB_GRAPHQL_URL='https://api.github.onpremise.com/graphql', expected=self.get_settings(graphql_url='https://api.github.onpremise.com/graphql'))
         self.do_test_get_settings(GITHUB_GRAPHQL_URL=None, expected=self.get_settings(graphql_url='https://api.github.com/graphql'))
+
+    def test_get_settings_github_retries(self):
+        self.do_test_get_settings(GITHUB_RETRIES='0', expected=self.get_settings(retries=0))
+        self.do_test_get_settings(GITHUB_RETRIES='1', expected=self.get_settings(retries=1))
+        self.do_test_get_settings(GITHUB_RETRIES='123', expected=self.get_settings(retries=123))
+        self.do_test_get_settings(GITHUB_RETRIES=None, expected=self.get_settings(retries=10))
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRIES='-1', expected=None)
+        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: -1', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(GITHUB_RETRIES='none', expected=None)
+        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: none', re.exception.args)
 
     def test_get_settings_files(self):
         self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
@@ -187,10 +208,12 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
         self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request'))
         self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event, event_name='push'))
-        with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event={}, GITHUB_SHA='default', expected=None)
-        with self.assertRaises(RuntimeError, msg='Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file'):
+        self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA=None, expected=None)
+        self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
 
     def test_get_settings_fail_on_default(self):
         self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
@@ -267,6 +290,25 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
+    def test_get_settings_seconds_between_github_reads(self):
+        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
+
+    def test_get_settings_seconds_between_github_writes(self):
+        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_WRITES', 'seconds_between_github_writes', 2.0)
+
+    def do_test_get_settings_seconds_between_github_requests(self, env_var_name: str, settings_var_name: str, default: float):
+        self.do_test_get_settings(**{env_var_name: '0.001', 'expected': self.get_settings(**{settings_var_name: 0.001})})
+        self.do_test_get_settings(**{env_var_name: '1', 'expected': self.get_settings(**{settings_var_name: 1.0})})
+        self.do_test_get_settings(**{env_var_name: '1.0', 'expected': self.get_settings(**{settings_var_name: 1.0})})
+        self.do_test_get_settings(**{env_var_name: '2.5', 'expected': self.get_settings(**{settings_var_name: 2.5})})
+        self.do_test_get_settings(**{env_var_name: None, 'expected': self.get_settings(**{settings_var_name: default})})
+
+        for val in ['0', '0.0', '-1', 'none']:
+            with self.subTest(reads=val):
+                with self.assertRaises(RuntimeError) as re:
+                    self.do_test_get_settings(**{env_var_name: val, 'expected': None})
+                self.assertIn(f'{env_var_name} must be a positive number: {val}', re.exception.args)
+
     def test_get_settings_missing_options(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
@@ -317,6 +359,7 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_NAME='event name',
                 GITHUB_API_URL='http://github.api.url/',  #defaults to github
                 GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
+                GITHUB_RETRIES='2',
                 TEST_CHANGES_LIMIT='10',  # not an int
                 CHECK_NAME='check name',  # defaults to 'Unit Test Results'
                 GITHUB_TOKEN='token',
@@ -329,6 +372,8 @@ class Test(unittest.TestCase):
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
                 # annotations config tested in test_get_annotations_config*
+                SECONDS_BETWEEN_GITHUB_READS='1.5',
+                SECONDS_BETWEEN_GITHUB_WRITES='2.5',
             )
             options.update(**kwargs)
             for arg in kwargs:
@@ -589,3 +634,57 @@ class Test(unittest.TestCase):
             files = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
+
+    def test_throttle_gh_request_raw(self):
+        logging.root.level = logging.getLevelName('INFO')
+        logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+
+        method = mock.Mock(return_value='response')
+        throttled_method = throttle_gh_request_raw(2, 5, method)
+
+        def test_request(verb: str, expected_sleep: Optional[float]):
+            with mock.patch('publish_unit_test_results.time.sleep') as sleep:
+                response = throttled_method('cnx', verb, 'url', 'headers', 'input')
+
+                self.assertEqual('response', response)
+                method.assert_called_once_with('cnx', verb, 'url', 'headers', 'input')
+                method.reset_mock()
+
+                if expected_sleep is not None:
+                    sleep.assert_called_once()
+                    slept = sleep.call_args[0][0]
+                    self.assertLessEqual(slept, expected_sleep)
+                    self.assertGreater(slept, expected_sleep - 0.5)
+                else:
+                    sleep.assert_not_called()
+
+        test_request('GET', None)
+        test_request('GET', 2.0)
+        test_request('GET', 2.0)
+        test_request('POST', 2.0)
+        test_request('POST', 5.0)
+        test_request('POST', 5.0)
+        test_request('GET', 2.0)
+        # these five seconds are since last write, and they include the 2 seconds of last read,
+        # but those 2 seconds have not been waited so it still sleeps 5 seconds
+        test_request('POST', 5.0)
+
+    def test_throttle_gh_request_raw_exception(self):
+        def exc(*args, **kwargs):
+            raise RuntimeError('request fails')
+
+        method = mock.Mock(side_effect=exc)
+        throttled_method = throttle_gh_request_raw(2, 5, method)
+
+        with self.assertRaises(RuntimeError) as re:
+            throttled_method('cnx', 'GET', 'url', 'headers', 'input')
+        self.assertIn('request fails', re.exception.args)
+
+    def test_is_float(self):
+        for value, expected in [
+            ('0', True), ('0.0', True), ('.0', True), ('0.', True),
+            ('1.2', True), ('-2.3', True), ('+1.3', True),
+            ('.', False), ('+1', True), ('-2', True)
+        ]:
+            with self.subTest(value=value):
+                self.assertEqual(expected, is_float(value))

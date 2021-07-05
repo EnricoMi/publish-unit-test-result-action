@@ -2,13 +2,16 @@ import json
 import logging
 import os
 import re
+import time
+from collections import defaultdict
+from datetime import datetime
 from glob import glob
 from typing import List, Optional, Union
 
 import github
 from urllib3.util.retry import Retry
 
-import publish
+import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes
@@ -83,8 +86,40 @@ def main(settings: Settings, gha: GithubAction) -> None:
     conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
     # publish the delta stats
-    gh = get_github(token=settings.token, url=settings.api_url, retries=10, backoff_factor=1)
+    backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor)
+    gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(
+        settings.seconds_between_github_reads,
+        settings.seconds_between_github_writes,
+        gh._Github__requester._Requester__requestRaw
+    )
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+
+def throttle_gh_request_raw(seconds_between_requests: float, seconds_between_writes: float, gh_request_raw):
+    last_requests = defaultdict(lambda: 0.0)
+
+    def throttled_gh_request_raw(cnx, verb, url, requestHeaders, input):
+        requests = last_requests.values()
+        writes = [l for v, l in last_requests.items() if v != 'GET']
+        last_request = max(requests) if requests else 0
+        last_write = max(writes) if writes else 0
+        next_request = last_request + seconds_between_requests
+        next_write = last_write + seconds_between_writes
+
+        next = next_request if verb == 'GET' else max(next_request, next_write)
+        defer = max(next - datetime.utcnow().timestamp(), 0)
+        if defer > 0:
+            logger.debug(f'sleeping {defer}s before next GitHub request')
+            time.sleep(defer)
+
+        logger.debug(f'GitHub request: {verb} {url}')
+        try:
+            return gh_request_raw(cnx, verb, url, requestHeaders, input)
+        finally:
+            last_requests[verb] = datetime.utcnow().timestamp()
+
+    return throttled_gh_request_raw
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):
@@ -142,6 +177,11 @@ def check_var(var: Union[str, List[str]],
                                    f"allowed: {', '.join(allowed_values)}")
 
 
+def check_var_condition(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
 def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
     if val is not None:
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
@@ -150,6 +190,10 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
             logger.debug(message)
         else:
             gha.warning(message)
+
+
+def is_float(text: str) -> bool:
+    return re.match('[+-]?([0-9]*.[0-9]+)|([0-9]+(.[0-9]?)?)', text) is not None
 
 
 def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
@@ -173,10 +217,18 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     fail_on_failures = fail_on == fail_on_mode_failures
     fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
 
+    retries = get_var('GITHUB_RETRIES', options) or '10'
+    seconds_between_github_reads = get_var('SECONDS_BETWEEN_GITHUB_READS', options) or '1'
+    seconds_between_github_writes = get_var('SECONDS_BETWEEN_GITHUB_WRITES', options) or '2'
+    check_var_condition(retries.isnumeric(), f'GITHUB_RETRIES must be a positive integer or 0: {retries}')
+    check_var_condition(is_float(seconds_between_github_reads), f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
+    check_var_condition(is_float(seconds_between_github_writes), f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
+
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         api_url=api_url,
         graphql_url=graphql_url,
+        api_retries=int(retries),
         event=event,
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
@@ -193,7 +245,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_var('REPORT_INDIVIDUAL_RUNS', options) == 'true',
         dedup_classes_by_file_name=get_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options) == 'true',
-        check_run_annotation=annotations
+        check_run_annotation=annotations,
+        seconds_between_github_reads=float(seconds_between_github_reads),
+        seconds_between_github_writes=float(seconds_between_github_writes)
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
@@ -203,6 +257,10 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
+
+    check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
+    check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
+    check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
     deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
 

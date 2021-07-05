@@ -46,6 +46,7 @@ class TestPublisher(unittest.TestCase):
             token=None,
             api_url='https://the-github-api-url',
             graphql_url='https://the-github-graphql-url',
+            api_retries=1,
             event=event,
             event_name=event_name,
             repo='owner/repo',
@@ -62,7 +63,9 @@ class TestPublisher(unittest.TestCase):
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
-            check_run_annotation=check_run_annotation
+            check_run_annotation=check_run_annotation,
+            seconds_between_github_reads=1.5,
+            seconds_between_github_writes=2.5
         )
 
     stats = UnitTestRunResults(

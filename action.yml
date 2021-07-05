@@ -6,6 +6,10 @@ inputs:
     description: 'GitHub API Access Token'
     default: ${{ github.token }}
     required: true
+  github_retries:
+    description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
+    default: '10'
+    required: false
   commit:
     description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
     required: false
@@ -58,6 +62,14 @@ inputs:
   check_run_annotations_branch:
     description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
     required: false
+  seconds_between_github_reads:
+    description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
+    required: false
+    default: '0.25'
+  seconds_between_github_writes:
+    description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
+    required: false
+    default: '2.0'
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.18'
