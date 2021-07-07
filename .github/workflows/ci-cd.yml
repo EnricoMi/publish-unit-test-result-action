@@ -270,16 +270,21 @@ jobs:
     outputs:
       image: ${{ steps.action.outputs.image }}
       image-exists: ${{ steps.image.outputs.exists }}
+      image-version: ${{ steps.action.outputs.version }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Extract action image and version
+        # we deploy from a specific commit on master (the one that mentions a new version the first time)
+        # so we need to tell docker/metadata-action to extract docker tags from that version
         id: action
         run: |
           image=$(grep -A 10 "^runs:" action.yml | grep -E "\s+image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
+          version=$(cut -d : -f 2 <<< "$image")
           echo "::set-output name=image::$image"
+          echo "::set-output name=version::$version"
         shell: bash
 
       - name: Check action image existence
@@ -312,6 +317,8 @@ jobs:
             type=match,pattern=(v\d+),group=1
             type=match,pattern=(v\d+.\d+),group=1
             type=match,pattern=(v\d+.\d+.\d+),group=1
+            type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}.0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
