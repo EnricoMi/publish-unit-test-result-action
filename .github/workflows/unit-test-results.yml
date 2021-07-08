@@ -29,19 +29,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          mkdir artifacts && cd artifacts
+          mkdir -p artifacts && cd artifacts
 
           artifacts_url=${{ github.event.workflow_run.artifacts_url }}
-          artifacts=$(gh api $artifacts_url -q '.artifacts[] | {name: .name, url: .archive_download_url}')
+          artifacts=$(gh api $artifacts_url -q '.artifacts[] | [.name, .archive_download_url] | @tsv')
 
-          IFS=$'\n'
-          for artifact in $artifacts
+          while read artifact
           do
-            name=$(jq -r .name <<<$artifact)
-            url=$(jq -r .url <<<$artifact)
+            read name url <<< "$artifact"
             gh api $url > "$name.zip"
             unzip -d "$name" "$name.zip"
-          done
+          done <<< "$artifacts"
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
