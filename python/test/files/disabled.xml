@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name='failing tests' tests='31' disabled='5' errors='1' failures='19' skipped='0' time='0.002'>
+    <testsuite name='factorial' tests='17' disabled='5' failures='5' errors='1' skipped='0'>
+        <testcase name='positive_arguments_must_produce_expected_result[0]' status='passed' time='0'/>
+        <testcase name='factorial_of_value_from_fixture' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: check_eq(3628800, 3628801)'/>
+        </testcase>
+        <testcase name='factorial_of_value_from_fixture[3]' status='passed' time='0'/>
+        <testcase name='factorial_of_value_from_fixture[2]' status='passed' time='0'/>
+        <testcase name='disabled_test' status='disabled' time='0'/>
+        <testcase name='positive_arguments_must_produce_expected_result' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, 6)hello world!'/>
+        </testcase>
+        <testcase name='test_which_throws_unknown_exception' status='errored' time='0'>
+            <error message='uncaught (anonymous namespace)::some_unknown_exception'/>
+        </testcase>
+        <testcase name='positive_arguments_must_produce_expected_result[2]' status='failed' time='0.001'>
+            <failure message='/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)'/>
+        </testcase>
+        <testcase name='positive_arguments_must_produce_expected_result[3]' status='passed' time='0'/>
+        <testcase name='factorial_of_value_from_fixture[0]' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2'/>
+        </testcase>
+        <testcase name='disabled_param_test[0]' status='disabled' time='0'/>
+        <testcase name='disabled_param_test[1]' status='disabled' time='0'/>
+        <testcase name='disabled_param_test[2]' status='disabled' time='0'/>
+        <testcase name='test_which_fails_check_eq_with_custom_message' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, 7)hello world!'/>
+        </testcase>
+        <testcase name='disabled_param_test[3]' status='disabled' time='0'/>
+        <testcase name='positive_arguments_must_produce_expected_result[1]' status='passed' time='0'/>
+        <testcase name='factorial_of_value_from_fixture[1]' status='passed' time='0'/>
+    </testsuite>
+    <testsuite name='failing_checks' tests='14' disabled='0' failures='14' errors='0' skipped='0'>
+        <testcase name='check_ge_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, 3)failed!'/>
+        </testcase>
+        <testcase name='check_ge' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, 3)Hello world!'/>
+        </testcase>
+        <testcase name='check_gt_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, 2)failed!'/>
+        </testcase>
+        <testcase name='check_lt_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, 2)failed!'/>
+        </testcase>
+        <testcase name='check_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!'/>
+        </testcase>
+        <testcase name='check_gt' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, 2)Hello world!'/>
+        </testcase>
+        <testcase name='check' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!'/>
+        </testcase>
+        <testcase name='check_le_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, 1)failed!'/>
+        </testcase>
+        <testcase name='check_eq' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, 2)Hello world!'/>
+        </testcase>
+        <testcase name='check_eq_print' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, 2)failed!'/>
+        </testcase>
+        <testcase name='check_le' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, 1)Hello world!'/>
+        </testcase>
+        <testcase name='check_ne' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, 2)Hello world!'/>
+        </testcase>
+        <testcase name='check_lt' status='failed' time='0'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, 2)Hello world!'/>
+        </testcase>
+        <testcase name='check_ne_print' status='failed' time='0.001'>
+            <failure message='/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, 2)failed!'/>
+        </testcase>
+    </testsuite>
+</testsuites>

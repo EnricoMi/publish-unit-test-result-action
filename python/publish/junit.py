@@ -3,12 +3,12 @@ from collections import defaultdict
 from html import unescape
 from typing import Optional, Iterable, Union, Any, List
 
-from junitparser import Element, JUnitXml, TestCase, TestSuite
+from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 
-def get_results(results: Union[Element, List[Element]]) -> List[Element]:
+def get_results(results: Union[Element, List[Element]], status: Optional[str] = None) -> List[Element]:
     """
     Returns the results with the most severe state.
     For example: If there are failures and succeeded tests, returns only the failures.
@@ -19,9 +19,13 @@ def get_results(results: Union[Element, List[Element]]) -> List[Element]:
             if result:
                 d[get_result(result)].append(result)
 
-        for state in ['error', 'failure', 'success', 'skipped']:
+        for state in ['error', 'failure', 'success', 'skipped', 'disabled']:
             if state in d:
                 return d[state]
+
+        if status and status in ['disabled']:
+            return [Disabled()]
+
         return []
 
     return [results]
@@ -98,7 +102,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
               for result_file, junit in junits
               for suite in (junit if junit._tag == "testsuites" else [junit])]
     suite_tests = sum([suite.tests for result_file, suite in suites])
-    suite_skipped = sum([suite.skipped for result_file, suite in suites])
+    suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites])
     suite_failures = sum([suite.failures for result_file, suite in suites])
     suite_errors = sum([suite.errors for result_file, suite in suites])
     suite_time = int(sum([suite.time for result_file, suite in suites]))
@@ -137,7 +141,7 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
         for result_file, suite in suites
         for case in get_cases(suite)
         if case.classname is not None or case.name is not None
-        for results in [get_results(case.result)]
+        for results in [get_results(case.result, case.status)]
     ]
 
     return ParsedUnitTestResults(
@@ -153,3 +157,33 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
         # test cases
         cases=cases
     )
+
+
+@property
+def disabled(self) -> int:
+    disabled = self._elem.get('disabled', '0')
+    if disabled.isnumeric():
+        return int(disabled)
+    return 0
+
+
+# add special type of test case result to TestSuite
+TestSuite.disabled = disabled
+
+
+@property
+def status(self) -> str:
+    return self._elem.get('status')
+
+
+# special attribute of TestCase
+TestCase.status = status
+
+
+class Disabled(Skipped):
+    """Test result when the test is disabled."""
+
+    _tag = "disabled"
+
+    def __eq__(self, other):
+        return super(Disabled, self).__eq__(other)

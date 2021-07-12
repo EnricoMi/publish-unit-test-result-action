@@ -268,7 +268,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     :return: unit test result statistics
     """
     cases = parsed_results.cases
-    cases_skipped = [case for case in cases if case.result == 'skipped']
+    cases_skipped = [case for case in cases if case.result in ['skipped', 'disabled']]
     cases_failures = [case for case in cases if case.result == 'failure']
     cases_errors = [case for case in cases if case.result == 'error']
     cases_time = sum([case.time or 0 for case in cases])
@@ -277,14 +277,14 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     cases_results = UnitTestCaseResults()
     for case in cases:
         key = (case.test_file if dedup_classes_by_file_name else None, case.class_name, case.test_name)
-        cases_results[key][case.result].append(case)
+        cases_results[key][case.result if case.result != 'disabled' else 'skipped'].append(case)
 
     test_results = dict()
     for test, states in cases_results.items():
         test_results[test] = aggregate_states(states)
 
     tests = len(test_results)
-    tests_skipped = len([test for test, state in test_results.items() if state == 'skipped'])
+    tests_skipped = len([test for test, state in test_results.items() if state in ['skipped', 'disabled']])
     tests_failures = len([test for test, state in test_results.items() if state == 'failure'])
     tests_errors = len([test for test, state in test_results.items() if state == 'error'])
 

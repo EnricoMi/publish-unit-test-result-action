@@ -86,6 +86,8 @@ The symbols have the following meaning:
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
 
+***Note:*** For simplicity, "disabled" tests count towards "skipped" tests.
+
 ## Configuration
 
 Files can be selected via the `files` option, which is optional and defaults to `*.xml` in the current working directory.

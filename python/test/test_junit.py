@@ -4,7 +4,7 @@ from typing import Optional
 
 from junitparser import JUnitXml, Element, version
 
-from publish.junit import parse_junit_xml_files, get_results, get_result, get_content, get_message
+from publish.junit import parse_junit_xml_files, get_results, get_result, get_content, get_message, Disabled
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 
@@ -454,6 +454,51 @@ class TestJunit(unittest.TestCase):
         self.assertEqual("skipped", junit.cases[2].result)
         self.assertEqual("success", junit.cases[3].result)
 
+    def test_parse_junit_xml_file_with_disabled_tests(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/disabled.xml']),
+            ParsedUnitTestResults(
+                cases=[UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[0]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: check_eq(3628800, 3628801)', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[3]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[2]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_test', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, 6)hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='test_which_throws_unknown_exception', result='error', message='uncaught (anonymous namespace)::some_unknown_exception', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[2]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)', content=None, time=0.001),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[3]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[0]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[0]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[1]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[2]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='test_which_fails_check_eq_with_custom_message', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, 7)hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[3]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[1]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[1]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ge_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, 3)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ge', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, 3)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_gt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_lt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_gt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_le_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, 1)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_eq', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_eq_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_le', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, 1)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ne', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_lt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ne_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, 2)failed!', content=None, time=0.001)],
+                files=1,
+                errors=[],
+                suite_errors=1,
+                suite_failures=19,
+                suite_skipped=5,
+                suite_tests=31,
+                suite_time=0,
+                suites=2
+            ))
+
     def test_get_results(self):
         success = TestElement('success')
         skipped = TestElement('skipped')
@@ -477,6 +522,24 @@ class TestJunit(unittest.TestCase):
         for results, expected in tests:
             with self.subTest(results=results):
                 actual = get_results(results)
+                self.assertEqual(expected, actual)
+
+    def test_get_results_with_disabled_status(self):
+        disabled = Disabled()
+        success = TestElement('success')
+        skipped = TestElement('skipped')
+        failure = TestElement('failure')
+        error = TestElement('error')
+        tests = [
+            ([], [disabled]),
+            ([success], [success]),
+            ([skipped], [skipped]),
+            ([failure], [failure]),
+            ([error], [error]),
+        ]
+        for results, expected in tests:
+            with self.subTest(results=results):
+                actual = get_results(results, 'disabled')
                 self.assertEqual(expected, actual)
 
     def test_get_result(self):
