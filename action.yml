@@ -5,7 +5,7 @@ inputs:
   github_token:
     description: 'GitHub API Access Token'
     default: ${{ github.token }}
-    required: true
+    required: false
   github_retries:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
     default: '10'
