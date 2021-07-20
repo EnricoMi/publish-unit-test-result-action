@@ -76,6 +76,8 @@ Those are highlighted in pull request comments to easily spot unintended test re
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 
+## The symbols
+
 The symbols have the following meaning:
 
 |Symbol|Meaning|
