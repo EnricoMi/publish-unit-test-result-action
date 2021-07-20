@@ -314,6 +314,7 @@ jobs:
         uses: ./
         with:
           check_name: Unit Test Results (Ingested)
+          fail_on: nothing
           files: "artifacts/**.xml"
           LOG_LEVEL: DEBUG
 
