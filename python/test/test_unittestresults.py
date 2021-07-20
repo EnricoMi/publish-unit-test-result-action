@@ -287,6 +287,39 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ))
 
+    def test_get_test_results_with_disabled_cases(self):
+        self.assertEqual(get_test_results(ParsedUnitTestResultsWithCommit(
+            files=1,
+            errors=errors,
+            suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+            cases=[
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', time=2),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', time=3),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', time=4),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='disabled', message='message5', content='content5', time=5),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', time=6),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', time=7),
+            ],
+            commit='commit'
+        ), False), UnitTestResults(
+            files=1,
+            errors=errors,
+            suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+            cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
+            case_results=UnitTestCaseResults([
+                ((None, 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1)])),
+                ((None, 'class1', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', time=2)])),
+                ((None, 'class1', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', time=3)])),
+                ((None, 'class2', 'test1'), dict(error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', time=4)])),
+                ((None, 'class2', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='disabled', message='message5', content='content5', time=5)])),
+                ((None, 'class2', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', time=6)])),
+                ((None, 'class2', 'test4'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', time=7)])),
+            ]),
+            tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
+            commit='commit'
+        ))
+
     def test_get_stats(self):
         self.assertEqual(get_stats(UnitTestResults(
             files=1,
