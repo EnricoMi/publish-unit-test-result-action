@@ -729,9 +729,9 @@ class TestPublisher(unittest.TestCase):
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
-                'summary': '\u205f\u20041 files\u2004\u2003{errors}2 suites\u2004\u2003\u20023s :stopwatch:\n'
-                           '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-                           '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
+                'summary': f'\u205f\u20041 files\u2004\u2003{{errors}}2 suites\u2004\u2003\u20023s {duration_label_md}\n'
+                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
+                           f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
                            '\n'
                            'Results for commit commit.\n'
                            '\n'
@@ -782,9 +782,9 @@ class TestPublisher(unittest.TestCase):
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
-                'summary': '\u205f\u20041 files\u2004 ±0\u2002\u2003{errors}2 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-                           '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-                           '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u2003{{errors}}2 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
                            '\n'
                            'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                            '\n'
@@ -825,9 +825,9 @@ class TestPublisher(unittest.TestCase):
             conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
-                           '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-                           '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
+                'summary': f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
+                           f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
                            '\n'
                            'Results for commit commit.\n'
                            '\n'
@@ -884,9 +884,9 @@ class TestPublisher(unittest.TestCase):
                 conclusion='conclusion',
                 output={
                     'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                    'summary': '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-                               '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-                               '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+                    'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                               f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+                               f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
                                '\n'
                                'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                                '\n'
@@ -930,9 +930,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
         )
@@ -951,9 +951,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
-            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
+            f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
+            f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
         )
@@ -970,9 +970,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
-            '22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-            '38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
+            f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
+            f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
         )
@@ -990,9 +990,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +4\u2002\u2003\u205f\u20047 :fire: +\u205f\u20044\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u200310 :x: +6\u2002\u200311 :fire: +10\u2002\n'
+            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
             '\n'
             'For more details on these failures and errors, see [this check](http://check-run.url).\n'
             '\n'
@@ -1015,9 +1015,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            '\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s :stopwatch: ±0s\n'
-            '22 tests +1\u2002\u20034 :heavy_check_mark: \u2006-\u200a\u205f\u20048\u2002\u20035 :zzz: +1\u2002\u20030 :x: \u2006-\u200a2\u2002\n'
-            '38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a17\u2002\u20039 :zzz: +2\u2002\u20030 :x: \u2006-\u200a4\u2002\n'
+            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u20030 {failed_tests_label_md} \u2006-\u200a2\u2002\n'
+            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u20030 {failed_tests_label_md} \u2006-\u200a4\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
         )
@@ -1266,42 +1266,42 @@ class TestPublisher(unittest.TestCase):
         {
             'id': 'comment one',
             'author': {'login': 'github-actions'},
-            'body': '## Comment Title\n'
-                    '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
-                    '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
-                    '\n'
-                    'Results for commit dee59820.\n',
+            'body': f'## Comment Title\n'
+                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
+                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
+                    f'\n'
+                    f'Results for commit dee59820.\n',
             'isMinimized': False
         },
         {
             'id': 'comment two',
             'author': {'login': 'github-actions'},
-            'body': '## Comment Title\n'
-                    '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
-                    '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
-                    '\n'
-                    'Results for commit 70b5dd18.\n',
+            'body': f'## Comment Title\n'
+                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
+                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
+                    f'\n'
+                    f'Results for commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
             'id': 'comment three',
             'author': {'login': 'github-actions'},
-            'body': '## Comment Title\n'
-                    '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
-                    '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
-                    '\n'
-                    'Results for commit b469da3d.\n',
+            'body': f'## Comment Title\n'
+                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
+                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
+                    f'\n'
+                    f'Results for commit b469da3d.\n',
             'isMinimized': False
         },
         # earlier version of comments with lower case result and comparison
         {
             'id': 'comment four',
             'author': {'login': 'github-actions'},
-            'body': '## Comment Title\n'
-                    '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s :stopwatch: ±0s\n'
-                    '43 tests +19\u2002\u200343 :heavy_check_mark: +19\u2002\u20030 :zzz: ±0\u2002\u20030 :x: ±0\u2002\n'
-                    '\n'
-                    'results for commit 52048b4\u2003± comparison against base commit 70b5dd18\n',
+            'body': f'## Comment Title\n'
+                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
+                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
+                    f'\n'
+                    f'results for commit 52048b4\u2003± comparison against base commit 70b5dd18\n',
             'isMinimized': False
         }
     ]

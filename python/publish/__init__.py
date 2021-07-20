@@ -378,7 +378,8 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
     return '[{label}]({link} "{tooltip}")'.format(
         label=label,
-        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/branch-tooltip-icons/README.md#the-symbols',
+        # bump the version if you change the target of this link (if it did not exist already)
+        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols',
         tooltip=tooltip
     )
 

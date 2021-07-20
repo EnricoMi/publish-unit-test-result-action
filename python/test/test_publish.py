@@ -504,13 +504,21 @@ class PublishTest(unittest.TestCase):
         self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
         self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
 
+    def test_label_md(self):
+        self.assertEqual(all_tests_label_md, 'tests')
+        self.assertEqual(passed_tests_label_md, '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests")')
+        self.assertEqual(skipped_tests_label_md, '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests")')
+        self.assertEqual(failed_tests_label_md, '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")')
+        self.assertEqual(test_errors_label_md, '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors")')
+        self.assertEqual(duration_label_md, '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")')
+
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
-        )), ('4 tests 5 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols passed tests) 6 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols skipped / disabled tests) 7 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols failed tests) 8 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols test errors)'))
+        )), (f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}'))
 
     def test_get_short_summary_md_with_delta(self):
         self.assertEqual(get_short_summary_md(UnitTestRunDeltaResults(
@@ -519,7 +527,7 @@ class PublishTest(unittest.TestCase):
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='commit',
             reference_type='type', reference_commit='0123456789abcdef'
-        )), ('4 tests  - 5  5 :heavy_check_mark: +6  6 :zzz:  - 7  7 :x: +8  8 :fire:  - 9 '))
+        )), (f'4 {all_tests_label_md}  - 5  5 {passed_tests_label_md} +6  6 {skipped_tests_label_md}  - 7  7 {failed_tests_label_md} +8  8 {test_errors_label_md}  - 9 '))
 
     def test_get_long_summary_md_with_single_runs(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
@@ -527,10 +535,10 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
-        )), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
-            '\n'
-            'Results for commit commit.\n'))
+        )), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_multiple_runs(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
@@ -538,11 +546,11 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
             commit='commit'
-        )), ('1 files    2 suites   3s :stopwatch:\n'
-            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
-            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
-            '\n'
-            'Results for commit commit.\n'))
+        )), (f'1 files    2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_errors(self):
         self.assertEqual(get_long_summary_md(UnitTestRunResults(
@@ -550,11 +558,11 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
-        )), ('1 files    2 suites   3s :stopwatch:\n'
-            '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
-            '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
-            '\n'
-            'Results for commit commit.\n'))
+        )), (f'1 files    2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n'))
 
     def test_get_long_summary_md_with_deltas(self):
         self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
@@ -562,11 +570,11 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        )), ('1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
-            '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
-            '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
-            '\n'
-            'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
+        )), (f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
+            f'4 tests  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
+            f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
+            f'\n'
+            f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
 
     def test_get_long_summary_md_with_details_url_with_fails(self):
         self.assertEqual(get_long_summary_md(
@@ -577,12 +585,12 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x:\n'
-            '\n'
-            'For more details on these failures, see [this check](https://details.url/).\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md}\n'
+            f'\n'
+            f'For more details on these failures, see [this check](https://details.url/).\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_details_url_with_errors(self):
@@ -594,12 +602,12 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x: 8 :fire:\n'
-            '\n'
-            'For more details on these errors, see [this check](https://details.url/).\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+            f'\n'
+            f'For more details on these errors, see [this check](https://details.url/).\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_details_url_with_parse_errors(self):
@@ -611,12 +619,12 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('2 files  1 errors  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
-            '\n'
-            'For more details on these parsing errors, see [this check](https://details.url/).\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'2 files  1 errors  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'\n'
+            f'For more details on these parsing errors, see [this check](https://details.url/).\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_details_url_with_fails_and_errors_and_parse_errors(self):
@@ -628,12 +636,12 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  1 errors  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
-            '\n'
-            'For more details on these parsing errors, failures and errors, see [this check](https://details.url/).\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'1 files  1 errors  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+            f'\n'
+            f'For more details on these parsing errors, failures and errors, see [this check](https://details.url/).\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_details_url_without_fails_or_errors_or_parse_errors(self):
@@ -645,10 +653,10 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_test_lists(self):
@@ -664,8 +672,8 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
                 ['test2'], ['test5', 'test6']
             ),
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -721,8 +729,8 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2'], ['test5', 'test6', 'test7']
             ),
             3
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -781,10 +789,10 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2'], ['test5', 'test6', 'test7']
             ),
             0
-        ), ('1 files  2 suites   3s :stopwatch:\n'
-            '4 tests 5 :heavy_check_mark: 6 :zzz: 0 :x:\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'1 files  2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_all_tests_removed(self):
@@ -800,10 +808,10 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], [],
                 ['test2'], []
             ),
-        ), ('0 files  0 suites   0s :stopwatch:\n'
-            '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'0 files  0 suites   0s {duration_label_md}\n'
+            f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_md_with_some_files_but_all_tests_removed(self):
@@ -819,10 +827,10 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], [],
                 ['test2'], []
             ),
-        ), ('2 files  0 suites   0s :stopwatch:\n'
-            '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
-            '\n'
-            'Results for commit commit.\n')
+        ), (f'2 files  0 suites   0s {duration_label_md}\n'
+            f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n')
         )
 
     def test_get_long_summary_with_digest_md_with_single_run(self):
@@ -837,8 +845,8 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files  2 suites   3s :stopwatch:\n'
-                                 '4 tests 5 :heavy_check_mark: 6 :zzz: 7 :x: 8 :fire:\n'
+        self.assertEqual(actual, f'1 files  2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -860,9 +868,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files    2 suites   3s :stopwatch:\n'
-                                 '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:\n'
-                                 '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x:\n'
+        self.assertEqual(actual, f'1 files    2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -884,9 +892,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files    2 suites   3s :stopwatch:\n'
-                                 '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
-                                 '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
+        self.assertEqual(actual, f'1 files    2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -908,9 +916,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files    1 errors    2 suites   3s :stopwatch:\n'
-                                 '4 tests   5 :heavy_check_mark:   6 :zzz:   7 :x:   8 :fire:\n'
-                                 '9 runs  10 :heavy_check_mark: 11 :zzz: 12 :x: 13 :fire:\n'
+        self.assertEqual(actual, f'1 files    1 errors    2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -937,9 +945,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files  +  2    2 suites   - 3   3s :stopwatch: +4s\n'
-                                 '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
-                                 '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
+        self.assertEqual(actual, f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
+                                 f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
+                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
                                  '\n'
                                  'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
                                  '\n'
@@ -966,9 +974,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, '1 files  +  2    1 errors    2 suites   - 3   3s :stopwatch: +4s\n'
-                                 '4 tests  -   5    5 :heavy_check_mark: +  6    6 :zzz:  -   7    7 :x: +  8    8 :fire:  -   9 \n'
-                                 '9 runs  +10  10 :heavy_check_mark:  - 11  11 :zzz: +12  12 :x:  - 13  13 :fire: +14 \n'
+        self.assertEqual(actual, f'1 files  +  2    1 errors    2 suites   - 3   3s {duration_label_md} +4s\n'
+                                 f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
+                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
                                  '\n'
                                  'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
                                  '\n'
@@ -1836,41 +1844,41 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('  10 files    10 suites   39m 1s :stopwatch:\n'
-                              '217 tests 208 :heavy_check_mark:   9 :zzz: 0 :x:\n'
-                              '373 runs  333 :heavy_check_mark: 40 :zzz: 0 :x:\n'
-                              '\n'
-                              'Results for commit example.\n'))
+        self.assertEqual(md, (f'  10 files    10 suites   39m 1s {duration_label_md}\n'
+                              f'217 {all_tests_label_md} 208 {passed_tests_label_md}   9 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'373 runs  333 {passed_tests_label_md} 40 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'\n'
+                              f'Results for commit example.\n'))
 
     def test_file_without_cases(self):
         parsed = parse_junit_xml_files(['files/no-cases.xml']).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('1 files  1 suites   0s :stopwatch:\n'
-                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
-                              '\n'
-                              'Results for commit a commit.\n'))
+        self.assertEqual(md, (f'1 files  1 suites   0s {duration_label_md}\n'
+                              f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'\n'
+                              f'Results for commit a commit.\n'))
 
     def test_non_parsable_file(self):
         parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('1 files  1 errors  0 suites   0s :stopwatch:\n'
-                              '0 tests 0 :heavy_check_mark: 0 :zzz: 0 :x:\n'
-                              '\n'
-                              'Results for commit a commit.\n'))
+        self.assertEqual(md, (f'1 files  1 errors  0 suites   0s {duration_label_md}\n'
+                              f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'\n'
+                              f'Results for commit a commit.\n'))
 
     def test_files_with_testcase_in_testcase(self):
         parsed = parse_junit_xml_files(['files/testcase-in-testcase.xml']).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, ('1 files  1 suites   4s :stopwatch:\n'
-                              '5 tests 5 :heavy_check_mark: 0 :zzz: 0 :x:\n'
-                              '\n'
-                              'Results for commit example.\n'))
+        self.assertEqual(md, (f'1 files  1 suites   4s {duration_label_md}\n'
+                              f'5 {all_tests_label_md} 5 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'\n'
+                              f'Results for commit example.\n'))
 
 
 if __name__ == '__main__':
