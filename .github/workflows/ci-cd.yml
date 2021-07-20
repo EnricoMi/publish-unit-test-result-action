@@ -261,6 +261,36 @@ jobs:
           comment_mode: create new
           files: "artifacts/**/*.xml"
 
+  publish-test-files:
+    name: Publish Test Files
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (Test Files)
+          fail_on: nothing
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+
   config-deploy:
     name: Configure Deployment
     needs: test
@@ -300,7 +330,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, config-deploy]
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-files, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
