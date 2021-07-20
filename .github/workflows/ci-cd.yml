@@ -74,6 +74,31 @@ jobs:
             test-results/*.xml
             unit-test-results.json
 
+  ingest-files:
+    name: Ingest junit xml files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Ingest test junit xml files
+        run: |
+          mkdir -p ingested-results
+          cp -v python/test/files/disabled.xml ingested-results/
+
+      - name: Upload Ingested Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Ingested Test Results
+          path: ingested-results/*.xml
+
   publish-dockerfile:
     name: Publish Unit Test Results (Dockerfile)
     needs: test
@@ -101,7 +126,7 @@ jobs:
         uses: ./
         with:
           check_name: Unit Test Results (Dockerfile)
-          files: "artifacts/**/*.xml"
+          files: "artifacts/*/test-results/*.xml"
           LOG_LEVEL: DEBUG
 
   publish-docker-image:
@@ -148,7 +173,7 @@ jobs:
         env:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
           INPUT_CHECK_NAME: Unit Test Results (Docker Image)
-          INPUT_FILES: "artifacts/**/*.xml"
+          INPUT_FILES: "artifacts/*/test-results/*.xml"
 
   publish-composite:
     name: Publish Unit Test Results (${{ matrix.os-label }})
@@ -219,7 +244,7 @@ jobs:
         uses: ./composite
         with:
           check_name: Unit Test Results (${{ matrix.os-label }})
-          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+          files: "artifacts${{ steps.os.outputs.path-sep }}*${{ steps.os.outputs.path-sep }}test-results${{ steps.os.outputs.path-sep }}*.xml"
 
   publish-composite-extra:
     name: Publish Unit Test Results (setup-python)
@@ -259,7 +284,38 @@ jobs:
         with:
           check_name: Unit Test Results (setup-python)
           comment_mode: create new
-          files: "artifacts/**/*.xml"
+          files: "artifacts/*/test-results/*.xml"
+
+  publish-ingested:
+    name: Publish Ingested Test Results
+    needs: ingest-files
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Ingested Test Results
+          path: artifacts
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (Ingested)
+          files: "artifacts/**.xml"
+          LOG_LEVEL: DEBUG
 
   config-deploy:
     name: Configure Deployment
@@ -300,7 +356,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, config-deploy]
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-ingested, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
