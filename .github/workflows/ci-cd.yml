@@ -274,10 +274,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Ingest test junit xml files
+      - name: Copy test junit xml files
         run: |
-          mkdir -p ingested-results
-          cp -v python/test/files/*.xml ingested-results/
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
 
       - name: Prepare publish action from this branch
         run: |
@@ -286,9 +286,9 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./
         with:
-          check_name: Unit Test Results (Ingested)
+          check_name: Unit Test Results (Test Files)
           fail_on: nothing
-          files: "ingested-results/**.xml"
+          files: "test-files/**.xml"
           LOG_LEVEL: DEBUG
 
   config-deploy:
