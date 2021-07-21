@@ -263,6 +263,8 @@ jobs:
 
   publish-test-files:
     name: Publish Test Files
+    # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
