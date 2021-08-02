@@ -375,14 +375,31 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
     return f'{get_test_summary()} in {as_stat_duration(duration)}'
 
 
+def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
+    return '[{label}]({link} "{tooltip}")'.format(
+        label=label,
+        # bump the version if you change the target of this link (if it did not exist already)
+        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols',
+        tooltip=tooltip
+    )
+
+
+all_tests_label_md = 'tests'
+passed_tests_label_md = get_link_and_tooltip_label_md(':heavy_check_mark:', 'passed tests')
+skipped_tests_label_md = get_link_and_tooltip_label_md(':zzz:', 'skipped / disabled tests')
+failed_tests_label_md = get_link_and_tooltip_label_md(':x:', 'failed tests')
+test_errors_label_md = get_link_and_tooltip_label_md(':fire:', 'test errors')
+duration_label_md = get_link_and_tooltip_label_md(':stopwatch:', 'duration of all tests')
+
+
 def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     """Provides a single-line summary with markdown for the given stats."""
     md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
-        tests=as_stat_number(stats.tests, 0, 0, 'tests'),
-        tests_succ=as_stat_number(stats.tests_succ, 0, 0, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(stats.tests_skip, 0, 0, ':zzz:'),
-        tests_fail=as_stat_number(stats.tests_fail, 0, 0, ':x:'),
-        tests_error=as_stat_number(stats.tests_error, 0, 0, ':fire:'),
+        tests=as_stat_number(stats.tests, 0, 0, all_tests_label_md),
+        tests_succ=as_stat_number(stats.tests_succ, 0, 0, passed_tests_label_md),
+        tests_skip=as_stat_number(stats.tests_skip, 0, 0, skipped_tests_label_md),
+        tests_fail=as_stat_number(stats.tests_fail, 0, 0, failed_tests_label_md),
+        tests_error=as_stat_number(stats.tests_error, 0, 0, test_errors_label_md),
     ))
     return md
 
@@ -507,28 +524,28 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         files=as_stat_number(stats.files, files_digits, files_delta_digits, 'files '),
         errors='{} '.format(as_stat_number(errors, success_digits, 0, 'errors ')) if errors > 0 else '',
         suites=as_stat_number(stats.suites, success_digits if errors == 0 else skip_digits, 0, 'suites '),
-        duration=as_stat_duration(stats.duration, ':stopwatch:')
+        duration=as_stat_duration(stats.duration, duration_label_md)
     )
 
     tests_error_part = ' {tests_error}'.format(
-        tests_error=as_stat_number(stats.tests_error, error_digits, error_delta_digits, ':fire:')
+        tests_error=as_stat_number(stats.tests_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.tests_error) else ''
     tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
-        tests=as_stat_number(stats.tests, files_digits, files_delta_digits, 'tests'),
-        tests_succ=as_stat_number(stats.tests_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, ':x:'),
+        tests=as_stat_number(stats.tests, files_digits, files_delta_digits, all_tests_label_md),
+        tests_succ=as_stat_number(stats.tests_succ, success_digits, success_delta_digits, passed_tests_label_md),
+        tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
+        tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
         tests_error_part=tests_error_part
     )
 
     runs_error_part = ' {runs_error}'.format(
-        runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, ':fire:')
+        runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.runs_error) else ''
     runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
         runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
-        runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, ':heavy_check_mark:'),
-        runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, ':zzz:'),
-        runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, ':x:'),
+        runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, passed_tests_label_md),
+        runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
+        runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
         runs_error_part=runs_error_part,
     )
 

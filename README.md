@@ -76,6 +76,9 @@ Those are highlighted in pull request comments to easily spot unintended test re
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 
+## The symbols
+[comment]: <> (This heading is linked to from method get_link_and_tooltip_label_md)
+
 The symbols have the following meaning:
 
 |Symbol|Meaning|
