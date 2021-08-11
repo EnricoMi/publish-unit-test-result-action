@@ -400,6 +400,7 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
         tests_succ=as_stat_number(stats.tests_succ, 0, 0, passed_tests_label_md),
         tests_skip=as_stat_number(stats.tests_skip, 0, 0, skipped_tests_label_md),
     )
+    
 
     if stats.tests_error:
         summary += ' {tests_fail}'.format(tests_fail=as_stat_number(stats.tests_fail, 0, 0, failed_tests_label_md))
