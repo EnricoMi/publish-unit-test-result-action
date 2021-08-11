@@ -385,7 +385,7 @@ def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
 
 
 all_tests_label_md = 'tests'
-passed_tests_label_md = get_link_and_tooltip_label_md(':heavy_check_mark:', 'passed tests')
+passed_tests_label_md = get_link_and_tooltip_label_md(':white_check_mark:', 'passed tests')
 skipped_tests_label_md = get_link_and_tooltip_label_md(':zzz:', 'skipped / disabled tests')
 failed_tests_label_md = get_link_and_tooltip_label_md(':x:', 'failed tests')
 test_errors_label_md = get_link_and_tooltip_label_md(':fire:', 'test errors')
@@ -394,14 +394,19 @@ duration_label_md = get_link_and_tooltip_label_md(':stopwatch:', 'duration of al
 
 def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
     """Provides a single-line summary with markdown for the given stats."""
-    md = ('{tests} {tests_succ} {tests_skip} {tests_fail} {tests_error}'.format(
+
+    summary = '{tests} {tests_succ} {tests_skip}'.format(
         tests=as_stat_number(stats.tests, 0, 0, all_tests_label_md),
         tests_succ=as_stat_number(stats.tests_succ, 0, 0, passed_tests_label_md),
         tests_skip=as_stat_number(stats.tests_skip, 0, 0, skipped_tests_label_md),
-        tests_fail=as_stat_number(stats.tests_fail, 0, 0, failed_tests_label_md),
-        tests_error=as_stat_number(stats.tests_error, 0, 0, test_errors_label_md),
-    ))
-    return md
+    )
+
+    if stats.tests_error:
+        summary += ' {tests_fail}'.format(tests_fail=as_stat_number(stats.tests_fail, 0, 0, failed_tests_label_md))
+
+    summary += ' {tests_error}'.format(tests_error=as_stat_number(stats.tests_error, 0, 0, test_errors_label_md))
+
+    return summary
 
 
 def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
