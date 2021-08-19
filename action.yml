@@ -72,7 +72,7 @@ inputs:
     default: '2.0'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.19'
+  image: 'Dockerfile'
 branding:
   icon: 'check-circle'
   color: 'green'
