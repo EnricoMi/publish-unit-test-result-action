@@ -530,22 +530,32 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
     tests_error_part = ' {tests_error}'.format(
         tests_error=as_stat_number(stats.tests_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.tests_error) else ''
-    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
+
+    tests_fail_part = ' {tests_fail}'.format(
+        tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, failed_tests_label_md)
+    ) if stats.tests_skip else ''
+
+    tests_line = '{tests} {tests_succ} {tests_skip}{tests_fail_part}{tests_error_part}\n'.format(
         tests=as_stat_number(stats.tests, files_digits, files_delta_digits, all_tests_label_md),
         tests_succ=as_stat_number(stats.tests_succ, success_digits, success_delta_digits, passed_tests_label_md),
         tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
-        tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
+        tests_fail_part=tests_fail_part,
         tests_error_part=tests_error_part
     )
 
     runs_error_part = ' {runs_error}'.format(
         runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.runs_error) else ''
-    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
+
+    runs_fail_part = ' {runs_fail}'.format(
+        runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md)
+    ) if stats.tests_skip else ''
+
+    runs_line = '{runs} {runs_succ} {runs_skip}{runs_fail_part}{runs_error_part}\n'.format(
         runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, passed_tests_label_md),
         runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
-        runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
+        runs_fail_part=runs_fail_part,
         runs_error_part=runs_error_part,
     )
 
