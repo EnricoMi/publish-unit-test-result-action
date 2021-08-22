@@ -533,11 +533,11 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
 
     tests_fail_part = ' {tests_fail}'.format(
         tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, failed_tests_label_md)
-    ) if stats.tests_fail else ''
+    ) if get_magnitude(stats.tests_fail) else ''
 
     tests_skip_part = ' {tests_skip}'.format(
         tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, skipped_tests_label_md)
-    ) if stats.tests_skip else ''
+    ) if get_magnitude(stats.tests_skip) else ''
 
     tests_line = '{tests} {tests_succ}{tests_skip_part}{tests_fail_part}{tests_error_part}\n'.format(
         tests=as_stat_number(stats.tests, files_digits, files_delta_digits, all_tests_label_md),
@@ -553,11 +553,11 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
 
     runs_fail_part = ' {runs_fail}'.format(
         runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md)
-    ) if stats.runs_fail else ''
+    ) if get_magnitude(stats.runs_fail) else ''
 
     runs_skip_part = ' {runs_skip}'.format(
         runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md)
-    ) if stats.runs_skip else ''
+    ) if get_magnitude(stats.runs_skip) else ''
 
     runs_line = '{runs} {runs_succ}{runs_skip_part}{runs_fail_part}{runs_error_part}\n'.format(
         runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
