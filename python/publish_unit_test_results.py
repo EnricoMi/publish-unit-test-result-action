@@ -200,8 +200,8 @@ def is_float(text: str) -> bool:
 
 
 def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
-    event = get_var('GITHUB_EVENT_PATH', options)
-    event_name = get_var('GITHUB_EVENT_NAME', options)
+    event = get_var('EVENT_FILE', options) or get_var('GITHUB_EVENT_PATH', options)
+    event_name = get_var('EVENT_NAME', options) or get_var('GITHUB_EVENT_NAME', options)
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'rt', encoding='utf-8') as f:
