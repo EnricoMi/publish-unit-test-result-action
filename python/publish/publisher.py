@@ -1,3 +1,4 @@
+import logging
 import re
 from dataclasses import dataclass
 from typing import List, Any, Optional, Tuple, Mapping
@@ -79,7 +80,9 @@ class Publisher:
 
     def get_pull(self, commit: str) -> Optional[PullRequest]:
         issues = self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}')
-        logger.debug(f'found {issues.totalCount} pull requests in repo {self._settings.repo} for commit {commit}')
+        # totalCount calls the GitHub API, so better not do this if we are not logging the result anyway
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'found {issues.totalCount} pull requests in repo {self._settings.repo} for commit {commit}')
 
         if issues.totalCount == 0:
             return None
@@ -136,7 +139,9 @@ class Publisher:
             return None
 
         runs = commit.get_check_runs()
-        logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
+        # totalCount calls the GitHub API, so better not do this if we are not logging the result anyway
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
         runs = list([run for run in runs if run.name == self._settings.check_name])
         logger.debug(f'found {len(runs)} check runs for commit {commit_sha} with title {self._settings.check_name}')
         if len(runs) != 1:
