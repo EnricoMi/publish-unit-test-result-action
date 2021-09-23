@@ -320,6 +320,7 @@ Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
 ```
 
 ## Support fork repositories and dependabot branches
+[comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
 Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
 or by contributors from fork repositories requires some additional setup.

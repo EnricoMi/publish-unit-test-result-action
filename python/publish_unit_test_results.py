@@ -62,8 +62,11 @@ def main(settings: Settings, gha: GithubAction) -> None:
     # when running on pull_request event from a fork
     if settings.event_name == 'pull_request' and \
             settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+        # bump the version if you change the target of this link (if it did not exist already)
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
-                    f'It cannot do anything useful like creating check runs or pull request comments.')
+                    f'It cannot do anything useful like creating check runs or pull request comments. '
+                    f'To run the action on fork repository pull requests, see '
+                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.19/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
     # resolve the files_glob to files
