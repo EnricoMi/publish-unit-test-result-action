@@ -123,6 +123,8 @@ See the complete list of options below.
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 |`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
+|`event_file`|`${{env.GITHUB_EVENT_PATH}}`|An alternative event file to use. Useful to replace a `workflow_run` event file with the actual source event file.|
+|`event_name`|`${{env.GITHUB_EVENT_NAME}}`|An alternative event name to use. Useful to replace a `workflow_run` event name with the actual source event name: `${{ github.event.workflow_run.event }}`.|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
 |`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
@@ -182,8 +184,7 @@ jobs:
     name: "Publish Unit Tests Results"
     needs: build-and-test
     runs-on: ubuntu-latest
-    # the build-and-test job might be skipped, we don't need to run this job then
-    if: success() || failure()
+    if: always()
 
     steps:
       - name: Download Artifacts
@@ -318,23 +319,32 @@ Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
 ```
 
 ## Support fork repositories and dependabot branches
+[comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
 Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
-or by contributors from fork repositories requires some additional setup.
+or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
+`"Resource not accessible by integration"` error for those situations.
 
-1. Condition the publish-unit-test-result action in your CI workflow to only publish test results
-   when the action runs in your repository's context.
-2. Your CI workflow has to upload unit test result files.
-3. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
-   downloads the unit test result files and runs this action on them.
+In this setup, your CI workflow does not need to publish unit test results anymore as they are **always** published from a separate workflow.
 
-Add this condition to your publish test results step in your CI workflow:
+1. Your CI workflow has to upload the GitHub event file and unit test result files.
+2. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
+   downloads the event file and the unit test result files, and runs this action on them.
+   This workflow publishes the unit test results for pull requests from fork repositories and dependabot,
+   as well as all "ordinary" runs of your CI workflow.
+
+Add the following job to your CI workflow to upload the event file as an artifact:
 
 ```yaml
-if: >
-  always() &&
-  github.event.sender.login != 'dependabot[bot]' &&
-  ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+event_file:
+  name: "Event File"
+  runs-on: ubuntu-latest
+  steps:
+  - name: Upload
+    uses: actions/upload-artifact@v2
+    with:
+      name: Event File
+      path: ${{ github.event_path }}
 ```
 
 Add the following action step to your CI workflow to upload unit test results as artifacts.
@@ -358,6 +368,8 @@ all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Up
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
 It then runs the action on files matching `artifacts/**/*.xml`.
 Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
+The publish action uses the event file of the CI workflow.
+
 Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 
@@ -374,11 +386,7 @@ jobs:
   unit-test-results:
     name: Unit Test Results
     runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.conclusion != 'skipped' && (
-        github.event.sender.login == 'dependabot[bot]' ||
-        github.event.workflow_run.head_repository.full_name != github.repository
-      )
+    if: github.event.workflow_run.conclusion != 'skipped'
 
     steps:
       - name: Download and Extract Artifacts
@@ -400,6 +408,8 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
+          event_file: artifacts/Event File/event.json
+          event_name: ${{ github.event.workflow_run.event }}
           files: "artifacts/**/*.xml"
 ```
 

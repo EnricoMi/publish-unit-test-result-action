@@ -62,8 +62,11 @@ def main(settings: Settings, gha: GithubAction) -> None:
     # when running on pull_request event from a fork
     if settings.event_name == 'pull_request' and \
             settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+        # bump the version if you change the target of this link (if it did not exist already)
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
-                    f'It cannot do anything useful like creating check runs or pull request comments.')
+                    f'It cannot do anything useful like creating check runs or pull request comments. '
+                    f'To run the action on fork repository pull requests, see '
+                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.19/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
     # resolve the files_glob to files
@@ -200,8 +203,8 @@ def is_float(text: str) -> bool:
 
 
 def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
-    event = get_var('GITHUB_EVENT_PATH', options)
-    event_name = get_var('GITHUB_EVENT_NAME', options)
+    event = get_var('EVENT_FILE', options) or get_var('GITHUB_EVENT_PATH', options)
+    event_name = get_var('EVENT_NAME', options) or get_var('GITHUB_EVENT_NAME', options)
     check_var(event, 'GITHUB_EVENT_PATH', 'GitHub event file path')
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'rt', encoding='utf-8') as f:

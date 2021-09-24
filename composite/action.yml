@@ -52,6 +52,12 @@ inputs:
     description: 'Pull request events build a merge of the branch and the target branch, not just the commit that has been pushed. When your workflow deviates from this behaviour and builds the actual commit, then set this option to "commit". Defaults to "merge".'
     required: false
     default: 'merge'
+  event_file:
+    description: 'An alternative event file to use. Useful to replace a "workflow_run" event file with the actual source event file.'
+    required: false
+  event_name:
+    description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
+    required: false
   test_changes_limit:
     description: 'Limits the number of removed or skipped tests listed on PR comments. This can be disabled with a value of 0. The default is 10.'
     required: false
@@ -121,6 +127,8 @@ runs:
         COMMENT_MODE: ${{ inputs.comment_mode }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
+        EVENT_FILE: ${{ inputs.event_file }}
+        EVENT_NAME: ${{ inputs.event_name }}
         TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}
         CHECK_RUN_ANNOTATIONS: ${{ inputs.check_run_annotations }}
         CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
