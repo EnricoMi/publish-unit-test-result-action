@@ -18,11 +18,7 @@ jobs:
   unit-test-results:
     name: Unit Test Results
     runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.conclusion != 'skipped' && (
-        github.event.sender.login == 'dependabot[bot]' ||
-        github.event.workflow_run.head_repository.full_name != github.repository
-      )
+    if: github.event.workflow_run.conclusion != 'skipped'
 
     steps:
       - name: Download and Extract Artifacts
@@ -44,4 +40,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
+          check_name: Unit Test Results (reference)
+          event_file: artifacts/Event File/event.json
+          event_name: ${{ github.event.workflow_run.event }}
           files: "artifacts/**/*.xml"
