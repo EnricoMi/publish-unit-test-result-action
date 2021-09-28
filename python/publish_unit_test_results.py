@@ -41,7 +41,7 @@ def get_github(token: str, url: str, retries: int, backoff_factor: float) -> git
                   # urllib3 Retry does not allow to consider the HTTP message, only status code
                   # so we retry all 403, which will respect HTTP Retry-After header
                   status_forcelist=[403] + list(range(500, 600)))
-    return github.Github(login_or_token=token, base_url=url, retry=retry)
+    return github.Github(login_or_token=token, base_url=url, per_page=100, retry=retry)
 
 
 def get_files(multiline_files_globs: str) -> List[str]:
