@@ -1,4 +1,4 @@
-name: Unit Test Results
+name: Unit Test Results (reference)
 
 on:
   workflow_run:
@@ -16,7 +16,7 @@ jobs:
         uses: hmarr/debug-action@v2.0.0
 
   unit-test-results:
-    name: Unit Test Results
+    name: Unit Test Results (reference)
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion != 'skipped'
 
