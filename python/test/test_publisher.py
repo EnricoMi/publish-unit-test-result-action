@@ -1,6 +1,6 @@
 import unittest
 from collections.abc import Collection
-import datetime
+from datetime import datetime, timezone
 
 import github.CheckRun
 import mock
@@ -533,19 +533,19 @@ class TestPublisher(unittest.TestCase):
         self.do_test_get_check_run_from_list([], None)
 
     def test_get_check_run_from_list_many(self):
-        expected = self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest')
+        expected = self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest')
         runs = [
-            self.mock_check_run(name='Other title', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
-            self.mock_check_run(name='Check Name', status='other status', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
-            self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:00:00'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Other title', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Check Name', status='other status', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 0, 0, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
             expected,
-            self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:00:00'), summary='no digest')
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='no digest')
         ]
         name = runs[0].name
         self.do_test_get_check_run_from_list(runs, expected)
 
     @staticmethod
-    def mock_check_run(name: str, status: str, started_at: datetime.datetime, summary: str) -> mock.Mock:
+    def mock_check_run(name: str, status: str, started_at: datetime, summary: str) -> mock.Mock:
         run = mock.MagicMock(status=status, started_at=started_at, output=mock.MagicMock(summary=summary))
         run.name = name
         return run
