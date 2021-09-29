@@ -1,6 +1,8 @@
 import unittest
 from collections.abc import Collection
+import datetime
 
+import github.CheckRun
 import mock
 from github import Github, GithubException
 
@@ -113,7 +115,7 @@ class TestPublisher(unittest.TestCase):
                     run = mock.MagicMock()
                     run.name = check_name
                     check_run_output = mock.MagicMock()
-                    check_run_output.summary = 'summary\n{}{}'.format(digest_prefix, digest)
+                    check_run_output.summary = 'summary\n{}{}'.format(digest_header, digest)
                     run.output = check_run_output
                     runs.append(run)
 
@@ -518,6 +520,35 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([own, fork1, fork2])
 
         self.do_test_get_pull(settings, search_issues, own)
+
+    def do_test_get_check_run_from_list(self, runs: List[github.CheckRun.CheckRun], expected: Optional[github.CheckRun.CheckRun]):
+        settings = self.create_settings()
+        gh, gha, req, repo, commit = self.create_mocks()
+        publisher = Publisher(settings, gh, gha)
+
+        actual = publisher.get_check_run_from_list(runs)
+        self.assertEqual(expected, actual)
+
+    def test_get_check_run_from_list_empty(self):
+        self.do_test_get_check_run_from_list([], None)
+
+    def test_get_check_run_from_list_many(self):
+        expected = self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest')
+        runs = [
+            self.mock_check_run(name='Other title', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Check Name', status='other status', started_at=datetime.datetime.fromisoformat('2021-03-19T12:02:04'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:00:00'), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            expected,
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime.datetime.fromisoformat('2021-03-19T12:00:00'), summary='no digest')
+        ]
+        name = runs[0].name
+        self.do_test_get_check_run_from_list(runs, expected)
+
+    @staticmethod
+    def mock_check_run(name: str, status: str, started_at: datetime.datetime, summary: str) -> mock.Mock:
+        run = mock.MagicMock(status=status, started_at=started_at, output=mock.MagicMock(summary=summary))
+        run.name = name
+        return run
 
     def do_test_get_stats_from_commit(self,
                                       settings: Settings,

@@ -9,8 +9,8 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
-    comment_mode_off, comment_mode_create, comment_mode_update, \
-    get_stats_from_digest, digest_prefix, get_short_summary, get_long_summary_md, \
+    comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, \
+    get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
     get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
@@ -142,12 +142,36 @@ class Publisher:
         # totalCount calls the GitHub API, so better not do this if we are not logging the result anyway
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'found {runs.totalCount} check runs for commit {commit_sha}')
-        runs = list([run for run in runs if run.name == self._settings.check_name])
-        logger.debug(f'found {len(runs)} check runs for commit {commit_sha} with title {self._settings.check_name}')
-        if len(runs) != 1:
-            return None
 
-        return runs[0]
+        return self.get_check_run_from_list(list(runs))
+
+    def get_check_run_from_list(self, runs: List[CheckRun]) -> Optional[CheckRun]:
+        # filter for runs with the same name as configured
+        runs = [run for run in runs if run.name == self._settings.check_name]
+        logger.debug(f'there are {len(runs)} check runs with title {self._settings.check_name}')
+        if len(runs) == 0:
+            return None
+        if len(runs) == 1:
+            return runs[0]
+
+        # filter based on summary
+        runs = [run for run in runs if digest_prefix in run.output.summary]
+        logger.debug(f'there are {len(runs)} check runs with a test result summary')
+        if len(runs) == 0:
+            return None
+        if len(runs) == 1:
+            return runs[0]
+
+        # filter for completed runs
+        runs = [run for run in runs if run.status == 'completed']
+        logger.debug(f'there are {len(runs)} check runs with completed status')
+        if len(runs) == 0:
+            return None
+        if len(runs) == 1:
+            return runs[0]
+
+        # pick run that started latest
+        return sorted(runs, key=lambda run: run.started_at, reverse=True)[0]
 
     @staticmethod
     def get_stats_from_check_run(check_run: CheckRun) -> Optional[UnitTestRunResults]:
@@ -157,9 +181,9 @@ class Publisher:
         for line in summary.split('\n'):
             logger.debug(f'summary: {line}')
 
-        pos = summary.index(digest_prefix) if digest_prefix in summary else None
+        pos = summary.index(digest_header) if digest_header in summary else None
         if pos:
-            digest = summary[pos + len(digest_prefix):]
+            digest = summary[pos + len(digest_header):]
             logger.debug(f'digest: {digest}')
             stats = get_stats_from_digest(digest)
             logger.debug(f'stats: {stats}')
