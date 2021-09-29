@@ -37,7 +37,7 @@ jobs:
           done
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action/composite@master
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           check_name: Unit Test Results (reference)
