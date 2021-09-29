@@ -11,7 +11,10 @@ from publish.unittestresults import Numeric, UnitTestCaseResults, UnitTestRunRes
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 logger = logging.getLogger('publish')
-digest_prefix = '[test-results]:data:application/gzip;base64,'
+digest_prefix = '[test-results]:data:'
+digest_mime_type = 'application/gzip'
+digest_encoding = 'base64'
+digest_header = f'{digest_prefix}{digest_mime_type};{digest_encoding},'
 digit_space = '  '
 punctuation_space = ' '
 
@@ -594,7 +597,7 @@ def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
         raise ValueError('stats must be UnitTestRunResults when no digest_stats is given')
     summary = get_long_summary_md(stats)
     digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
-    return f'{summary}\n{digest_prefix}{digest}'
+    return f'{summary}\n{digest_header}{digest}'
 
 
 def get_case_messages(case_results: UnitTestCaseResults) -> CaseMessages:
