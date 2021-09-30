@@ -533,14 +533,15 @@ class TestPublisher(unittest.TestCase):
         self.do_test_get_check_run_from_list([], None)
 
     def test_get_check_run_from_list_many(self):
-        expected = self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest')
         runs = [
             self.mock_check_run(name='Other title', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
             self.mock_check_run(name='Check Name', status='other status', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
             self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 0, 0, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
-            expected,
-            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='no digest')
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='summary\n[test-results]:data:application/gzip;base64,digest'),
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary='no digest'),
+            self.mock_check_run(name='Check Name', status='completed', started_at=datetime(2021, 3, 19, 12, 2, 4, tzinfo=timezone.utc), summary=None)
         ]
+        expected = runs[3]
         name = runs[0].name
         self.do_test_get_check_run_from_list(runs, expected)
 
