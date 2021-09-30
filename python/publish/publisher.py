@@ -155,7 +155,7 @@ class Publisher:
             return runs[0]
 
         # filter based on summary
-        runs = [run for run in runs if digest_prefix in run.output.summary]
+        runs = [run for run in runs if run.output.summary and digest_prefix in run.output.summary]
         logger.debug(f'there are {len(runs)} check runs with a test result summary')
         if len(runs) == 0:
             return None
