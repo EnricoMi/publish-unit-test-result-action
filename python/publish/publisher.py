@@ -293,7 +293,9 @@ class Publisher:
         if self._settings.compare_earlier:
             base_commit_sha = self.get_base_commit_sha(pull_request)
             if stats.commit == base_commit_sha:
-                base_commit_sha = None
+                # we do not publish a comment when we compare the commit to itself
+                # that would overwrite earlier comments without change stats
+                return pull_request
             logger.debug(f'comparing against base={base_commit_sha}')
             base_check_run = self.get_check_run(base_commit_sha)
         base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None
