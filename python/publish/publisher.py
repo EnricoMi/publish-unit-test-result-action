@@ -292,6 +292,8 @@ class Publisher:
         base_check_run = None
         if self._settings.compare_earlier:
             base_commit_sha = self.get_base_commit_sha(pull_request)
+            if stats.commit == base_commit_sha:
+                base_commit_sha = None
             logger.debug(f'comparing against base={base_commit_sha}')
             base_check_run = self.get_check_run(base_commit_sha)
         base_stats = self.get_stats_from_check_run(base_check_run) if base_check_run is not None else None

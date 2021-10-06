@@ -355,6 +355,95 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
 
+    def test_publish_comment_compare_earlier(self):
+        pr = mock.MagicMock()
+        cr = mock.MagicMock()
+        bcr = mock.MagicMock()
+        bs = mock.MagicMock()
+        stats = self.stats
+        cases = UnitTestCaseResults(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_check_run = mock.Mock(return_value=bcr)
+        publisher.get_stats_from_check_run = mock.Mock(return_value=bs)
+        publisher.get_stats_delta = mock.Mock(return_value=bs)
+        publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
+
+        self.assertEqual(4, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_base_commit_sha', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual(('base commit', ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('get_stats_from_check_run', method)
+        self.assertEqual((bcr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[3]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((bcr, ), args)
+        self.assertEqual({}, kwargs)
+
+        mock_calls = pr.mock_calls
+        self.assertEqual(1, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('create_issue_comment', method)
+        self.assertEqual(('## title\nbody', ), args)
+        self.assertEqual({}, kwargs)
+
+    def test_publish_comment_compare_with_itself(self):
+        pr = mock.MagicMock()
+        cr = mock.MagicMock()
+        stats = self.stats
+        cases = UnitTestCaseResults(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_check_run = mock.Mock(return_value=None)
+        publisher.get_base_commit_sha = mock.Mock(return_value=stats.commit)
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
+
+        self.assertEqual(3, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_base_commit_sha', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual((None, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((None, ), args)
+        self.assertEqual({}, kwargs)
+
+        mock_calls = pr.mock_calls
+        self.assertEqual(1, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('create_issue_comment', method)
+        self.assertEqual(('## title\nbody', ), args)
+        self.assertEqual({}, kwargs)
+
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
