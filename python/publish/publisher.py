@@ -27,6 +27,7 @@ class Settings:
     graphql_url: str
     api_retries: int
     event: dict
+    event_file: Optional[str]
     event_name: str
     repo: str
     commit: str

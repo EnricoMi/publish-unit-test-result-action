@@ -50,6 +50,7 @@ class TestPublisher(unittest.TestCase):
             graphql_url='https://the-github-graphql-url',
             api_retries=1,
             event=event,
+            event_file=None,
             event_name=event_name,
             repo='owner/repo',
             commit='commit',
