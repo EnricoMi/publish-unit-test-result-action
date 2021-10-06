@@ -419,30 +419,15 @@ class TestPublisher(unittest.TestCase):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(1, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_base_commit_sha', method)
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_check_run', method)
-        self.assertEqual((None, ), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('get_test_lists_from_check_run', method)
-        self.assertEqual((None, ), args)
-        self.assertEqual({}, kwargs)
-
         mock_calls = pr.mock_calls
-        self.assertEqual(1, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('create_issue_comment', method)
-        self.assertEqual(('## title\nbody', ), args)
-        self.assertEqual({}, kwargs)
+        self.assertEqual(0, len(mock_calls))
 
     def test_publish_comment_compare_with_None(self):
         pr = mock.MagicMock()
