@@ -110,8 +110,13 @@ class Publisher:
         if len(pulls) == 0:
             logger.debug(f'found no open pull request in repo {self._settings.repo} for commit {commit}')
             return None
+        pulls = [pull for pull in pulls if commit in [pull.head.sha, pull.merge_commit_sha]]
+        if len(pulls) == 0:
+            logger.debug(f'found no pull request in repo {self._settings.repo} with '
+                         f'commit {commit} as head or current merge commit')
+            return None
         if len(pulls) > 1:
-            self._gha.error(f'Found multiple open pull requests for commit {commit}')
+            self._gha.error(f'Found multiple pull requests for commit {commit}')
             return None
 
         pull = pulls[0]
