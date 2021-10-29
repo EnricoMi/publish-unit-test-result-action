@@ -80,19 +80,17 @@ class Publisher:
             logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
     def get_pull(self, commit: str) -> Optional[PullRequest]:
-        issues = self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}')
-        # totalCount calls the GitHub API, so better not do this if we are not logging the result anyway
+        # totalCount calls the GitHub API just to get the total number
+        # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
+        issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
+        logger.debug(f'found {len(issues)} pull requests in repo {self._settings.repo} containing commit {commit}')
+
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'found {issues.totalCount} pull requests in repo {self._settings.repo} for commit {commit}')
-
-        if issues.totalCount == 0:
-            return None
-
-        for issue in issues:
-            pr = issue.as_pull_request()
-            logger.debug(pr)
-            logger.debug(pr.raw_data)
-            logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
+            for issue in issues:
+                pr = issue.as_pull_request()
+                logger.debug(pr)
+                logger.debug(pr.raw_data)
+                logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
 
         # we can only publish the comment to PRs that are in the same repository as this action is executed in
         # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY / self._settings.repo
@@ -105,22 +103,28 @@ class Publisher:
         if len(pulls) == 0:
             logger.debug(f'found no pull requests in repo {self._settings.repo} for commit {commit}')
             return None
-        if len(pulls) > 1:
-            pulls = [pull for pull in pulls if pull.state == 'open']
-        if len(pulls) == 0:
-            logger.debug(f'found no open pull request in repo {self._settings.repo} for commit {commit}')
-            return None
+
+        # we only comment on PRs that have the commit as their current head or merge commit
         pulls = [pull for pull in pulls if commit in [pull.head.sha, pull.merge_commit_sha]]
         if len(pulls) == 0:
             logger.debug(f'found no pull request in repo {self._settings.repo} with '
-                         f'commit {commit} as head or current merge commit')
-            return None
-        if len(pulls) > 1:
-            self._gha.error(f'Found multiple pull requests for commit {commit}')
+                         f'commit {commit} as current head or merge commit')
             return None
 
+        # if we still have multiple PRs, only comment on the open one
+        if len(pulls) > 1:
+            pulls = [pull for pull in pulls if pull.state == 'open']
+            if len(pulls) == 0:
+                logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
+                             f'commit {commit} as current head or merge commit but none is open')
+                return None
+            if len(pulls) > 1:
+                self._gha.error(f'Found multiple open pull requests in repo {self._settings.repo} with '
+                                f'commit {commit} as current head or merge commit')
+                return None
+
         pull = pulls[0]
-        logger.debug(f'found pull request #{pull.number} for commit {commit}')
+        logger.debug(f'found pull request #{pull.number} with commit {commit} as current head or merge commit')
         return pull
 
     def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:

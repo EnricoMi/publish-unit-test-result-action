@@ -597,6 +597,15 @@ class TestPublisher(unittest.TestCase):
         gha = self.do_test_get_pull(settings, search_issues, None)
         gha.error.assert_not_called()
 
+    def test_get_pull_one_closed_matches(self):
+        settings = self.create_settings()
+
+        pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
+        search_issues = self.create_github_collection([pr])
+
+        gha = self.do_test_get_pull(settings, search_issues, pr)
+        gha.error.assert_not_called()
+
     def test_get_pull_multiple_closed_matches(self):
         settings = self.create_settings()
 
@@ -645,7 +654,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('Found multiple pull requests for commit commit')
+        gha.error.assert_called_once_with('Found multiple open pull requests in repo owner/repo with commit commit as current head or merge commit')
 
     def test_get_pull_multiple_open_both_match_merge_commit(self):
         settings = self.create_settings()
@@ -655,7 +664,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('Found multiple pull requests for commit commit')
+        gha.error.assert_called_once_with('Found multiple open pull requests in repo owner/repo with commit commit as current head or merge commit')
 
     def test_get_pull_forked_repo(self):
         settings = self.create_settings()
