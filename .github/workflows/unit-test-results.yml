@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Debug Action
-        uses: hmarr/debug-action@v2.0.0
+        uses: hmarr/debug-action@v2.0.1
 
   unit-test-results:
     name: Unit Test Results (reference)
