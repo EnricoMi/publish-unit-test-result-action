@@ -126,13 +126,16 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
                 for suite in suites
                 for case in get_cases(suite)] + cases
 
+    # junitparser HTML escapes all attributes (e.g. TestCase.name), see junitparser.junitparser.Attr
+    # we could unescape the values, or access the XML attributes instead (e.g. TestCase._elem.attrib['name'])
+    # https://github.com/weiwei/junitparser/issues/71
     cases = [
         UnitTestCase(
             result_file=result_file,
             test_file=case._elem.get('file'),
             line=int_opt(case._elem.get('line')),
-            class_name=case.classname,
-            test_name=case.name,
+            class_name=case._elem.attrib.get('classname'),
+            test_name=case._elem.attrib.get('name'),
             result=get_result(results),
             message=get_message(results),
             content=get_content(results),

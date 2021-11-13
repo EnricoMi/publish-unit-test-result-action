@@ -499,6 +499,26 @@ class TestJunit(unittest.TestCase):
                 suites=2
             ))
 
+    def test_parse_junit_xml_files_xml_entities_in_test_names(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/xml-entities-in-names.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[],
+                suites=1,
+                suite_tests=4,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=0,
+                cases=[
+                    UnitTestCase(result_file='files/xml-entities-in-names.xml', test_file=None, line=None, class_name=None, test_name='Test with "quotes" in the test name', result='success', message=None, content=None, time=0.0),
+                    UnitTestCase(result_file='files/xml-entities-in-names.xml', test_file=None, line=None, class_name=None, test_name="Test with 'apostrophe' in the test name", result='success', message=None, content=None, time=0.0),
+                    UnitTestCase(result_file='files/xml-entities-in-names.xml', test_file=None, line=None, class_name=None, test_name='Test with & in the test name', result='success', message=None, content=None, time=0.0),
+                    UnitTestCase(result_file='files/xml-entities-in-names.xml', test_file=None, line=None, class_name=None, test_name='Test with < and > in the test name', result='success', message=None, content=None, time=0.0)
+                ]
+            ))
+
     def test_get_results(self):
         success = TestElement('success')
         skipped = TestElement('skipped')
