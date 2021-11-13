@@ -16,6 +16,11 @@ class TestElement(Element):
         self._tag = tag
         self.message = message
         self._elem.text = content
+        self._elem.attrib['message'] = message
+
+    @property
+    def text(self):
+        return self._elem.text
 
 
 class TestJunit(unittest.TestCase):
