@@ -54,8 +54,8 @@ def get_message(results: Union[Element, List[Element]]) -> str:
     if isinstance(results, List):
         messages = [result._elem.attrib.get('message')
                     for result in results
-                    if result and result.message]
-        message = '\n'.join([message for message in messages if message is not None]) if messages else None
+                    if result and result._elem.attrib.get('message')]
+        message = '\n'.join(messages) if messages else None
     else:
         message = results._elem.attrib.get('message') if results else None
     return message

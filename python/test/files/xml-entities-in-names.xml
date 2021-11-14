@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<testsuites>
-    <testsuite>
-        <testcase name="Test with &quot;quotes&quot; in the test name" time="0.0"/>
-        <testcase name="Test with &apos;apostrophe&apos; in the test name" time="0.0"/>
-        <testcase name="Test with &amp; in the test name" time="0.0"/>
-        <testcase name="Test with &lt; and &gt; in the test name" time="0.0"/>
-    </testsuite>
-</testsuites>
