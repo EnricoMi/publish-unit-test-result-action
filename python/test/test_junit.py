@@ -16,6 +16,11 @@ class TestElement(Element):
         self._tag = tag
         self.message = message
         self._elem.text = content
+        self._elem.attrib['message'] = message
+
+    @property
+    def text(self):
+        return self._elem.text
 
 
 class TestJunit(unittest.TestCase):
@@ -497,6 +502,26 @@ class TestJunit(unittest.TestCase):
                 suite_tests=31,
                 suite_time=0,
                 suites=2
+            ))
+
+    def test_parse_junit_xml_files_xml_entities_in_test_names(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/with-xml-entities.xml']),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[],
+                suites=1,
+                suite_tests=4,
+                suite_skipped=2,
+                suite_failures=1,
+                suite_errors=1,
+                suite_time=0,
+                cases=[
+                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with "quotes" in the test name', result='skipped', message='A message with "quotes"', content='Content with "quotes"', time=0.0),
+                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name="Test with 'apostrophe' in the test name", result='failure', message='A message with \'apostrophes\'', content='Content with \'apostrophes\'', time=0.0),
+                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with & in the test name', result='error', message='A message with &', content='Content with &', time=0.0),
+                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with < and > in the test name', result='skipped', message='A message with < and >', content='Content with < and >', time=0.0)
+                ]
             ))
 
     def test_get_results(self):

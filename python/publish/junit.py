@@ -1,6 +1,5 @@
 import os
 from collections import defaultdict
-from html import unescape
 from typing import Optional, Iterable, Union, Any, List
 
 from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
@@ -49,14 +48,17 @@ def get_message(results: Union[Element, List[Element]]) -> str:
     :param results:
     :return:
     """
+    # junitparser HTML escapes all attributes (e.g. TestCase.name), see junitparser.junitparser.Attr
+    # we could unescape the values, or access the XML attributes instead (e.g. TestCase._elem.attrib['name'])
+    # https://github.com/weiwei/junitparser/issues/71
     if isinstance(results, List):
-        messages = [result.message
+        messages = [result._elem.attrib.get('message')
                     for result in results
-                    if result and result.message]
+                    if result and result._elem.attrib.get('message')]
         message = '\n'.join(messages) if messages else None
     else:
-        message = results.message if results else None
-    return unescape(message) if message is not None else None
+        message = results._elem.attrib.get('message') if results else None
+    return message
 
 
 def get_content(results: Union[Element, List[Element]]) -> str:
@@ -66,14 +68,13 @@ def get_content(results: Union[Element, List[Element]]) -> str:
     :return:
     """
     if isinstance(results, List):
-        contents = [result._elem.text
+        contents = [result.text
                     for result in results
-                    if result is not None and result._elem is not None and result._elem.text is not None]
+                    if result is not None and result.text is not None]
         content = '\n'.join(contents) if contents else None
     else:
-        content = results._elem.text \
-            if results and results._elem and results._elem.text is not None else None
-    return unescape(content) if content is not None else None
+        content = results.text if results and results.text is not None else None
+    return content
 
 
 def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
@@ -126,13 +127,16 @@ def parse_junit_xml_files(files: Iterable[str]) -> ParsedUnitTestResults:
                 for suite in suites
                 for case in get_cases(suite)] + cases
 
+    # junitparser HTML escapes all attributes (e.g. TestCase.name), see junitparser.junitparser.Attr
+    # we could unescape the values, or access the XML attributes instead (e.g. TestCase._elem.attrib['name'])
+    # https://github.com/weiwei/junitparser/issues/71
     cases = [
         UnitTestCase(
             result_file=result_file,
             test_file=case._elem.get('file'),
             line=int_opt(case._elem.get('line')),
-            class_name=case.classname,
-            test_name=case.name,
+            class_name=case._elem.attrib.get('classname'),
+            test_name=case._elem.attrib.get('name'),
             result=get_result(results),
             message=get_message(results),
             content=get_content(results),
