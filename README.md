@@ -13,7 +13,7 @@
 This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
 publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
 
-You can add this action to your GitHub workflow for Ubuntu runners (e.g. `runs-on: ubuntu-latest`) as follows:
+You can add this action to your GitHub workflow for **Ubuntu Linux** (e.g. `runs-on: ubuntu-latest`) runners:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -23,7 +23,7 @@ You can add this action to your GitHub workflow for Ubuntu runners (e.g. `runs-o
     files: test-results/**/*.xml
 ```
 
-Use this for macOS (e.g. `runs-on: macos-latest`) and Windows (e.g. `runs-on: windows-latest`) runners:
+Use this for **macOS** (e.g. `runs-on: macos-latest`) and **Windows** (e.g. `runs-on: windows-latest`) runners:
 
 ```yaml
 - name: Publish Unit Test Results
