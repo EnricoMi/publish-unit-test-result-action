@@ -13,7 +13,7 @@
 This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
 publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
 
-You can add this action to your GitHub workflow for **Ubuntu Linux** (e.g. `runs-on: ubuntu-latest`) runners:
+You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -23,7 +23,8 @@ You can add this action to your GitHub workflow for **Ubuntu Linux** (e.g. `runs
     files: test-results/**/*.xml
 ```
 
-Use this for **macOS** (e.g. `runs-on: macos-latest`) and **Windows** (e.g. `runs-on: windows-latest`) runners:
+Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
+and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `runs-on: windows-latest`) runners:
 
 ```yaml
 - name: Publish Unit Test Results
@@ -33,8 +34,10 @@ Use this for **macOS** (e.g. `runs-on: macos-latest`) and **Windows** (e.g. `run
     files: test-results/**/*.xml
 ```
 
-See the [notes on running this action as a composite action](#running-as-a-composite-action) if you
-run it on Windows or macOS.
+See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
+
+Also see the [notes on supporting pull requests from fork repositories and branches](#support-fork-repositories-and-dependabot-branches)
+created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically).
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
