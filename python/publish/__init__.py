@@ -298,6 +298,8 @@ def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str
             if unit == 's' or duration:
                 strings.insert(0, f'{duration % 60}{unit}')
                 duration //= 60
+        if duration > 0:
+            strings.insert(0, f'{duration}d')
         string = ' '.join(strings)
         if label:
             return f'{string} {label}'
