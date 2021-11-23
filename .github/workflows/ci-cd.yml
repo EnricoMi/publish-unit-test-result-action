@@ -293,6 +293,7 @@ jobs:
           check_name: Unit Test Results (Test Files)
           fail_on: nothing
           files: "test-files/**.xml"
+          time_unit: "milliseconds"
           LOG_LEVEL: DEBUG
 
   config-deploy:
