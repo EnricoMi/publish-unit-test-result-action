@@ -27,6 +27,10 @@ inputs:
   files:
     description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
     required: true
+  time_unit:
+    description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
+    default: 'seconds'
+    required: false
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
     required: false

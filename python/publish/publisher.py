@@ -34,6 +34,7 @@ class Settings:
     fail_on_errors: bool
     fail_on_failures: bool
     files_glob: str
+    time_factor: float
     check_name: str
     comment_title: str
     comment_mode: str

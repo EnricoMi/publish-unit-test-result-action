@@ -79,7 +79,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
         logger.debug(f'reading {list(files)}')
 
     # get the unit test results
-    parsed = parse_junit_xml_files(files).with_commit(settings.commit)
+    parsed = parse_junit_xml_files(files, settings.time_factor).with_commit(settings.commit)
     [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
      for error in parsed.errors]
 
@@ -217,6 +217,14 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options)
     test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 10
 
+    time_unit = get_var('TIME_UNIT', options) or 'seconds'
+    time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
+    time_factor = time_factors.get(time_unit.lower())
+    if time_factor is None:
+        raise RuntimeError(f'TIME_UNIT {time_unit} is not supported. '
+                           f'It is optional, but when given must be one of these values: '
+                           f'{", ".join(time_factors.keys())}')
+
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     annotations = get_annotations_config(options, event)
 
@@ -246,6 +254,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
         files_glob=get_var('FILES', options) or '*.xml',
+        time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if get_var('COMMENT_ON_PR', options) != 'false' else comment_mode_off),

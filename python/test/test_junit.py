@@ -107,8 +107,8 @@ class TestJunit(unittest.TestCase):
                         message=None,
                         time=0.001
                     )
-                ])
-      )
+                ]
+            ))
 
     def test_parse_junit_xml_files_with_horovod_file(self):
         self.assertEqual(
@@ -520,6 +520,77 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name="Test with 'apostrophe' in the test name", result='failure', message='A message with \'apostrophes\'', content='Content with \'apostrophes\'', time=0.0),
                     UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with & in the test name', result='error', message='A message with &', content='Content with &', time=0.0),
                     UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with < and > in the test name', result='skipped', message='A message with < and >', content='Content with < and >', time=0.0)
+                ]
+            ))
+
+    def test_parse_junit_xml_files_with_time_factor(self):
+        self.assertEqual(
+            parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml'], 0.1),
+            ParsedUnitTestResults(
+                files=1,
+                errors=[],
+                suites=1,
+                suite_tests=5,
+                suite_skipped=0,
+                suite_failures=0,
+                suite_errors=0,
+                suite_time=2,
+                cases=[
+                    UnitTestCase(
+                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        test_file=None,
+                        line=None,
+                        test_name='diff options with empty diff column name',
+                        result='success',
+                        content=None,
+                        message=None,
+                        time=0.025900000000000003
+                    ),
+                    UnitTestCase(
+                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        test_name='diff options left and right prefixes',
+                        test_file=None,
+                        line=None,
+                        result='success',
+                        content=None,
+                        message=None,
+                        time=0.19590000000000002
+                    ),
+                    UnitTestCase(
+                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        test_name='diff options diff value',
+                        test_file=None,
+                        line=None,
+                        result='success',
+                        content=None,
+                        message=None,
+                        time=0.0002
+                    ),
+                    UnitTestCase(
+                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        test_name='diff options with change column name same as diff column',
+                        test_file=None,
+                        line=None,
+                        result='success',
+                        content=None,
+                        message=None,
+                        time=0.0002
+                    ),
+                    UnitTestCase(
+                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        test_name='fluent methods of diff options',
+                        test_file=None,
+                        line=None,
+                        result='success',
+                        content=None,
+                        message=None,
+                        time=0.0001
+                    )
                 ]
             ))
 
