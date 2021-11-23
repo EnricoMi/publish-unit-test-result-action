@@ -444,13 +444,15 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_stat_duration(72, label), '1m 12s time')
         self.assertEqual(as_stat_duration(3754, label), '1h 2m 34s time')
         self.assertEqual(as_stat_duration(-3754, label), '1h 2m 34s time')
-        self.assertEqual(as_stat_duration(223954, label), '1d 2h 12m 34s time')
+        self.assertEqual(as_stat_duration(94354, label), '1d 2h 12m 34s time')
+        self.assertEqual(as_stat_duration(223954, label), '2d 14h 12m 34s time')
 
         self.assertEqual(as_stat_duration(d(3754), label), '1h 2m 34s time')
         self.assertEqual(as_stat_duration(d(3754, 0), label), '1h 2m 34s time ±0s')
         self.assertEqual(as_stat_duration(d(3754, 1234), label), '1h 2m 34s time + 20m 34s')
         self.assertEqual(as_stat_duration(d(3754, -123), label), '1h 2m 34s time - 2m 3s')
-        self.assertEqual(as_stat_duration(d(3754, -223954), label), '1h 2m 34s time - 1d 2h 12m 34s')
+        self.assertEqual(as_stat_duration(d(3754, -94354), label), '1h 2m 34s time - 1d 2h 12m 34s')
+        self.assertEqual(as_stat_duration(d(3754, -223954), label), '1h 2m 34s time - 2d 14h 12m 34s')
         self.assertEqual(as_stat_duration(dict(delta=123), label), 'N/A time + 2m 3s')
 
     def test_get_stats_digest_undigest(self):
