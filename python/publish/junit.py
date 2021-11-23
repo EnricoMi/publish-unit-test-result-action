@@ -103,7 +103,7 @@ def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0) -> Par
     suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites])
     suite_failures = sum([suite.failures for result_file, suite in suites])
     suite_errors = sum([suite.errors for result_file, suite in suites])
-    suite_time = int(sum([suite.time for result_file, suite in suites]))
+    suite_time = int(sum([suite.time for result_file, suite in suites]) * time_factor)
 
     def int_opt(string: Optional[str]) -> Optional[int]:
         try:
