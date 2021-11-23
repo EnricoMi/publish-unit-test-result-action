@@ -524,75 +524,77 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_time_factor(self):
-        self.assertEqual(
-            parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml'], 0.1),
-            ParsedUnitTestResults(
-                files=1,
-                errors=[],
-                suites=1,
-                suite_tests=5,
-                suite_skipped=0,
-                suite_failures=0,
-                suite_errors=0,
-                suite_time=2,
-                cases=[
-                    UnitTestCase(
-                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                        test_file=None,
-                        line=None,
-                        test_name='diff options with empty diff column name',
-                        result='success',
-                        content=None,
-                        message=None,
-                        time=0.025900000000000003
-                    ),
-                    UnitTestCase(
-                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                        test_name='diff options left and right prefixes',
-                        test_file=None,
-                        line=None,
-                        result='success',
-                        content=None,
-                        message=None,
-                        time=0.19590000000000002
-                    ),
-                    UnitTestCase(
-                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                        test_name='diff options diff value',
-                        test_file=None,
-                        line=None,
-                        result='success',
-                        content=None,
-                        message=None,
-                        time=0.0002
-                    ),
-                    UnitTestCase(
-                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                        test_name='diff options with change column name same as diff column',
-                        test_file=None,
-                        line=None,
-                        result='success',
-                        content=None,
-                        message=None,
-                        time=0.0002
-                    ),
-                    UnitTestCase(
-                        class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
-                        test_name='fluent methods of diff options',
-                        test_file=None,
-                        line=None,
-                        result='success',
-                        content=None,
-                        message=None,
-                        time=0.0001
-                    )
-                ]
-            ))
+        for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
+            with self.subTest(time_factor=time_factor):
+                self.assertEqual(
+                    parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml'], time_factor),
+                    ParsedUnitTestResults(
+                        files=1,
+                        errors=[],
+                        suites=1,
+                        suite_tests=5,
+                        suite_skipped=0,
+                        suite_failures=0,
+                        suite_errors=0,
+                        suite_time=int(2.222 * time_factor),
+                        cases=[
+                            UnitTestCase(
+                                class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                test_file=None,
+                                line=None,
+                                test_name='diff options with empty diff column name',
+                                result='success',
+                                content=None,
+                                message=None,
+                                time=0.259 * time_factor
+                            ),
+                            UnitTestCase(
+                                class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                test_name='diff options left and right prefixes',
+                                test_file=None,
+                                line=None,
+                                result='success',
+                                content=None,
+                                message=None,
+                                time=1.959 * time_factor
+                            ),
+                            UnitTestCase(
+                                class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                test_name='diff options diff value',
+                                test_file=None,
+                                line=None,
+                                result='success',
+                                content=None,
+                                message=None,
+                                time=0.002 * time_factor
+                            ),
+                            UnitTestCase(
+                                class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                test_name='diff options with change column name same as diff column',
+                                test_file=None,
+                                line=None,
+                                result='success',
+                                content=None,
+                                message=None,
+                                time=0.002 * time_factor
+                            ),
+                            UnitTestCase(
+                                class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                test_name='fluent methods of diff options',
+                                test_file=None,
+                                line=None,
+                                result='success',
+                                content=None,
+                                message=None,
+                                time=0.001 * time_factor
+                            )
+                        ]
+                    ))
 
     def test_get_results(self):
         success = TestElement('success')
