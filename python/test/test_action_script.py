@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 import tempfile
 import unittest
 from typing import Optional
@@ -190,10 +191,17 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(EVENT_FILE='', expected=self.get_settings(event_file=None))
         self.do_test_get_settings(EVENT_FILE=None, expected=self.get_settings(event_file=None))
 
-        with tempfile.NamedTemporaryFile(mode='wb') as file:
+        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
             file.write(b'{}')
             file.flush()
-            self.do_test_get_settings(EVENT_FILE=file.name, expected=self.get_settings(event_file=file.name))
+            if sys.platform == 'win32':
+                file.close()
+
+            try:
+                self.do_test_get_settings(EVENT_FILE=file.name, expected=self.get_settings(event_file=file.name))
+            finally:
+                if sys.platform == 'win32':
+                    os.unlink(file.name)
 
     def test_get_settings_github_api_url(self):
         self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
@@ -709,19 +717,25 @@ class Test(unittest.TestCase):
                 self.assertEqual(expected, is_float(value))
 
     def test_main_fork_pr_check(self):
-        with tempfile.NamedTemporaryFile(mode='wb') as file:
+        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
             file.write(b'{ "pull_request": { "head": { "repo": { "full_name": "fork/repo" } } } }')
             file.flush()
+            if sys.platform == 'win32':
+                file.close()
 
             gha = mock.MagicMock()
-            settings = get_settings(dict(
-                COMMIT='commit',
-                GITHUB_TOKEN='********',
-                GITHUB_EVENT_PATH=file.name,
-                GITHUB_EVENT_NAME='pull_request',
-                GITHUB_REPOSITORY='repo',
-                EVENT_FILE=None
-            ), gha)
+            try:
+                settings = get_settings(dict(
+                    COMMIT='commit',
+                    GITHUB_TOKEN='********',
+                    GITHUB_EVENT_PATH=file.name,
+                    GITHUB_EVENT_NAME='pull_request',
+                    GITHUB_REPOSITORY='repo',
+                    EVENT_FILE=None
+                ), gha)
+            finally:
+                if sys.platform == 'win32':
+                    os.unlink(file.name)
 
             def do_raise(*args):
                 # if this is raised, the tested main method did not return where expected but continued
