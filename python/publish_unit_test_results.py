@@ -162,7 +162,8 @@ def get_var(name: str, options: dict) -> Optional[str]:
     Returns the value from the given dict with key 'INPUT_$key',
     or if this does not exist, key 'key'.
     """
-    return options.get(f'INPUT_{name}') or options.get(name)
+    # the last 'or None' turns empty strings into None
+    return options.get(f'INPUT_{name}') or options.get(name) or None
 
 
 def check_var(var: Union[str, List[str]],
