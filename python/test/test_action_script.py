@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 import tempfile
 import unittest
 from typing import Optional
@@ -11,8 +12,8 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
-from publish_unit_test_results import get_conclusion, get_commit_sha, \
-    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float
+from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, main
 from test import chdir
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
@@ -120,6 +121,13 @@ class Test(unittest.TestCase):
             actual = get_commit_sha(event, event_name, options)
             self.assertEqual('event_sha', actual)
 
+    def test_get_var(self):
+        self.assertIsNone(get_var('NAME', dict()))
+        self.assertIsNone(get_var('NAME', dict(name='case sensitive')))
+        self.assertEquals(get_var('NAME', dict(NAME='value')), 'value')
+        self.assertEquals(get_var('NAME', dict(INPUT_NAME='precedence', NAME='value')), 'precedence')
+        self.assertIsNone(get_var('NAME', dict(NAME='')))
+
     @staticmethod
     def get_settings(token='token',
                      api_url='http://github.api.url/',
@@ -177,6 +185,23 @@ class Test(unittest.TestCase):
                    for key, value in options.items()
                    if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA'}}
         self.do_test_get_settings(**options)
+
+    def test_get_settings_event_file(self):
+        self.do_test_get_settings(expected=self.get_settings(event_file=None))
+        self.do_test_get_settings(EVENT_FILE='', expected=self.get_settings(event_file=None))
+        self.do_test_get_settings(EVENT_FILE=None, expected=self.get_settings(event_file=None))
+
+        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
+            file.write(b'{}')
+            file.flush()
+            if sys.platform == 'win32':
+                file.close()
+
+            try:
+                self.do_test_get_settings(EVENT_FILE=file.name, expected=self.get_settings(event_file=file.name))
+            finally:
+                if sys.platform == 'win32':
+                    os.unlink(file.name)
 
     def test_get_settings_github_api_url(self):
         self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
@@ -690,3 +715,38 @@ class Test(unittest.TestCase):
         ]:
             with self.subTest(value=value):
                 self.assertEqual(expected, is_float(value))
+
+    def test_main_fork_pr_check(self):
+        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
+            file.write(b'{ "pull_request": { "head": { "repo": { "full_name": "fork/repo" } } } }')
+            file.flush()
+            if sys.platform == 'win32':
+                file.close()
+
+            gha = mock.MagicMock()
+            try:
+                settings = get_settings(dict(
+                    COMMIT='commit',
+                    GITHUB_TOKEN='********',
+                    GITHUB_EVENT_PATH=file.name,
+                    GITHUB_EVENT_NAME='pull_request',
+                    GITHUB_REPOSITORY='repo',
+                    EVENT_FILE=None
+                ), gha)
+            finally:
+                if sys.platform == 'win32':
+                    os.unlink(file.name)
+
+            def do_raise(*args):
+                # if this is raised, the tested main method did not return where expected but continued
+                raise RuntimeError('This is not expected to be called')
+
+            with mock.patch('publish_unit_test_results.get_files') as m:
+                m.side_effect = do_raise
+                main(settings, gha)
+
+            gha.warning.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
+                                                'It cannot do anything useful like creating check runs or pull request '
+                                                'comments. To run the action on fork repository pull requests, see '
+                                                'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
+                                                '/README.md#support-fork-repositories-and-dependabot-branches')
