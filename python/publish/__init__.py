@@ -294,10 +294,12 @@ def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str
     if isinstance(duration, int):
         duration = abs(duration)
         strings = []
-        for unit in ['s', 'm', 'h']:
+        for unit, denominator in [('s', 60), ('m', 60), ('h', 24)]:
             if unit == 's' or duration:
-                strings.insert(0, f'{duration % 60}{unit}')
-                duration //= 60
+                strings.insert(0, f'{duration % denominator}{unit}')
+                duration //= denominator
+        if duration:
+            strings.insert(0, f'{duration}d')
         string = ' '.join(strings)
         if label:
             return f'{string} {label}'
