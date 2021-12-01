@@ -64,6 +64,7 @@ class TestPublisher(unittest.TestCase):
             fail_on_errors=True,
             fail_on_failures=True,
             files_glob='*.xml',
+            time_factor=1.0,
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
