@@ -15,6 +15,7 @@ import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes
+from publish.github import GitHubRetry
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
@@ -34,13 +35,10 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
 
 
 def get_github(token: str, url: str, retries: int, backoff_factor: float) -> github.Github:
-    retry = Retry(total=retries,
-                  backoff_factor=backoff_factor,
-                  allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
-                  # 403 is too broad to be retried, but GitHub API signals rate limits via 403
-                  # urllib3 Retry does not allow to consider the HTTP message, only status code
-                  # so we retry all 403, which will respect HTTP Retry-After header
-                  status_forcelist=[403] + list(range(500, 600)))
+    retry = GitHubRetry(total=retries,
+                        backoff_factor=backoff_factor,
+                        allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
+                        status_forcelist=list(range(500, 600)))
     return github.Github(login_or_token=token, base_url=url, per_page=100, retry=retry)
 
 
