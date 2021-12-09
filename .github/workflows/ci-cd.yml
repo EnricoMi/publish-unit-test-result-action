@@ -67,7 +67,7 @@ jobs:
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
     permissions:
-      checks: write
+      checks: none
 
     steps:
       - name: Checkout
