@@ -43,6 +43,7 @@ jobs:
           check_name: Unit Test Results (minimal permissions)
           files: "test-files/**.xml"
           LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
 
   event_file:
     name: "Event File"
