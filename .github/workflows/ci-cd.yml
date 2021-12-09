@@ -9,57 +9,8 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      max-parallel: 10
-      matrix:
-        os:
-          - ubuntu-latest
-        python-version: [3.8]
-
-    steps:
-      - name: Setup Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          sudo apt-get update
-          sudo apt-get install language-pack-en language-pack-de
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade --force --no-cache-dir pip
-          pip install --force --no-cache-dir -r python/requirements.txt
-          pip install --force --no-cache-dir -r python/test/requirements.txt
-
-      - name: PyTest
-        env:
-          PYTHONPATH: ..
-        run: |
-          cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
-
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: Unit Test Results (python-${{ matrix.python-version }}, ${{ matrix.os }})
-          path: |
-            test-results/*.xml
-            unit-test-results.json
-
   publish-permissions-minimal:
     name: Publish (minimal permissions)
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -73,10 +24,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
 
       - name: Prepare publish action from this branch
         run: |
@@ -90,7 +41,7 @@ jobs:
           comment_mode: off
           compare_to_earlier_commit: false
           check_name: Unit Test Results (minimal permissions)
-          files: "artifacts/**/*.xml"
+          files: "test-files/**.xml"
           LOG_LEVEL: DEBUG
 
   event_file:
