@@ -81,6 +81,212 @@ jobs:
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
+  publish-permissions-create-comment:
+    name: Publish (create comment permissions)
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create new
+          compare_to_earlier_commit: false
+          check_name: Unit Test Results (create comment permissions)
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+  publish-permissions-update-comment:
+    name: Publish (update comment permissions)
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results (create)
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create
+          compare_to_earlier_commit: false
+          check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+      - name: Publish Unit Test Results (update)
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: update last
+          compare_to_earlier_commit: false
+          check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+  publish-permissions-comment-compare:
+    name: Publish (comment compare permissions)
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create new
+          compare_to_earlier_commit: true
+          check_name: Unit Test Results (comment compare permissions)
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+  publish-permissions-hide-comment:
+    name: Publish (hide comment permissions)
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results (create)
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create new
+          compare_to_earlier_commit: false
+          check_name: Unit Test Results (hide comment permissions)
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+      - name: Publish Unit Test Results (hide)
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create new
+          compare_to_earlier_commit: false
+          hide_comments: all but latest
+          check_name: Unit Test Results (hide comment permissions)
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
+  publish-permissions-commit-build-mode:
+    name: Publish (commit build mode permissions)
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          comment_mode: create new
+          compare_to_earlier_commit: true
+          pull_request_build: commit
+          check_name: Unit Test Results (commit build mode permissions)
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
   event_file:
     name: "Event File"
     runs-on: ubuntu-latest
