@@ -36,6 +36,12 @@ class GitHubRetry(Retry):
                     logging.info(f'Retrying after {response.headers.get("Retry-After")} seconds')
                 else:
                     logging.info(f'There is no Retry-After given in the response header')
+                    # retry if:
+                    # output.get("message").lower().startswith("api rate limit exceeded")
+                    #    or output.get("message")
+                    #    .lower()
+                    #    .endswith("please wait a few minutes before you try again.")
+                    #need to decompress response.data and encode to string, json.loads to output
                     raise MaxRetryError(_pool, url, error or ResponseError(response.reason))
 
         return super().increment(method, url, response, error, _pool, _stacktrace)
