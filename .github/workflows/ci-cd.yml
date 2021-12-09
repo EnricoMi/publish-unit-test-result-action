@@ -87,7 +87,7 @@ jobs:
         with:
           comment_mode: off
           compare_to_earlier_commit: false
-          check_name: Unit Test Results (Dockerfile)
+          check_name: Unit Test Results (minimal permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
 
