@@ -84,6 +84,7 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
+        timeout-minutes: 5
         with:
           github_retries: 1
           comment_mode: off
