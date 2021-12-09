@@ -148,7 +148,7 @@ jobs:
         timeout-minutes: 5
         with:
           github_retries: 0
-          comment_mode: create
+          comment_mode: create new
           compare_to_earlier_commit: false
           check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
           files: "test-files/**.xml"
