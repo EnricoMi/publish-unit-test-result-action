@@ -85,6 +85,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./
         with:
+          github_retries: 1
           comment_mode: off
           compare_to_earlier_commit: false
           check_name: Unit Test Results (minimal permissions)
