@@ -91,6 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: read
 
     steps:
       - name: Checkout
@@ -127,6 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: read
 
     steps:
       - name: Checkout
@@ -175,6 +177,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: read
 
     steps:
       - name: Checkout
@@ -211,6 +214,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: read
 
     steps:
       - name: Checkout
@@ -260,6 +264,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: read
 
     steps:
       - name: Checkout
