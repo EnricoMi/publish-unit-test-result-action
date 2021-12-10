@@ -17,8 +17,31 @@ jobs:
       max-parallel: 10
       matrix:
         os:
+          - macos-10.15
+          - macos-11
+          - macos-latest
+          - ubuntu-18.04
+          - ubuntu-20.04
           - ubuntu-latest
+          - windows-2019
+          - windows-2022
+          - windows-latest
         python-version: [3.8]
+
+        include:
+          - os: macos-latest
+            python-version: 3.7
+          - os: ubuntu-latest
+            python-version: 3.7
+          - os: windows-latest
+            python-version: 3.7
+
+          - os: macos-latest
+            python-version: 3.6
+          - os: ubuntu-latest
+            python-version: 3.6
+          - os: windows-latest
+            python-version: 3.6
 
     steps:
       - name: Setup Ubuntu
@@ -56,6 +79,221 @@ jobs:
           path: |
             test-results/*.xml
             unit-test-results.json
+
+  publish-dockerfile:
+    name: Publish Unit Test Results (Dockerfile)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (Dockerfile)
+          files: "artifacts/**/*.xml"
+          LOG_LEVEL: DEBUG
+
+  publish-docker-image:
+    name: Publish Unit Test Results (Docker Image)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: enricomi/publish-unit-test-result-action:latest
+          outputs: type=docker
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        if: always()
+        run: |
+          docker run --workdir $GITHUB_WORKSPACE --rm -e INPUT_CHECK_NAME -e INPUT_FILES -e INPUT_TIME_UNIT -e INPUT_GITHUB_TOKEN -e INPUT_GITHUB_RETRIES -e INPUT_COMMIT -e INPUT_COMMENT_TITLE -e INPUT_FAIL_ON -e INPUT_REPORT_INDIVIDUAL_RUNS -e INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME -e INPUT_HIDE_COMMENTS -e INPUT_COMMENT_ON_PR -e INPUT_COMMENT_MODE -e INPUT_COMPARE_TO_EARLIER_COMMIT -e INPUT_PULL_REQUEST_BUILD -e INPUT_EVENT_FILE -e INPUT_EVENT_NAME -e INPUT_TEST_CHANGES_LIMIT -e INPUT_CHECK_RUN_ANNOTATIONS -e INPUT_CHECK_RUN_ANNOTATIONS_BRANCH -e INPUT_SECONDS_BETWEEN_GITHUB_READS -e INPUT_SECONDS_BETWEEN_GITHUB_WRITES -e HOME -e GITHUB_JOB -e GITHUB_REF -e GITHUB_SHA -e GITHUB_REPOSITORY -e GITHUB_REPOSITORY_OWNER -e GITHUB_RUN_ID -e GITHUB_RUN_NUMBER -e GITHUB_RETENTION_DAYS -e GITHUB_ACTOR -e GITHUB_WORKFLOW -e GITHUB_HEAD_REF -e GITHUB_BASE_REF -e GITHUB_EVENT_NAME -e GITHUB_SERVER_URL -e GITHUB_API_URL -e GITHUB_GRAPHQL_URL -e GITHUB_WORKSPACE -e GITHUB_ACTION -e GITHUB_EVENT_PATH -e GITHUB_ACTION_REPOSITORY -e GITHUB_ACTION_REF -e GITHUB_PATH -e GITHUB_ENV -e RUNNER_OS -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE -e ACTIONS_RUNTIME_URL -e ACTIONS_RUNTIME_TOKEN -e ACTIONS_CACHE_URL -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "$RUNNER_TEMP":"$RUNNER_TEMP" -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" enricomi/publish-unit-test-result-action:latest
+        env:
+          INPUT_GITHUB_TOKEN: ${{ github.token }}
+          INPUT_CHECK_NAME: Unit Test Results (Docker Image)
+          INPUT_FILES: "artifacts/**/*.xml"
+
+  publish-composite:
+    name: Publish Unit Test Results (${{ matrix.os-label }})
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            os-label: macOS
+          - os: ubuntu-latest
+            os-label: Linux
+          - os: windows-latest
+            os-label: Windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Detect OS
+        id: os
+        env:
+          OS: ${{ matrix.os }}
+        run: |
+          case "$OS" in
+            ubuntu*)
+              echo "::set-output name=path-sep::/"
+              echo "::set-output name=pip-cache::~/.cache/pip"
+              ;;
+            macos*)
+              echo "::set-output name=path-sep::/"
+              echo "::set-output name=pip-cache::~/Library/Caches/pip"
+              ;;
+            windows*)
+              echo "::set-output name=path-sep::\\"
+              echo "::set-output name=pip-cache::~\\AppData\\Local\\pip\\Cache"
+              ;;
+          esac
+        shell: bash
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Cache PIP Packages
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: ${{ steps.os.outputs.pip-cache }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install package wheel
+        if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: python3 -m pip install wheel
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (${{ matrix.os-label }})
+          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+
+  publish-composite-extra:
+    name: Publish Unit Test Results (setup-python)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache PIP Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-extra-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-extra-
+            ${{ runner.os }}-pip-
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: ./composite
+        with:
+          check_name: Unit Test Results (setup-python)
+          comment_mode: create new
+          files: "artifacts/**/*.xml"
+
+  publish-test-files:
+    name: Publish Test Files
+    # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        with:
+          check_name: Unit Test Results (Test Files)
+          fail_on: nothing
+          files: "test-files/**.xml"
+          LOG_LEVEL: DEBUG
 
   publish-permissions-minimal:
     name: Publish (minimal permissions)
@@ -346,6 +584,94 @@ jobs:
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
+
+  config-deploy:
+    name: Configure Deployment
+    needs: test
+    # do not build or deploy on forked repositories
+    if: github.repository_owner == 'EnricoMi'
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.action.outputs.image }}
+      image-exists: ${{ steps.image.outputs.exists }}
+      image-version: ${{ steps.action.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Extract action image and version
+        # we deploy from a specific commit on master (the one that mentions a new version the first time)
+        # so we need to tell docker/metadata-action to extract docker tags from that version
+        id: action
+        run: |
+          image=$(grep -A 10 "^runs:" action.yml | grep -E "\s+image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
+          version=$(cut -d : -f 2 <<< "$image")
+          echo "::set-output name=image::$image"
+          echo "::set-output name=version::$version"
+        shell: bash
+
+      - name: Check action image existence
+        id: image
+        env:
+          DOCKER_CLI_EXPERIMENTAL: enabled
+        run: |
+          if docker manifest inspect '${{ steps.action.outputs.image }}'
+          then
+            echo "::set-output name=exists::true"
+          fi
+        shell: bash
+
+  deploy:
+    name: Deploy to GitHub
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-files, config-deploy]
+
+    # do not build or deploy on forked repositories
+    if: github.repository_owner == 'EnricoMi'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker meta
+        id: docker-meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/EnricoMi/publish-unit-test-result-action
+          tags: |
+            type=sha
+            type=ref,event=tag
+            type=match,pattern=(v\d+),group=1
+            type=match,pattern=(v\d+.\d+),group=1
+            type=match,pattern=(v\d+.\d+.\d+),group=1
+            type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}.0
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}.0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          labels: ${{ steps.docker-meta.outputs.labels }}
+          pull: true
+          # deploy image actions from commits pushed to master and
+          # deploy Dockerfile actions from pushed version tags (no major versions)
+          push: |
+            ${{
+              github.event_name == 'push' && (
+                needs.config-deploy.outputs.image != 'Dockerfile' && needs.config-deploy.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
+                needs.config-deploy.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
+              )
+            }}
 
   event_file:
     name: "Event File"
