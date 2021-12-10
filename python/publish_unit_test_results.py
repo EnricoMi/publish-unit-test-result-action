@@ -58,6 +58,9 @@ def get_files(multiline_files_globs: str) -> List[str]:
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
+    print(f'settings: {settings}')
+    logger.debug(f'settings: {settings}')
+
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
     if settings.event_file is None and \

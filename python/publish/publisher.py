@@ -224,6 +224,8 @@ class Publisher:
         file_list_annotations = self.get_test_list_annotations(cases)
         all_annotations = error_annotations + case_annotations + file_list_annotations
 
+        logger.info(f'creating check with {len(all_annotations)} annotations')
+
         # we can send only 50 annotations at once, so we split them into chunks of 50
         check_run = None
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
@@ -234,7 +236,7 @@ class Publisher:
                 annotations=[annotation.to_dict() for annotation in annotations]
             )
 
-            logger.info('creating check')
+            logger.debug(f'creating check ({len(annotations)} annotations)')
             check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                     head_sha=self._settings.commit,
                                                     status='completed',
