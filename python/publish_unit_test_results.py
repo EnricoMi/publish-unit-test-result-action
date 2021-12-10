@@ -34,8 +34,9 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
     return 'success'
 
 
-def get_github(token: str, url: str, retries: int, backoff_factor: float) -> github.Github:
-    retry = GitHubRetry(total=retries,
+def get_github(token: str, url: str, retries: int, backoff_factor: float, gha: GithubAction) -> github.Github:
+    retry = GitHubRetry(gha=gha,
+                        total=retries,
                         backoff_factor=backoff_factor,
                         allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
                         status_forcelist=list(range(500, 600)))
@@ -92,7 +93,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
-    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor, gha=gha)
     gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(
         settings.seconds_between_github_reads,
         settings.seconds_between_github_writes,

@@ -8,15 +8,29 @@ from requests.utils import get_encoding_from_headers
 from urllib3 import Retry, HTTPResponse
 from urllib3.exceptions import MaxRetryError, ResponseError
 
+from publish.github_action import GithubAction
+
+
 logger = logging.getLogger('publish-unit-test-results')
 
 
 class GitHubRetry(Retry):
+    gha: GithubAction = None
+
     def __init__(self, **kwargs):
+        if 'gha' in kwargs:
+            self.gha = kwargs['gha']
+            del kwargs['gha']
+
         # 403 is too broad to be retried, but GitHub API signals rate limits via 403
         # we retry 403 and look into the response header via Retry.increment
         kwargs['status_forcelist'] = kwargs.get('status_forcelist', []) + [403]
         super().__init__(**kwargs)
+
+    def new(self, **kw):
+        retry = super().new(**kw)
+        retry.gha = self.gha
+        return retry
 
     def increment(self,
                   method=None,
@@ -35,6 +49,7 @@ class GitHubRetry(Retry):
             # we retry 403 only if there is a Retry-After header (indicating it is retry-able)
             # or if the body message implies so
             if response.status == 403:
+                self.gha.warning(f'Request {method} {url} failed with 403: {response.reason}')
                 if 'Retry-After' in response.headers:
                     logger.info(f'Retrying after {response.headers.get("Retry-After")} seconds')
                 else:
@@ -46,7 +61,7 @@ class GitHubRetry(Retry):
                         message = content.get('message').lower()
 
                         if message.startswith('api rate limit exceeded') or \
-                           message.endswith('please wait a few minutes before you try again.'):
+                                message.endswith('please wait a few minutes before you try again.'):
                             logger.info('Response body indicates retry-able error')
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
