@@ -96,6 +96,7 @@ jobs:
 
   publish-permissions-minimal-compare:
     name: Publish (minimal compare permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -109,10 +110,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -126,12 +127,13 @@ jobs:
           comment_mode: off
           compare_to_earlier_commit: true
           check_name: Unit Test Results (minimal compare permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
   publish-permissions-create-comment:
     name: Publish (create comment permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -146,10 +148,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -163,12 +165,13 @@ jobs:
           comment_mode: create new
           compare_to_earlier_commit: false
           check_name: Unit Test Results (create comment permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
   publish-permissions-update-comment:
     name: Publish (update comment permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -183,10 +186,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -200,7 +203,7 @@ jobs:
           comment_mode: create new
           compare_to_earlier_commit: false
           check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
@@ -212,12 +215,13 @@ jobs:
           comment_mode: update last
           compare_to_earlier_commit: false
           check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
   publish-permissions-comment-compare:
     name: Publish (comment compare permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -232,10 +236,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -249,12 +253,13 @@ jobs:
           comment_mode: create new
           compare_to_earlier_commit: true
           check_name: Unit Test Results (comment compare permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
   publish-permissions-hide-comment:
     name: Publish (hide comment permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -269,10 +274,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -286,7 +291,7 @@ jobs:
           comment_mode: create new
           compare_to_earlier_commit: false
           check_name: Unit Test Results (hide comment permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
@@ -299,12 +304,13 @@ jobs:
           compare_to_earlier_commit: false
           hide_comments: all but latest
           check_name: Unit Test Results (hide comment permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
   publish-permissions-commit-build-mode:
     name: Publish (commit build mode permissions)
+    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -319,10 +325,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Prepare publish action from this branch
         run: |
@@ -337,7 +343,7 @@ jobs:
           compare_to_earlier_commit: true
           pull_request_build: commit
           check_name: Unit Test Results (commit build mode permissions)
-          files: "test-files/**.xml"
+          files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
