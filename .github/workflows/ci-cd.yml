@@ -585,6 +585,39 @@ jobs:
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
 
+  publish-permissions-default:
+    name: Publish (default permissions)
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Unit Test Results
+        uses: ./
+        timeout-minutes: 5
+        with:
+          github_retries: 0
+          check_name: Unit Test Results (default permissions)
+          files: "artifacts/**/*.xml"
+          LOG_LEVEL: DEBUG
+          ROOT_LOG_LEVEL: DEBUG
+
   config-deploy:
     name: Configure Deployment
     needs: test
