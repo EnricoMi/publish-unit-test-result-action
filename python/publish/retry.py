@@ -12,17 +12,11 @@ logger = logging.getLogger('publish-unit-test-results')
 
 
 class GitHubRetry(Retry):
-    def __init__(self,
-                 total,
-                 backoff_factor,
-                 allowed_methods,
-                 status_forcelist):
+    def __init__(self, **kwargs):
         # 403 is too broad to be retried, but GitHub API signals rate limits via 403
         # we retry 403 and look into the response header via Retry.increment
-        super().__init__(total=total,
-                         backoff_factor=backoff_factor,
-                         allowed_methods=allowed_methods,
-                         status_forcelist=status_forcelist + [403])
+        kwargs['status_forcelist'] = kwargs.get('status_forcelist', []) + [403]
+        super().__init__(**kwargs)
 
     def increment(self,
                   method=None,
@@ -49,14 +43,16 @@ class GitHubRetry(Retry):
                     try:
                         content = get_content(response, url)
                         content = json.loads(content)
-                        message = content.get("message").lower()
+                        message = content.get('message').lower()
 
-                        if message.startswith("api rate limit exceeded") or \
-                           message.endswith("please wait a few minutes before you try again."):
-                            logger.info("Response body indicates retry-able error")
+                        if message.startswith('api rate limit exceeded') or \
+                           message.endswith('please wait a few minutes before you try again.'):
+                            logger.info('Response body indicates retry-able error')
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
                         logger.info(f'Response message does not indicate retry-able error')
+                    except MaxRetryError:
+                        raise
                     except Exception as e:
                         logger.warning('failed to inspect response message', exc_info=e)
 
