@@ -1,19 +1,17 @@
+import json
 import logging
 
-from github import Requester, RateLimitExceededException, GithubException
+from github import GithubException
 from requests import Response
 from requests.models import CaseInsensitiveDict
 from requests.utils import get_encoding_from_headers
 from urllib3 import Retry, HTTPResponse
 from urllib3.exceptions import MaxRetryError, ResponseError
 
-
 logger = logging.getLogger('publish-unit-test-results')
 
 
 class GitHubRetry(Retry):
-    requester: Requester = None
-
     def __init__(self,
                  total,
                  backoff_factor,
@@ -34,41 +32,35 @@ class GitHubRetry(Retry):
                   _pool=None,
                   _stacktrace=None):
         if response:
-            logging.info(f'Request {method} {url} failed: {response.reason}')
+            logger.warning(f'Request {method} {url} failed: {response.reason}')
             if logger.isEnabledFor(logging.DEBUG):
-                logging.debug(f'Response headers:')
+                logger.debug(f'Response headers:')
                 for field, value in response.headers.items():
-                    logging.debug(f'- {field}: {value}')
+                    logger.debug(f'- {field}: {value}')
 
             # we retry 403 only if there is a Retry-After header (indicating it is retry-able)
-            # or if we know it is a rate limit exceeded exception (which might not have a Retry-After header)
+            # or if the body message implies so
             if response.status == 403:
                 if 'Retry-After' in response.headers:
-                    logging.info(f'Retrying after {response.headers.get("Retry-After")} seconds')
+                    logger.info(f'Retrying after {response.headers.get("Retry-After")} seconds')
                 else:
-                    logging.info(f'There is no Retry-After given in the response header')
+                    logger.info(f'There is no Retry-After given in the response header')
+                    content = response.reason
                     try:
-                        output = get_content(response, url)
-                        #output = json.loads(output)
+                        content = get_content(response, url)
+                        content = json.loads(content)
+                        message = content.get("message").lower()
 
-                        if self.requester is not None:
-                            try:
-                                self.requester._Requester__check(response.status, response.headers, output)
-                            except RateLimitExceededException:
-                                return super().increment(method, url, response, error, _pool, _stacktrace)
-                            except GithubException as e:
-                                raise e
+                        if message.startswith("api rate limit exceeded") or \
+                           message.endswith("please wait a few minutes before you try again."):
+                            logger.info("Response body indicates retry-able error")
+                            return super().increment(method, url, response, error, _pool, _stacktrace)
 
-                            #if output.get("message").lower().startswith("api rate limit exceeded")
-                            #    or output.get("message")
-                            #    .lower()
-                            #    .endswith("please wait a few minutes before you try again.")
-                    except GithubException as e:
-                        raise e
-                    except:
-                        pass
+                        logger.info(f'Response message does not indicate retry-able error')
+                    except Exception as e:
+                        logger.warning('failed to inspect response message', exc_info=e)
 
-                    raise MaxRetryError(_pool, url, error or ResponseError(response.reason))
+                    raise GithubException(response.status, content, response.headers)
 
         return super().increment(method, url, response, error, _pool, _stacktrace)
 
