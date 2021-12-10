@@ -322,7 +322,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: off
@@ -360,7 +359,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: off
@@ -399,7 +397,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -438,7 +435,6 @@ jobs:
 
       - name: Publish Unit Test Results (create)
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -451,7 +447,6 @@ jobs:
 
       - name: Publish Unit Test Results (update)
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: update last
@@ -490,7 +485,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -529,7 +523,6 @@ jobs:
 
       - name: Publish Unit Test Results (create)
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -542,7 +535,6 @@ jobs:
 
       - name: Publish Unit Test Results (hide)
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -582,7 +574,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           comment_mode: create new
@@ -619,7 +610,6 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: ./
-        timeout-minutes: 5
         with:
           github_retries: 0
           check_run_annotations_branch: '*'
