@@ -15,10 +15,10 @@ import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes
-from publish.github import GitHubRetry
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
+from publish.retry import GitHubRetry
 from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
 logger = logging.getLogger('publish-unit-test-results')
