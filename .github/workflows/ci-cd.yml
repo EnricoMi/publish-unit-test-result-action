@@ -327,6 +327,7 @@ jobs:
           github_retries: 0
           comment_mode: off
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (minimal permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -364,6 +365,7 @@ jobs:
           github_retries: 0
           comment_mode: off
           compare_to_earlier_commit: true
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (minimal compare permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -402,6 +404,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (create comment permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -440,6 +443,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -452,6 +456,7 @@ jobs:
           github_retries: 0
           comment_mode: update last
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -490,6 +495,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: true
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (comment compare permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -528,6 +534,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (hide comment permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
@@ -540,6 +547,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: false
+          check_run_annotations_branch: '*'
           hide_comments: all but latest
           check_name: Unit Test Results (hide comment permissions)
           files: "artifacts/**/*.xml"
@@ -579,6 +587,7 @@ jobs:
           github_retries: 0
           comment_mode: create new
           compare_to_earlier_commit: true
+          check_run_annotations_branch: '*'
           pull_request_build: commit
           check_name: Unit Test Results (commit build mode permissions)
           files: "artifacts/**/*.xml"
@@ -613,6 +622,7 @@ jobs:
         timeout-minutes: 5
         with:
           github_retries: 0
+          check_run_annotations_branch: '*'
           check_name: Unit Test Results (default permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
