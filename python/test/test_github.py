@@ -85,7 +85,7 @@ class TestGitHub(unittest.TestCase):
                 try:
                     with self.assertRaises(github.GithubException) as context:
                         self.gh.get_repo('owner/repo')
-                    self.assertEquals(status, context.exception.args[0])
+                    self.assertEqual(status, context.exception.args[0])
                 finally:
                     self.stop_api(server)
 
@@ -181,7 +181,7 @@ class TestGitHub(unittest.TestCase):
                                               status='completed',
                                               conclusion='success',
                                               output={})
-                    self.assertEquals(status, context.exception.args[0])
+                    self.assertEqual(status, context.exception.args[0])
 
                 finally:
                     self.stop_api(server)
