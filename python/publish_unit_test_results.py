@@ -39,7 +39,9 @@ def get_github(token: str, url: str, retries: int, backoff_factor: float) -> git
                         backoff_factor=backoff_factor,
                         allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
                         status_forcelist=list(range(500, 600)))
-    return github.Github(login_or_token=token, base_url=url, per_page=100, retry=retry)
+    gh = github.Github(login_or_token=token, base_url=url, per_page=100, retry=retry)
+    retry.requester = gh._Github__requester
+    return gh
 
 
 def get_files(multiline_files_globs: str) -> List[str]:
