@@ -444,7 +444,7 @@ jobs:
           comment_mode: create new
           compare_to_earlier_commit: false
           check_run_annotations_branch: '*'
-          check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
+          check_name: Unit Test Results (update comment permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
@@ -457,7 +457,7 @@ jobs:
           comment_mode: update last
           compare_to_earlier_commit: false
           check_run_annotations_branch: '*'
-          check_name: Unit Test Results (update comment permissions ${{ github.run_id }})
+          check_name: Unit Test Results (update comment permissions)
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
           ROOT_LOG_LEVEL: DEBUG
