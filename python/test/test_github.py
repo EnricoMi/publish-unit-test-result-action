@@ -125,6 +125,31 @@ class TestGitHub(unittest.TestCase):
                 finally:
                     self.stop_api(server)
 
+    def test_github_get_retry_403_without_message(self):
+        for content in ["{'info': 'here is no message'}", 'here is no json']:
+            with self.subTest(content=content):
+                app = Flask(self.test_github_get_retry_403_with_retry_message.__name__)
+                self.gha.reset_mock()
+
+                @app.route('/health')
+                def health():
+                    return {'health': 'alive'}
+
+                @app.route('/api/repos/<owner>/<repo>')
+                def repo(owner: str, repo: str):
+                    return content, 403
+
+                server = self.start_api(app)
+                try:
+                    with self.assertRaises(github.GithubException) as context:
+                        self.gh.get_repo('owner/repo')
+                    self.assertEquals(403, context.exception.args[0])
+                    self.assertEquals(content.encode('utf-8'), context.exception.args[1])
+                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+
+                finally:
+                    self.stop_api(server)
+
     def test_github_get_no_retry(self):
         # 403 does not get retried without special header field or body message
         for status in self.test_http_status_to_not_retry + [403]:
@@ -291,6 +316,43 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
                                                                         mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
+
+                finally:
+                    self.stop_api(server)
+
+    def test_github_post_retry_403_without_message(self):
+        for content in ["{'info': 'here is no message'}", 'here is no json']:
+            with self.subTest(content=content):
+                app = Flask(self.test_github_post_retry.__name__)
+                self.gha.reset_mock()
+
+                @app.route('/health')
+                def health():
+                    return {'health': 'alive'}
+
+                @app.route('/api/repos/<owner>/<repo>')
+                def repo(owner: str, repo: str):
+                    return {'id': 1234, 'name': repo, 'full_name': '/'.join([owner, repo]), 'url': '/'.join([self.base_url, 'repos', owner, repo])}
+
+                @app.route('/api/repos/<owner>/<repo>/check-runs', methods=['POST'])
+                def check_runs(owner: str, repo: str):
+                    return content, 403
+
+                server = self.start_api(app)
+                try:
+                    repo = self.gh.get_repo('owner/repo')
+                    expected = {'full_name': 'owner/repo', 'id': 1234, 'name': 'repo', 'url': 'http://localhost:12380/api/repos/owner/repo'}
+                    self.assertEqual(expected, repo.raw_data)
+
+                    with self.assertRaises(github.GithubException) as context:
+                        repo.create_check_run(name='check_name',
+                                              head_sha='sha',
+                                              status='completed',
+                                              conclusion='success',
+                                              output={})
+                    self.assertEquals(403, context.exception.args[0])
+                    self.assertEquals(content.encode('utf-8'), context.exception.args[1])
+                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
 
                 finally:
                     self.stop_api(server)
