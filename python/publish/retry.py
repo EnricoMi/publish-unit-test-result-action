@@ -58,14 +58,14 @@ class GitHubRetry(Retry):
                     try:
                         content = get_content(response, url)
                         content = json.loads(content)
-                        message = content.get('message').lower()
+                        message = content.get('message', '').lower()
 
                         if message.startswith('api rate limit exceeded') or \
                                 message.endswith('please wait a few minutes before you try again.'):
                             logger.info('Response body indicates retry-able error')
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
-                        logger.info(f'Response message does not indicate retry-able error')
+                        logger.info('Response message does not indicate retry-able error')
                     except MaxRetryError:
                         raise
                     except Exception as e:
@@ -77,6 +77,7 @@ class GitHubRetry(Retry):
 
 
 def get_content(resp: HTTPResponse, url: str):
+    # logic taken from HTTPAdapter.build_response (requests.adapters)
     response = Response()
 
     # Fallback to None if there's no status_code, for whatever reason.
