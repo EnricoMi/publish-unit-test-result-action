@@ -18,6 +18,7 @@ from publish import hide_comments_modes, available_annotations, default_annotati
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
+from publish.retry import GitHubRetry
 from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
 logger = logging.getLogger('publish-unit-test-results')
@@ -33,14 +34,12 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
     return 'success'
 
 
-def get_github(token: str, url: str, retries: int, backoff_factor: float) -> github.Github:
-    retry = Retry(total=retries,
-                  backoff_factor=backoff_factor,
-                  allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
-                  # 403 is too broad to be retried, but GitHub API signals rate limits via 403
-                  # urllib3 Retry does not allow to consider the HTTP message, only status code
-                  # so we retry all 403, which will respect HTTP Retry-After header
-                  status_forcelist=[403] + list(range(500, 600)))
+def get_github(token: str, url: str, retries: int, backoff_factor: float, gha: GithubAction) -> github.Github:
+    retry = GitHubRetry(gha=gha,
+                        total=retries,
+                        backoff_factor=backoff_factor,
+                        allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
+                        status_forcelist=list(range(500, 600)))
     return github.Github(login_or_token=token, base_url=url, per_page=100, retry=retry)
 
 
@@ -94,7 +93,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
-    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor)
+    gh = get_github(token=settings.token, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor, gha=gha)
     gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(
         settings.seconds_between_github_reads,
         settings.seconds_between_github_writes,
