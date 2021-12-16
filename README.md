@@ -202,6 +202,103 @@ jobs:
           files: artifacts/**/*.xml
 ```
 
+## Support fork repositories and dependabot branches
+[comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
+
+Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
+or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
+`"Resource not accessible by integration"` error for those situations.
+
+In this setup, your CI workflow does not need to publish unit test results anymore as they are **always** published from a separate workflow.
+
+1. Your CI workflow has to upload the GitHub event file and unit test result files.
+2. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
+   downloads the event file and the unit test result files, and runs this action on them.
+   This workflow publishes the unit test results for pull requests from fork repositories and dependabot,
+   as well as all "ordinary" runs of your CI workflow.
+
+Add the following job to your CI workflow to upload the event file as an artifact:
+
+```yaml
+event_file:
+  name: "Event File"
+  runs-on: ubuntu-latest
+  steps:
+  - name: Upload
+    uses: actions/upload-artifact@v2
+    with:
+      name: Event File
+      path: ${{ github.event_path }}
+```
+
+Add the following action step to your CI workflow to upload unit test results as artifacts.
+Adjust the value of `path` to fit your setup:
+
+```yaml
+- name: Upload Test Results
+  if: always()
+  uses: actions/upload-artifact@v2
+  with:
+    name: Unit Test Results
+    path: |
+      test-results/*.xml
+```
+
+If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
+make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
+
+Add the following workflow that publishes unit test results. It downloads and extracts
+all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
+when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
+It then runs the action on files matching `artifacts/**/*.xml`.
+Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
+The publish action uses the event file of the CI workflow.
+
+Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
+
+
+```yaml
+name: Unit Test Results
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  unit-test-results:
+    name: Unit Test Results
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion != 'skipped'
+
+    steps:
+      - name: Download and Extract Artifacts
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+           mkdir -p artifacts && cd artifacts
+
+           artifacts_url=${{ github.event.workflow_run.artifacts_url }}
+
+           gh api "$artifacts_url" -q '.artifacts[] | [.name, .archive_download_url] | @tsv' | while read artifact
+           do
+             IFS=$'\t' read name url <<< "$artifact"
+             gh api $url > "$name.zip"
+             unzip -d "$name" "$name.zip"
+           done
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_sha }}
+          event_file: artifacts/Event File/event.json
+          event_name: ${{ github.event.workflow_run.event }}
+          files: "artifacts/**/*.xml"
+```
+
+Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
+
 ## Running as a composite action
 
 Running this action as a composite action allows to run it on various operating systems as it
@@ -321,100 +418,3 @@ Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
 Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
 ```
-
-## Support fork repositories and dependabot branches
-[comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
-
-Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
-or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
-`"Resource not accessible by integration"` error for those situations.
-
-In this setup, your CI workflow does not need to publish unit test results anymore as they are **always** published from a separate workflow.
-
-1. Your CI workflow has to upload the GitHub event file and unit test result files.
-2. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
-   downloads the event file and the unit test result files, and runs this action on them.
-   This workflow publishes the unit test results for pull requests from fork repositories and dependabot,
-   as well as all "ordinary" runs of your CI workflow.
-
-Add the following job to your CI workflow to upload the event file as an artifact:
-
-```yaml
-event_file:
-  name: "Event File"
-  runs-on: ubuntu-latest
-  steps:
-  - name: Upload
-    uses: actions/upload-artifact@v2
-    with:
-      name: Event File
-      path: ${{ github.event_path }}
-```
-
-Add the following action step to your CI workflow to upload unit test results as artifacts.
-Adjust the value of `path` to fit your setup:
-
-```yaml
-- name: Upload Test Results
-  if: always()
-  uses: actions/upload-artifact@v2
-  with:
-    name: Unit Test Results
-    path: |
-      test-results/*.xml
-```
-
-If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
-make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
-
-Add the following workflow that publishes unit test results. It downloads and extracts
-all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
-when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
-It then runs the action on files matching `artifacts/**/*.xml`.
-Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
-The publish action uses the event file of the CI workflow.
-
-Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
-
-
-```yaml
-name: Unit Test Results
-
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
-
-jobs:
-  unit-test-results:
-    name: Unit Test Results
-    runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion != 'skipped'
-
-    steps:
-      - name: Download and Extract Artifacts
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: |
-           mkdir -p artifacts && cd artifacts
-
-           artifacts_url=${{ github.event.workflow_run.artifacts_url }}
-
-           gh api "$artifacts_url" -q '.artifacts[] | [.name, .archive_download_url] | @tsv' | while read artifact
-           do
-             IFS=$'\t' read name url <<< "$artifact"
-             gh api $url > "$name.zip"
-             unzip -d "$name" "$name.zip"
-           done
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          commit: ${{ github.event.workflow_run.head_sha }}
-          event_file: artifacts/Event File/event.json
-          event_name: ${{ github.event.workflow_run.event }}
-          files: "artifacts/**/*.xml"
-```
-
-Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
