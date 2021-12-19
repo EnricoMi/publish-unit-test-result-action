@@ -245,7 +245,12 @@ Adjust the value of `path` to fit your setup:
 ```
 
 If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
-make the artifact name unique for each job, e.g.: `name: Upload Test Results (${{ matrix.python-version }})`.
+make the artifact name unique for each job, e.g.:
+```yaml
+  with:
+    name: Unit Test Results (${{ matrix.python-version }})
+    path: …
+```
 
 Add the following workflow that publishes unit test results. It downloads and extracts
 all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
