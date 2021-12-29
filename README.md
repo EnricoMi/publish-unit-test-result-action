@@ -94,6 +94,28 @@ The symbols have the following meaning:
 
 ***Note:*** For simplicity, "disabled" tests count towards "skipped" tests.
 
+## Permissions
+
+Minimal permissions required by this action in **public** GitHub repositories are:
+
+```yaml
+permissions:
+  checks: write
+  pull-requests: write
+```
+
+The following permissions are required in **private** GitHub repos:
+
+```yaml
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: write
+```
+
+With `comment_mode: off`, the `pull-requests: write` permission is not needed.
+
 ## Configuration
 
 Files can be selected via the `files` option, which is optional and defaults to `*.xml` in the current working directory.
