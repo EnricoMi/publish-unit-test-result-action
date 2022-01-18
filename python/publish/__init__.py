@@ -803,6 +803,11 @@ def chunk_test_list(tests: List[str], delimiter: str, max_chunk_size: int) -> Li
     if sum(sizes) <= max_chunk_size:
         return [tests]
 
+    if any(size > max_chunk_size for size in sizes):
+        logger.warning(f'Dropping all test names because some names are longer '
+                       f'than max_chunk_size of {max_chunk_size} bytes')
+        return []
+
     chunks = []
     while tests:
         size = 0
