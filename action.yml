@@ -71,6 +71,7 @@ inputs:
     required: false
   check_run_annotations_branch:
     description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
+    default: "*"
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
