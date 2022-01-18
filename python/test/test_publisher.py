@@ -113,7 +113,10 @@ class TestPublisher(unittest.TestCase):
 
         # have repo.create_check_run return the arguments given to it
         def create_check_run_hook(**kwargs) -> Mapping[str, Any]:
-            return {'check_run_for_kwargs': kwargs}
+            m = mock.MagicMock()
+            m.html_url = 'mock url'
+            m.create_check_run_kwargs = kwargs
+            return m
 
         repo.create_check_run = mock.Mock(side_effect=create_check_run_hook)
 
@@ -948,7 +951,9 @@ class TestPublisher(unittest.TestCase):
 
         # this checks that publisher.publish_check returned
         # the result of the last call to repo.create_check_run
-        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
+        self.assertIsInstance(check_run, mock.Mock)
+        self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
+        self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
 
     def test_publish_check_with_base_stats(self):
         self.do_test_publish_check_with_base_stats([])
@@ -999,7 +1004,9 @@ class TestPublisher(unittest.TestCase):
 
         # this checks that publisher.publish_check returned
         # the result of the last call to repo.create_check_run
-        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
+        self.assertIsInstance(check_run, mock.Mock)
+        self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
+        self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
 
     def test_publish_check_without_compare(self):
         earlier_commit = 'past'
@@ -1041,7 +1048,9 @@ class TestPublisher(unittest.TestCase):
 
         # this checks that publisher.publish_check returned
         # the result of the last call to repo.create_check_run
-        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargs}, check_run)
+        self.assertIsInstance(check_run, mock.Mock)
+        self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
+        self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
 
     def test_publish_check_with_multiple_annotation_pages(self):
         earlier_commit = 'past'
@@ -1069,48 +1078,70 @@ class TestPublisher(unittest.TestCase):
             check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
-        # we expect multiple calls to create_check_run
-        create_check_run_kwargss = [
-            dict(
-                name=settings.check_name,
-                head_sha=settings.commit,
-                status='completed',
-                conclusion='conclusion',
-                output={
-                    'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                    'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-                               f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-                               f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
-                               '\n'
-                               'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
-                               '\n'
-                               '[test-results]:data:application/gzip;base64,'
-                               'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
-                               '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
-                               '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                               'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
-                    'annotations': ([
-                        {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
-                        # for each batch starting at start we expect 50 annotations
-                        for i in range(start, start + 50)
-                    ] if start < 151 else [
-                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 150 tests, see "Raw output" for the full list of tests.', 'title': '150 tests found', 'raw_details': '\n'.join(sorted([f'class ‑ test{i}' for i in range(1, 151)]))}
-                    ])
-                }
-            )
-            # we expect three calls, each batch starting at these starts,
-            # then a last batch with notice annotations
-            for start in [1, 51, 101, 151]
-        ]
-        repo.create_check_run.assert_has_calls(
-            [mock.call(**create_check_run_kwargs)
-             for create_check_run_kwargs in create_check_run_kwargss],
-            any_order=False
+        # we expect a single call to create_check_run
+        create_check_run_kwargs = dict(
+            name=settings.check_name,
+            head_sha=settings.commit,
+            status='completed',
+            conclusion='conclusion',
+            output={
+                'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
+                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+                           '\n'
+                           'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
+                           '\n'
+                           '[test-results]:data:application/gzip;base64,'
+                           'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
+                           '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
+                           '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                'annotations': ([
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
+                    # we expect the first 50 annotations in the create call
+                    for i in range(1, 51)
+                ])
+            }
         )
+        repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
 
         # this checks that publisher.publish_check returned
-        # the result of the last call to repo.create_check_run
-        self.assertEqual({'check_run_for_kwargs': create_check_run_kwargss[-1]}, check_run)
+        # the result of the call to repo.create_check_run
+        self.assertIsInstance(check_run, mock.Mock)
+        self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
+        self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+
+        # we expect the edit method of the created check to be called for the remaining annotations
+        # we expect three calls, each batch starting at these starts,
+        # then a last batch with notice annotations
+        outputs = [
+            {
+                'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
+                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
+                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+                           '\n'
+                           'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
+                           '\n'
+                           '[test-results]:data:application/gzip;base64,'
+                           'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
+                           '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
+                           '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                'annotations': ([
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
+                    # for each edit we expect a batch of 50 annotations starting at start
+                    for i in range(start, start + 50)
+                ] if start < 151 else [
+                    # and a batch of the remainder annotation
+                    {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 150 tests, see "Raw output" for the full list of tests.', 'title': '150 tests found', 'raw_details': '\n'.join(sorted([f'class ‑ test{i}' for i in range(1, 151)]))}
+                ])
+            }
+            for start in [51, 101, 151]
+        ]
+
+        self.assertEqual(check_run.edit.call_args_list, [mock.call(output=output) for output in outputs])
 
     def test_publish_comment(self):
         settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
