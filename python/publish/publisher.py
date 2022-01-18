@@ -243,7 +243,7 @@ class Publisher:
                                                         output=output)
                 logger.info(f'created check {check_run.html_url}')
             else:
-                logger.debug(f'updating check with with {len(annotations)} more annotations')
+                logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
         return check_run
