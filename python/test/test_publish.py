@@ -1786,6 +1786,10 @@ class PublishTest(unittest.TestCase):
     def test_chunk(self):
         self.assertEqual([], chunk_test_list([], '\n', 100))
 
+        tests = [f'abcdefghijklmnopqrstu-{i}' for i in range(10)]
+        chunks = chunk_test_list(tests, '\n', 10)
+        self.assertEqual([], chunks)
+
         four_per_chunk = [['abcdefghijklmnopqrstu-0',
                            'abcdefghijklmnopqrstu-1',
                            'abcdefghijklmnopqrstu-2',
