@@ -240,7 +240,7 @@ class Publisher:
                                                     status='completed',
                                                     conclusion=conclusion,
                                                     output=output)
-            logger.info(f'created check {check_run}')
+            logger.info(f'created check {check_run.html_url}')
         return check_run
 
     @staticmethod
