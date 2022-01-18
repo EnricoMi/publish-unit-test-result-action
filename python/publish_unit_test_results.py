@@ -288,11 +288,11 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
 if __name__ == "__main__":
     options = dict(os.environ)
 
-    root_log_level = get_var('ROOT_LOG_LEVEL', options) or 'INFO'
+    root_log_level = get_var('ROOT_LOG_LEVEL', options) or 'DEBUG'
     logging.root.level = logging.getLevelName(root_log_level)
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
 
-    log_level = get_var('LOG_LEVEL', options) or 'INFO'
+    log_level = get_var('LOG_LEVEL', options) or 'DEBUG'
     logger.level = logging.getLevelName(log_level)
     publish.logger.level = logging.getLevelName(log_level)
 
