@@ -8,7 +8,7 @@ inputs:
     required: false
   github_retries:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
-    default: '10'
+    default: '0'
     required: false
   commit:
     description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
