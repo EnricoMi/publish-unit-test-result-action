@@ -7,7 +7,9 @@ assignees: ''
 
 ---
 
-Please report if your repository is private. If it is public, please provide a link to the repository and the affected workflow.
+Please provide as much information as possible, including screenshots, logging snippets and links to your repository, if it is public. Especially, link to the affected workflow that shows the issue that you are reporting.
+
+For private repositories, please paste logs or your workflow yaml if you think this is relevant.
 
 If the error occurs repeatedly, please consider adding this to the publish action, to collect more information on the issue:
 
