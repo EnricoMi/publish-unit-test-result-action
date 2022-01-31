@@ -87,6 +87,7 @@ jobs:
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
         with:
+          pull: false
           push: false
           file: Dockerfile.codeql
           tags: enricomi/publish-unit-test-result-action:codeql
