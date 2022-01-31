@@ -52,6 +52,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Build CodeQL Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          file: Dockerfile
+          tags: action:latest
+          outputs: type=docker
+
       - name: Initialize CodeQL
         id: codeql
         uses: github/codeql-action/init@v1
@@ -59,41 +67,11 @@ jobs:
           languages: python
           setup-python-dependencies: false
 
-      - name: Debug Action
-        uses: hmarr/debug-action@v1.0.0
-
-      - name: Setup CodeQL for docker image
-        run: |
-          # copy CodeQL distribution into docker context
-          cp -rl "${{ steps.codeql.outputs.codeql-path }}" .codeql
-
-          # copy CodeQL databases into docker context
-          cp -rl "/home/runner/work/_temp/codeql_databases" .codeql_databases
-
-          # Derive Dockerfile.codeql from Dockerfile
-          grep -v "ENTRYPOINT" Dockerfile > Dockerfile.codeql
-          cat >> Dockerfile.codeql <<- EOM
-          COPY .codeql /codeql
-          COPY .codeql_databases /codeql_databases
-          COPY codeql.sh /
-
-          ENTRYPOINT ["python", "/codeql.sh"]
-          EOM
-
-          mv Dockerfile.codeql Dockerfile
-          git diff
-
-      - name: Build CodeQL Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          file: Dockerfile
-          tags: action:codeql
-          outputs: type=docker
-
       - name: Run CodeQL Analyser in docker
         run: |
-          docker run --name codeql action:codeql
+          docker create --name codeql --entrypoint /codeql.sh --volume "${{ steps.codeql.outputs.codeql-path }}":/codeql --volume /home/runner/work/_temp/codeql_databases:/codeql_databases action:latest
+          docker cp codeql.sh codeql:/codeql.sh
+          docker start --attach codeql
           docker cp codeql:/python.sarif .
 
       - name: Upload
