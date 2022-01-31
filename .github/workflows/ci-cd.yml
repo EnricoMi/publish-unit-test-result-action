@@ -169,6 +169,11 @@ jobs:
           image: enricomi/publish-unit-test-result-action:latest
           dockerfile: ./Dockerfile
           annotations: true
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SARIF
+          path: ${{ steps.scan.outputs.sarif }}
       - name: Upload SARIF file
         if: always() && steps.scan.outputs.sarif != ''
         uses: github/codeql-action/upload-sarif@v1
