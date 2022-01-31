@@ -79,6 +79,11 @@ jobs:
           tags: enricomi/publish-unit-test-result-action:latest
           outputs: type=docker
 
+      - name: Docker images
+        run: |
+          docker image ls -a
+          docker inspect enricomi/publish-unit-test-result-action:latest
+
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
         with:
