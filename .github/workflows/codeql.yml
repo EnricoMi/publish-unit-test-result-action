@@ -64,8 +64,6 @@ jobs:
 
       - name: Setup CodeQL for docker image
         run: |
-          echo "${{ toJson( steps ) }}"
-
           # copy CodeQL distribution into docker context
           cp -rl "${{ steps.codeql.outputs.codeql-path }}" .codeql
 
@@ -82,13 +80,14 @@ jobs:
           ENTRYPOINT ["python", "/codeql.sh"]
           EOM
 
+          mv Dockerfile.codeql Dockerfile
           git diff
 
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
         with:
           push: false
-          file: Dockerfile.codeql
+          file: Dockerfile
           tags: action:codeql
           outputs: type=docker
 

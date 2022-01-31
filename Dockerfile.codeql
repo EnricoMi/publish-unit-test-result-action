@@ -1,7 +1,0 @@
-FROM action:latest
-
-COPY .codeql /codeql
-COPY .codeql_databases /codeql_databases
-COPY codeql.sh /
-
-ENTRYPOINT ["python", "/codeql.sh"]
