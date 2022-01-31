@@ -145,6 +145,11 @@ jobs:
           tags: enricomi/publish-unit-test-result-action:latest
           outputs: type=docker
 
+      - name: Scan for vulnerabilities
+        uses: crazy-max/ghaction-container-scan@v1
+        with:
+          image: enricomi/publish-unit-test-result-action:latest
+
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
