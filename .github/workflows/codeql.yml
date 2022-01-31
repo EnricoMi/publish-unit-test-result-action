@@ -52,13 +52,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build action Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          tags: enricomi/publish-unit-test-result-action:latest
-          outputs: type=docker
-
       - name: Initialize CodeQL
         id: codeql
         uses: github/codeql-action/init@v1
@@ -76,6 +69,13 @@ jobs:
 
           # copy CodeQL databases into docker context
           cp -rl "/home/runner/work/_temp/codeql_databases" .codeql_databases
+
+      - name: Build action Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: enricomi/publish-unit-test-result-action:latest
+          outputs: type=docker
 
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
