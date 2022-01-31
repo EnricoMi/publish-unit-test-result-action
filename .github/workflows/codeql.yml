@@ -64,8 +64,10 @@ jobs:
 
       - name: Setup CodeQL for docker image
         run: |
+          echo "${{ toJson( steps ) }}"
+
           # copy CodeQL distribution into docker context
-          cp -rl "${{ steps.codeql.codeql-path }}" .codeql
+          cp -rl "${{ steps.codeql.outputs.codeql-path }}" .codeql
 
           # copy CodeQL databases into docker context
           cp -rl "/home/runner/work/_temp/codeql_databases" .codeql_databases
