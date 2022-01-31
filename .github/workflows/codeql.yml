@@ -10,20 +10,13 @@ on:
     - cron: '30 15 * * 3'
 
 jobs:
-  analyze:
-    name: Analyze
+  analyze-python:
+    name: Analyze Python (sources)
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'python' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
-        # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
     - name: Checkout repository
@@ -33,27 +26,71 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:
-        languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+        languages: python
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
       uses: github/codeql-action/autobuild@v1
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
-
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
-
-    #- run: |
-    #   make bootstrap
-    #   make release
-
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+
+  analyze-python-docker:
+    name: Analyze Python (Docker)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build action Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: enricomi/publish-unit-test-result-action:latest
+          outputs: type=docker
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: python
+          setup-python-dependencies: false
+
+      - name: Debug Action
+        uses: hmarr/debug-action@v1.0.0
+
+      - name: Setup CodeQL for docker image
+        run: |
+          # copy CodeQL distribution into docker context
+          cp -rl "${{ env.CODEQL_DIST }}" .codeql
+
+          # copy CodeQL databases into docker context
+          cp -rl "/home/runner/work/_temp/codeql_databases" .codeql_databases
+
+      - name: Build CodeQL Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          file: Dockerfile.codeql
+          tags: enricomi/publish-unit-test-result-action:codeql
+          outputs: type=docker
+
+      - name: Run CodeQL Analyser in docker
+        run: |
+          docker run -name codeql enricomi/publish-unit-test-result-action:codeql
+          docker cp codeql:/python.sarif .
+
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: CodeQL Docker
+          path: python.sarif
