@@ -72,22 +72,21 @@ jobs:
           # copy CodeQL databases into docker context
           cp -rl "/home/runner/work/_temp/codeql_databases" .codeql_databases
 
-      - name: Build action Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          tags: action:latest
-          outputs: type=docker
+          # Derive Dockerfile.codeql from Dockerfile
+          grep -v "ENTRYPOINT" Dockerfile > Dockerfile.codeql
+          cat >> Dockerfile.codeql <<- EOM
+          COPY .codeql /codeql
+          COPY .codeql_databases /codeql_databases
+          COPY codeql.sh /
 
-      - name: Docker images
-        run: |
-          docker image ls -a
-          docker inspect action:latest
+          ENTRYPOINT ["python", "/codeql.sh"]
+          EOM
+
+          git diff
 
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
         with:
-          pull: false
           push: false
           file: Dockerfile.codeql
           tags: action:codeql
@@ -95,7 +94,7 @@ jobs:
 
       - name: Run CodeQL Analyser in docker
         run: |
-          docker run -name codeql enricomi/publish-unit-test-result-action:codeql
+          docker run -name codeql action:codeql
           docker cp codeql:/python.sarif .
 
       - name: Upload
