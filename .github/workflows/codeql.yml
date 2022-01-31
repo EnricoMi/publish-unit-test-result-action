@@ -93,7 +93,7 @@ jobs:
 
       - name: Run CodeQL Analyser in docker
         run: |
-          docker run -name codeql action:codeql
+          docker run --name codeql action:codeql
           docker cp codeql:/python.sarif .
 
       - name: Upload
