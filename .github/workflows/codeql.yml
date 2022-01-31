@@ -76,13 +76,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: false
-          tags: enricomi/publish-unit-test-result-action:latest
+          tags: action:latest
           outputs: type=docker
 
       - name: Docker images
         run: |
           docker image ls -a
-          docker inspect enricomi/publish-unit-test-result-action:latest
+          docker inspect action:latest
 
       - name: Build CodeQL Docker image
         uses: docker/build-push-action@v2
@@ -90,7 +90,7 @@ jobs:
           pull: false
           push: false
           file: Dockerfile.codeql
-          tags: enricomi/publish-unit-test-result-action:codeql
+          tags: action:codeql
           outputs: type=docker
 
       - name: Run CodeQL Analyser in docker
