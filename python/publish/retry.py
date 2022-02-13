@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import time
 
 from github import GithubException
 from requests import Response
@@ -66,15 +65,16 @@ class GitHubRetry(Retry):
                             logger.info(f'Response body indicates retry-able error: {message}')
                             for header in ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset',
                                            'X-RateLimit-Used', 'X-RateLimit-Resource']:
-                                value = response.headers.get(header)
-                                logger.debug(f'Response header contains {header}={value}')
+                                if header in response.headers:
+                                    value = response.headers.get(header)
+                                    logger.debug(f'Response header contains {header}={value}')
 
                             # backoff until X-RateLimit-Reset
                             if 'X-RateLimit-Reset' in response.headers:
                                 value = response.headers.get('X-RateLimit-Reset')
                                 if value and value.isdigit():
                                     reset = datetime.datetime.fromtimestamp(int(value))
-                                    delta = reset - datetime.datetime.utcnow()
+                                    delta = reset - self._utc_now()
                                     retry = super().increment(method, url, response, error, _pool, _stacktrace)
                                     backoff = retry.get_backoff_time()
 
@@ -100,6 +100,10 @@ class GitHubRetry(Retry):
                     raise GithubException(response.status, content, response.headers)
 
         return super().increment(method, url, response, error, _pool, _stacktrace)
+
+    def _utc_now(self):
+        """Used to inject time for testing"""
+        return datetime.datetime.utcnow()
 
 
 def get_content(resp: HTTPResponse, url: str):
