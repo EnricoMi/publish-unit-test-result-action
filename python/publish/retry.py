@@ -1,15 +1,16 @@
+import datetime
 import json
 import logging
+import time
 
 from github import GithubException
 from requests import Response
 from requests.models import CaseInsensitiveDict
 from requests.utils import get_encoding_from_headers
 from urllib3 import Retry, HTTPResponse
-from urllib3.exceptions import MaxRetryError, ResponseError
+from urllib3.exceptions import MaxRetryError
 
 from publish.github_action import GithubAction
-
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -63,6 +64,25 @@ class GitHubRetry(Retry):
                         if message.startswith('api rate limit exceeded') or \
                                 message.endswith('please wait a few minutes before you try again.'):
                             logger.info(f'Response body indicates retry-able error: {message}')
+                            for header in ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'X-RateLimit-Used', 'X-RateLimit-Resource']:
+                                value = response.headers.get(header)
+                                logger.info(f'Response header contains {header}={value}')
+
+                            # consider X-RateLimit-Reset header value
+                            if 'X-RateLimit-Reset' in response.headers:
+                                value = response.headers.get('X-RateLimit-Reset')
+                                if value and value.isdigit():
+                                    reset = datetime.datetime.fromtimestamp(int(value))
+                                    delta = reset - datetime.datetime.utcnow()
+                                    logger.info(f'Reset occurs in {str(delta)} ({reset})')
+
+                                    retry = super().increment(method, url, response, error, _pool, _stacktrace)
+                                    extra_sleep = delta.total_seconds() - retry.get_backoff_time()
+                                    if extra_sleep > 0:
+                                        logger.info(f'Waiting {extra_sleep}s on top of {retry.get_backoff_time()}s backoff')
+                                        time.sleep(extra_sleep)
+                                    return retry
+
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
                         logger.info('Response message does not indicate retry-able error')
