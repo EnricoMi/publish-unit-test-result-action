@@ -9,11 +9,14 @@ LABEL com.github.actions.description="A GitHub Action to publish unit test resul
 LABEL com.github.actions.icon="check-circle"
 LABEL com.github.actions.color="green"
 
-RUN apk add --no-cache --upgrade expat libuuid
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 COPY python/requirements.txt /action/
 RUN apk add --no-cache build-base libffi-dev; \
-    pip install --upgrade --force --no-cache-dir pip && pip install --upgrade --force --no-cache-dir -r /action/requirements.txt; \
+    ls -lahR /tmp; \
+    pip install --upgrade --force --no-cache-dir pip; \
+    pip install --upgrade --force --no-cache-dir -r /action/requirements.txt; \
+    ls -lahR /tmp; \
     apk del build-base libffi-dev
 
 COPY python/publish /action/publish
