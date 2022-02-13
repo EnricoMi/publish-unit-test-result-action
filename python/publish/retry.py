@@ -64,26 +64,29 @@ class GitHubRetry(Retry):
                         if message.startswith('api rate limit exceeded') or \
                                 message.endswith('please wait a few minutes before you try again.'):
                             logger.info(f'Response body indicates retry-able error: {message}')
-                            for header in ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'X-RateLimit-Used', 'X-RateLimit-Resource']:
+                            for header in ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset',
+                                           'X-RateLimit-Used', 'X-RateLimit-Resource']:
                                 value = response.headers.get(header)
-                                logger.info(f'Response header contains {header}={value}')
+                                logger.debug(f'Response header contains {header}={value}')
 
-                            # consider X-RateLimit-Reset header value
+                            # backoff until X-RateLimit-Reset
                             if 'X-RateLimit-Reset' in response.headers:
                                 value = response.headers.get('X-RateLimit-Reset')
                                 if value and value.isdigit():
                                     reset = datetime.datetime.fromtimestamp(int(value))
                                     delta = reset - datetime.datetime.utcnow()
-                                    logger.info(f'Reset occurs in {str(delta)} ({reset})')
                                     retry = super().increment(method, url, response, error, _pool, _stacktrace)
+                                    backoff = retry.get_backoff_time()
 
                                     if delta.total_seconds() > 0:
-                                        logger.info(f'Setting next backoff to {delta}')
+                                        logger.info(f'Reset occurs in {str(delta)} ({reset}), setting next backoff to {delta.total_seconds()}s')
 
                                         def get_backoff_time():
-                                            return delta.total_seconds() + 1
+                                            # plus 1s as it is not clear when in that second the reset occurs
+                                            return max(delta.total_seconds() + 1, backoff)
 
                                         retry.get_backoff_time = get_backoff_time
+
                                     return retry
 
                             return super().increment(method, url, response, error, _pool, _stacktrace)
