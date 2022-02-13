@@ -124,8 +124,8 @@ class Test(unittest.TestCase):
     def test_get_var(self):
         self.assertIsNone(get_var('NAME', dict()))
         self.assertIsNone(get_var('NAME', dict(name='case sensitive')))
-        self.assertEquals(get_var('NAME', dict(NAME='value')), 'value')
-        self.assertEquals(get_var('NAME', dict(INPUT_NAME='precedence', NAME='value')), 'precedence')
+        self.assertEqual(get_var('NAME', dict(NAME='value')), 'value')
+        self.assertEqual(get_var('NAME', dict(INPUT_NAME='precedence', NAME='value')), 'precedence')
         self.assertIsNone(get_var('NAME', dict(NAME='')))
 
     @staticmethod

@@ -116,8 +116,8 @@ class TestGitHub(unittest.TestCase):
                 self.gh.get_repo('owner/repo')
             self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
             self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
-            self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                                                                mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+            self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
+                                                               mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
 
     def test_github_get_retry_403_with_retry_message(self):
         for message in ['api rate limit exceeded, please be gentle',
@@ -131,8 +131,8 @@ class TestGitHub(unittest.TestCase):
                         self.gh.get_repo('owner/repo')
                     self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
-                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                                                                        mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
+                                                                       mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
 
     def test_github_get_retry_403_without_message(self):
         for content in ["{'info': 'here is no message'}", 'here is no json']:
@@ -143,9 +143,9 @@ class TestGitHub(unittest.TestCase):
 
                     with self.assertRaises(github.GithubException) as context:
                         self.gh.get_repo('owner/repo')
-                    self.assertEquals(403, context.exception.args[0])
-                    self.assertEquals(content.encode('utf-8'), context.exception.args[1])
-                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+                    self.assertEqual(403, context.exception.args[0])
+                    self.assertEqual(content.encode('utf-8'), context.exception.args[1])
+                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
 
     def test_github_get_no_retry(self):
         # 403 does not get retried without special header field or body message
@@ -157,8 +157,8 @@ class TestGitHub(unittest.TestCase):
 
                     with self.assertRaises(github.GithubException) as context:
                         self.gh.get_repo('owner/repo')
-                    self.assertEquals(status, context.exception.args[0])
-                    self.assertEquals({'message': f'{status}'}, context.exception.args[1])
+                    self.assertEqual(status, context.exception.args[0])
+                    self.assertEqual({'message': f'{status}'}, context.exception.args[1])
                     if status == 403:
                         self.gha.warning.assert_called_once_with('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')
                     else:
@@ -220,8 +220,8 @@ class TestGitHub(unittest.TestCase):
                                       output={})
             self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/check-runs", context.exception.args[0].args[0])
             self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
-            self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                                                                mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
+            self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
+                                                               mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
 
     def test_github_post_retry_403_with_retry_message(self):
         for message in ['api rate limit exceeded, please be gentle',
@@ -241,8 +241,8 @@ class TestGitHub(unittest.TestCase):
                                               output={})
                     self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo/check-runs", context.exception.args[0].args[0])
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
-                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                                                                        mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
+                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
+                                                                       mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
 
     def test_github_post_retry_403_without_message(self):
         for content in ["{'info': 'here is no message'}", 'here is no json']:
@@ -259,9 +259,9 @@ class TestGitHub(unittest.TestCase):
                                               status='completed',
                                               conclusion='success',
                                               output={})
-                    self.assertEquals(403, context.exception.args[0])
-                    self.assertEquals(content.encode('utf-8'), context.exception.args[1])
-                    self.assertEquals(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
+                    self.assertEqual(403, context.exception.args[0])
+                    self.assertEqual(content.encode('utf-8'), context.exception.args[1])
+                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')])
 
     def test_github_post_no_retry(self):
         # 403 does not get retried without special header field or body message
@@ -279,7 +279,7 @@ class TestGitHub(unittest.TestCase):
                                               status='completed',
                                               conclusion='success',
                                               output={})
-                    self.assertEquals(status, context.exception.args[0])
+                    self.assertEqual(status, context.exception.args[0])
                     if status == 403:
                         self.gha.warning.assert_called_once_with('Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')
                     else:
