@@ -75,12 +75,15 @@ class GitHubRetry(Retry):
                                     reset = datetime.datetime.fromtimestamp(int(value))
                                     delta = reset - datetime.datetime.utcnow()
                                     logger.info(f'Reset occurs in {str(delta)} ({reset})')
-
                                     retry = super().increment(method, url, response, error, _pool, _stacktrace)
-                                    extra_sleep = delta.total_seconds() - retry.get_backoff_time()
-                                    if extra_sleep > 0:
-                                        logger.info(f'Waiting {extra_sleep}s on top of {retry.get_backoff_time()}s backoff')
-                                        time.sleep(extra_sleep)
+
+                                    if delta.total_seconds() > 0:
+                                        logger.info(f'Setting next backoff to {delta}')
+
+                                        def get_backoff_time():
+                                            return delta.total_seconds() + 1
+
+                                        retry.get_backoff_time = get_backoff_time
                                     return retry
 
                             return super().increment(method, url, response, error, _pool, _stacktrace)
