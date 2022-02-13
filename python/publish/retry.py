@@ -62,7 +62,7 @@ class GitHubRetry(Retry):
 
                         if message.startswith('api rate limit exceeded') or \
                                 message.endswith('please wait a few minutes before you try again.'):
-                            logger.info('Response body indicates retry-able error')
+                            logger.info(f'Response body indicates retry-able error: {message}')
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
                         logger.info('Response message does not indicate retry-able error')
