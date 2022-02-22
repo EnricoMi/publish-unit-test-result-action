@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 
@@ -6,10 +7,9 @@ from requests import Response
 from requests.models import CaseInsensitiveDict
 from requests.utils import get_encoding_from_headers
 from urllib3 import Retry, HTTPResponse
-from urllib3.exceptions import MaxRetryError, ResponseError
+from urllib3.exceptions import MaxRetryError
 
 from publish.github_action import GithubAction
-
 
 logger = logging.getLogger('publish-unit-test-results')
 
@@ -63,6 +63,32 @@ class GitHubRetry(Retry):
                         if message.startswith('api rate limit exceeded') or \
                                 message.endswith('please wait a few minutes before you try again.'):
                             logger.info(f'Response body indicates retry-able error: {message}')
+                            for header in ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset',
+                                           'X-RateLimit-Used', 'X-RateLimit-Resource']:
+                                if header in response.headers:
+                                    value = response.headers.get(header)
+                                    logger.debug(f'Response header contains {header}={value}')
+
+                            # backoff until X-RateLimit-Reset
+                            if 'X-RateLimit-Reset' in response.headers:
+                                value = response.headers.get('X-RateLimit-Reset')
+                                if value and value.isdigit():
+                                    reset = datetime.datetime.fromtimestamp(int(value))
+                                    delta = reset - self._utc_now()
+                                    retry = super().increment(method, url, response, error, _pool, _stacktrace)
+                                    backoff = retry.get_backoff_time()
+
+                                    if delta.total_seconds() > 0:
+                                        logger.info(f'Reset occurs in {str(delta)} ({reset}), setting next backoff to {delta.total_seconds()}s')
+
+                                        def get_backoff_time():
+                                            # plus 1s as it is not clear when in that second the reset occurs
+                                            return max(delta.total_seconds() + 1, backoff)
+
+                                        retry.get_backoff_time = get_backoff_time
+
+                                    return retry
+
                             return super().increment(method, url, response, error, _pool, _stacktrace)
 
                         logger.info('Response message does not indicate retry-able error')
@@ -74,6 +100,10 @@ class GitHubRetry(Retry):
                     raise GithubException(response.status, content, response.headers)
 
         return super().increment(method, url, response, error, _pool, _stacktrace)
+
+    def _utc_now(self):
+        """Used to inject time for testing"""
+        return datetime.datetime.utcnow()
 
 
 def get_content(resp: HTTPResponse, url: str):

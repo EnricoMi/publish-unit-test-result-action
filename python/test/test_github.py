@@ -1,4 +1,5 @@
 import contextlib
+import datetime
 import logging
 import sys
 import time
@@ -133,6 +134,36 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
                                                                        mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+
+    def test_github_get_retry_403_with_retry_message_and_reset_time(self):
+        message = 'api rate limit exceeded, please be gentle'
+        with self.api_server(self.test_github_get_retry_403_with_retry_message.__name__,
+                             repo_response=Response(response=f'{{"message": "{message}"}}', status=403, headers={'X-RateLimit-Reset': '1644768030'})):
+            self.gha.reset_mock()
+
+            with mock.patch('publish.retry.GitHubRetry._utc_now', return_value=datetime.datetime.fromtimestamp(1644768000)), \
+                 mock.patch('time.sleep') as sleep:
+                    with self.assertRaises(requests.exceptions.RetryError) as context:
+                        self.gh.get_repo('owner/repo')
+                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
+                    self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
+                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
+                                                                       mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+                    self.assertEqual(sleep.call_args_list, [mock.call(30.0 + 1)])  # we sleep one extra second
+
+    def test_github_get_retry_403_with_retry_message_and_invalid_reset_time(self):
+        # reset time is expected to be int, what happens if it is not?
+        message = 'api rate limit exceeded, please be gentle'
+        with self.api_server(self.test_github_get_retry_403_with_retry_message.__name__,
+                             repo_response=Response(response=f'{{"message": "{message}"}}', status=403, headers={'X-RateLimit-Reset': 'in a few minutes'})):
+            self.gha.reset_mock()
+
+            with self.assertRaises(requests.exceptions.RetryError) as context:
+                self.gh.get_repo('owner/repo')
+            self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
+            self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
+            self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
+                                                               mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
 
     def test_github_get_retry_403_without_message(self):
         for content in ["{'info': 'here is no message'}", 'here is no json']:
