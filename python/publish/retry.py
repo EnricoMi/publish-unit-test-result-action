@@ -73,13 +73,14 @@ class GitHubRetry(Retry):
                             if 'X-RateLimit-Reset' in response.headers:
                                 value = response.headers.get('X-RateLimit-Reset')
                                 if value and value.isdigit():
-                                    reset = datetime.datetime.fromtimestamp(int(value))
+                                    reset = datetime.datetime.utcfromtimestamp(int(value))
                                     delta = reset - self._utc_now()
                                     retry = super().increment(method, url, response, error, _pool, _stacktrace)
                                     backoff = retry.get_backoff_time()
 
                                     if delta.total_seconds() > 0:
-                                        logger.info(f'Reset occurs in {str(delta)} ({reset}), setting next backoff to {delta.total_seconds()}s')
+                                        logger.info(f'Reset occurs in {str(delta)} ({value} / {reset}), '
+                                                    f'setting next backoff to {delta.total_seconds()}s')
 
                                         def get_backoff_time():
                                             # plus 1s as it is not clear when in that second the reset occurs

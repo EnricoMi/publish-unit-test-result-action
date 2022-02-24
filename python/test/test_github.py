@@ -141,7 +141,7 @@ class TestGitHub(unittest.TestCase):
                              repo_response=Response(response=f'{{"message": "{message}"}}', status=403, headers={'X-RateLimit-Reset': '1644768030'})):
             self.gha.reset_mock()
 
-            with mock.patch('publish.retry.GitHubRetry._utc_now', return_value=datetime.datetime.fromtimestamp(1644768000)), \
+            with mock.patch('publish.retry.GitHubRetry._utc_now', return_value=datetime.datetime.utcfromtimestamp(1644768000)), \
                  mock.patch('time.sleep') as sleep:
                     with self.assertRaises(requests.exceptions.RetryError) as context:
                         self.gh.get_repo('owner/repo')
