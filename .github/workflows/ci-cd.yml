@@ -61,7 +61,7 @@ jobs:
           sudo apt-get install language-pack-en language-pack-de
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -292,7 +292,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
