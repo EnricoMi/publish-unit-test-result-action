@@ -343,6 +343,7 @@ jobs:
           LOG_LEVEL: DEBUG
 
       - name: JSON file
+        if: always() && steps.publish.conclusion == 'success'
         run: |
           echo "JSON file:"
           cat tests.json
@@ -351,6 +352,7 @@ jobs:
           jq . tests.json
 
       - name: JSON output
+        if: always() && steps.publish.conclusion == 'success'
         env:
           TITLE: ${{ fromJSON( steps.publish.outputs.json ).title }}
           SUMMARY: ${{ fromJSON( steps.publish.outputs.json ).summary }}
