@@ -8,7 +8,7 @@ from publish import logger
 
 class GithubAction:
 
-    def __init__(self, file: TextIOWrapper = None):
+    def __init__(self, file: Optional[TextIOWrapper] = None):
         if file is None:
             file = sys.stdout
             if isinstance(file, TextIOWrapper):
