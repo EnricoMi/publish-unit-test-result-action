@@ -333,12 +333,42 @@ jobs:
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
 
       - name: Publish Unit Test Results
+        id: publish
         uses: ./
         with:
           check_name: Unit Test Results (Test Files)
           fail_on: nothing
           files: "test-files/**.xml"
+          json_file: "tests.json"
           LOG_LEVEL: DEBUG
+
+      - name: JSON file
+        run: |
+          echo "JSON file:"
+          cat tests.json
+
+      - name: JSON output
+        env:
+          TITLE: ${{ fromJSON( steps.publish.outputs.json ).title }}
+          SUMMARY: ${{ fromJSON( steps.publish.outputs.json ).summary }}
+          CONCLUSION: ${{ fromJSON( steps.publish.outputs.json ).conclusion }}
+          STATS: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats ) }}
+          STATS_WITH_DELTA: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats_with_delta ) }}
+          COMMIT: ${{ fromJSON( steps.publish.outputs.json ).stats.commit }}
+          REFERENCE: ${{ fromJSON( steps.publish.outputs.json ).stats.reference_commit }}
+        run: |
+          echo "title=$TITLE"
+          echo "summary=$SUMMARY"
+          echo "conclusion=$CONCLUSION"
+          echo "stats=$STATS"
+          echo "stats-with-delta=$STATS_WITH_DELTA"
+          echo "commit=$COMMIT"
+          echo "reference=$REFERENCE"
+          echo
+          echo "JSON output:"
+          cat <<<EOF
+          ${{ steps.publish.outputs.json }}
+          EOF
 
   config-deploy:
     name: Configure Deployment
