@@ -14,7 +14,8 @@ class GithubAction:
             if isinstance(file, TextIOWrapper):
                 # ensure we have utf8 encoding, the default encoding of sys.stdout on Windows is cp1252
                 file.reconfigure(encoding='utf-8')
-        self._file = file
+
+        self._file: TextIOWrapper = file
 
     def set_output(self, name: str, value: Any) -> str:
         return self._command(self._file, 'set-output', value, {'name': name})
