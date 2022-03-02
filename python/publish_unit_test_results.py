@@ -277,6 +277,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         event_name=event_name,
         repo=get_var('GITHUB_REPOSITORY', options),
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
+        json_file=get_var('JSON_FILE', options),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
         files_glob=get_var('FILES', options) or '*.xml',

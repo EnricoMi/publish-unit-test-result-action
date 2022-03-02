@@ -1,6 +1,8 @@
+import tempfile
 import unittest
 from collections.abc import Collection
 from datetime import datetime, timezone
+import os
 
 import github.CheckRun
 import mock
@@ -49,6 +51,7 @@ class TestPublisher(unittest.TestCase):
                         check_run_annotation=default_annotations,
                         event: Optional[dict] = {'before': 'before'},
                         event_name: str = 'event name',
+                        json_file: Optional[str] = None,
                         pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5):
         return Settings(
@@ -61,6 +64,7 @@ class TestPublisher(unittest.TestCase):
             event_name=event_name,
             repo='owner/repo',
             commit='commit',
+            json_file=json_file,
             fail_on_errors=True,
             fail_on_failures=True,
             files_glob='*.xml',
@@ -919,6 +923,19 @@ class TestPublisher(unittest.TestCase):
 
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
+        annotations = error_annotations + [
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
+        ] + (
+            [
+                 {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
+            ] if skipped_tests_list in annotations else []
+        ) + (
+            [
+                {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
+            ] if all_tests_list in annotations else []
+        )
+
         create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,
@@ -938,14 +955,7 @@ class TestPublisher(unittest.TestCase):
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
-                'annotations': error_annotations + [
-                        {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-                        {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
-                    ] + ([
-                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
-                    ] if skipped_tests_list in annotations else []) + ([
-                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
-                    ] if all_tests_list in annotations else [])
+                'annotations': annotations
             }
         )
         repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
@@ -955,6 +965,20 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+
+        # check the json output has been provided
+        title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
+        summary_errors = '{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''
+        gha.set_output.assert_called_once_with(
+            'json',
+            '{'
+            f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
+            f'"summary": "  1 files  {summary_errors}2 suites   3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"duration of all tests\\")\\n22 tests 4 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 5 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\")   6 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\")   7 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n38 runs  8 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 9 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") 10 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") 11 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n\\nResults for commit commit.\\n", '
+            '"conclusion": "conclusion", '
+            '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
+            f'"annotations": {len(annotations)}'
+            '}'
+        )
 
     def test_publish_check_with_base_stats(self):
         self.do_test_publish_check_with_base_stats([])
@@ -1008,6 +1032,21 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+
+        # check the json output has been provided
+        title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
+        summary_errors = '{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''
+        gha.set_output.assert_called_once_with(
+            'json',
+            '{'
+            f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
+            f'"summary": "  1 files  ±0  {summary_errors}2 suites  ±0   3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"duration of all tests\\") ±0s\\n22 tests +1  4 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\")  -   8  5 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") +1    6 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") +4    7 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\") +  4 \\n38 runs  +1  8 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\")  - 17  9 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") +2  10 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") +6  11 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\") +10 \\n\\nResults for commit commit. ± Comparison against earlier commit past.\\n", '
+            '"conclusion": "conclusion", '
+            '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
+            '"stats_with_delta": {"files": {"number": 1, "delta": 0}, ' + f'"errors": {len(errors)}, ' + '"suites": {"number": 2, "delta": 0}, "duration": {"duration": 3, "delta": 0}, "tests": {"number": 22, "delta": 1}, "tests_succ": {"number": 4, "delta": -8}, "tests_skip": {"number": 5, "delta": 1}, "tests_fail": {"number": 6, "delta": 4}, "tests_error": {"number": 7, "delta": 4}, "runs": {"number": 38, "delta": 1}, "runs_succ": {"number": 8, "delta": -17}, "runs_skip": {"number": 9, "delta": 2}, "runs_fail": {"number": 10, "delta": 6}, "runs_error": {"number": 11, "delta": 10}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}, '
+            f'"annotations": {4 + len(errors)}'
+            '}'
+        )
 
     def test_publish_check_without_compare(self):
         earlier_commit = 'past'
@@ -1143,6 +1182,34 @@ class TestPublisher(unittest.TestCase):
         ]
 
         self.assertEqual(check_run.edit.call_args_list, [mock.call(output=output) for output in outputs])
+
+    def test_publish_json(self):
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file.json')
+            settings = self.create_settings(json_file=filepath)
+
+            gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+            publisher = Publisher(settings, gh, gha)
+
+            data = dict(
+                key='value',
+                dict=dict(list=[1, 2, 3]),
+                stats=dict(errors=[1, 2, 3]),
+                stats_with_delta=dict(errors=[1.0, 2.0, 3.0]),
+                annotations=['one', 'two', 'three']
+            )
+            publisher.publish_json(data)
+
+            # data is being sent to GH action output 'json'
+            # some list fields are replaced by their length
+            expected = dict(
+                key='value',
+                dict=dict(list=[1, 2, 3]),
+                stats=dict(errors=3),
+                stats_with_delta=dict(errors=3),
+                annotations=3
+            )
+            gha.set_output.assert_called_once_with('json', json.dumps(expected))
 
     def test_publish_comment(self):
         settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
