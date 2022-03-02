@@ -345,11 +345,8 @@ jobs:
       - name: JSON file
         if: always() && steps.publish.conclusion == 'success'
         run: |
-          echo "JSON file:"
-          cat tests.json
-
-          echo
           jq . tests.json
+          jq .conclusion tests.json
 
       - name: JSON output
         if: always() && steps.publish.conclusion == 'success'
@@ -361,6 +358,7 @@ jobs:
           STATS_WITH_DELTA: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats_with_delta ) }}
           COMMIT: ${{ fromJSON( steps.publish.outputs.json ).stats.commit }}
           REFERENCE: ${{ fromJSON( steps.publish.outputs.json ).stats_with_delta.reference_commit }}
+          ANNOTATIONS: ${{ fromJSON( steps.publish.outputs.json ).annotations }}
         run: |
           echo "title=$TITLE"
           echo "summary=$SUMMARY"
@@ -369,6 +367,7 @@ jobs:
           echo "stats-with-delta=$STATS_WITH_DELTA"
           echo "commit=$COMMIT"
           echo "reference=$REFERENCE"
+          echo "annotations=$ANNOTATIONS"
 
           echo
           echo "JSON output:"
