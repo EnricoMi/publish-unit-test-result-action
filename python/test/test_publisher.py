@@ -1,8 +1,8 @@
+import os
 import tempfile
 import unittest
 from collections.abc import Collection
 from datetime import datetime, timezone
-import os
 
 import github.CheckRun
 import mock
@@ -1194,20 +1194,45 @@ class TestPublisher(unittest.TestCase):
             data = dict(
                 key='value',
                 dict=dict(list=[1, 2, 3]),
-                stats=dict(errors=[1, 2, 3]),
-                stats_with_delta=dict(errors=[1.0, 2.0, 3.0]),
-                annotations=['one', 'two', 'three']
+                stats=dict(errors=[ParseError('file', 'message', 1, 2)]),
+                stats_with_delta=dict(errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)]),
+                annotations=[Annotation(
+                    path='path',
+                    start_line=1,
+                    end_line=2,
+                    start_column=3,
+                    end_column=4,
+                    annotation_level='failure',
+                    message='message',
+                    title=f'Error processing result file',
+                    raw_details='file'
+                )]
             )
             publisher.publish_json(data)
+            gha.error.assert_not_called()
+
+            # assert the file
+            with open(filepath, encoding='utf-8') as r:
+                actual = r.read()
+                self.assertEqual(
+                    '{'
+                    '"key": "value", '
+                    '"dict": {"list": [1, 2, 3]}, '
+                    '"stats": {"errors": [{"file": "file", "message": "message", "line": 1, "column": 2}]}, '
+                    '"stats_with_delta": {"errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}]}, '
+                    '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}]'
+                    '}',
+                    actual
+                )
 
             # data is being sent to GH action output 'json'
             # some list fields are replaced by their length
             expected = dict(
                 key='value',
                 dict=dict(list=[1, 2, 3]),
-                stats=dict(errors=3),
-                stats_with_delta=dict(errors=3),
-                annotations=3
+                stats=dict(errors=1),
+                stats_with_delta=dict(errors=2),
+                annotations=1
             )
             gha.set_output.assert_called_once_with('json', json.dumps(expected))
 

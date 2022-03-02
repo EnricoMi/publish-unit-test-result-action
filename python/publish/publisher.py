@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass
 from typing import List, Any, Optional, Tuple, Mapping, Dict
@@ -18,6 +19,7 @@ from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_late
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
+from publish.json_encoder import JSONEncoder
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
 
 
@@ -267,11 +269,15 @@ class Publisher:
 
     def publish_json(self, data: Dict[str, Any]):
         if self._settings.json_file:
-            with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
+            try:
+                with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
+                    json.dump(data, w, ensure_ascii=False, cls=JSONEncoder)
+            except Exception as e:
+                self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:
-                    json.dump(data, w, ensure_ascii=False)
-                except Exception as e:
-                    self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
+                    os.unlink(self._settings.json_file)
+                except:
+                    pass
 
         # replace some large fields with their lengths
         if data.get('stats', {}).get('errors') is not None:
