@@ -345,6 +345,9 @@ jobs:
       - name: JSON file
         run: |
           echo "JSON file:"
+          cat tests.json
+
+          echo
           jq . tests.json
 
       - name: JSON output
