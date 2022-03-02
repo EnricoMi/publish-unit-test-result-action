@@ -345,7 +345,7 @@ jobs:
       - name: JSON file
         run: |
           echo "JSON file:"
-          cat tests.json
+          jq . tests.json
 
       - name: JSON output
         env:
@@ -355,7 +355,7 @@ jobs:
           STATS: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats ) }}
           STATS_WITH_DELTA: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats_with_delta ) }}
           COMMIT: ${{ fromJSON( steps.publish.outputs.json ).stats.commit }}
-          REFERENCE: ${{ fromJSON( steps.publish.outputs.json ).stats.reference_commit }}
+          REFERENCE: ${{ fromJSON( steps.publish.outputs.json ).stats_with_delta.reference_commit }}
         run: |
           echo "title=$TITLE"
           echo "summary=$SUMMARY"
@@ -364,11 +364,19 @@ jobs:
           echo "stats-with-delta=$STATS_WITH_DELTA"
           echo "commit=$COMMIT"
           echo "reference=$REFERENCE"
+
           echo
           echo "JSON output:"
-          cat <<<EOF
+          cat <<EOF
           ${{ steps.publish.outputs.json }}
           EOF
+          echo
+
+          if [[ "$CONCLUSION" != "success" ]]
+          then
+            echo 'conclusion != "success"'
+            exit 1
+          fi
 
   config-deploy:
     name: Configure Deployment
