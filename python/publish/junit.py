@@ -1,8 +1,10 @@
 import os
 from collections import defaultdict
-from typing import Optional, Iterable, Union, Any, List
+from typing import Optional, Iterable, Union, Any, List, Dict
 
+import junitparser
 from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
+from junitparser.junitparser import etree
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
@@ -74,6 +76,23 @@ def get_content(results: Union[Element, List[Element]]) -> str:
     return content
 
 
+class Target(etree.TreeBuilder):
+    _stack = []
+
+    def start(self, tag: Union[str, bytes], attrs: Dict[Union[str, bytes], Union[str, bytes]]) -> Element:
+        self._stack.append(tag)
+        if junitparser.TestCase._tag not in self._stack:
+            return super().start(tag, attrs)
+
+    def end(self, tag: Union[str, bytes]) -> Element:
+        try:
+            if junitparser.TestCase._tag not in self._stack:
+                return super().end(tag)
+        finally:
+            if self._stack:
+                self._stack.pop()
+
+
 def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[str, Any]:
@@ -83,7 +102,12 @@ def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0) -> Par
             return Exception(f'File is empty.')
 
         try:
-            return JUnitXml.fromfile(path)
+            def parse(filepath):
+                target = Target()
+                parser = etree.XMLParser(target=target)
+                return etree.parse(filepath, parser=parser)
+
+            return JUnitXml.fromfile(path, parse_func=parse)
         except BaseException as e:
             return e
 
