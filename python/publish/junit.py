@@ -76,8 +76,13 @@ def get_content(results: Union[Element, List[Element]]) -> str:
     return content
 
 
-class Target(etree.TreeBuilder):
+class DropTestCaseBuilder(etree.TreeBuilder):
     _stack = []
+
+    def parse(self, filepath):
+        self._stack.clear()
+        parser = etree.XMLParser(target=self)
+        return etree.parse(filepath, parser=parser)
 
     def start(self, tag: Union[str, bytes], attrs: Dict[Union[str, bytes], Union[str, bytes]]) -> Element:
         self._stack.append(tag)
@@ -93,7 +98,7 @@ class Target(etree.TreeBuilder):
                 self._stack.pop()
 
 
-def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0) -> ParsedUnitTestResults:
+def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0, drop_testcases: bool = False) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[str, Any]:
         if not os.path.exists(path):
@@ -102,12 +107,10 @@ def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0) -> Par
             return Exception(f'File is empty.')
 
         try:
-            def parse(filepath):
-                target = Target()
-                parser = etree.XMLParser(target=target)
-                return etree.parse(filepath, parser=parser)
-
-            return JUnitXml.fromfile(path, parse_func=parse)
+            if drop_testcases:
+                builder = DropTestCaseBuilder()
+                return JUnitXml.fromfile(path, parse_func=builder.parse)
+            return JUnitXml.fromfile(path)
         except BaseException as e:
             return e
 
