@@ -268,6 +268,21 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     :return: unit test result statistics
     """
     cases = parsed_results.cases
+    if len(cases) == 0:
+        return parsed_results.with_stats(
+            # test states and counts from cases
+            cases_skipped=parsed_results.suite_skipped,
+            cases_failures=parsed_results.suite_failures,
+            cases_errors=parsed_results.suite_errors,
+            cases_time=parsed_results.suite_time,
+            case_results=UnitTestCaseResults(),
+
+            tests=parsed_results.suite_tests,
+            tests_skipped=parsed_results.suite_skipped,
+            tests_failures=parsed_results.suite_failures,
+            tests_errors=parsed_results.suite_errors,
+        )
+
     cases_skipped = [case for case in cases if case.result in ['skipped', 'disabled']]
     cases_failures = [case for case in cases if case.result == 'failure']
     cases_errors = [case for case in cases if case.result == 'error']
