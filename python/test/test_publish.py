@@ -1898,6 +1898,26 @@ class PublishTest(unittest.TestCase):
                               f'\n'
                               f'Results for commit example.\n'))
 
+    def test_files_without_annotations(self):
+        parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
+                                        'files/junit.gloo.elastic.spark.torch.xml',
+                                        'files/junit.gloo.elastic.xml',
+                                        'files/junit.gloo.standalone.xml',
+                                        'files/junit.gloo.static.xml',
+                                        'files/junit.mpi.integration.xml',
+                                        'files/junit.mpi.standalone.xml',
+                                        'files/junit.mpi.static.xml',
+                                        'files/junit.spark.integration.1.xml',
+                                        'files/junit.spark.integration.2.xml'],
+                                       drop_testcases=True).with_commit('example')
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        md = get_long_summary_md(stats)
+        self.assertEqual(md, (f'  10 files    10 suites   39m 1s {duration_label_md}\n'
+                              f'373 {all_tests_label_md} 333 {passed_tests_label_md} 40 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'\n'
+                              f'Results for commit example.\n'))
+
 
 if __name__ == '__main__':
     unittest.main()

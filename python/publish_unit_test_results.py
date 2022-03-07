@@ -12,7 +12,7 @@ import github
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, available_annotations, default_annotations, \
+from publish import hide_comments_modes, none_list, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes
 from publish.github_action import GithubAction
@@ -78,7 +78,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
         logger.debug(f'reading {list(files)}')
 
     # get the unit test results
-    parsed = parse_junit_xml_files(files, settings.time_factor).with_commit(settings.commit)
+    parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
     [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
      for error in parsed.errors]
 
@@ -291,6 +291,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False, gha=gha),
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False, gha=gha),
+        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False, gha=gha),
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
