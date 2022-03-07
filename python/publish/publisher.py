@@ -1,3 +1,4 @@
+import dataclasses
 import json
 import logging
 import os
@@ -19,8 +20,7 @@ from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_late
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
-from publish.json_encoder import JSONEncoder
-from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, get_stats_delta
+from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, get_stats_delta
 
 
 @dataclass(frozen=True)
@@ -52,6 +52,32 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
+
+
+@dataclasses.dataclass(frozen=True)
+class PublishData:
+    title: str
+    summary: str
+    conclusion: str
+    stats: UnitTestRunResults
+    stats_with_delta: Optional[UnitTestRunDeltaResults]
+    annotations: List[Annotation]
+
+    def to_dict(self) -> Mapping[str, Any]:
+        return dataclasses.asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
+
+    def reduced(self) -> Mapping[str, Any]:
+        data = self.to_dict()
+
+        # replace some large fields with their lengths
+        if data.get('stats', {}).get('errors') is not None:
+            data['stats']['errors'] = len(data['stats']['errors'])
+        if data.get('stats_with_delta', {}).get('errors') is not None:
+            data['stats_with_delta']['errors'] = len(data['stats_with_delta']['errors'])
+        if data.get('annotations') is not None:
+            data['annotations'] = len(data['annotations'])
+
+        return data
 
 
 class Publisher:
@@ -229,28 +255,30 @@ class Publisher:
         file_list_annotations = self.get_test_list_annotations(cases)
         all_annotations = error_annotations + case_annotations + file_list_annotations
 
+        title = get_short_summary(stats)
+        summary = get_long_summary_md(stats_with_delta)
+
         # create full json
-        data = dict(
-            title=get_short_summary(stats),
-            summary=get_long_summary_md(stats_with_delta),
+        data = PublishData(
+            title=title,
+            summary=summary,
             conclusion=conclusion,
-            stats=stats.to_dict(),
-            stats_with_delta=stats_with_delta.to_dict(),
-            annotations=[annotation.to_dict() for annotation in all_annotations]
+            stats=stats,
+            stats_with_delta=stats_with_delta if before_stats is not None else None,
+            annotations=all_annotations
         )
-        # remove stats_with_delta when there are no deltas
-        if before_stats is None:
-            del data['stats_with_delta']
         self.publish_json(data)
 
         # we can send only 50 annotations at once, so we split them into chunks of 50
         check_run = None
+        summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
+        all_annotations = [annotation.to_dict() for annotation in all_annotations]
         all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
         for annotations in all_annotations:
             output = dict(
-                title=get_short_summary(stats),
-                summary=get_long_summary_with_digest_md(stats_with_delta, stats),
-                annotations=[annotation.to_dict() for annotation in annotations]
+                title=title,
+                summary=summary_with_digest,
+                annotations=annotations
             )
 
             if check_run is None:
@@ -267,11 +295,11 @@ class Publisher:
                 logger.debug(f'updated check')
         return check_run
 
-    def publish_json(self, data: Dict[str, Any]):
+    def publish_json(self, data: PublishData):
         if self._settings.json_file:
             try:
                 with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
-                    json.dump(data, w, ensure_ascii=False, cls=JSONEncoder)
+                    json.dump(data.to_dict(), w, ensure_ascii=False)
             except Exception as e:
                 self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:
@@ -279,14 +307,8 @@ class Publisher:
                 except:
                     pass
 
-        # replace some large fields with their lengths
-        if data.get('stats', {}).get('errors') is not None:
-            data['stats']['errors'] = len(data['stats']['errors'])
-        if data.get('stats_with_delta', {}).get('errors') is not None:
-            data['stats_with_delta']['errors'] = len(data['stats_with_delta']['errors'])
-        if data.get('annotations') is not None:
-            data['annotations'] = len(data['annotations'])
-        self._gha.set_output('json', json.dumps(data, ensure_ascii=False))
+        # provide a reduced version to Github actions
+        self._gha.set_output('json', json.dumps(data.reduced(), ensure_ascii=False))
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:

@@ -10,7 +10,7 @@ from github import Github, GithubException
 
 from publish import *
 from publish.github_action import GithubAction
-from publish.publisher import Publisher, Settings
+from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError
 
 errors = [ParseError('file', 'error', 1, 2)]
@@ -1191,11 +1191,29 @@ class TestPublisher(unittest.TestCase):
             gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
             publisher = Publisher(settings, gh, gha)
 
-            data = dict(
-                key='value',
-                dict=dict(list=[1, 2, 3]),
-                stats=dict(errors=[ParseError('file', 'message', 1, 2)]),
-                stats_with_delta=dict(errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)]),
+            data = PublishData(
+                title='title',
+                summary='summary',
+                conclusion='conclusion',
+                stats=UnitTestRunResults(
+                    files=1,
+                    errors=[ParseError('file', 'message', 1, 2)],
+                    suites=2,
+                    duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    commit='commit'
+                ),
+                stats_with_delta=UnitTestRunDeltaResults(
+                    files={'number': 1, 'delta': -1},
+                    errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)],
+                    suites={'number': 2, 'delta': -2},
+                    duration={'number': 3, 'delta': -3},
+                    tests={'number': 4, 'delta': -4}, tests_succ={'number': 5, 'delta': -5}, tests_skip={'number': 6, 'delta': -6}, tests_fail={'number': 7, 'delta': -7}, tests_error={'number': 8, 'delta': -8},
+                    runs={'number': 9, 'delta': -9}, runs_succ={'number': 10, 'delta': -10}, runs_skip={'number': 11, 'delta': -11}, runs_fail={'number': 12, 'delta': -12}, runs_error={'number': 13, 'delta': -13},
+                    commit='commit',
+                    reference_type='type', reference_commit='ref'
+                ),
                 annotations=[Annotation(
                     path='path',
                     start_line=1,
@@ -1216,10 +1234,11 @@ class TestPublisher(unittest.TestCase):
                 actual = r.read()
                 self.assertEqual(
                     '{'
-                    '"key": "value", '
-                    '"dict": {"list": [1, 2, 3]}, '
-                    '"stats": {"errors": [{"file": "file", "message": "message", "line": 1, "column": 2}]}, '
-                    '"stats_with_delta": {"errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}]}, '
+                    '"title": "title", '
+                    '"summary": "summary", '
+                    '"conclusion": "conclusion", '
+                    '"stats": {"files": 1, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 13, "commit": "commit"}, '
+                    '"stats_with_delta": {"files": {"number": 1, "delta": -1}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3, "delta": -3}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 13, "delta": -13}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
                     '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}]'
                     '}',
                     actual
@@ -1227,13 +1246,14 @@ class TestPublisher(unittest.TestCase):
 
             # data is being sent to GH action output 'json'
             # some list fields are replaced by their length
-            expected = dict(
-                key='value',
-                dict=dict(list=[1, 2, 3]),
-                stats=dict(errors=1),
-                stats_with_delta=dict(errors=2),
-                annotations=1
-            )
+            expected = {
+                "title": "title",
+                "summary": "summary",
+                "conclusion": "conclusion",
+                "stats": {"files": 1, "errors": 1, "suites": 2, "duration": 3, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 13, "commit": "commit"},
+                "stats_with_delta": {"files": {"number": 1, "delta": -1}, "errors": 2, "suites": {"number": 2, "delta": -2}, "duration": {"number": 3, "delta": -3}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 13, "delta": -13}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"},
+                "annotations": 1
+            }
             gha.set_output.assert_called_once_with('json', json.dumps(expected))
 
     def test_publish_comment(self):
