@@ -78,7 +78,7 @@ class ParsedUnitTestResults:
 class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
     commit: str
 
-    def with_stats(self,
+    def with_cases(self,
                    cases_skipped: int,
                    cases_failures: int,
                    cases_errors: int,
@@ -113,6 +113,22 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             tests_errors=tests_errors
         )
 
+    def without_cases(self):
+        # when there are no case information, we use the
+        # testsuite information for case and test level
+        return self.with_cases(
+            # test states and counts from cases
+            cases_skipped=self.suite_skipped,
+            cases_failures=self.suite_failures,
+            cases_errors=self.suite_errors,
+            cases_time=self.suite_time,
+            case_results=UnitTestCaseResults(),
+
+            tests=self.suite_tests,
+            tests_skipped=self.suite_skipped,
+            tests_failures=self.suite_failures,
+            tests_errors=self.suite_errors,
+        )
 
 @dataclass(frozen=True)
 class UnitTestResults(ParsedUnitTestResultsWithCommit):
@@ -268,20 +284,9 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     :return: unit test result statistics
     """
     cases = parsed_results.cases
-    if len(cases) == 0:
-        return parsed_results.with_stats(
-            # test states and counts from cases
-            cases_skipped=parsed_results.suite_skipped,
-            cases_failures=parsed_results.suite_failures,
-            cases_errors=parsed_results.suite_errors,
-            cases_time=parsed_results.suite_time,
-            case_results=UnitTestCaseResults(),
 
-            tests=parsed_results.suite_tests,
-            tests_skipped=parsed_results.suite_skipped,
-            tests_failures=parsed_results.suite_failures,
-            tests_errors=parsed_results.suite_errors,
-        )
+    if len(cases) == 0:
+        return parsed_results.without_cases()
 
     cases_skipped = [case for case in cases if case.result in ['skipped', 'disabled']]
     cases_failures = [case for case in cases if case.result == 'failure']
@@ -303,7 +308,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     tests_failures = len([test for test, state in test_results.items() if state == 'failure'])
     tests_errors = len([test for test, state in test_results.items() if state == 'error'])
 
-    return parsed_results.with_stats(
+    return parsed_results.with_cases(
         # test states and counts from cases
         cases_skipped=len(cases_skipped),
         cases_failures=len(cases_failures),
