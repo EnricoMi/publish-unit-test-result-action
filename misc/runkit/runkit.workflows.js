@@ -8,7 +8,8 @@ exports.endpoint = async function(request, response) {
   //var ghcr_count = search(query('ghcr.io%2Fenricomi%2Fpublish-unit-test-result-action'));
   var count = Promise.all([build_count])
                      .then((counts) => counts.map(c => c.body.total_count))
-                     .then((counts) => counts.reduce((a, b) => a + b, 0));
+                     .then((counts) => counts.reduce((a, b) => a + b, 0))
+                     .then((counts) => counts.toLocaleString());
 
   var resp = {
     subject: 'GitHub Workflows',
