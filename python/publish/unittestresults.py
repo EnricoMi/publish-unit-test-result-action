@@ -1,4 +1,5 @@
 from collections import defaultdict
+import dataclasses
 from dataclasses import dataclass
 from typing import Optional, List, Mapping, Any, Union, Dict
 from xml.etree.ElementTree import ParseError as XmlParseError
@@ -189,26 +190,7 @@ class UnitTestRunResults:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        return dict(
-            files=self.files,
-            errors=self.errors,
-            suites=self.suites,
-            duration=self.duration,
-
-            tests=self.tests,
-            tests_succ=self.tests_succ,
-            tests_skip=self.tests_skip,
-            tests_fail=self.tests_fail,
-            tests_error=self.tests_error,
-
-            runs=self.runs,
-            runs_succ=self.runs_succ,
-            runs_skip=self.runs_skip,
-            runs_fail=self.runs_fail,
-            runs_error=self.runs_error,
-
-            commit=self.commit
-        )
+        return dataclasses.asdict(self)
 
     @staticmethod
     def from_dict(values: Mapping[str, Any]) -> 'UnitTestRunResults':
@@ -260,6 +242,9 @@ class UnitTestRunDeltaResults:
 
     reference_type: str
     reference_commit: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return dataclasses.asdict(self)
 
 
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]

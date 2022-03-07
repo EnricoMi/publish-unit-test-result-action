@@ -155,7 +155,8 @@ class Test(unittest.TestCase):
                      ignore_runs=False,
                      check_run_annotation=[],
                      seconds_between_github_reads=1.5,
-                     seconds_between_github_writes=2.5):
+                     seconds_between_github_writes=2.5,
+                     json_file=None):
         return Settings(
             token=token,
             api_url=api_url,
@@ -166,6 +167,7 @@ class Test(unittest.TestCase):
             event_name=event_name,
             repo=repo,
             commit=commit,
+            json_file=json_file,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             files_glob=files_glob,
@@ -393,6 +395,11 @@ class Test(unittest.TestCase):
                 with self.assertRaises(RuntimeError) as re:
                     self.do_test_get_settings(**{env_var_name: val, 'expected': None})
                 self.assertIn(f'{env_var_name} must be a positive number: {val}', re.exception.args)
+
+    def test_get_settings_json_file(self):
+        for json_file in [None, 'file.json', '/path/file.json']:
+            with self.subTest(json_file=json_file):
+                self.do_test_get_settings(JSON_FILE=json_file, expected=self.get_settings(json_file=json_file))
 
     def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:

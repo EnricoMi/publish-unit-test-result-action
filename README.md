@@ -147,6 +147,7 @@ See the complete list of options below.
 |`seconds_between_github_reads`|`0.25`|Sets the number of seconds the action waits between concurrent read requests to the GitHub API.|
 |`seconds_between_github_writes`|`2.0`|Sets the number of seconds the action waits between concurrent write requests to the GitHub API.|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
+|`json_file`|no file|Results are written to this JSON file.|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 |`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
 |`event_file`|`${{env.GITHUB_EVENT_PATH}}`|An alternative event file to use. Useful to replace a `workflow_run` event file with the actual source event file.|
@@ -165,6 +166,94 @@ which defaults to `10`. Listing these tests can be disabled entirely by setting 
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
+
+## JSON result
+
+The gathered test information are accessible as JSON. The `json` output of the action can be accessed
+through the expression `steps.<id>.outputs.json`.
+
+```yaml
+- name: Publish Unit Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v1
+  id: test-results
+  if: always()
+  with:
+    files: test-results/**/*.xml
+
+- name: Conclusion
+  run: echo "Conclusion is ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}"
+```
+
+Here is an example JSON:
+```json
+{
+  "title": "4 parse errors, 4 errors, 23 fail, 18 skipped, 227 pass in 39m 12s",
+  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 24,
+    "errors": 4,
+    "suites": 21,
+    "duration": 2352,
+    "tests": 272,
+    "tests_succ": 227,
+    "tests_skip": 18,
+    "tests_fail": 23,
+    "tests_error": 4,
+    "runs": 437,
+    "runs_succ": 354,
+    "runs_skip": 53,
+    "runs_fail": 25,
+    "runs_error": 5,
+    "commit": "11c02e561e0eb51ee90f1c744c0ca7f306f1f5f9"
+  },
+  "stats_with_delta": {
+    "files": {
+      "number": 24,
+      "delta": 0
+    },
+    …,
+    "commit": "11c02e561e0eb51ee90f1c744c0ca7f306f1f5f9",
+    "reference_type": "earlier",
+    "reference_commit": "d8ce4b6c62ebfafe1890c55bf7ea30058ebf77f2"
+  },
+  "annotations": 31
+}
+```
+
+The optional `json_file` allows to configure a file where extended JSON information are to be written.
+Compared to above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
+
+```json
+{
+   …,
+   "stats": {
+      …,
+      "errors": [
+         {
+            "file": "test-files/empty.xml",
+            "message": "File is empty.",
+            "line": null,
+            "column": null
+         }
+      ],
+      …
+   },
+   …,
+   "annotations": [
+      {
+         "path": "test/test.py",
+         "start_line": 819,
+         "end_line": 819,
+         "annotation_level": "warning",
+         "message": "test-files/junit.fail.xml",
+         "title": "1 out of 3 runs failed: test_events (test.Tests)",
+         "raw_details": "self = <test.Tests testMethod=test_events>\n\n                def test_events(self):\n                > self.do_test_events(3)\n\n                test.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test.py:836: in do_test_events\n                self.do_test_rsh(command, 143, events=events)\n                test.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            "
+      }
+   ]
+}
+```
+
 
 ## Use with matrix strategy
 

@@ -8,8 +8,14 @@ from publish import logger
 
 class GithubAction:
 
-    def __init__(self, file: TextIOWrapper = sys.stdout):
-        self._file = file
+    def __init__(self, file: Optional[TextIOWrapper] = None):
+        if file is None:
+            file = sys.stdout
+            if isinstance(file, TextIOWrapper):
+                # ensure we have utf8 encoding, the default encoding of sys.stdout on Windows is cp1252
+                file.reconfigure(encoding='utf-8')
+
+        self._file: TextIOWrapper = file
 
     def set_output(self, name: str, value: Any) -> str:
         return self._command(self._file, 'set-output', value, {'name': name})
