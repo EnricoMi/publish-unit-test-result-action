@@ -164,21 +164,33 @@ def get_var(name: str, options: dict) -> Optional[str]:
     # the last 'or None' turns empty strings into None
     return options.get(f'INPUT_{name}') or options.get(name) or None
 
-def get_bool(name: str, options: dict, default: bool = False) -> Optional[str]:
+
+def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAction] = None) -> bool:
     """
     Same as get_var(), but checks if the value is a valid boolean.
-    If the value is unset, defaults to false.
+    Prints a warning and uses the default if the string value is not a boolean value.
+    If the value is unset, returns the default.
     """
-    val = get_var(name, options).lower()
+    val = get_var(name, options)
     if not val:
         return default
-    elif val == 'true':
+
+    val = val.lower()
+    if val == 'true':
         return True
-    elif val is 'false':
+    elif val == 'false':
         return False
     else:
-        raise RuntimeError(f"Value '{val}' is not supported for variable {name}, "
-                                   f'expected: "true" or "false"')
+        # TODO: breaking change for version 2: raise a RuntimeError
+        message = f'Option {name.lower()} has to be boolean, so either "true" or "false": {val}'
+
+        if gha is None:
+            logger.debug(message)
+        else:
+            gha.warning(message)
+
+        return default
+
 
 def check_var(var: Union[str, List[str]],
               name: str,
@@ -240,6 +252,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
                            f'{", ".join(time_factors.keys())}')
 
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
+    comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
     annotations = get_annotations_config(options, event)
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
@@ -271,13 +284,13 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if get_bool('COMMENT_ON_PR', options, default=True) else comment_mode_off),
-        compare_earlier=get_bool('COMPARE_TO_EARLIER_COMMIT', options, default=True),
+        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if comment_on_pr else comment_mode_off),
+        compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=test_changes_limit,
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
-        report_individual_runs=get_bool('REPORT_INDIVIDUAL_RUNS', options),
-        dedup_classes_by_file_name=get_bool('DEDUPLICATE_CLASSES_BY_FILE_NAME', options),
+        report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False, gha=gha),
+        dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False, gha=gha),
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
