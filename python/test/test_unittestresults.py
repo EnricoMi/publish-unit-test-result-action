@@ -1,3 +1,4 @@
+import dataclasses
 import unittest
 from xml.etree.ElementTree import ParseError as XmlParseError
 
@@ -8,6 +9,7 @@ from publish.unittestresults import get_test_results, get_stats, get_stats_delta
 from test import d, n
 
 errors = [ParseError('file', 'error', None, None)]
+errors_dict = [dataclasses.asdict(e) for e in errors]
 
 
 class TestUnitTestResults(unittest.TestCase):
@@ -73,7 +75,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ).to_dict()
         expected = dict(
-            files=1, errors=errors, suites=2, duration=3,
+            files=1, errors=errors_dict, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -82,13 +84,13 @@ class TestUnitTestResults(unittest.TestCase):
 
     def test_unit_test_run_results_from_dict(self):
         actual = UnitTestRunResults.from_dict(dict(
-            files=1, errors=errors, suites=2, duration=3,
+            files=1, errors=errors_dict, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         ))
         expected = UnitTestRunResults(
-            files=1, errors=errors, suites=2, duration=3,
+            files=1, errors=errors_dict, suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
