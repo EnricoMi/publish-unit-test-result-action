@@ -9,7 +9,8 @@ from typing import Optional, Union, List
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update
+    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
+    hide_comments_modes, pull_request_build_modes
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -147,6 +148,7 @@ class Test(unittest.TestCase):
                      comment_mode=comment_mode_create,
                      compare_earlier=True,
                      test_changes_limit=10,
+                     pull_request_build=pull_request_build_mode_merge,
                      hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
@@ -172,7 +174,7 @@ class Test(unittest.TestCase):
             comment_title=comment_title,
             comment_mode=comment_mode,
             compare_earlier=compare_earlier,
-            pull_request_build=pull_request_build_mode_merge,
+            pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
@@ -220,12 +222,12 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(GITHUB_RETRIES='1', expected=self.get_settings(retries=1))
         self.do_test_get_settings(GITHUB_RETRIES='123', expected=self.get_settings(retries=123))
         self.do_test_get_settings(GITHUB_RETRIES=None, expected=self.get_settings(retries=10))
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(GITHUB_RETRIES='-1', expected=None)
-        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: -1', re.exception.args)
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(GITHUB_RETRIES='none', expected=None)
-        self.assertIn('GITHUB_RETRIES must be a positive integer or 0: none', re.exception.args)
+
+        for retries in ['-1', '12e', 'none']:
+            with self.subTest(retries=retries):
+                with self.assertRaises(RuntimeError) as re:
+                    self.do_test_get_settings(GITHUB_RETRIES=retries, expected=None)
+                self.assertIn(f'GITHUB_RETRIES must be a positive integer or 0: {retries}', re.exception.args)
 
     def test_get_settings_files(self):
         self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
@@ -236,12 +238,13 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
         self.do_test_get_settings(TIME_UNIT='milliseconds', expected=self.get_settings(time_factor=0.001))
         self.do_test_get_settings(TIME_UNIT='seconds', expected=self.get_settings(time_factor=1.0))
+
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(TIME_UNIT='minutes', expected=None)
         self.assertIn('TIME_UNIT minutes is not supported. It is optional, '
                       'but when given must be one of these values: seconds, milliseconds', re.exception.args)
 
-    def test_get_settings_commit_default(self):
+    def test_get_settings_commit(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
         self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request'))
         self.do_test_get_settings(COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request'))
@@ -254,26 +257,48 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA=None, expected=None)
         self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(COMMIT=None, expected=None)
+        self.assertEqual('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', str(re.exception))
 
-    def test_get_settings_fail_on_default(self):
+    def test_get_settings_fail_on(self):
         self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
         self.do_test_get_settings(FAIL_ON=fail_on_mode_failures, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
         self.do_test_get_settings(FAIL_ON=fail_on_mode_errors, expected=self.get_settings(fail_on_errors=True, fail_on_failures=False))
         self.do_test_get_settings(FAIL_ON=fail_on_mode_nothing, expected=self.get_settings(fail_on_errors=False, fail_on_failures=False))
 
-    def test_get_settings_test_changes_limit_default(self):
-        self.do_test_get_settings(TEST_CHANGES_LIMIT=None, expected=self.get_settings(test_changes_limit=10))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='-10', expected=self.get_settings(test_changes_limit=10))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='10.0', expected=self.get_settings(test_changes_limit=10))
-        self.do_test_get_settings(TEST_CHANGES_LIMIT='string', expected=self.get_settings(test_changes_limit=10))
+    def test_get_settings_pull_request_build(self):
+        for mode in pull_request_build_modes:
+            with self.subTest(mode=mode):
+                self.do_test_get_settings(PULL_REQUEST_BUILD=mode, expected=self.get_settings(pull_request_build=mode))
+        self.do_test_get_settings(PULL_REQUEST_BUILD=None, expected=self.get_settings(pull_request_build=pull_request_build_mode_merge))
 
-    def test_get_settings_check_name_default(self):
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(PULL_REQUEST_BUILD='build')
+        self.assertEqual("Value 'build' is not supported for variable PULL_REQUEST_BUILD, expected: commit, merge", str(re.exception))
+
+    def test_get_settings_test_changes_limit(self):
+        self.do_test_get_settings(TEST_CHANGES_LIMIT='0', expected=self.get_settings(test_changes_limit=0))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT='1', expected=self.get_settings(test_changes_limit=1))
+        self.do_test_get_settings(TEST_CHANGES_LIMIT=None, expected=self.get_settings(test_changes_limit=10))
+
+        for limit in ['-1', '1.0', '12e', 'string']:
+            with self.subTest(limit=limit):
+                with self.assertRaises(RuntimeError) as re:
+                    self.do_test_get_settings(TEST_CHANGES_LIMIT=limit, expected=self.get_settings(test_changes_limit=10))
+                self.assertIn(f'TEST_CHANGES_LIMIT must be a positive integer or 0: {limit}', re.exception.args)
+
+    def test_get_settings_check_name(self):
+        self.do_test_get_settings(CHECK_NAME='name', expected=self.get_settings(check_name='name'))
         self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Unit Test Results'))
 
-    def test_get_settings_comment_title_default(self):
-        self.do_test_get_settings(COMMENT_TITLE=None, expected=self.get_settings(comment_title='check name'))
+    def test_get_settings_comment_title(self):
+        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME=None, expected=self.get_settings(comment_title='Unit Test Results', check_name='Unit Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME=None, expected=self.get_settings(comment_title='title', check_name='Unit Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME='name', expected=self.get_settings(comment_title='title', check_name='name'))
+        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
-    def test_get_settings_comment_on_pr_default(self):
+    def test_get_settings_comment_on_pr(self):
         default_comment_mode = comment_mode_update
         bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
         depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
@@ -285,7 +310,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_update), warning=[bool_warning, depr_warning])
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
 
-    def test_get_settings_comment_mode_default(self):
+    def test_get_settings_comment_mode(self):
         warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
         for mode in [comment_mode_off, comment_mode_create, comment_mode_update]:
             with self.subTest(mode=mode):
@@ -294,7 +319,11 @@ class Test(unittest.TestCase):
 
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
 
-    def test_get_settings_compare_to_earlier_commit_default(self):
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(COMMENT_MODE='mode')
+        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+
+    def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='false', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=False))
@@ -303,10 +332,17 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
-    def test_get_settings_hide_comment_default(self):
+    def test_get_settings_hide_comment(self):
+        for mode in hide_comments_modes:
+            with self.subTest(mode=mode):
+                self.do_test_get_settings(HIDE_COMMENTS=mode, expected=self.get_settings(hide_comment_mode=mode))
         self.do_test_get_settings(HIDE_COMMENTS=None, expected=self.get_settings(hide_comment_mode='all but latest'))
 
-    def test_get_settings_report_individual_runs_default(self):
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(HIDE_COMMENTS='hide')
+        self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
+
+    def test_get_settings_report_individual_runs(self):
         warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='false', expected=self.get_settings(report_individual_runs=False))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='False', expected=self.get_settings(report_individual_runs=False))
@@ -315,7 +351,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
-    def test_get_settings_dedup_classes_by_file_name_default(self):
+    def test_get_settings_dedup_classes_by_file_name(self):
         warning = 'Option deduplicate_classes_by_file_name has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='false', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='False', expected=self.get_settings(dedup_classes_by_file_name=False))
@@ -324,7 +360,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
-    def test_get_settings_ignore_runs_default(self):
+    def test_get_settings_ignore_runs(self):
         warning = 'Option ignore_runs has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(IGNORE_RUNS='false', expected=self.get_settings(ignore_runs=False))
         self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False))
@@ -332,6 +368,12 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True))
         self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning)
         self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
+
+    def test_get_settings_check_run_annotations(self):
+        # Note: more tests in test_get_annotations_config*
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation', expected=None)
+        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
@@ -346,13 +388,13 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(**{env_var_name: '2.5', 'expected': self.get_settings(**{settings_var_name: 2.5})})
         self.do_test_get_settings(**{env_var_name: None, 'expected': self.get_settings(**{settings_var_name: default})})
 
-        for val in ['0', '0.0', '-1', 'none']:
+        for val in ['0', '0.0', '-1', 'none', '12e']:
             with self.subTest(reads=val):
                 with self.assertRaises(RuntimeError) as re:
                     self.do_test_get_settings(**{env_var_name: val, 'expected': None})
                 self.assertIn(f'{env_var_name} must be a positive number: {val}', re.exception.args)
 
-    def test_get_settings_missing_options(self):
+    def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
         self.assertEqual('GitHub event file path must be provided via action input or environment variable GITHUB_EVENT_PATH', str(re.exception))
@@ -364,27 +406,6 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_REPOSITORY=None)
         self.assertEqual('GitHub repository must be provided via action input or environment variable GITHUB_REPOSITORY', str(re.exception))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(COMMIT=None)
-        self.assertEqual('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', str(re.exception))
-
-    def test_get_settings_unknown_values(self):
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(COMMENT_MODE='mode')
-        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(PULL_REQUEST_BUILD='build')
-        self.assertEqual("Value 'build' is not supported for variable PULL_REQUEST_BUILD, expected: commit, merge", str(re.exception))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(HIDE_COMMENTS='hide')
-        self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation')
-        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def do_test_get_settings(self,
                              event: dict = {},
@@ -428,9 +449,10 @@ class Test(unittest.TestCase):
                 if arg.startswith('INPUT_'):
                     del options[arg[6:]]
 
-            # simplify functionality of get_annotations_config
+            # Note: functionality of get_annotations_config is simplified here,
+            #       its true behaviour is tested in get_annotations_config*
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
-                if 'CHECK_RUN_ANNOTATIONS' in options else []
+                if options.get('CHECK_RUN_ANNOTATIONS') is not None else []
             with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
@@ -741,10 +763,11 @@ class Test(unittest.TestCase):
         for value, expected in [
             ('0', True), ('0.0', True), ('.0', True), ('0.', True),
             ('1.2', True), ('-2.3', True), ('+1.3', True),
-            ('.', False), ('+1', True), ('-2', True)
+            ('.', False), ('+1', True), ('-2', True), ('+1.', True), ('-2.', True), ('+.1', True), ('-.2', True),
+            ('a1', False), ('1a', False), ('1a2', False), ('12e45', False),
         ]:
             with self.subTest(value=value):
-                self.assertEqual(expected, is_float(value))
+                self.assertEqual(expected, is_float(value), value)
 
     def test_main_fork_pr_check(self):
         with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
