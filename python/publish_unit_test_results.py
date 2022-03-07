@@ -227,7 +227,7 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
 
 
 def is_float(text: str) -> bool:
-    return re.match('[+-]?([0-9]*.[0-9]+)|([0-9]+(.[0-9]?)?)', text) is not None
+    return re.match('^[+-]?(([0-9]*\\.[0-9]+)|([0-9]+(\\.[0-9]?)?))$', text) is not None
 
 
 def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
@@ -240,16 +240,15 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         event = json.load(f)
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
-    test_changes_limit = get_var('TEST_CHANGES_LIMIT', options)
-    test_changes_limit = int(test_changes_limit) if test_changes_limit and test_changes_limit.isdigit() else 10
+    test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
+    check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
     time_factor = time_factors.get(time_unit.lower())
-    if time_factor is None:
-        raise RuntimeError(f'TIME_UNIT {time_unit} is not supported. '
-                           f'It is optional, but when given must be one of these values: '
-                           f'{", ".join(time_factors.keys())}')
+    check_var_condition(time_factor is not None, f'TIME_UNIT {time_unit} is not supported. '
+                                                 f'It is optional, but when given must be one of these values: '
+                                                 f'{", ".join(time_factors.keys())}')
 
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
@@ -287,7 +286,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if comment_on_pr else comment_mode_off),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
-        test_changes_limit=test_changes_limit,
+        test_changes_limit=int(test_changes_limit),
         hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False, gha=gha),
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False, gha=gha),
@@ -305,6 +304,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
+    check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
