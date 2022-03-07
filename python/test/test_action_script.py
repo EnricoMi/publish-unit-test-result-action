@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 import unittest
-from typing import Optional
+from typing import Optional, Union, List
 
 import mock
 
@@ -273,59 +273,53 @@ class Test(unittest.TestCase):
 
     def test_get_settings_comment_on_pr_default(self):
         default_comment_mode = comment_mode_update
+        bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
+        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
 
-        gha = mock.MagicMock()
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', gha=gha, expected=self.get_settings(comment_mode=comment_mode_off))
-        gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_update))
-
-        gha = mock.MagicMock()
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', gha=gha, expected=self.get_settings(comment_mode=default_comment_mode))
-        gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode))
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=default_comment_mode))
-
-        gha = mock.MagicMock()
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, gha=gha, expected=self.get_settings(comment_mode=default_comment_mode))
-        gha.warning.assert_not_called()
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_update), warning=[bool_warning, depr_warning])
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
 
     def test_get_settings_comment_mode_default(self):
+        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
         for mode in [comment_mode_off, comment_mode_create, comment_mode_update]:
             with self.subTest(mode=mode):
                 self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
-
-                gha = mock.MagicMock()
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true' if mode == comment_mode_off else 'false', gha=gha, expected=self.get_settings(comment_mode=mode))
-                gha.warning.assert_called_once_with('Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".')
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true' if mode == comment_mode_off else 'false', expected=self.get_settings(comment_mode=mode), warning=warning)
 
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
 
     def test_get_settings_compare_to_earlier_commit_default(self):
+        warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='false', expected=self.get_settings(compare_earlier=False))
-        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='True', expected=self.get_settings(compare_earlier=True))
-        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True))
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
     def test_get_settings_hide_comment_default(self):
         self.do_test_get_settings(HIDE_COMMENTS=None, expected=self.get_settings(hide_comment_mode='all but latest'))
 
     def test_get_settings_report_individual_runs_default(self):
+        warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='false', expected=self.get_settings(report_individual_runs=False))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='False', expected=self.get_settings(report_individual_runs=False))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='true', expected=self.get_settings(report_individual_runs=True))
-        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='True', expected=self.get_settings(report_individual_runs=False))
-        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False))
+        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='True', expected=self.get_settings(report_individual_runs=True))
+        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
     def test_get_settings_dedup_classes_by_file_name_default(self):
+        warning = 'Option deduplicate_classes_by_file_name has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='false', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='False', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='true', expected=self.get_settings(dedup_classes_by_file_name=True))
-        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='True', expected=self.get_settings(dedup_classes_by_file_name=False))
-        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False))
+        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='True', expected=self.get_settings(dedup_classes_by_file_name=True))
+        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
     def test_get_settings_seconds_between_github_reads(self):
@@ -381,7 +375,12 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation')
         self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
-    def do_test_get_settings(self, event: dict = {}, gha: Optional[GithubAction] = None, expected: Settings = get_settings.__func__(), **kwargs):
+    def do_test_get_settings(self,
+                             event: dict = {},
+                             gha: Optional[GithubAction] = None,
+                             warning: Optional[Union[str, List[str]]] = None,
+                             expected: Settings = get_settings.__func__(),
+                             **kwargs):
         event = event.copy()
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'event.json')
@@ -422,8 +421,17 @@ class Test(unittest.TestCase):
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
                 if 'CHECK_RUN_ANNOTATIONS' in options else []
             with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
+                if gha is None:
+                    gha = mock.MagicMock()
                 actual = get_settings(options, gha)
                 m.assert_called_once_with(options, event)
+                if warning:
+                    if isinstance(warning, list):
+                        gha.warning.assert_has_calls([mock.call(w) for w in warning], any_order=False)
+                    else:
+                        gha.warning.assert_called_once_with(warning)
+                else:
+                    gha.warning.assert_not_called()
 
             self.assertEqual(expected, actual)
 
