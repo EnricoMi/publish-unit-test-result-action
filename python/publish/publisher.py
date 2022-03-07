@@ -44,6 +44,7 @@ class Settings:
     hide_comment_mode: str
     report_individual_runs: bool
     dedup_classes_by_file_name: bool
+    ignore_runs: bool
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float

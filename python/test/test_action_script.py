@@ -150,6 +150,7 @@ class Test(unittest.TestCase):
                      hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
+                     ignore_runs=False,
                      check_run_annotation=[],
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5):
@@ -176,6 +177,7 @@ class Test(unittest.TestCase):
             hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
+            ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes
@@ -321,6 +323,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='True', expected=self.get_settings(dedup_classes_by_file_name=True))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
+
+    def test_get_settings_ignore_runs_default(self):
+        warning = 'Option ignore_runs has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(IGNORE_RUNS='false', expected=self.get_settings(ignore_runs=False))
+        self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False))
+        self.do_test_get_settings(IGNORE_RUNS='true', expected=self.get_settings(ignore_runs=True))
+        self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True))
+        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning)
+        self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
