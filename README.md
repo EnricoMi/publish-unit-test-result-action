@@ -20,7 +20,7 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
   uses: EnricoMi/publish-unit-test-result-action@v1
   if: always()
   with:
-    files: test-results/**/*.xml
+    files: "test-results/**/*.xml"
 ```
 
 Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
@@ -31,7 +31,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
   uses: EnricoMi/publish-unit-test-result-action/composite@v1
   if: always()
   with:
-    files: test-results/**/*.xml
+    files: "test-results/**/*.xml"
 ```
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
@@ -136,7 +136,7 @@ See the complete list of options below.
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `test-results/**/*.xml`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
+|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `"test-results/**/*.xml"`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
 |`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
@@ -178,7 +178,7 @@ through the expression `steps.<id>.outputs.json`.
   id: test-results
   if: always()
   with:
-    files: test-results/**/*.xml
+    files: "test-results/**/*.xml"
 
 - name: Conclusion
   run: echo "Conclusion is ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}"
@@ -311,7 +311,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: artifacts/**/*.xml
+          files: "artifacts/**/*.xml"
 ```
 
 ## Support fork repositories and dependabot branches
@@ -453,7 +453,7 @@ build-and-test:
     uses: actions/upload-artifact@v2
     with:
       name: Unit Test Results
-      path: test-results/**/*.xml
+      path: "test-results/**/*.xml"
 ```
 
 Your dedicated publish-unit-test-result-workflow then downloads these files and runs the action there:
@@ -475,7 +475,7 @@ publish-test-results:
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v1
       with:
-        files: artifacts/**/*.xml
+        files: "artifacts/**/*.xml"
 ```
 
 ### Slow startup of composite action
