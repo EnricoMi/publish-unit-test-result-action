@@ -226,7 +226,7 @@ class TestPublisher(unittest.TestCase):
     def call_mocked_publish(settings: Settings,
                             stats: UnitTestRunResults = stats,
                             cases: UnitTestCaseResults = cases,
-                            pr: object = None,
+                            prs: List[object] = [],
                             cr: object = None):
         # UnitTestCaseResults is mutable, always copy it
         cases = UnitTestCaseResults(cases)
@@ -234,7 +234,7 @@ class TestPublisher(unittest.TestCase):
         # mock Publisher and call publish
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
-        publisher.get_pull = mock.Mock(return_value=pr)
+        publisher.get_pulls = mock.Mock(return_value=prs)
         publisher.publish_check = mock.Mock(return_value=cr)
         Publisher.publish(publisher, stats, cases, 'success')
 
@@ -246,7 +246,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_without_comment(self):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=object())
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
@@ -256,7 +256,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_without_comment_with_hiding(self):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_all_but_latest)
-        mock_calls = self.call_mocked_publish(settings, pr=object())
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
@@ -266,7 +266,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_with_comment_without_pr(self):
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=None)
+        mock_calls = self.call_mocked_publish(settings, prs=[])
 
         self.assertEqual(2, len(mock_calls))
 
@@ -276,7 +276,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
+        self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
@@ -284,7 +284,7 @@ class TestPublisher(unittest.TestCase):
         pr = object()
         cr = object()
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
+        mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(3, len(mock_calls))
 
@@ -294,7 +294,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
+        self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
@@ -307,7 +307,7 @@ class TestPublisher(unittest.TestCase):
         pr = object()
         cr = object()
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_mode)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
+        mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(4, len(mock_calls))
 
@@ -317,7 +317,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
+        self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
@@ -347,7 +347,7 @@ class TestPublisher(unittest.TestCase):
         pr = object()
         cr = object()
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
-        mock_calls = self.call_mocked_publish(settings, pr=pr, cr=cr)
+        mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(4, len(mock_calls))
 
@@ -357,7 +357,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_pull', method)
+        self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
@@ -579,109 +579,109 @@ class TestPublisher(unittest.TestCase):
                                    body='comment already updated\n:recycle: Has been updated',
                                    expected_body='comment already updated\n:recycle: Has been updated')
 
-    def do_test_get_pull(self,
+    def do_test_get_pulls(self,
                          settings: Settings,
                          search_issues: mock.Mock,
-                         expected: Optional[mock.Mock]) -> mock.Mock:
+                         expected: List[mock.Mock]) -> mock.Mock:
         gh, gha, req, repo, commit = self.create_mocks()
         gh.search_issues = mock.Mock(return_value=search_issues)
         publisher = Publisher(settings, gh, gha)
 
-        actual = publisher.get_pull(settings.commit)
+        actual = publisher.get_pulls(settings.commit)
 
         self.assertEqual(expected, actual)
         gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
         return gha
 
-    def test_get_pull(self):
+    def test_get_pulls(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr])
-        gha = self.do_test_get_pull(settings, search_issues, pr)
+        gha = self.do_test_get_pulls(settings, search_issues, [pr])
         gha.error.assert_not_called()
 
-    def test_get_pull_no_search_results(self):
+    def test_get_pulls_no_search_results(self):
         settings = self.create_settings()
         search_issues = self.create_github_collection([])
-        gha = self.do_test_get_pull(settings, search_issues, None)
+        gha = self.do_test_get_pulls(settings, search_issues, [])
         gha.error.assert_not_called()
 
-    def test_get_pull_one_closed_matches(self):
+    def test_get_pulls_one_closed_matches(self):
         settings = self.create_settings()
 
         pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr])
 
-        gha = self.do_test_get_pull(settings, search_issues, pr)
+        gha = self.do_test_get_pulls(settings, search_issues, [pr])
         gha.error.assert_not_called()
 
-    def test_get_pull_multiple_closed_matches(self):
+    def test_get_pulls_multiple_closed_matches(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, None)
+        gha = self.do_test_get_pulls(settings, search_issues, [])
         gha.error.assert_not_called()
 
-    def test_get_pull_one_closed_one_open_matches(self):
+    def test_get_pulls_one_closed_one_open_matches(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, pr2)
+        gha = self.do_test_get_pulls(settings, search_issues, [pr2])
         gha.error.assert_not_called()
 
-    def test_get_pull_multiple_open_one_matches_head_commit(self):
+    def test_get_pulls_multiple_open_one_matches_head_commit(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='other head commit', merge_commit_sha='merge two')
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, pr1)
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1])
         gha.error.assert_not_called()
 
-    def test_get_pull_multiple_open_one_matches_merge_commit(self):
+    def test_get_pulls_multiple_open_one_matches_merge_commit(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha='other merge commit')
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, pr1)
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1])
         gha.error.assert_not_called()
 
-    def test_get_pull_multiple_open_both_match_head_commit(self):
+    def test_get_pulls_multiple_open_both_match_head_commit(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge two')
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('Found multiple open pull requests in repo owner/repo with commit commit as current head or merge commit')
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1,pr2])
+        gha.error.assert_not_called()
 
-    def test_get_pull_multiple_open_both_match_merge_commit(self):
+    def test_get_pulls_multiple_open_both_match_merge_commit(self):
         settings = self.create_settings()
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pull(settings, search_issues, None)
-        gha.error.assert_called_once_with('Found multiple open pull requests in repo owner/repo with commit commit as current head or merge commit')
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1,pr2])
+        gha.error.assert_not_called()
 
-    def test_get_pull_forked_repo(self):
+    def test_get_pulls_forked_repo(self):
         settings = self.create_settings()
         fork = self.create_github_pr('other/fork', head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([fork])
-        self.do_test_get_pull(settings, search_issues, None)
+        self.do_test_get_pulls(settings, search_issues, [])
 
-    def test_get_pull_forked_repos_and_own_repo(self):
+    def test_get_pulls_forked_repos_and_own_repo(self):
         settings = self.create_settings()
 
         own = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
@@ -689,7 +689,7 @@ class TestPublisher(unittest.TestCase):
         fork2 = self.create_github_pr('{}.fork'.format(settings.repo), head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([own, fork1, fork2])
 
-        self.do_test_get_pull(settings, search_issues, own)
+        self.do_test_get_pulls(settings, search_issues, [own])
 
     def do_test_get_check_run_from_list(self, runs: List[github.CheckRun.CheckRun], expected: Optional[github.CheckRun.CheckRun]):
         settings = self.create_settings()
