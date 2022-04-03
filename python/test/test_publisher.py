@@ -31,7 +31,7 @@ class TestPublisher(unittest.TestCase):
                          head_commit_sha: Optional[str] = 'head',
                          merge_commit_sha: Optional[str] = 'merge',
                          number: Optional[int] = None,
-                         state: Optional[str] = None):
+                         state: str = 'open'):
         pr = mock.MagicMock()
         pr.as_pull_request = mock.Mock(return_value=pr)
         pr.base.repo.full_name = repo
@@ -413,11 +413,21 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(1, len(mock_calls))
+        self.assertEqual(3, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
         self.assertEqual(('## title\nbody', ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('number.__str__', method)
+        self.assertEqual((), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('create_issue_comment().html_url.__str__', method)
+        self.assertEqual((), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_comment_compare_with_itself(self):
@@ -478,11 +488,21 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(1, len(mock_calls))
+        self.assertEqual(3, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
         self.assertEqual(('## title\nbody', ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('number.__str__', method)
+        self.assertEqual((), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('create_issue_comment().html_url.__str__', method)
+        self.assertEqual((), args)
         self.assertEqual({}, kwargs)
 
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
@@ -512,12 +532,22 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(0 if one_exists else 1, len(mock_calls))
+        self.assertEqual(0 if one_exists else 3, len(mock_calls))
 
         if not one_exists:
             (method, args, kwargs) = mock_calls[0]
             self.assertEqual('create_issue_comment', method)
             self.assertEqual(('## title\nbody', ), args)
+            self.assertEqual({}, kwargs)
+
+            (method, args, kwargs) = mock_calls[1]
+            self.assertEqual('number.__str__', method)
+            self.assertEqual((), args)
+            self.assertEqual({}, kwargs)
+
+            (method, args, kwargs) = mock_calls[2]
+            self.assertEqual('create_issue_comment().html_url.__str__', method)
+            self.assertEqual((), args)
             self.assertEqual({}, kwargs)
 
     def test_publish_comment_with_reuse_comment_none_existing(self):
@@ -598,12 +628,14 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr])
         gha = self.do_test_get_pulls(settings, search_issues, [pr])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_no_search_results(self):
         settings = self.create_settings()
         search_issues = self.create_github_collection([])
         gha = self.do_test_get_pulls(settings, search_issues, [])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_one_closed_matches(self):
@@ -612,7 +644,8 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr])
+        gha = self.do_test_get_pulls(settings, search_issues, [])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_closed_matches(self):
@@ -623,6 +656,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_one_closed_one_open_matches(self):
@@ -633,6 +667,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [pr2])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_open_one_matches_head_commit(self):
@@ -643,6 +678,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [pr1])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_open_one_matches_merge_commit(self):
@@ -653,6 +689,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [pr1])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_open_both_match_head_commit(self):
@@ -663,6 +700,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_open_both_match_merge_commit(self):
@@ -673,6 +711,7 @@ class TestPublisher(unittest.TestCase):
         search_issues = self.create_github_collection([pr1, pr2])
 
         gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
+        gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_forked_repo(self):
