@@ -144,14 +144,14 @@ class Publisher:
                          f'commit {commit} as current head or merge commit')
             return []
 
-        # if we still have multiple PRs, only comment on the open ones
+        # only comment on the open PRs
         pulls = [pull for pull in pulls if pull.state == 'open']
         if len(pulls) == 0:
             logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
-                            f'commit {commit} as current head or merge commit but none is open')
+                         f'commit {commit} as current head or merge commit but none is open')
 
         for pull in pulls:
-            logger.debug(f'found pull request #{pull.number} with commit {commit} as current head or merge commit')
+            logger.debug(f'found open pull request #{pull.number} with commit {commit} as current head or merge commit')
         return pulls
 
     def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
@@ -386,8 +386,8 @@ class Publisher:
         # reuse existing commend when comment_mode == comment_mode_update
         # if none exists or comment_mode != comment_mode_update, create new comment
         if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
-            logger.info('creating comment')
-            pull_request.create_issue_comment(body)
+            comment = pull_request.create_issue_comment(body)
+            logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
 
         return pull_request
 
@@ -404,12 +404,13 @@ class Publisher:
 
         # edit last comment
         comment_id = comments[-1].get("databaseId")
-        logger.info(f'editing comment {comment_id}')
         if ':recycle:' not in body:
             body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
         try:
-            pull.get_issue_comment(comment_id).edit(body)
+            comment = pull.get_issue_comment(comment_id)
+            comment.edit(body)
+            logger.info(f'edited comment for pull request #{pull.number}: {comment.html_url}')
         except Exception as e:
             self._gha.warning(f'Failed to edit existing comment #{comment_id}')
             logger.debug('editing existing comment failed', exc_info=e)
