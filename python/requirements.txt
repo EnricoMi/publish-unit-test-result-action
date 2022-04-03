@@ -1,6 +1,6 @@
 # dataclasses does not exist before Python3.7, needed as dependency
 dataclasses;python_version<"3.7"
-junitparser==2.4.2
+junitparser==2.4.3
 PyGithub==1.55
 urllib3==1.26.9
 requests==2.27.1
