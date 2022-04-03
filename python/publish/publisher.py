@@ -11,7 +11,7 @@ from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
-from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
+from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
@@ -97,21 +97,22 @@ class Publisher:
         check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.comment_mode != comment_mode_off:
-            pull = self.get_pull(self._settings.commit)
-            if pull is not None:
-                self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
-                if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
-                    self.hide_orphaned_commit_comments(pull)
-                elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
-                    self.hide_all_but_latest_comments(pull)
-                else:
+            pulls = self.get_pulls(self._settings.commit)
+            if pulls:
+                for pull in pulls:
+                    self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+                    if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
+                        self.hide_orphaned_commit_comments(pull)
+                    elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
+                        self.hide_all_but_latest_comments(pull)
+                if self._settings.hide_comment_mode == hide_comments_mode_off:
                     logger.info('hide_comments disabled, not hiding any comments')
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
         else:
             logger.info('comment_on_pr disabled, not commenting on any pull requests')
 
-    def get_pull(self, commit: str) -> Optional[PullRequest]:
+    def get_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount calls the GitHub API just to get the total number
         # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
         issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
@@ -134,30 +135,24 @@ class Publisher:
 
         if len(pulls) == 0:
             logger.debug(f'found no pull requests in repo {self._settings.repo} for commit {commit}')
-            return None
+            return []
 
         # we only comment on PRs that have the commit as their current head or merge commit
         pulls = [pull for pull in pulls if commit in [pull.head.sha, pull.merge_commit_sha]]
         if len(pulls) == 0:
             logger.debug(f'found no pull request in repo {self._settings.repo} with '
                          f'commit {commit} as current head or merge commit')
-            return None
+            return []
 
-        # if we still have multiple PRs, only comment on the open one
-        if len(pulls) > 1:
-            pulls = [pull for pull in pulls if pull.state == 'open']
-            if len(pulls) == 0:
-                logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
-                             f'commit {commit} as current head or merge commit but none is open')
-                return None
-            if len(pulls) > 1:
-                self._gha.error(f'Found multiple open pull requests in repo {self._settings.repo} with '
-                                f'commit {commit} as current head or merge commit')
-                return None
+        # only comment on the open PRs
+        pulls = [pull for pull in pulls if pull.state == 'open']
+        if len(pulls) == 0:
+            logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
+                         f'commit {commit} as current head or merge commit but none is open')
 
-        pull = pulls[0]
-        logger.debug(f'found pull request #{pull.number} with commit {commit} as current head or merge commit')
-        return pull
+        for pull in pulls:
+            logger.debug(f'found open pull request #{pull.number} with commit {commit} as current head or merge commit')
+        return pulls
 
     def get_stats_from_commit(self, commit_sha: str) -> Optional[UnitTestRunResults]:
         check_run = self.get_check_run(commit_sha)
@@ -391,8 +386,8 @@ class Publisher:
         # reuse existing commend when comment_mode == comment_mode_update
         # if none exists or comment_mode != comment_mode_update, create new comment
         if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
-            logger.info('creating comment')
-            pull_request.create_issue_comment(body)
+            comment = pull_request.create_issue_comment(body)
+            logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
 
         return pull_request
 
@@ -409,12 +404,13 @@ class Publisher:
 
         # edit last comment
         comment_id = comments[-1].get("databaseId")
-        logger.info(f'editing comment {comment_id}')
         if ':recycle:' not in body:
             body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
         try:
-            pull.get_issue_comment(comment_id).edit(body)
+            comment = pull.get_issue_comment(comment_id)
+            comment.edit(body)
+            logger.info(f'edited comment for pull request #{pull.number}: {comment.html_url}')
         except Exception as e:
             self._gha.warning(f'Failed to edit existing comment #{comment_id}')
             logger.debug('editing existing comment failed', exc_info=e)
