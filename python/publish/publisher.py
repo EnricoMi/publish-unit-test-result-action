@@ -11,7 +11,7 @@ from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
-from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, \
+from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
@@ -99,14 +99,14 @@ class Publisher:
         if self._settings.comment_mode != comment_mode_off:
             pulls = self.get_pulls(self._settings.commit)
             if pulls:
-                for index, pull in enumerate(pulls):
+                for pull in pulls:
                     self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                     if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                         self.hide_orphaned_commit_comments(pull)
                     elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                         self.hide_all_but_latest_comments(pull)
-                    elif index==0: # only log for the first PR
-                        logger.info('hide_comments disabled, not hiding any comments')
+                if self._settings.hide_comment_mode == hide_comments_mode_off:
+                    logger.info('hide_comments disabled, not hiding any comments')
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
         else:
