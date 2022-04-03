@@ -662,7 +662,7 @@ class TestPublisher(unittest.TestCase):
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge two')
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1,pr2])
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
         gha.error.assert_not_called()
 
     def test_get_pulls_multiple_open_both_match_merge_commit(self):
@@ -672,7 +672,7 @@ class TestPublisher(unittest.TestCase):
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha=settings.commit)
         search_issues = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1,pr2])
+        gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
         gha.error.assert_not_called()
 
     def test_get_pulls_forked_repo(self):

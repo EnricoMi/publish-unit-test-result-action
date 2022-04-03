@@ -99,13 +99,13 @@ class Publisher:
         if self._settings.comment_mode != comment_mode_off:
             pulls = self.get_pulls(self._settings.commit)
             if pulls:
-                for pull in pulls:
+                for index, pull in enumerate(pulls):
                     self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
                     if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
                         self.hide_orphaned_commit_comments(pull)
                     elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                         self.hide_all_but_latest_comments(pull)
-                    else:
+                    elif index==0: # only log for the first PR
                         logger.info('hide_comments disabled, not hiding any comments')
             else:
                 logger.info(f'there is no pull request for commit {self._settings.commit}')
@@ -145,16 +145,10 @@ class Publisher:
             return []
 
         # if we still have multiple PRs, only comment on the open ones
-        if len(pulls) > 1:
-            pulls = [pull for pull in pulls if pull.state == 'open']
-            if len(pulls) == 0:
-                logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
-                             f'commit {commit} as current head or merge commit but none is open')
-                return []
-            if len(pulls) > 1:
-                logger.warning(f'Found multiple open pull requests in repo {self._settings.repo} with '
-                                f'commit {commit} as current head or merge commit, '
-                                f'all of them will be decorated')
+        pulls = [pull for pull in pulls if pull.state == 'open']
+        if len(pulls) == 0:
+            logger.debug(f'found multiple pull requests in repo {self._settings.repo} with '
+                            f'commit {commit} as current head or merge commit but none is open')
 
         for pull in pulls:
             logger.debug(f'found pull request #{pull.number} with commit {commit} as current head or merge commit')
