@@ -282,7 +282,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -427,10 +427,14 @@ Self-hosted runners may require setting up a Python environment first:
 
 ```yaml
 - name: Setup Python
-  uses: actions/setup-python@v2
+  uses: actions/setup-python@v3
   with:
     python-version: 3.8
 ```
+
+Self-hosted runners for Windows require Bash shell to be installed. Easiest way to have one is by installing
+Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
+environment variable seen by the self-hosted runner.
 
 ### Isolating composite action from your workflow
 
