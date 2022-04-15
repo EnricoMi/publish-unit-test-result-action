@@ -14,6 +14,7 @@ from github.PullRequest import PullRequest
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
+    comment_condition_always, comment_condition_changes, comment_condition_failures, comment_condition_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -44,6 +45,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
+    comment_condition: str
     job_summary: bool
     compare_earlier: bool
     pull_request_build: str
@@ -55,6 +57,12 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
+
+    def require_comment(self, data: 'PublishData'):
+        return (self.comment_condition == comment_condition_always or
+                self.comment_condition == comment_condition_changes and data.has_changes or
+                self.comment_condition == comment_condition_failures and (data.has_failures or data.has_errors) or
+                self.comment_condition == comment_condition_errors and data.has_errors)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -121,6 +129,30 @@ class PublishData:
         ))
         return data
 
+    @property
+    def has_changes(self):
+        return (self.stats_with_delta is None or
+                any([field.get('delta') for field in [self.stats_with_delta.files,
+                                                      self.stats_with_delta.suites,
+                                                      self.stats_with_delta.tests,
+                                                      self.stats_with_delta.tests_succ,
+                                                      self.stats_with_delta.tests_skip,
+                                                      self.stats_with_delta.tests_fail,
+                                                      self.stats_with_delta.tests_error,
+                                                      self.stats_with_delta.runs,
+                                                      self.stats_with_delta.runs_succ,
+                                                      self.stats_with_delta.runs_skip,
+                                                      self.stats_with_delta.runs_fail,
+                                                      self.stats_with_delta.runs_error]]))
+
+    @property
+    def has_failures(self):
+        return self.stats.tests_fail > 0 or self.stats.runs_fail > 0
+
+    @property
+    def has_errors(self):
+        return len(self.stats.errors) > 0 or self.stats.tests_error > 0 or self.stats.runs_error > 0
+
 
 class Publisher:
 
@@ -136,26 +168,29 @@ class Publisher:
                 cases: UnitTestCaseResults,
                 conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+        check_run, before_check_run, test_data = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
             self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
 
-        if self._settings.comment_mode != comment_mode_off:
-            pulls = self.get_pulls(self._settings.commit)
-            if pulls:
-                for pull in pulls:
-                    self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
-                    if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
-                        self.hide_orphaned_commit_comments(pull)
-                    elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
-                        self.hide_all_but_latest_comments(pull)
-                if self._settings.hide_comment_mode == hide_comments_mode_off:
-                    logger.info('hide_comments disabled, not hiding any comments')
+        if self._settings.require_comment(test_data):
+            if self._settings.comment_mode != comment_mode_off:
+                pulls = self.get_pulls(self._settings.commit)
+                if pulls:
+                    for pull in pulls:
+                        self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+                        if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
+                            self.hide_orphaned_commit_comments(pull)
+                        elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
+                            self.hide_all_but_latest_comments(pull)
+                    if self._settings.hide_comment_mode == hide_comments_mode_off:
+                        logger.info('hide_comments disabled, not hiding any comments')
+                else:
+                    logger.info(f'there is no pull request for commit {self._settings.commit}')
             else:
-                logger.info(f'there is no pull request for commit {self._settings.commit}')
+                logger.info('comment_on_pr disabled, not commenting on any pull requests')
         else:
-            logger.info('comment_on_pr disabled, not commenting on any pull requests')
+            logger.info(f'No comment required as comment_condition is {self._settings.comment_condition}')
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount calls the GitHub API just to get the total number
@@ -280,7 +315,7 @@ class Publisher:
     def publish_check(self,
                       stats: UnitTestRunResults,
                       cases: UnitTestCaseResults,
-                      conclusion: str) -> Tuple[CheckRun, Optional[CheckRun]]:
+                      conclusion: str) -> Tuple[CheckRun, Optional[CheckRun], PublishData]:
         # get stats from earlier commits
         before_stats = None
         before_check_run = None
@@ -335,7 +370,7 @@ class Publisher:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
-        return check_run, before_check_run
+        return check_run, before_check_run, data
 
     def publish_json(self, data: PublishData):
         if self._settings.json_file:

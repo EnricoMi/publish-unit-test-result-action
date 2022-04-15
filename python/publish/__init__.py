@@ -27,6 +27,17 @@ comment_modes = [
     comment_mode_update
 ]
 
+comment_condition_always = 'always'
+comment_condition_changes = 'changes'
+comment_condition_failures = 'test failures'
+comment_condition_errors = 'test errors'
+comment_conditions = [
+    comment_condition_always,
+    comment_condition_changes,
+    comment_condition_failures,
+    comment_condition_errors
+]
+
 fail_on_mode_nothing = 'nothing'
 fail_on_mode_errors = 'errors'
 fail_on_mode_failures = 'test failures'

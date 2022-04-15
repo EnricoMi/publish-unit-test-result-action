@@ -10,7 +10,7 @@ import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
-    hide_comments_modes, pull_request_build_modes, punctuation_space
+    comment_condition_always, comment_conditions, hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -146,6 +146,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_create,
+                     comment_condition=comment_condition_always,
                      job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
@@ -178,6 +179,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
+            comment_condition=comment_condition,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -328,6 +330,17 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
         self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+
+    def test_get_settings_comment_condition(self):
+        for cond in comment_conditions:
+            with self.subTest(condition=cond):
+                self.do_test_get_settings(COMMENT_CONDITION=cond, expected=self.get_settings(comment_condition=cond))
+
+        self.do_test_get_settings(COMMENT_CONDITION=None, expected=self.get_settings(comment_condition=comment_condition_always))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(COMMENT_CONDITION='condition')
+        self.assertEqual(f"Value 'condition' is not supported for variable COMMENT_CONDITION, expected: always, changes, test failures, test errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'

@@ -131,6 +131,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             tests_errors=self.suite_errors,
         )
 
+
 @dataclass(frozen=True)
 class UnitTestResults(ParsedUnitTestResultsWithCommit):
     cases: int
