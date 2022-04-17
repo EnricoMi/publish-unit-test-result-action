@@ -334,13 +334,13 @@ class Test(unittest.TestCase):
     def test_get_settings_comment_condition(self):
         for cond in comment_conditions:
             with self.subTest(condition=cond):
-                self.do_test_get_settings(COMMENT_CONDITION=cond, expected=self.get_settings(comment_condition=cond))
+                self.do_test_get_settings(COMMENT_ON=cond, expected=self.get_settings(comment_condition=cond))
 
-        self.do_test_get_settings(COMMENT_CONDITION=None, expected=self.get_settings(comment_condition=comment_condition_always))
+        self.do_test_get_settings(COMMENT_ON=None, expected=self.get_settings(comment_condition=comment_condition_always))
 
         with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(COMMENT_CONDITION='condition')
-        self.assertEqual(f"Value 'condition' is not supported for variable COMMENT_CONDITION, expected: always, changes, test failures, test errors", str(re.exception))
+            self.do_test_get_settings(COMMENT_ON='condition')
+        self.assertEqual(f"Value 'condition' is not supported for variable COMMENT_ON, expected: always, changes, test failures, test errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'

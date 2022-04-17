@@ -21,6 +21,10 @@ inputs:
   comment_title:
     description: 'Title of PR comments, defaults to value of check_name input'
     required: false
+  comment_on:
+    description: 'Create PR comments only in some cases: When number of tests, failures or runs "changes", when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
+    default: 'always'
+    required: false
   fail_on:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     default: 'test failures'
