@@ -1,18 +1,26 @@
-import itertools
+import json
 import os
 import tempfile
 import unittest
 from collections.abc import Collection
 from datetime import datetime, timezone
+from typing import Optional, List, Mapping, Union, Any
 
 import github.CheckRun
 import mock
 from github import Github, GithubException
 
-from publish import *
+from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_condition_always, \
+    comment_condition_changes, comment_condition_failures, comment_condition_errors, hide_comments_mode_off, \
+    hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, Annotation, default_annotations, \
+    get_error_annotation, digest_header, get_digest_from_stats, \
+    all_tests_list, skipped_tests_list, none_list, \
+    all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
+    duration_label_md, pull_request_build_mode_merge, punctuation_space
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
-from publish.unittestresults import UnitTestCase, ParseError
+from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
+    UnitTestCaseResults
 
 errors = [ParseError('file', 'error', 1, 2)]
 
