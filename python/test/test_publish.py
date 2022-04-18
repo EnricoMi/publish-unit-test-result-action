@@ -106,6 +106,17 @@ class PublishTest(unittest.TestCase):
             self.assertEqual(SomeTestChanges(default, [], default, ['two']).has_no_tests(), True)
             self.assertEqual(SomeTestChanges(default, ['one'], default, ['two']).has_no_tests(), False)
 
+    def test_test_changes_has_changes(self):
+        for changes, expected in [(SomeTestChanges(None, None, None, None), False),
+                                  (SomeTestChanges([], [], [], []), False),
+                                  (SomeTestChanges(['one'], ['one'], ['two'], ['two']), False),
+                                  (SomeTestChanges(['one'], ['three'], ['two'], ['two']), True),
+                                  (SomeTestChanges(['one'], ['one'], ['two'], ['three']), True),
+                                  (SomeTestChanges(['one'], ['two'], ['two'], ['three']), True),
+                                  (SomeTestChanges(['one'], None, ['two'], None), False),
+                                  (SomeTestChanges(None, ['one'], None, ['two']), False)]:
+            self.assertEqual(changes.has_changes, expected, str(changes))
+
     def test_restrict_unicode(self):
         self.assertEqual(None, restrict_unicode(None))
         self.assertEqual('', restrict_unicode(''))

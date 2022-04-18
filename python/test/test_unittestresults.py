@@ -1,4 +1,5 @@
 import dataclasses
+from typing import List
 import unittest
 from xml.etree.ElementTree import ParseError as XmlParseError
 
@@ -10,6 +11,49 @@ from test import d, n
 
 errors = [ParseError('file', 'error', None, None)]
 errors_dict = [dataclasses.asdict(e) for e in errors]
+
+
+def create_unit_test_run_results(files=1,
+                                 errors: List[ParseError] = [],
+                                 suites=2,
+                                 duration=3,
+                                 tests=22, tests_succ=4, tests_skip=5, tests_fail=6, tests_error=7,
+                                 runs=38, runs_succ=8, runs_skip=9, runs_fail=10, runs_error=11) -> UnitTestRunResults:
+    return UnitTestRunResults(
+        files=files,
+        errors=list(errors),
+        suites=suites,
+        duration=duration,
+        tests=tests, tests_succ=tests_succ, tests_skip=tests_skip, tests_fail=tests_fail, tests_error=tests_error,
+        runs=runs, runs_succ=runs_succ, runs_skip=runs_skip, runs_fail=runs_fail, runs_error=runs_error,
+        commit='commit'
+    )
+
+
+def create_unit_test_run_delta_results(files_delta=-1,
+                                       errors=[],
+                                       suites_delta=-2,
+                                       duration_delta=-3,
+                                       tests_delta=-4,
+                                       tests_succ_delta=-5,
+                                       tests_skip_delta=-6,
+                                       tests_fail_delta=-7,
+                                       tests_error_delta=-8,
+                                       runs_delta=-9,
+                                       runs_succ_delta=-10,
+                                       runs_skip_delta=-11,
+                                       runs_fail_delta=-12,
+                                       runs_error_delta=-13) -> UnitTestRunDeltaResults:
+    return UnitTestRunDeltaResults(
+        files={'number': 1, 'delta': files_delta},
+        errors=errors,
+        suites={'number': 2, 'delta': suites_delta},
+        duration={'number': 3, 'delta': duration_delta},
+        tests={'number': 4, 'delta': tests_delta}, tests_succ={'number': 5, 'delta': tests_succ_delta}, tests_skip={'number': 6, 'delta': tests_skip_delta}, tests_fail={'number': 7, 'delta': tests_fail_delta}, tests_error={'number': 8, 'delta': tests_error_delta},
+        runs={'number': 9, 'delta': runs_delta}, runs_succ={'number': 10, 'delta': runs_succ_delta}, runs_skip={'number': 11, 'delta': runs_skip_delta}, runs_fail={'number': 12, 'delta': runs_fail_delta}, runs_error={'number': 13, 'delta': runs_error_delta},
+        commit='commit',
+        reference_type='type', reference_commit='ref'
+    )
 
 
 class TestUnitTestResults(unittest.TestCase):
@@ -429,3 +473,64 @@ class TestUnitTestResults(unittest.TestCase):
             reference_commit='ref',
             reference_type='type'
         ))
+
+    def test_unit_test_run_delta_results_has_changes(self):
+        def create_stats_with_delta(files_delta=0,
+                                    suites_delta=0,
+                                    duration_delta=0,
+                                    tests_delta=0,
+                                    tests_succ_delta=0,
+                                    tests_skip_delta=0,
+                                    tests_fail_delta=0,
+                                    tests_error_delta=0,
+                                    runs_delta=0,
+                                    runs_succ_delta=0,
+                                    runs_skip_delta=0,
+                                    runs_fail_delta=0,
+                                    runs_error_delta=0) -> UnitTestRunDeltaResults:
+            return create_unit_test_run_delta_results(files_delta=files_delta, suites_delta=suites_delta, duration_delta=duration_delta,
+                                                      tests_delta=tests_delta, tests_succ_delta=tests_succ_delta, tests_skip_delta=tests_skip_delta, tests_fail_delta=tests_fail_delta, tests_error_delta=tests_error_delta,
+                                                      runs_delta=runs_delta, runs_succ_delta=runs_succ_delta, runs_skip_delta=runs_skip_delta, runs_fail_delta=runs_fail_delta, runs_error_delta=runs_error_delta)
+
+        for label, stats, expected in [('no deltas', create_stats_with_delta(), False),
+                                      ('files', create_stats_with_delta(files_delta=1), True),
+                                      ('suites', create_stats_with_delta(suites_delta=1), True),
+                                      ('duration', create_stats_with_delta(duration_delta=1), False),
+                                      ('tests', create_stats_with_delta(tests_delta=1), True),
+                                      ('tests succ', create_stats_with_delta(tests_succ_delta=1), True),
+                                      ('tests skip', create_stats_with_delta(tests_skip_delta=1), True),
+                                      ('tests fail', create_stats_with_delta(tests_fail_delta=1), True),
+                                      ('tests error', create_stats_with_delta(tests_error_delta=1), True),
+                                      ('runs', create_stats_with_delta(runs_delta=1), True),
+                                      ('runs succ', create_stats_with_delta(runs_succ_delta=1), True),
+                                      ('runs skip', create_stats_with_delta(runs_skip_delta=1), True),
+                                      ('runs fail', create_stats_with_delta(runs_fail_delta=1), True),
+                                      ('runs error', create_stats_with_delta(runs_error_delta=1), True)]:
+            with self.subTest(msg=label):
+                self.assertEqual(stats.has_changes, expected, msg=label)
+
+    def unit_test_run_results_has_failures(self):
+        def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
+            return create_unit_test_run_results(errors=errors, tests_fail=tests_fail, tests_error=tests_error, runs_fail=runs_fail, runs_error=runs_error)
+
+        for label, stats, expected in [('no failures', create_stats(), False),
+                                      ('errors', create_stats(errors=errors), False),
+                                      ('test failures', create_stats(tests_fail=1), True),
+                                      ('test errors', create_stats(tests_error=1), False),
+                                      ('runs failures', create_stats(runs_fail=1), True),
+                                      ('runs errors', create_stats(runs_error=1), False)]:
+            with self.subTest(msg=label):
+                self.assertEqual(stats.has_failures, expected, msg=label)
+
+    def test_test_run_results_has_errors(self):
+        def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
+            return create_unit_test_run_results(errors=errors, tests_fail=tests_fail, tests_error=tests_error, runs_fail=runs_fail, runs_error=runs_error)
+
+        for label, stats, expected in [('no errors', create_stats(), False),
+                                      ('errors', create_stats(errors=errors), True),
+                                      ('test failures', create_stats(tests_fail=1), False),
+                                      ('test errors', create_stats(tests_error=1), True),
+                                      ('runs failures', create_stats(runs_fail=1), False),
+                                      ('runs errors', create_stats(runs_error=1), True)]:
+            with self.subTest(msg=label):
+                self.assertEqual(stats.has_errors, expected, msg=label)

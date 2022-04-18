@@ -168,6 +168,14 @@ class UnitTestRunResults:
 
     commit: str
 
+    @property
+    def has_failures(self):
+        return self.tests_fail > 0 or self.runs_fail > 0
+
+    @property
+    def has_errors(self):
+        return len(self.errors) > 0 or self.tests_error > 0 or self.runs_error > 0
+
     def with_errors(self, errors: List[ParseError]):
         return UnitTestRunResults(
             files=self.files,
@@ -246,6 +254,13 @@ class UnitTestRunDeltaResults:
 
     def to_dict(self) -> Dict[str, Any]:
         return dataclasses.asdict(self)
+
+    @property
+    def has_changes(self):
+        return (any([field.get('delta')
+                     for field in [self.files, self.suites,
+                                   self.tests, self.tests_succ, self.tests_skip, self.tests_fail, self.tests_error,
+                                   self.runs, self.runs_succ, self.runs_skip, self.runs_fail, self.runs_error]]))
 
 
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]

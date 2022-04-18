@@ -91,6 +91,11 @@ class SomeTestChanges:
         self._skipped_tests_before = set(skipped_tests_before) if skipped_tests_before is not None else None
         self._skipped_tests_current = set(skipped_tests_current) if skipped_tests_current is not None else None
 
+    @property
+    def has_changes(self) -> bool:
+        return (self.adds() is not None and self.removes() is not None and len(self.adds().union(self.removes())) > 0 or
+                self.skips() is not None and self.un_skips() is not None and len(self.skips().union(self.un_skips())) > 0)
+
     def adds(self) -> Optional[Set[str]]:
         if self._all_tests_before is None or self._all_tests_current is None:
             return None
