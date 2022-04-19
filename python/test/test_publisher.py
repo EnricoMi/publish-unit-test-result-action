@@ -1,10 +1,12 @@
+import dataclasses
 import json
 import os
+import re
 import tempfile
 import unittest
 from collections.abc import Collection
 from datetime import datetime, timezone
-from typing import Optional, List, Mapping, Union, Any
+from typing import Optional, List, Mapping, Union, Any, Callable
 
 import github.CheckRun
 import mock
@@ -16,13 +18,24 @@ from publish import comment_mode_create, comment_mode_update, comment_mode_off, 
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_list, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
-    duration_label_md, pull_request_build_mode_merge, punctuation_space
+    duration_label_md, pull_request_build_mode_merge, punctuation_space, get_long_summary_md
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestCaseResults
+    UnitTestRunResultsOrDeltaResults, UnitTestCaseResults, get_diff_value
 
 errors = [ParseError('file', 'error', 1, 2)]
+
+
+@dataclasses.dataclass(frozen=True)
+class CommentConditionTest:
+    comment_has_changes: bool
+    comment_has_failures: bool
+    comment_has_errors: bool
+    stats_has_changes: bool
+    stats_has_failures: bool
+    stats_has_errors: bool
+    tests_has_changes: bool
 
 
 class TestPublisher(unittest.TestCase):
@@ -293,102 +306,135 @@ class TestPublisher(unittest.TestCase):
             Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='class ‑ test \\U0001d484')
         ], annotations)
 
-    def do_test_require_comment(self, comment_condition, tests):
+    def test_re(self):
+        m = re.search(r'[-+](\s*[0-9]+)+\s+(([^0-9\s])|\n)', '- 1 \n')
+        self.assertIsNotNone(m)
+
+    def test_comment_has_changes(self):
+        with self.subTest(comment=None):
+            self.assertEqual(Publisher.comment_has_changes(None), False)
+
+        for mag in [1, 10, 100, 1000]:
+            kwargs = {
+                'files': get_diff_value(1+mag, 1+mag),
+                'errors': [],
+                'suites': get_diff_value(2+mag, 2+mag),
+                'duration': get_diff_value(3+mag, 3+mag, 'duration'),
+
+                'tests': get_diff_value(22+mag, 22+mag),
+                'tests_succ': get_diff_value(4+mag, 4+mag),
+                'tests_skip': get_diff_value(5+mag, 5+mag),
+                'tests_fail': get_diff_value(6+mag, 6+mag),
+                'tests_error': get_diff_value(7+mag, 7+mag),
+
+                'runs': get_diff_value(38+mag, 38+mag),
+                'runs_succ': get_diff_value(8+mag, 8+mag),
+                'runs_skip': get_diff_value(9+mag, 9+mag),
+                'runs_fail': get_diff_value(10+mag, 10+mag),
+                'runs_error': get_diff_value(11+mag, 11+mag),
+
+                'commit': 'commit',
+                'reference_type': 'ref',
+                'reference_commit': 'base'
+            }
+
+            # comments with changes
+            for field in [None, 'files', 'suites', 'duration',
+                          'tests', 'tests_succ', 'tests_skip', 'tests_fail', 'tests_error',
+                          'runs', 'runs_succ', 'runs_skip', 'runs_fail', 'runs_error']:
+                for change in {-1, +1, mag, -mag}:
+                    with self.subTest(field=field, magnitude=mag,   change=change):
+                        kwargs2 = {k: v if k != field else {k2: v2 + change if k2 == 'delta' else v2
+                                                            for k2, v2 in v.items()}
+                                   for k, v in kwargs.items()}
+                        stats = UnitTestRunDeltaResults(**kwargs2)
+                        summary = get_long_summary_md(stats, 'http://details')
+                        comment = f'## title\n{summary}'
+                        self.assertEqual(Publisher.comment_has_changes(comment), stats.has_changes, msg=comment)
+
+    def test_comment_has_failures(self):
+        self.do_test_comment_has(lambda comment: Publisher.comment_has_failures(comment), lambda stats: stats.has_failures)
+
+    def test_comment_has_errors(self):
+        self.do_test_comment_has(lambda comment: Publisher.comment_has_errors(comment), lambda stats: stats.has_errors)
+
+    def do_test_comment_has(self,
+                            actual: Callable[[str], bool],
+                            expected: Callable[[UnitTestRunResultsOrDeltaResults], bool]):
+        with self.subTest(comment=None):
+            self.assertEqual(Publisher.comment_has_failures(None), False)
+
+        kwargs = {
+            'errors': [],
+            'commit': 'commit'
+        }
+        fields = ['files', 'suites', 'duration',
+                  'tests', 'tests_succ', 'tests_skip', 'tests_fail', 'tests_error',
+                  'runs', 'runs_succ', 'runs_skip', 'runs_fail', 'runs_error']
+        kwargs.update(**{field: 0 for field in fields})
+
+        for mag in [1, 10, 100, 1000]:
+            for field in fields + ['errors']:
+                with self.subTest(field=field, magnitude=mag):
+                    kwargs2 = {k: mag if k == field and field != 'errors' else v for k, v in kwargs.items()}
+                    stats = UnitTestRunResults(**kwargs2)
+                    if field == 'errors':
+                        stats = stats.with_errors(errors * mag)
+                    summary = get_long_summary_md(stats, 'http://details')
+                    comment = f'## title\n{summary}'
+                    print(f'field={field} stats={stats} summary={summary}')
+                    self.assertEqual(actual(comment), expected(stats), msg=comment)
+
+    def do_test_require_comment(self, comment_condition, test_expectation: Callable[["CommentConditionTest"], bool]):
+        tests = [(test, test_expectation(test)) for test in self.comment_condition_tests]
+
         publisher = mock.MagicMock(Publisher)
         publisher._settings = self.create_settings(comment_condition=comment_condition)
 
-        for has_failures, has_errors, stats_has_changes, tests_has_changes, expected in tests:
-            with self.subTest(has_failures=has_failures, has_errors=has_errors,
-                              stats_has_changes=stats_has_changes, tests_has_changes=tests_has_changes):
-                stats = mock.MagicMock(has_failures=has_failures, has_errors=has_errors)
-                stats_with_delta = mock.MagicMock(has_changes=stats_has_changes)
-                test_changes = mock.MagicMock(has_changes=tests_has_changes)
-                required = Publisher.require_comment(publisher, stats, stats_with_delta, test_changes)
+        for test, expected in tests:
+            with self.subTest(test):
+                publisher.comment_has_changes = mock.Mock(return_value=test.comment_has_changes)
+                publisher.comment_has_failures = mock.Mock(return_value=test.comment_has_failures)
+                publisher.comment_has_errors = mock.Mock(return_value=test.comment_has_errors)
+                stats = mock.MagicMock(has_failures=test.stats_has_failures, has_errors=test.stats_has_errors)
+                stats_with_delta = mock.MagicMock(has_changes=test.stats_has_changes)
+                test_changes = mock.MagicMock(has_changes=test.tests_has_changes)
+                required = Publisher.require_comment(publisher, stats, stats_with_delta, test_changes, 'body')
                 self.assertEqual(required, expected)
 
+    comment_condition_tests = [CommentConditionTest(comment_has_changes, comment_has_failures, comment_has_errors,
+                                                    stat_has_changes, stat_has_failures, stat_has_errors, tests_has_changes)
+                               for comment_has_changes in [False, True]
+                               for comment_has_failures in [False, True]
+                               for comment_has_errors in [False, True]
+                               for stat_has_changes in [False, True]
+                               for stat_has_failures in [False, True]
+                               for stat_has_errors in [False, True]
+                               for tests_has_changes in [False, True]]
+
     def test_require_comment_always(self):
-        self.do_test_require_comment(comment_condition_always, [
-            # failures, errors, changes, test changes
-            (False, False, False, False, True),
-            (False, False, False, True, True),
-            (False, False, True, False, True),
-            (False, False, True, True, True),
-            (False, True, False, False, True),
-            (False, True, False, True, True),
-            (False, True, True, False, True),
-            (False, True, True, True, True),
-            (True, False, False, False, True),
-            (True, False, False, True, True),
-            (True, False, True, False, True),
-            (True, False, True, True, True),
-            (True, True, False, False, True),
-            (True, True, False, True, True),
-            (True, True, True, False, True),
-            (True, True, True, True, True)
-        ])
+        self.do_test_require_comment(
+            comment_condition_always,
+            lambda _: True
+        )
 
     def test_require_comment_changes(self):
-        self.do_test_require_comment(comment_condition_changes, [
-            # failures, errors, changes, test changes
-            (False, False, False, False, False),
-            (False, False, False, True, True),
-            (False, False, True, False, True),
-            (False, False, True, True, True),
-            (False, True, False, False, False),
-            (False, True, False, True, True),
-            (False, True, True, False, True),
-            (False, True, True, True, True),
-            (True, False, False, False, False),
-            (True, False, False, True, True),
-            (True, False, True, False, True),
-            (True, False, True, True, True),
-            (True, True, False, False, False),
-            (True, True, False, True, True),
-            (True, True, True, False, True),
-            (True, True, True, True, True)
-        ])
+        self.do_test_require_comment(
+            comment_condition_changes,
+            lambda test: test.comment_has_changes or test.stats_has_changes or test.tests_has_changes
+        )
 
     def test_require_comment_failures(self):
-        self.do_test_require_comment(comment_condition_failures, [
-            # failures, errors, changes, test changes
-            (False, False, False, False, False),
-            (False, False, False, True, False),
-            (False, False, True, False, False),
-            (False, False, True, True, False),
-            (False, True, False, False, True),
-            (False, True, False, True, True),
-            (False, True, True, False, True),
-            (False, True, True, True, True),
-            (True, False, False, False, True),
-            (True, False, False, True, True),
-            (True, False, True, False, True),
-            (True, False, True, True, True),
-            (True, True, False, False, True),
-            (True, True, False, True, True),
-            (True, True, True, False, True),
-            (True, True, True, True, True)
-        ])
+        self.do_test_require_comment(
+            comment_condition_failures,
+            lambda test: test.comment_has_failures or test.comment_has_errors or test.stats_has_failures or test.stats_has_errors
+        )
 
     def test_require_comment_errors(self):
-        self.do_test_require_comment(comment_condition_errors, [
-            # failures, errors, changes, test changes
-            (False, False, False, False, False),
-            (False, False, False, True, False),
-            (False, False, True, False, False),
-            (False, False, True, True, False),
-            (False, True, False, False, True),
-            (False, True, False, True, True),
-            (False, True, True, False, True),
-            (False, True, True, True, True),
-            (True, False, False, False, False),
-            (True, False, False, True, False),
-            (True, False, True, False, False),
-            (True, False, True, True, False),
-            (True, True, False, False, True),
-            (True, True, False, True, True),
-            (True, True, True, False, True),
-            (True, True, True, True, True)
-        ])
+        self.do_test_require_comment(
+            comment_condition_errors,
+            lambda test: test.comment_has_errors or test.stats_has_errors
+        )
 
     def test_publish_without_comment(self):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
@@ -827,19 +873,21 @@ class TestPublisher(unittest.TestCase):
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
+        lc = mock.MagicMock(body='latest comment') if one_exists else None
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
         settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=lc)
         publisher.reuse_comment = mock.Mock(return_value=one_exists)
         publisher.require_comment = mock.Mock(return_value=True)
         with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(4 if one_exists else 3, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_test_lists_from_check_run', method)
@@ -847,17 +895,28 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('require_comment', method)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('reuse_comment', method)
-        self.assertEqual((pr, '## title\nbody'), args)
+        self.assertEqual('get_latest_comment', method)
+        self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
 
-        mock_calls = pr.mock_calls
-        self.assertEqual(0 if one_exists else 3, len(mock_calls))
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('require_comment', method)
 
-        if not one_exists:
+        if one_exists:
+            (method, args, kwargs) = mock_calls[3]
+            self.assertEqual('reuse_comment', method)
+            self.assertEqual((lc, '## title\nbody'), args)
+            self.assertEqual({}, kwargs)
+
+        mock_calls = pr.mock_calls
+        self.assertEqual(1 if one_exists else 3, len(mock_calls))
+
+        if one_exists:
+            (method, args, kwargs) = mock_calls[0]
+            self.assertEqual('number.__str__', method)
+            self.assertEqual((), args)
+            self.assertEqual({}, kwargs)
+        else:
             (method, args, kwargs) = mock_calls[0]
             self.assertEqual('create_issue_comment', method)
             self.assertEqual(('## title\nbody', ), args)
@@ -879,57 +938,22 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_with_reuse_comment_one_existing(self):
         self.do_test_publish_comment_with_reuse_comment(one_exists=True)
 
-    def do_test_reuse_comment(self,
-                              pull_request_comments: List[Any],
-                              action_comments: List[Mapping[str, int]],
-                              body='body',
-                              expected_body='body\n:recycle: This comment has been updated with latest results.'):
-        pr = mock.MagicMock()
+    def do_test_reuse_comment(self, earlier_body: str, expected_body: str):
         comment = mock.MagicMock()
-        pr.get_issue_comment = mock.Mock(return_value=comment)
-        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
         publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher.get_pull_request_comments = mock.Mock(return_value=pull_request_comments)
-        publisher.get_action_comments = mock.Mock(return_value=action_comments)
-        Publisher.reuse_comment(publisher, pr, body)
+        Publisher.reuse_comment(publisher, comment, earlier_body)
 
-        mock_calls = publisher.mock_calls
-        self.assertEqual(2, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('get_pull_request_comments', method)
-        self.assertEqual((pr, ), args)
-        self.assertEqual({'order_by_updated': True}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_action_comments', method)
-        self.assertEqual((pull_request_comments, ), args)
-        self.assertEqual({}, kwargs)
-
-        if action_comments:
-            pr.get_issue_comment.assert_called_once_with(action_comments[-1].get('databaseId'))
-            comment.edit.assert_called_once_with(expected_body)
-
-    def test_reuse_comment_non_existing(self):
-        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[])
-
-    def test_reuse_comment_one_existing(self):
-        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}])
-
-    def test_reuse_comment_multiple_existing(self):
-        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}, {'databaseId': 2}, {'databaseId': 3}])
+        comment.edit.assert_called_once_with(expected_body)
+        self.assertEqual(0, len(publisher.mock_calls))
 
     def test_reuse_comment_existing_not_updated(self):
         # we do not expect the body to be extended by the recycle message
-        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
-                                   body='a new comment',
+        self.do_test_reuse_comment(earlier_body='a new comment',
                                    expected_body='a new comment\n:recycle: This comment has been updated with latest results.')
 
     def test_reuse_comment_existing_updated(self):
         # we do not expect the body to be extended by the recycle message
-        self.do_test_reuse_comment(pull_request_comments=[1, 2, 3], action_comments=[{'databaseId': 1}],
-                                   body='comment already updated\n:recycle: Has been updated',
+        self.do_test_reuse_comment(earlier_body='comment already updated\n:recycle: Has been updated',
                                    expected_body='comment already updated\n:recycle: Has been updated')
 
     def do_test_get_pulls(self,

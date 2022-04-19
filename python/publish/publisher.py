@@ -11,6 +11,7 @@ from github import Github, GithubException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
+from github.IssueComment import IssueComment
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
@@ -445,8 +446,15 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
+        # we need fetch the latest comment if comment_condition != comment_condition_always
+        # or self._settings.comment_mode == comment_mode_update
+        latest_comment = None
+        if self._settings.comment_condition != comment_condition_always or self._settings.comment_mode == comment_mode_update:
+            latest_comment = self.get_latest_comment(pull_request)
+        latest_comment_body = latest_comment.body if latest_comment else None
+
         # are we required to create a comment on this PR?
-        if not self.require_comment(stats, stats_with_delta, test_changes):
+        if not self.require_comment(stats, stats_with_delta, test_changes, latest_comment_body):
             logger.info(f'No comment required as comment_on is {self._settings.comment_condition}')
             return
 
@@ -454,22 +462,64 @@ class Publisher:
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # reuse existing commend when comment_mode == comment_mode_update
-        # if none exists or comment_mode != comment_mode_update, create new comment
-        if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
+        # reuse existing comment when comment_mode == comment_mode_update, otherwise create new comment
+        if self._settings.comment_mode == comment_mode_update and latest_comment is not None:
+            self.reuse_comment(latest_comment, body)
+            logger.info(f'edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
+        else:
             comment = pull_request.create_issue_comment(body)
             logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
+
+    @staticmethod
+    def comment_has_changes(comment_body: Optional[str]) -> bool:
+        if comment_body is None:
+            return False
+        end = comment_body.lower().find('results for commit')
+        if end < 0:
+            return False
+        comment_body = comment_body[:end]
+
+        # remove links
+        comment_body = re.sub(r'\([^)]*\)', '<link>', comment_body)
+        # replace ' ' with some non-whitespace string, it separates columns in the comment
+        comment_body = comment_body.replace(' ', '⋯')
+
+        m = re.search(r'[-+](\s*[0-9]+)+\s+(([^0-9\s])|\n)', comment_body)
+        return m is not None
+
+    @classmethod
+    def comment_has_failures(cls, comment_body: Optional[str]) -> bool:
+        return cls._comment_has(comment_body, r'\[:x:]')
+
+    @classmethod
+    def comment_has_errors(cls, comment_body: Optional[str]) -> bool:
+        return cls._comment_has(comment_body, r'(\[:fire:]|errors)')
+
+    @staticmethod
+    def _comment_has(comment_body: Optional[str], symbol: str) -> bool:
+        if comment_body is None:
+            return False
+
+        end = comment_body.lower().find('results for commit')
+        if end < 0:
+            return False
+        comment_body = comment_body[:end]
+
+        # we assume '00 ...' indicates multiple failures / errors (more than 99)
+        m = re.search(r'([0-9][0-9]|[1-9])\s' + symbol, comment_body)
+        return m is not None
 
     def require_comment(self,
                         stats: UnitTestRunResults,
                         stats_with_delta: UnitTestRunDeltaResults,
-                        test_changes: SomeTestChanges) -> bool:
+                        test_changes: SomeTestChanges,
+                        comment_body: Optional[str]) -> bool:
         return (self._settings.comment_condition == comment_condition_always or
-                self._settings.comment_condition == comment_condition_changes and (stats_with_delta is None or stats_with_delta.has_changes or test_changes.has_changes) or
-                self._settings.comment_condition == comment_condition_failures and (stats.has_failures or stats.has_errors) or
-                self._settings.comment_condition == comment_condition_errors and stats.has_errors)
+                self._settings.comment_condition == comment_condition_changes and (self.comment_has_changes(comment_body) or stats_with_delta is None or stats_with_delta.has_changes or test_changes.has_changes) or
+                self._settings.comment_condition == comment_condition_failures and (self.comment_has_failures(comment_body) or self.comment_has_errors(comment_body) or stats.has_failures or stats.has_errors) or
+                self._settings.comment_condition == comment_condition_errors and (self.comment_has_errors(comment_body) or stats.has_errors))
 
-    def reuse_comment(self, pull: PullRequest, body: str) -> bool:
+    def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
         comments = self.get_pull_request_comments(pull, order_by_updated=True)
 
@@ -478,22 +528,21 @@ class Publisher:
 
         # if there is no such comment, stop here
         if len(comments) == 0:
-            return False
+            return None
 
-        # edit last comment
+        # fetch latest action comment
         comment_id = comments[-1].get("databaseId")
+        return pull.get_issue_comment(comment_id)
+
+    def reuse_comment(self, comment: IssueComment, body: str):
         if ':recycle:' not in body:
             body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
         try:
-            comment = pull.get_issue_comment(comment_id)
             comment.edit(body)
-            logger.info(f'edited comment for pull request #{pull.number}: {comment.html_url}')
         except Exception as e:
-            self._gha.warning(f'Failed to edit existing comment #{comment_id}')
+            self._gha.warning(f'Failed to edit existing comment #{comment.id}')
             logger.debug('editing existing comment failed', exc_info=e)
-
-        return True
 
     def get_base_commit_sha(self, pull_request: PullRequest) -> Optional[str]:
         if self._settings.pull_request_build == pull_request_build_mode_merge:
