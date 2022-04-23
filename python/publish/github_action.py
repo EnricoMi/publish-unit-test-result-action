@@ -11,7 +11,8 @@ class GithubAction:
     def __init__(self, file: Optional[TextIOWrapper] = None):
         if file is None:
             file = sys.stdout
-            if isinstance(file, TextIOWrapper):
+            # pre Python 3.7, TextIOWrapper does not have reconfigure
+            if isinstance(file, TextIOWrapper) and hasattr(file, 'reconfigure'):
                 # ensure we have utf8 encoding, the default encoding of sys.stdout on Windows is cp1252
                 file.reconfigure(encoding='utf-8')
 
