@@ -205,7 +205,7 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
   publish-composite:
-    name: Publish Unit Test Results (${{ matrix.os-label }})
+    name: Publish Unit Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
     needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
@@ -218,6 +218,7 @@ jobs:
       max-parallel: 3
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+        python: ["installed", "3.6"]
         include:
           - os: macos-latest
             os-label: macOS
@@ -229,6 +230,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Setup Python
+        if: matrix.python != 'installed'
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python }}
 
       - name: Detect OS
         id: os
@@ -272,7 +279,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: ./composite
         with:
-          check_name: Unit Test Results (${{ matrix.os-label }})
+          check_name: Unit Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
 
   publish-composite-extra:
