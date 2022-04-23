@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from io import TextIOWrapper
@@ -74,5 +75,9 @@ class GithubAction:
         params = ','.join([f'{key}={str(value)}'
                            for key, value in params.items()])
         params = f' {params}' if params else ''
-        file.write(f'::{command}{params}::{value}')
-        file.write(os.linesep)
+
+        try:
+            file.write(f'::{command}{params}::{value}')
+            file.write(os.linesep)
+        except Exception as e:
+            logging.error(f'Failed to forward command {command} to GithubActions: {e}')
