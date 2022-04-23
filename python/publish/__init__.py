@@ -153,7 +153,7 @@ def restrict_unicode(text: Optional[str]) -> Optional[str]:
                     for c in text])
 
 
-def restrict_unicode_list(texts: List[str]) -> List[str]:
+def restrict_unicode_list(texts: List[Optional[str]]) -> List[Optional[str]]:
     return [restrict_unicode(text) for text in texts]
 
 
