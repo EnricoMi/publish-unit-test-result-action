@@ -109,7 +109,7 @@ class TestPublisher(unittest.TestCase):
                      repo_name: Optional[str] = None,
                      repo_login: Optional[str] = None,
                      commit: Optional[mock.Mock] = mock.MagicMock(),
-                     digest: str = None,
+                     digest: Optional[str] = None,
                      check_names: List[str] = None):
         gh = mock.MagicMock(Github)
         gh._Github__requester = mock.MagicMock()

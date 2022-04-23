@@ -266,7 +266,7 @@ def as_delta(number: int, digits: int) -> str:
 def as_stat_number(number: Optional[Union[int, Numeric]],
                    number_digits: int = 0,
                    delta_digits: int = 0,
-                   label: str = None) -> str:
+                   label: Optional[str] = None) -> str:
     if number is None:
         if label:
             return 'N/A {}'.format(label)
