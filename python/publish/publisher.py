@@ -347,10 +347,10 @@ class Publisher:
                      for test in test_list]
         return test_list
 
-    def get_test_list_annotations(self, cases: UnitTestCaseResults) -> List[Annotation]:
-        all_tests = get_all_tests_list_annotation(cases) \
+    def get_test_list_annotations(self, cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
+        all_tests = get_all_tests_list_annotation(cases, max_chunk_size) \
             if all_tests_list in self._settings.check_run_annotation else []
-        skipped_tests = get_skipped_tests_list_annotation(cases) \
+        skipped_tests = get_skipped_tests_list_annotation(cases, max_chunk_size) \
             if skipped_tests_list in self._settings.check_run_annotation else []
         return [annotation for annotation in skipped_tests + all_tests if annotation]
 

@@ -244,6 +244,44 @@ class TestPublisher(unittest.TestCase):
                       if not call[0].startswith('_logger.')]
         return mock_calls
 
+    def test_get_test_list_annotations(self):
+        cases = UnitTestCaseResults([
+            ((None, 'class', 'test abcd'), {'success': [None]}),
+            ((None, 'class', 'test efgh'), {'skipped': [None]}),
+            ((None, 'class', 'test ijkl'), {'skipped': [None]}),
+        ])
+
+        settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
+        gh = mock.MagicMock()
+        publisher = Publisher(settings, gh, None)
+        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=42)
+
+        self.assertEqual([
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class ‑ test efgh\nclass ‑ test ijkl'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class ‑ test abcd\nclass ‑ test efgh'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='class ‑ test ijkl')
+        ], annotations)
+
+    def test_get_test_list_annotations_chunked_and_restricted_unicode(self):
+        cases = UnitTestCaseResults([
+            ((None, 'class', 'test 𝒂'), {'success': [None]}),
+            ((None, 'class', 'test 𝒃'), {'skipped': [None]}),
+            ((None, 'class', 'test 𝒄'), {'skipped': [None]}),
+        ])
+
+        settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
+        gh = mock.MagicMock()
+        publisher = Publisher(settings, gh, None)
+        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=42)
+
+        self.assertEqual([
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the list of skipped tests 1 to 1.', title='2 skipped tests found (test 1 to 1)', raw_details='class ‑ test \\U0001d483'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the list of skipped tests 2 to 2.', title='2 skipped tests found (test 2 to 2)', raw_details='class ‑ test \\U0001d484'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 1.', title='3 tests found (test 1 to 1)', raw_details='class ‑ test \\U0001d482'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 2 to 2.', title='3 tests found (test 2 to 2)', raw_details='class ‑ test \\U0001d483'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='class ‑ test \\U0001d484')
+        ], annotations)
+
     def test_publish_without_comment(self):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])

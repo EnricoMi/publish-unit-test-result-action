@@ -93,6 +93,30 @@ class PublishTest(unittest.TestCase):
         self.assertIsNone(changes.remaining_and_un_skipped())
         self.assertIsNone(changes.removed_skips())
 
+    def test_restrict_unicode(self):
+        self.assertEqual(None, restrict_unicode(None))
+        self.assertEqual('', restrict_unicode(''))
+
+        # utf8 characters ≤ 0xffff
+        self.assertEqual('…', restrict_unicode('…'))
+        self.assertEqual('abc', restrict_unicode('abc'))
+        self.assertEqual('»»»»»', restrict_unicode('»»»»»'))
+        self.assertEqual('▊▋▌▍▎', restrict_unicode('▊▋▌▍▎'))
+
+        # utf8 characters > 0xffff
+        self.assertEqual(r'\U0001d482\U0001d483\U0001d484', restrict_unicode('𝒂𝒃𝒄'))
+        self.assertEqual(r'헴䜝헱홐㣇㿷䔭\U0001237a\U000214ff\U00020109㦓', restrict_unicode('헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓'))
+
+        # restricting a second time should not alter the result
+        self.assertEqual(None, restrict_unicode(restrict_unicode(None)))
+        self.assertEqual('', restrict_unicode(restrict_unicode('')))
+        self.assertEqual('…', restrict_unicode(restrict_unicode('…')))
+        self.assertEqual('abc', restrict_unicode(restrict_unicode('abc')))
+        self.assertEqual('»»»»»', restrict_unicode(restrict_unicode('»»»»»')))
+        self.assertEqual('▊▋▌▍▎', restrict_unicode(restrict_unicode('▊▋▌▍▎')))
+        self.assertEqual(r'\U0001d482\U0001d483\U0001d484', restrict_unicode(restrict_unicode('𝒂𝒃𝒄')))
+        self.assertEqual(r'헴䜝헱홐㣇㿷䔭\U0001237a\U000214ff\U00020109㦓', restrict_unicode(restrict_unicode('헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓')))
+
     def test_abbreviate_characters(self):
         # None string
         self.assertIsNone(abbreviate(None, 1))
@@ -1427,6 +1451,16 @@ class PublishTest(unittest.TestCase):
         self.assertEqual('message ' * 3999 + 'message…ssage ' + 'message ' * 3999, annotation.to_dict().get('message'))
         self.assertEqual('title - ' * 15 + 'title -…itle - ' + 'title - ' * 15, annotation.to_dict().get('title'))
         self.assertEqual('raw ' * 8000 + '…aw ' + 'raw ' * 7999, annotation.to_dict().get('raw_details'))
+
+    def test_annotation_to_dict_restricted_unicode(self):
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message abc')
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message abc'), annotation.to_dict())
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message »»»')
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message »»»'), annotation.to_dict())
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message ▊▋▌▍▎')
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message ▊▋▌▍▎'), annotation.to_dict())
+        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message 𝒂𝒃𝒄')
+        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message \\U0001d482\\U0001d483\\U0001d484'), annotation.to_dict())
 
     def test_get_case_annotation(self):
         messages = CaseMessages([
