@@ -17,32 +17,32 @@ class GithubAction:
 
         self._file: TextIOWrapper = file
 
-    def set_output(self, name: str, value: Any) -> str:
-        return self._command(self._file, 'set-output', value, {'name': name})
+    def set_output(self, name: str, value: Any):
+        self._command(self._file, 'set-output', value, {'name': name})
 
-    def add_mask(self, value: str) -> str:
-        return self._command(self._file, 'add-mask', value)
+    def add_mask(self, value: str):
+        self._command(self._file, 'add-mask', value)
 
-    def stop_commands(self, end_token: str) -> str:
-        return self._command(self._file, 'stop-commands', end_token)
+    def stop_commands(self, end_token: str):
+        self._command(self._file, 'stop-commands', end_token)
 
-    def continue_commands(self, end_token: str) -> str:
-        return self._command(self._file, end_token)
+    def continue_commands(self, end_token: str):
+        self._command(self._file, end_token)
 
-    def save_state(self, name: str, value: Any) -> str:
-        return self._command(self._file, 'save-state', value, {'name': name})
+    def save_state(self, name: str, value: Any):
+        self._command(self._file, 'save-state', value, {'name': name})
 
-    def group(self, title: str) -> str:
-        return self._command(self._file, 'group', title)
+    def group(self, title: str):
+        self._command(self._file, 'group', title)
 
-    def group_end(self, ) -> str:
-        return self._command(self._file, 'endgroup')
+    def group_end(self, ):
+        self._command(self._file, 'endgroup')
 
-    def debug(self, message: str) -> str:
+    def debug(self, message: str):
         logger.debug(message)
-        return self._command(self._file, 'debug', message)
+        self._command(self._file, 'debug', message)
 
-    def warning(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None) -> str:
+    def warning(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None):
         logger.warning(message)
 
         params = {}
@@ -52,9 +52,9 @@ class GithubAction:
             params.update(line=line)
         if column is not None:
             params.update(col=column)
-        return self._command(self._file, 'warning', message, params)
+        self._command(self._file, 'warning', message, params)
 
-    def error(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None) -> str:
+    def error(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None):
         logger.error(message)
 
         params = {}
@@ -64,10 +64,10 @@ class GithubAction:
             params.update(line=line)
         if column is not None:
             params.update(col=column)
-        return self._command(self._file, 'error', message, params)
+        self._command(self._file, 'error', message, params)
 
     @staticmethod
-    def _command(file: TextIOWrapper, command: str, value: str = '', params: Optional[Mapping[str, Any]] = None) -> str:
+    def _command(file: TextIOWrapper, command: str, value: str = '', params: Optional[Mapping[str, Any]] = None):
         if params is None:
             params = {}
         params = ','.join([f'{key}={str(value)}'
