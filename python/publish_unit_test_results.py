@@ -192,7 +192,7 @@ def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAc
         return default
 
 
-def check_var(var: Union[str, List[str]],
+def check_var(var: Union[Optional[str], List[str]],
               name: str,
               label: str,
               allowed_values: Optional[List[str]] = None) -> None:
