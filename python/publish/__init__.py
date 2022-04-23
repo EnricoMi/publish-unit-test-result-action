@@ -144,6 +144,19 @@ def utf8_character_length(c: int) -> int:
     return 1
 
 
+# Github API does not like Unicode characters above 0xffff
+# Those characters are replaced here by \U00000000
+def restrict_unicode(text: Optional[str]) -> Optional[str]:
+    if text is None:
+        return None
+    return ''.join([r"\U{:08x}".format(ord(c)) if ord(c) > 0xffff else c
+                    for c in text])
+
+
+def restrict_unicode_list(texts: List[Optional[str]]) -> List[Optional[str]]:
+    return [restrict_unicode(text) for text in texts]
+
+
 def alternating_range(positive_first: bool = True) -> Iterator[int]:
     i = 0
     yield i
@@ -628,7 +641,7 @@ class Annotation:
         dictionary = self.__dict__.copy()
         dictionary['message'] = abbreviate_bytes(dictionary['message'], 64000)
         dictionary['title'] = abbreviate(dictionary['title'], 255)
-        dictionary['raw_details'] = abbreviate(dictionary['raw_details'], 64000)
+        dictionary['raw_details'] = abbreviate(restrict_unicode(dictionary['raw_details']), 64000)
         if not dictionary.get('start_column'):
             del dictionary['start_column']
         if not dictionary.get('end_column'):
@@ -758,11 +771,11 @@ def get_skipped_tests_list(cases: UnitTestCaseResults) -> List[str]:
 
 
 def get_all_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
-    return get_test_list_annotation(get_all_tests_list(cases), 'test', max_chunk_size)
+    return get_test_list_annotation(restrict_unicode_list(get_all_tests_list(cases)), 'test', max_chunk_size)
 
 
 def get_skipped_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
-    return get_test_list_annotation(get_skipped_tests_list(cases), 'skipped test', max_chunk_size)
+    return get_test_list_annotation(restrict_unicode_list(get_skipped_tests_list(cases)), 'skipped test', max_chunk_size)
 
 
 def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int = 64000) -> List[Annotation]:
