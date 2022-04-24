@@ -468,6 +468,121 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((), args)
         self.assertEqual({}, kwargs)
 
+    def test_publish_comment_compare_earlier_with_restricted_unicode(self):
+        pr = mock.MagicMock()
+        cr = mock.MagicMock()
+        cr.html_url = 'html://url'
+        bcr = mock.MagicMock()
+        bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
+        stats = self.stats
+        # the new test cases with un-restricted unicode, as they come from test result files
+        cases = UnitTestCaseResults([
+            # removed test 𝒂
+            ((None, 'class', 'test 𝒃'), {'success': [None]}),     # unchanged test 𝒃
+            # removed skipped 𝒄
+            ((None, 'class', 'skipped 𝒅'), {'skipped': [None]}),  # unchanged skipped 𝒅
+            ((None, 'class', 'skipped 𝒆'), {'skipped': [None]}),  # added skipped 𝒆
+            ((None, 'class', 'test 𝒇'), {'success': [None]}),     # added test 𝒇
+        ])
+
+        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_check_run = mock.Mock(return_value=bcr)
+        publisher.get_stats_from_check_run = mock.Mock(return_value=bs)
+        publisher.get_stats_delta = mock.Mock(return_value=bs)
+        publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
+        # the earlier test cases with restricted unicode as they come from the check runs API
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(
+            # before, these existed: test 𝒂, test 𝒃, skipped 𝒄, skipped 𝒅
+            ['class ‑ test \\U0001d482', 'class ‑ test \\U0001d483', 'class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485'],
+            ['class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485']
+        ))
+        Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
+
+        self.assertEqual(4, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_base_commit_sha', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual(('base commit', ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('get_stats_from_check_run', method)
+        self.assertEqual((bcr, ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[3]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((bcr, ), args)
+        self.assertEqual({}, kwargs)
+
+        mock_calls = pr.mock_calls
+        self.assertEqual(3, len(mock_calls))
+
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('create_issue_comment', method)
+        self.assertEqual(('## title\n'
+                          '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003'
+                          '2 suites\u2004 +1\u2002\u2003\u2002'
+                          '3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests") +2s\n'
+                          '22 tests +19\u2002\u2003'
+                          '4 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") +3\u2002\u2003'
+                          '5 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") +3\u2002\u2003\u205f\u2004'
+                          '6 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests") +\u205f\u20046\u2002\u2003\u205f\u2004'
+                          '7 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors") +\u205f\u20047\u2002\n'
+                          '38 runs\u2006 +35\u2002\u20038 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") +7\u2002\u2003'
+                          '9 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") +7\u2002\u2003'
+                          '10 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests") +10\u2002\u2003'
+                          '11 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors") +11\u2002\n'
+                          '\n'
+                          'For more details on these failures and errors, see [this check](html://url).\n'
+                          '\n'
+                          'Results for commit commit.\u2003± Comparison against base commit commit.\n'
+                          '\n'
+                          '<details>\n'
+                          '  <summary>This pull request <b>removes</b> 2 and <b>adds</b> 2 tests. <i>Note that renamed tests count towards both.</i></summary>\n'
+                          '\n'
+                          '```\n'
+                          'class ‑ skipped \\U0001d484\n'
+                          'class ‑ test \\U0001d482\n'
+                          '```\n'
+                          '\n'
+                          '```\n'
+                          'class ‑ skipped \\U0001d486\n'
+                          'class ‑ test \\U0001d487\n'
+                          '```\n'
+                          '</details>\n'
+                          '\n'
+                          '<details>\n'
+                          '  <summary>This pull request <b>removes</b> 1 skipped test and <b>adds</b> 1 skipped test. <i>Note that renamed tests count towards both.</i></summary>\n'
+                          '\n'
+                          '```\n'
+                          'class ‑ skipped \\U0001d484\n'
+                          '```\n'
+                          '\n'
+                          '```\n'
+                          'class ‑ skipped \\U0001d486\n'
+                          '```\n'
+                          '</details>\n',), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('number.__str__', method)
+        self.assertEqual((), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
+        self.assertEqual('create_issue_comment().html_url.__str__', method)
+        self.assertEqual((), args)
+        self.assertEqual({}, kwargs)
+
     def test_publish_comment_compare_with_itself(self):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
