@@ -1453,14 +1453,15 @@ class PublishTest(unittest.TestCase):
         self.assertEqual('raw ' * 8000 + '…aw ' + 'raw ' * 7999, annotation.to_dict().get('raw_details'))
 
     def test_annotation_to_dict_restricted_unicode(self):
-        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message abc')
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message abc'), annotation.to_dict())
-        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message »»»')
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message »»»'), annotation.to_dict())
-        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message ▊▋▌▍▎')
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message ▊▋▌▍▎'), annotation.to_dict())
-        annotation = Annotation(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message 𝒂𝒃𝒄')
-        self.assertEqual(dict(path='file1', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message \\U0001d482\\U0001d483\\U0001d484'), annotation.to_dict())
+        for text, expected in [
+            ('abc', 'abc'),
+            ('»»»', '»»»'),
+            ('▊▋▌▍▎', '▊▋▌▍▎'),
+            ('𝒂𝒃𝒄', '\\U0001d482\\U0001d483\\U0001d484')
+        ]:
+            with self.subTest(text=text):
+                annotation = Annotation(path=f'file1 {text}', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message=f'result-file1 {text}', title=f'1 out of 6 runs skipped: test1 {text}', raw_details=f'message {text}')
+                self.assertEqual(dict(path=f'file1 {expected}', start_line=123, end_line=123, start_column=4, end_column=5, annotation_level='notice', message=f'result-file1 {expected}', title=f'1 out of 6 runs skipped: test1 {expected}', raw_details=f'message {expected}'), annotation.to_dict())
 
     def test_get_case_annotation(self):
         messages = CaseMessages([

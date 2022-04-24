@@ -639,8 +639,9 @@ class Annotation:
 
     def to_dict(self) -> Mapping[str, Any]:
         dictionary = self.__dict__.copy()
-        dictionary['message'] = abbreviate_bytes(dictionary['message'], 64000)
-        dictionary['title'] = abbreviate(dictionary['title'], 255)
+        dictionary['path'] = restrict_unicode(dictionary['path'])
+        dictionary['message'] = abbreviate_bytes(restrict_unicode(dictionary['message']), 64000)
+        dictionary['title'] = abbreviate(restrict_unicode(dictionary['title']), 255)
         dictionary['raw_details'] = abbreviate(restrict_unicode(dictionary['raw_details']), 64000)
         if not dictionary.get('start_column'):
             del dictionary['start_column']
