@@ -12,7 +12,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
-    comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, \
+    comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -377,6 +377,9 @@ class Publisher:
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
+        # 'before' test names a retrieved from check runs, which have a limited unicode
+        # so we have to apply the same restriction to the test names retrieved from cases so they match
+        all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         details_url = check_run.html_url if check_run else None
