@@ -494,6 +494,7 @@ class TestPublisher(unittest.TestCase):
         publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
         # the earlier test cases with restricted unicode as they come from the check runs API
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(
+            # before, these existed: test 𝒂, test 𝒃, skipped 𝒄, skipped 𝒅
             ['class ‑ test \\U0001d482', 'class ‑ test \\U0001d483', 'class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485'],
             ['class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485']
         ))

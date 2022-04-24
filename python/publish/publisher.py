@@ -377,8 +377,8 @@ class Publisher:
         # gather test lists from check run and cases
         before_all_tests, before_skipped_tests = self.get_test_lists_from_check_run(base_check_run)
         all_tests, skipped_tests = get_all_tests_list(cases), get_skipped_tests_list(cases)
-        # 'before' test names a retrieved from check runs, which have a limited unicode
-        # so we have to apply the same restriction to the test names retrieved from cases so they match
+        # 'before' test names are retrieved from check runs, which have restricted unicode
+        # so we have to apply the same restriction to the test names retrieved from cases, so that they match
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
