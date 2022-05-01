@@ -108,9 +108,9 @@ The following permissions are required in **private** GitHub repos:
 
 ```yaml
 permissions:
-  checks: write
   contents: read
   issues: read
+  checks: write
   pull-requests: write
 ```
 
@@ -266,6 +266,7 @@ are then all downloaded by your publish job.
 name: CI
 
 on: [push]
+permissions: {}
 
 jobs:
   build-and-test:
@@ -300,6 +301,17 @@ jobs:
     name: "Publish Unit Tests Results"
     needs: build-and-test
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+      # only needed unless run with comment_mode: off
+      pull-requests: write
+
+      # only needed for private repository
+      contents: read
+
+      # only needed for private repository
+      issues: read
     if: always()
 
     steps:
@@ -382,11 +394,24 @@ on:
     workflows: ["CI"]
     types:
       - completed
+permissions: {}
 
 jobs:
   unit-test-results:
     name: Unit Test Results
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: write
+
+      # only needed unless run with comment_mode: off
+      pull-requests: write
+
+      # only needed for private repository
+      contents: read
+
+      # only needed for private repository
+      issues: read
     if: github.event.workflow_run.conclusion != 'skipped'
 
     steps:

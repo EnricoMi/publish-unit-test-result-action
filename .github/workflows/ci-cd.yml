@@ -10,6 +10,7 @@ on:
   schedule:
     - cron: '0 16 * * *'
   workflow_dispatch:
+permissions: {}
 
 jobs:
   test:
@@ -122,6 +123,9 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -152,6 +156,10 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      security-events: write
 
     steps:
       - name: Checkout
@@ -213,6 +221,10 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      pull-requests: write
+
     strategy:
       fail-fast: false
       max-parallel: 3
@@ -291,6 +303,9 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -332,6 +347,9 @@ jobs:
       github.event.sender.login != 'dependabot[bot]' &&
       ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout

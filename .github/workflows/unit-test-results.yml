@@ -5,20 +5,17 @@ on:
     workflows: ["CI/CD"]
     types:
       - completed
+permissions: {}
 
 jobs:
-  debug:
-    name: Debug
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Debug Action
-        uses: hmarr/debug-action@v2.0.1
-
   unit-test-results:
     name: Unit Test Results (reference)
-    runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion != 'skipped'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Download and Extract Artifacts
