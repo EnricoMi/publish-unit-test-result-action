@@ -95,7 +95,7 @@ runs:
         echo '##[group]Check for Python3'
         if ! which python3
         then
-          if ! which python || [[ $(python -V) != *"python 3."* ]]
+          if ! which python || [[ $(python -V) != *"python 3."* && $(python -V) != *"Python 3."* ]]
           then
             echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
             exit 1
