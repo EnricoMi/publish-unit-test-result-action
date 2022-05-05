@@ -108,7 +108,9 @@ runs:
           interpreter3="${interpreter}3"
           if [[ ! -e "$interpreter3" ]]
           then
-            ln -s $interpreter $interpreter3
+            mkdir -p "$RUNNER_TEMP/bin/"
+            ln -s "$interpreter" "$RUNNER_TEMP/bin/${interpreter}3"
+            echo "PATH=$PATH:$RUNNER_TEMP/bin/${interpreter}3" >> $GITHUB_ENV
           fi
         fi
         echo '##[endgroup]'
