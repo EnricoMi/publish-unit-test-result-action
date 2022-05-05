@@ -93,7 +93,10 @@ runs:
     - name: Check for Python3
       run: |
         echo '##[group]Check for Python3'
-        if ! which python3
+        # we check version here just to execute `python3` with an argument
+        # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
+        # command `which python3` finds that, but `python3 -V` does not return the version on stdout
+        if ! which python3 || [[ $(python3 -V) != *"python 3."* && $(python3 -V) != *"Python 3."* ]]
         then
           if ! which python || [[ $(python -V) != *"python 3."* && $(python -V) != *"Python 3."* ]]
           then
