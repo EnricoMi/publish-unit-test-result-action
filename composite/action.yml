@@ -108,7 +108,7 @@ runs:
           interpreter3="${interpreter}3"
           if [[ ! -e "$interpreter3" ]]
           then
-            ln -s $interpreter3 $interpreter
+            ln -s $interpreter $interpreter3
           fi
         fi
         echo '##[endgroup]'
