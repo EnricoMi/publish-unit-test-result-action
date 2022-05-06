@@ -109,8 +109,8 @@ runs:
           if [[ ! -e "$interpreter3" ]]
           then
             mkdir -p "$RUNNER_TEMP/bin/"
-            ln -s "$interpreter" "$RUNNER_TEMP/bin/${interpreter}3"
-            echo "PATH=$PATH:$RUNNER_TEMP/bin/${interpreter}3" >> $GITHUB_ENV
+            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
+            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
           fi
         fi
         echo '##[endgroup]'
