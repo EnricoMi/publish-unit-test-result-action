@@ -105,8 +105,7 @@ runs:
           fi
 
           interpreter="$(which python)"
-          interpreter3="${interpreter}3"
-          if [[ ! -e "$interpreter3" ]]
+          if [[ ! -e "${interpreter}3" ]]
           then
             mkdir -p "$RUNNER_TEMP/bin/"
             ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
