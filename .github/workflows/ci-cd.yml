@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Unit Test Results (python-${{ matrix.python-version }}, ${{ matrix.os }})
           path: |
@@ -202,7 +202,7 @@ jobs:
           dockerfile: ./Dockerfile
           annotations: true
       - name: Upload SARIF artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: SARIF
           path: ${{ steps.scan.outputs.sarif }}
@@ -507,7 +507,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Event File
           path: ${{ github.event_path }}
