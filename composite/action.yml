@@ -93,19 +93,23 @@ runs:
     - name: Check for Python3
       run: |
         echo '##[group]Check for Python3'
-        if ! which python3
+        # we check version here just to execute `python3` with an argument
+        # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
+        # command `which python3` finds that, but `python3 -V` does not return the version on stdout
+        if ! which python3 || [[ $(python3 -V) != *"python 3."* && $(python3 -V) != *"Python 3."* ]]
         then
-          if ! which python || [[ $(python -V) != *"python 3."* ]]
+          if ! which python || [[ $(python -V) != *"python 3."* && $(python -V) != *"Python 3."* ]]
           then
             echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
             exit 1
           fi
 
           interpreter="$(which python)"
-          interpreter3="${interpreter}3"
-          if [[ ! -e "$interpreter3" ]]
+          if [[ ! -e "${interpreter}3" ]]
           then
-            ln -s $interpreter3 $interpreter
+            mkdir -p "$RUNNER_TEMP/bin/"
+            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
+            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
           fi
         fi
         echo '##[endgroup]'
