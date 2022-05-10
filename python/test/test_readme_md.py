@@ -1,16 +1,18 @@
+import pathlib
 import unittest
 
 import yaml
-from yaml import Loader
+import os
 
+project_root = pathlib.Path(__file__).parent.parent.parent
 
 class TestActionYml(unittest.TestCase):
 
     def test_readme_md(self):
-        with open('../../action.yml', encoding='utf-8') as r:
-            action = yaml.load(r, Loader=Loader)
+        with open(project_root / 'action.yml', encoding='utf-8') as r:
+            action = yaml.safe_load(r)
 
-        with open('../../README.md', encoding='utf-8') as r:
+        with open(project_root / 'README.md', encoding='utf-8') as r:
             readme = r.readlines()
 
         for input, config in action.get('inputs').items():

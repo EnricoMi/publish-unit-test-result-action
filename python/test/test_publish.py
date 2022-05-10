@@ -1,5 +1,7 @@
 import contextlib
 import locale
+import os
+import pathlib
 import unittest
 
 import mock
@@ -10,6 +12,7 @@ from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
 from test import d, n
 
+test_files_path = pathlib.Path(__file__).parent / 'files'
 
 @contextlib.contextmanager
 def temp_locale(encoding: str) -> Any:
@@ -1874,16 +1877,16 @@ class PublishTest(unittest.TestCase):
                          chunks)
 
     def test_files(self):
-        parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
-                                        'files/junit.gloo.elastic.spark.torch.xml',
-                                        'files/junit.gloo.elastic.xml',
-                                        'files/junit.gloo.standalone.xml',
-                                        'files/junit.gloo.static.xml',
-                                        'files/junit.mpi.integration.xml',
-                                        'files/junit.mpi.standalone.xml',
-                                        'files/junit.mpi.static.xml',
-                                        'files/junit.spark.integration.1.xml',
-                                        'files/junit.spark.integration.2.xml']).with_commit('example')
+        parsed = parse_junit_xml_files([str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
+                                        str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
+                                        str(test_files_path / 'junit.gloo.elastic.xml'),
+                                        str(test_files_path / 'junit.gloo.standalone.xml'),
+                                        str(test_files_path / 'junit.gloo.static.xml'),
+                                        str(test_files_path / 'junit.mpi.integration.xml'),
+                                        str(test_files_path / 'junit.mpi.standalone.xml'),
+                                        str(test_files_path / 'junit.mpi.static.xml'),
+                                        str(test_files_path / 'junit.spark.integration.1.xml'),
+                                        str(test_files_path / 'junit.spark.integration.2.xml')]).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -1894,7 +1897,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit example.\n'))
 
     def test_file_without_cases(self):
-        parsed = parse_junit_xml_files(['files/no-cases.xml']).with_commit('a commit sha')
+        parsed = parse_junit_xml_files([str(test_files_path / 'no-cases.xml')]).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -1904,7 +1907,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_file_without_cases_but_with_tests(self):
-        parsed = parse_junit_xml_files(['files/no-cases-but-tests.xml']).with_commit('a commit sha')
+        parsed = parse_junit_xml_files([str(test_files_path / 'no-cases-but-tests.xml')]).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -1924,7 +1927,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_files_with_testcase_in_testcase(self):
-        parsed = parse_junit_xml_files(['files/testcase-in-testcase.xml']).with_commit('example')
+        parsed = parse_junit_xml_files([str(test_files_path / 'testcase-in-testcase.xml')]).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -1934,16 +1937,16 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit example.\n'))
 
     def test_files_without_annotations(self):
-        parsed = parse_junit_xml_files(['files/junit.gloo.elastic.spark.tf.xml',
-                                        'files/junit.gloo.elastic.spark.torch.xml',
-                                        'files/junit.gloo.elastic.xml',
-                                        'files/junit.gloo.standalone.xml',
-                                        'files/junit.gloo.static.xml',
-                                        'files/junit.mpi.integration.xml',
-                                        'files/junit.mpi.standalone.xml',
-                                        'files/junit.mpi.static.xml',
-                                        'files/junit.spark.integration.1.xml',
-                                        'files/junit.spark.integration.2.xml'],
+        parsed = parse_junit_xml_files([str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
+                                        str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
+                                        str(test_files_path / 'junit.gloo.elastic.xml'),
+                                        str(test_files_path / 'junit.gloo.standalone.xml'),
+                                        str(test_files_path / 'junit.gloo.static.xml'),
+                                        str(test_files_path / 'junit.mpi.integration.xml'),
+                                        str(test_files_path / 'junit.mpi.standalone.xml'),
+                                        str(test_files_path / 'junit.mpi.static.xml'),
+                                        str(test_files_path / 'junit.spark.integration.1.xml'),
+                                        str(test_files_path / 'junit.spark.integration.2.xml')],
                                        drop_testcases=True).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)

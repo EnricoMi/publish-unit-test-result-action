@@ -1,3 +1,5 @@
+import os
+import pathlib
 import unittest
 from distutils.version import LooseVersion
 from typing import Optional
@@ -7,6 +9,7 @@ from junitparser import JUnitXml, Element, version
 from publish.junit import parse_junit_xml_files, get_results, get_result, get_content, get_message, Disabled
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
+test_files_path = pathlib.Path(__file__).parent / 'files'
 
 class TestElement(Element):
     __test__ = False
@@ -40,8 +43,9 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_spark_diff_file(self):
+        result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -54,7 +58,7 @@ class TestJunit(unittest.TestCase):
                 cases=[
                     UnitTestCase(
                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         test_name='diff options with empty diff column name',
@@ -65,7 +69,7 @@ class TestJunit(unittest.TestCase):
                     ),
                     UnitTestCase(
                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        result_file=result_file,
                         test_name='diff options left and right prefixes',
                         test_file=None,
                         line=None,
@@ -76,7 +80,7 @@ class TestJunit(unittest.TestCase):
                     ),
                     UnitTestCase(
                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        result_file=result_file,
                         test_name='diff options diff value',
                         test_file=None,
                         line=None,
@@ -87,7 +91,7 @@ class TestJunit(unittest.TestCase):
                     ),
                     UnitTestCase(
                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        result_file=result_file,
                         test_name='diff options with change column name same as diff column',
                         test_file=None,
                         line=None,
@@ -98,7 +102,7 @@ class TestJunit(unittest.TestCase):
                     ),
                     UnitTestCase(
                         class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                        result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                        result_file=result_file,
                         test_name='fluent methods of diff options',
                         test_file=None,
                         line=None,
@@ -111,8 +115,9 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_horovod_file(self):
+        result_file = str(test_files_path / 'junit.mpi.integration.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/junit.mpi.integration.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -124,7 +129,7 @@ class TestJunit(unittest.TestCase):
                 suite_time=15,
                 cases=[
                     UnitTestCase(
-                        result_file='files/junit.mpi.integration.xml',
+                        result_file=result_file,
                         class_name='test.test_interactiverun.InteractiveRunTests',
                         test_name='test_failed_run',
                         test_file='test/test_interactiverun.py',
@@ -135,7 +140,7 @@ class TestJunit(unittest.TestCase):
                         time=9.386
                     ),
                     UnitTestCase(
-                        result_file='files/junit.mpi.integration.xml',
+                        result_file=result_file,
                         class_name='test.test_interactiverun.InteractiveRunTests',
                         test_name='test_happy_run',
                         test_file='test/test_interactiverun.py',
@@ -146,7 +151,7 @@ class TestJunit(unittest.TestCase):
                         time=4.012
                     ),
                     UnitTestCase(
-                        result_file='files/junit.mpi.integration.xml',
+                        result_file=result_file,
                         class_name='test.test_interactiverun.InteractiveRunTests',
                         test_name='test_happy_run_elastic',
                         test_file='test/test_interactiverun.py',
@@ -160,8 +165,9 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_spark_extension_file(self):
+        result_file = str(test_files_path / 'junit.fail.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/junit.fail.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -175,7 +181,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='test.test_spark.SparkTests',
                         content=None,
-                        result_file='files/junit.fail.xml',
+                        result_file=result_file,
                         test_file='test/test_spark.py',
                         line=1412,
                         message=None,
@@ -188,7 +194,7 @@ class TestJunit(unittest.TestCase):
                         content='/horovod/test/test_spark.py:1642: get_available_devices only\n'
                                 '                supported in Spark 3.0 and above\n'
                                 '            ',
-                        result_file='files/junit.fail.xml',
+                        result_file=result_file,
                         test_file='test/test_spark.py',
                         line=1641,
                         message='get_available_devices only supported in Spark 3.0 and above',
@@ -199,7 +205,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='test.test_spark.SparkTests',
                         content=None,
-                        result_file='files/junit.fail.xml',
+                        result_file=result_file,
                         test_file='test/test_spark.py',
                         line=1102,
                         message=None,
@@ -222,7 +228,7 @@ class TestJunit(unittest.TestCase):
                                 '                self.assertEqual(expected_result, res)\n'
                                 '                E AssertionError: 143 != 0\n'
                                 '            ',
-                        result_file='files/junit.fail.xml',
+                        result_file=result_file,
                         test_file='test/test_spark.py',
                         line=819,
                         message='self = <test_spark.SparkTests testMethod=test_rsh_events>'
@@ -244,7 +250,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='test.test_spark.SparkTests',
                         content=None,
-                        result_file='files/junit.fail.xml',
+                        result_file=result_file,
                         test_file='test/test_spark.py',
                         line=813,
                         message=None,
@@ -256,14 +262,15 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_minimal_attributes_file(self):
+        result_file = str(test_files_path / 'minimal-attributes.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/minimal-attributes.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 cases=[
                     UnitTestCase(
                         class_name='ClassName',
                         content=None,
-                        result_file='files/minimal-attributes.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -274,7 +281,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='ClassName',
                         content=None,
-                        result_file='files/minimal-attributes.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -285,7 +292,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='ClassName',
                         content=None,
-                        result_file='files/minimal-attributes.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -296,7 +303,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name='ClassName',
                         content=None,
-                        result_file='files/minimal-attributes.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -316,14 +323,15 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_xunit_xml_file(self):
+        result_file = str(test_files_path / 'xunit.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/xunit.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 cases=[
                     UnitTestCase(
                         class_name=None,
                         content=None,
-                        result_file='files/xunit.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -334,7 +342,7 @@ class TestJunit(unittest.TestCase):
                     UnitTestCase(
                         class_name=None,
                         content=None,
-                        result_file='files/xunit.xml',
+                        result_file=result_file,
                         test_file=None,
                         line=None,
                         message=None,
@@ -354,8 +362,9 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_no_attributes_file(self):
+        result_file = str(test_files_path / 'no-attributes.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/no-attributes.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
@@ -369,12 +378,13 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_empty_file(self):
+        result_file = str(test_files_path / 'empty.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/empty.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError('files/empty.xml', 'File is empty.', None, None)],
+                errors=[ParseError(result_file, 'File is empty.', None, None)],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
@@ -384,11 +394,12 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_non_xml_file(self):
+        result_file = str(test_files_path / 'non-xml.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/non-xml.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file='files/non-xml.xml', message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
+                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -399,11 +410,12 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_corrupt_xml_file(self):
+        result_file = str(test_files_path / 'corrupt-xml.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/corrupt-xml.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file='files/corrupt-xml.xml', message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
+                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -414,11 +426,12 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_non_junit_file(self):
+        result_file = str(test_files_path / 'non-junit.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/non-junit.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file='files/non-junit.xml', message='Invalid format.', line=None, column=None)],
+                errors=[ParseError(file=result_file, message='Invalid format.', line=None, column=None)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -445,13 +458,13 @@ class TestJunit(unittest.TestCase):
 
     # tests https://github.com/weiwei/junitparser/issues/64
     def test_junitparser_locale(self):
-        junit = JUnitXml.fromfile('files/junit.spark.integration.1.xml')
+        junit = JUnitXml.fromfile(str(test_files_path / 'junit.spark.integration.1.xml'))
         self.assertAlmostEqual(162.933, junit.time, 3)
 
     @unittest.skipIf(LooseVersion(version) < LooseVersion('2.0.0'),
                      'multiple results per test case not supported by junitparser')
     def test_parse_junit_xml_file_with_multiple_results(self):
-        junit = parse_junit_xml_files(['files/junit.multiresult.xml'])
+        junit = parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')])
         self.assertEqual(4, len(junit.cases))
         self.assertEqual("error", junit.cases[0].result)
         self.assertEqual("failure", junit.cases[1].result)
@@ -459,40 +472,41 @@ class TestJunit(unittest.TestCase):
         self.assertEqual("success", junit.cases[3].result)
 
     def test_parse_junit_xml_file_with_disabled_tests(self):
+        result_file = str(test_files_path / 'disabled.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/disabled.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
-                cases=[UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[0]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: check_eq(3628800, 3628801)', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[3]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[2]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_test', result='disabled', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, 6)hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='test_which_throws_unknown_exception', result='error', message='uncaught (anonymous namespace)::some_unknown_exception', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[2]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)', content=None, time=0.001),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[3]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[0]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[0]', result='disabled', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[1]', result='disabled', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[2]', result='disabled', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='test_which_fails_check_eq_with_custom_message', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, 7)hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='disabled_param_test[3]', result='disabled', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[1]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[1]', result='success', message=None, content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ge_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, 3)failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ge', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, 3)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_gt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, 2)failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_lt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, 2)failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_gt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, 2)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_le_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, 1)failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_eq', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, 2)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_eq_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, 2)failed!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_le', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, 1)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ne', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, 2)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_lt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, 2)Hello world!', content=None, time=0.0),
-                       UnitTestCase(result_file='files/disabled.xml', test_file=None, line=None, class_name=None, test_name='check_ne_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, 2)failed!', content=None, time=0.001)],
+                cases=[UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[0]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: check_eq(3628800, 3628801)', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[3]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[2]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='disabled_test', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, 6)hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='test_which_throws_unknown_exception', result='error', message='uncaught (anonymous namespace)::some_unknown_exception', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[2]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)', content=None, time=0.001),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[3]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[0]', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='disabled_param_test[0]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='disabled_param_test[1]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='disabled_param_test[2]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='test_which_fails_check_eq_with_custom_message', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, 7)hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='disabled_param_test[3]', result='disabled', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[1]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture[1]', result='success', message=None, content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_ge_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, 3)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_ge', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, 3)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_gt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_lt_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_gt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_le_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, 1)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_eq', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_eq_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, 2)failed!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_le', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, 1)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_ne', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_lt', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, 2)Hello world!', content=None, time=0.0),
+                       UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='check_ne_print', result='failure', message='/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, 2)failed!', content=None, time=0.001)],
                 files=1,
                 errors=[],
                 suite_errors=1,
@@ -504,8 +518,9 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_xml_entities_in_test_names(self):
+        result_file = str(test_files_path / 'with-xml-entities.xml')
         self.assertEqual(
-            parse_junit_xml_files(['files/with-xml-entities.xml']),
+            parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -516,18 +531,19 @@ class TestJunit(unittest.TestCase):
                 suite_errors=1,
                 suite_time=0,
                 cases=[
-                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with "quotes" in the test name', result='skipped', message='A message with "quotes"', content='Content with "quotes"', time=0.0),
-                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name="Test with 'apostrophe' in the test name", result='failure', message='A message with \'apostrophes\'', content='Content with \'apostrophes\'', time=0.0),
-                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with & in the test name', result='error', message='A message with &', content='Content with &', time=0.0),
-                    UnitTestCase(result_file='files/with-xml-entities.xml', test_file=None, line=None, class_name=None, test_name='Test with < and > in the test name', result='skipped', message='A message with < and >', content='Content with < and >', time=0.0)
+                    UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='Test with "quotes" in the test name', result='skipped', message='A message with "quotes"', content='Content with "quotes"', time=0.0),
+                    UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name="Test with 'apostrophe' in the test name", result='failure', message='A message with \'apostrophes\'', content='Content with \'apostrophes\'', time=0.0),
+                    UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='Test with & in the test name', result='error', message='A message with &', content='Content with &', time=0.0),
+                    UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='Test with < and > in the test name', result='skipped', message='A message with < and >', content='Content with < and >', time=0.0)
                 ]
             ))
 
     def test_parse_junit_xml_files_with_time_factor(self):
+        result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 self.assertEqual(
-                    parse_junit_xml_files(['files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml'], time_factor),
+                    parse_junit_xml_files([result_file], time_factor),
                     ParsedUnitTestResults(
                         files=1,
                         errors=[],
@@ -540,7 +556,7 @@ class TestJunit(unittest.TestCase):
                         cases=[
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                result_file=result_file,
                                 test_file=None,
                                 line=None,
                                 test_name='diff options with empty diff column name',
@@ -551,7 +567,7 @@ class TestJunit(unittest.TestCase):
                             ),
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                result_file=result_file,
                                 test_name='diff options left and right prefixes',
                                 test_file=None,
                                 line=None,
@@ -562,7 +578,7 @@ class TestJunit(unittest.TestCase):
                             ),
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                result_file=result_file,
                                 test_name='diff options diff value',
                                 test_file=None,
                                 line=None,
@@ -573,7 +589,7 @@ class TestJunit(unittest.TestCase):
                             ),
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                result_file=result_file,
                                 test_name='diff options with change column name same as diff column',
                                 test_file=None,
                                 line=None,
@@ -584,7 +600,7 @@ class TestJunit(unittest.TestCase):
                             ),
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
-                                result_file='files/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+                                result_file=result_file,
                                 test_name='fluent methods of diff options',
                                 test_file=None,
                                 line=None,
