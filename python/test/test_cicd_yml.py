@@ -1,17 +1,18 @@
+import pathlib
 import unittest
 
 import yaml
-from yaml import Loader
 
+project_root = pathlib.Path(__file__).parent.parent.parent
 
 class TestActionYml(unittest.TestCase):
 
     def test_cicd_workflow(self):
-        with open('../../action.yml', encoding='utf-8') as r:
-            action = yaml.load(r, Loader=Loader)
+        with open(project_root / 'action.yml', encoding='utf-8') as r:
+            action = yaml.safe_load(r)
 
-        with open('../../.github/workflows/ci-cd.yml', encoding='utf-8') as r:
-            cicd = yaml.load(r, Loader=Loader)
+        with open(project_root / '.github/workflows/ci-cd.yml', encoding='utf-8') as r:
+            cicd = yaml.safe_load(r)
 
         docker_image_steps = cicd.get('jobs', []).get('publish-docker-image', {}).get('steps', [])
         docker_image_step = [step

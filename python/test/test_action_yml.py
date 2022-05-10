@@ -1,17 +1,19 @@
+import pathlib
 import unittest
 
 import yaml
-from yaml import Loader
+
+project_root = pathlib.Path(__file__).parent.parent.parent
 
 
 class TestActionYml(unittest.TestCase):
 
     def test_composite_action(self):
-        with open('../../action.yml', encoding='utf-8') as r:
-            dockerfile_action = yaml.load(r, Loader=Loader)
+        with open(project_root / 'action.yml', encoding='utf-8') as r:
+            dockerfile_action = yaml.safe_load(r)
 
-        with open('../../composite/action.yml', encoding='utf-8') as r:
-            composite_action = yaml.load(r, Loader=Loader)
+        with open(project_root / 'composite/action.yml', encoding='utf-8') as r:
+            composite_action = yaml.safe_load(r)
 
         self.assertIn('runs', dockerfile_action)
         self.assertIn('runs', composite_action)
@@ -21,8 +23,8 @@ class TestActionYml(unittest.TestCase):
         self.assertIn(('using', 'composite'), composite_action.get('runs', {}).items())
 
     def test_composite_inputs(self):
-        with open('../../composite/action.yml', encoding='utf-8') as r:
-            action = yaml.load(r, Loader=Loader)
+        with open(project_root / 'composite/action.yml', encoding='utf-8') as r:
+            action = yaml.safe_load(r)
 
         # these are not documented in the action.yml files but still needs to be forwarded
         extra_inputs = ['root_log_level', 'log_level']
