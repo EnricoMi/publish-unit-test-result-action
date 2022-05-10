@@ -52,6 +52,9 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
+    job_summary: bool = True
+    job_summary_file: Optional[str] = None
+
 
 
 @dataclasses.dataclass(frozen=True)
@@ -252,6 +255,7 @@ class Publisher:
 
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
+        self.publish_summary(summary)
 
         # create full json
         data = PublishData(
@@ -304,6 +308,14 @@ class Publisher:
 
         # provide a reduced version to Github actions
         self._gha.set_output('json', json.dumps(data.reduced(), ensure_ascii=False))
+
+    def publish_summary(self, summary: str):
+        if self._settings.job_summary_file:
+            try:
+                with open(self._settings.job_summary_file, 'a', encoding='utf-8') as summary_file:
+                    summary_file.write(summary)
+            except Exception as e:
+                self._gha.error(f'Failed to write summary file {self._settings.job_summary_file}: {str(e)}')
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:

@@ -53,7 +53,9 @@ class TestPublisher(unittest.TestCase):
                         event_name: str = 'event name',
                         json_file: Optional[str] = None,
                         pull_request_build: str = pull_request_build_mode_merge,
-                        test_changes_limit: Optional[int] = 5):
+                        test_changes_limit: Optional[int] = 5,
+                        job_summary: Optional[bool] = False,
+                        job_summary_file: Optional[str] = None):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -81,7 +83,9 @@ class TestPublisher(unittest.TestCase):
             ignore_runs=False,
             check_run_annotation=check_run_annotation,
             seconds_between_github_reads=1.5,
-            seconds_between_github_writes=2.5
+            seconds_between_github_writes=2.5,
+            job_summary=job_summary,
+            job_summary_file=job_summary_file
         )
 
     stats = UnitTestRunResults(
@@ -1447,6 +1451,22 @@ class TestPublisher(unittest.TestCase):
                 "annotations": 1
             }
             gha.set_output.assert_called_once_with('json', json.dumps(expected))
+
+    def test_publish_summary(self):
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'summary.md')
+            settings = self.create_settings(job_summary=True, job_summary_file=filepath)
+            gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+            publisher = Publisher(settings, gh, gha)
+
+            summary = 'Well, this summary is not very interesting'
+        
+            publisher.publish_summary(summary)
+
+            with open(filepath, 'r') as summary_file:
+                contents = summary_file.read()
+                self.assertEqual(contents, summary)
+            
 
     def test_publish_comment(self):
         settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
