@@ -87,6 +87,10 @@ inputs:
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
+  job_summary:
+    description: 'Set to `true` to publish summary as Job Step Summary, can be used in addition or replacement of pull request decoration'
+    required: false
+    default: 'true'
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.34'

@@ -294,7 +294,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False, gha=gha),
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
-        seconds_between_github_writes=float(seconds_between_github_writes)
+        seconds_between_github_writes=float(seconds_between_github_writes),
+        job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
+        job_summary_file=options.get('GITHUB_STEP_SUMMARY')
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
@@ -311,6 +313,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
     deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
+
+    if settings.job_summary:
+        check_var_condition(settings.job_summary_file, f'GITHUB_STEP_SUMMARY must point to a writeable file when JOB_SUMMARY is true')
 
     return settings
 

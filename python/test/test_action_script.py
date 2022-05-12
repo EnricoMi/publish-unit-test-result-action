@@ -184,7 +184,9 @@ class Test(unittest.TestCase):
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
-            seconds_between_github_writes=seconds_between_github_writes
+            seconds_between_github_writes=seconds_between_github_writes,
+            job_summary=False,
+            job_summary_file=None,
         )
 
     def test_get_settings(self):
@@ -450,6 +452,7 @@ class Test(unittest.TestCase):
                 # annotations config tested in test_get_annotations_config*
                 SECONDS_BETWEEN_GITHUB_READS='1.5',
                 SECONDS_BETWEEN_GITHUB_WRITES='2.5',
+                JOB_SUMMARY='false'
             )
             options.update(**kwargs)
             for arg in kwargs:
@@ -791,7 +794,8 @@ class Test(unittest.TestCase):
                     GITHUB_EVENT_PATH=file.name,
                     GITHUB_EVENT_NAME='pull_request',
                     GITHUB_REPOSITORY='repo',
-                    EVENT_FILE=None
+                    EVENT_FILE=None,
+                    JOB_SUMMARY="false"
                 ), gha)
             finally:
                 if sys.platform == 'win32':
