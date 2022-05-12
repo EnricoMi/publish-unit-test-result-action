@@ -9,6 +9,12 @@ from publish import logger
 
 class GithubAction:
 
+    # GitHub Actions environment file variable names
+    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
+    ENV_FILE_VAR_NAME = 'GITHUB_ENV'
+    PATH_FILE_VAR_NAME = 'GITHUB_PATH'
+    JOB_SUMMARY_FILE_VAR_NAME = 'GITHUB_STEP_SUMMARY'
+
     def __init__(self, file: Optional[TextIOWrapper] = None):
         if file is None:
             file = sys.stdout
@@ -81,3 +87,32 @@ class GithubAction:
             file.write(os.linesep)
         except Exception as e:
             logging.error(f'Failed to forward command {command} to GithubActions: {e}')
+
+    def add_to_env(self, var: str, val: str):
+        if '\n' in val:
+            # if this is really needed, implement it as describe here:
+            # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+            raise ValueError('Multiline values not supported for environment variables')
+        self._append_to_file(f'{var}={val}\n', self.ENV_FILE_VAR_NAME)
+
+    def add_to_path(self, path: str):
+        self._append_to_file(f'{path}\n', self.PATH_FILE_VAR_NAME)
+
+    def add_to_job_summary(self, markdown: str):
+        self._append_to_file(markdown, self.JOB_SUMMARY_FILE_VAR_NAME)
+
+    def _append_to_file(self, content: str, env_file_var_name: str):
+        # appends content to an environment file denoted by an environment variable name
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
+        filename = os.getenv(env_file_var_name)
+        if not filename:
+            self.warning(f'Cannot append to environment file {env_file_var_name} as it is not set. '
+                         f'See https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files')
+            return
+
+        try:
+            with open(filename, 'a', encoding='utf-8') as file:
+                file.write(content)
+        except Exception as e:
+            self.warning(f'Failed to write to environment file {filename}: {str(e)}. '
+                         f'See https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files')
