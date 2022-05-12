@@ -42,6 +42,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
+    job_summary: bool
     compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
@@ -52,9 +53,6 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
-    job_summary: bool = True
-    job_summary_file: Optional[str] = None
-
 
 
 @dataclasses.dataclass(frozen=True)
@@ -97,7 +95,10 @@ class Publisher:
                 cases: UnitTestCaseResults,
                 conclusion: str):
         logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
-        check_run = self.publish_check(stats, cases, conclusion)
+        check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+
+        if self._settings.job_summary:
+            self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
 
         if self._settings.comment_mode != comment_mode_off:
             pulls = self.get_pulls(self._settings.commit)
@@ -238,13 +239,15 @@ class Publisher:
     def publish_check(self,
                       stats: UnitTestRunResults,
                       cases: UnitTestCaseResults,
-                      conclusion: str) -> CheckRun:
+                      conclusion: str) -> Tuple[CheckRun, Optional[CheckRun]]:
         # get stats from earlier commits
         before_stats = None
+        before_check_run = None
         if self._settings.compare_earlier:
             before_commit_sha = self._settings.event.get('before')
             logger.debug(f'comparing against before={before_commit_sha}')
-            before_stats = self.get_stats_from_commit(before_commit_sha)
+            before_check_run = self.get_check_run(before_commit_sha)
+            before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         logger.debug(f'stats with delta: {stats_with_delta}')
 
@@ -255,7 +258,6 @@ class Publisher:
 
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
-        self.publish_summary(summary)
 
         # create full json
         data = PublishData(
@@ -292,7 +294,7 @@ class Publisher:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
-        return check_run
+        return check_run, before_check_run
 
     def publish_json(self, data: PublishData):
         if self._settings.json_file:
@@ -309,13 +311,18 @@ class Publisher:
         # provide a reduced version to Github actions
         self._gha.set_output('json', json.dumps(data.reduced(), ensure_ascii=False))
 
-    def publish_summary(self, summary: str):
-        if self._settings.job_summary_file:
-            try:
-                with open(self._settings.job_summary_file, 'a', encoding='utf-8') as summary_file:
-                    summary_file.write(summary)
-            except Exception as e:
-                self._gha.error(f'Failed to write summary file {self._settings.job_summary_file}: {str(e)}')
+    def publish_job_summary(self,
+                            title: str,
+                            stats: UnitTestRunResults,
+                            check_run: CheckRun,
+                            before_check_run: Optional[CheckRun]):
+        before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
+        stats_with_delta = get_stats_delta(stats, before_stats, 'base') if before_stats is not None else stats
+
+        details_url = check_run.html_url if check_run else None
+        summary = get_long_summary_md(stats_with_delta, details_url)
+        markdown = f'## {title}\n{summary}'
+        self._gha.add_to_job_summary(markdown)
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
