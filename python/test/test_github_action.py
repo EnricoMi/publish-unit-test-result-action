@@ -130,7 +130,8 @@ class TestGithubAction(unittest.TestCase):
             filepath = os.path.join(os.path.join(path, 'sub'), 'file')
             with mock.patch.dict(os.environ, {env_var_name: filepath}):
                 escaped_filepath = filepath.replace('\\', '\\\\')
-                with gh_action_command_test(self, f"::warning::Failed to write to environment file {escaped_filepath}: "
+                self.maxDiff = None
+                with gh_action_command_test(self, f"::warning::Failed to write to environment file {filepath}: "
                                                   f"[Errno 2] No such file or directory: '{escaped_filepath}'. "
                                                   f"See https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files") as gha:
                     gha._append_to_file('markdown', env_var_name)
