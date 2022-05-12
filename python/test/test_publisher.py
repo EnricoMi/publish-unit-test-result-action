@@ -1539,7 +1539,7 @@ class TestPublisher(unittest.TestCase):
                           '\n'
                           'For more details on these failures and errors, see [this check](http://check-run.url).\n'
                           '\n'
-                          'Results for commit commit.\u2003± Comparison against base commit before.\n', ), args)
+                          'Results for commit commit.\u2003± Comparison against earlier commit before.\n', ), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_comment(self):

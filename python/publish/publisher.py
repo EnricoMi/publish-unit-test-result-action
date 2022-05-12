@@ -317,7 +317,7 @@ class Publisher:
                             check_run: CheckRun,
                             before_check_run: Optional[CheckRun]):
         before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
-        stats_with_delta = get_stats_delta(stats, before_stats, 'base') if before_stats is not None else stats
+        stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
 
         details_url = check_run.html_url if check_run else None
         summary = get_long_summary_md(stats_with_delta, details_url)
