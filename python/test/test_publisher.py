@@ -44,6 +44,7 @@ class TestPublisher(unittest.TestCase):
 
     @staticmethod
     def create_settings(comment_mode=comment_mode_create,
+                        job_summary=True,
                         compare_earlier=True,
                         hide_comment_mode=hide_comments_mode_off,
                         report_individual_runs=False,
@@ -53,9 +54,7 @@ class TestPublisher(unittest.TestCase):
                         event_name: str = 'event name',
                         json_file: Optional[str] = None,
                         pull_request_build: str = pull_request_build_mode_merge,
-                        test_changes_limit: Optional[int] = 5,
-                        job_summary: Optional[bool] = False,
-                        job_summary_file: Optional[str] = None):
+                        test_changes_limit: Optional[int] = 5):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -74,6 +73,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
+            job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -83,9 +83,7 @@ class TestPublisher(unittest.TestCase):
             ignore_runs=False,
             check_run_annotation=check_run_annotation,
             seconds_between_github_reads=1.5,
-            seconds_between_github_writes=2.5,
-            job_summary=job_summary,
-            job_summary_file=job_summary_file
+            seconds_between_github_writes=2.5
         )
 
     stats = UnitTestRunResults(
@@ -122,10 +120,7 @@ class TestPublisher(unittest.TestCase):
 
         # have repo.create_check_run return the arguments given to it
         def create_check_run_hook(**kwargs) -> Mapping[str, Any]:
-            m = mock.MagicMock()
-            m.html_url = 'mock url'
-            m.create_check_run_kwargs = kwargs
-            return m
+            return mock.MagicMock(html_url='mock url', create_check_run_kwargs=kwargs)
 
         repo.create_check_run = mock.Mock(side_effect=create_check_run_hook)
 
@@ -135,8 +130,7 @@ class TestPublisher(unittest.TestCase):
                 for check_name in check_names:
                     run = mock.MagicMock()
                     run.name = check_name
-                    check_run_output = mock.MagicMock()
-                    check_run_output.summary = 'summary\n{}{}'.format(digest_header, digest)
+                    check_run_output = mock.MagicMock(summary='summary\n{}{}'.format(digest_header, digest))
                     run.output = check_run_output
                     runs.append(run)
 
@@ -239,7 +233,7 @@ class TestPublisher(unittest.TestCase):
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_pulls = mock.Mock(return_value=prs)
-        publisher.publish_check = mock.Mock(return_value=cr)
+        publisher.publish_check = mock.Mock(return_value=(cr, None))
         Publisher.publish(publisher, stats, cases, 'success')
 
         # return calls to mocked instance, except call to _logger
@@ -290,6 +284,21 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
+        self.assertEqual(2, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('publish_check', method)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, None, None), args)
+        self.assertEqual({}, kwargs)
+
+    def test_publish_without_job_summary_and_comment(self):
+        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off, job_summary=False)
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
+
         self.assertEqual(1, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
@@ -300,17 +309,22 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_all_but_latest)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
-        self.assertEqual(1, len(mock_calls))
+        self.assertEqual(2, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
         self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, None, None), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[])
 
-        self.assertEqual(2, len(mock_calls))
+        self.assertEqual(3, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
@@ -318,6 +332,11 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, None, None), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
         self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
@@ -328,7 +347,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(4, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
@@ -336,11 +355,16 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, cr, None), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
         self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[2]
+        (method, args, kwargs) = mock_calls[3]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
@@ -351,7 +375,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_mode)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
-        self.assertEqual(4, len(mock_calls))
+        self.assertEqual(5, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
@@ -359,16 +383,21 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, cr, None), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
         self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[2]
+        (method, args, kwargs) = mock_calls[3]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[3]
+        (method, args, kwargs) = mock_calls[4]
         self.assertEqual(hide_method, method)
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
@@ -391,7 +420,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
-        self.assertEqual(4, len(mock_calls))
+        self.assertEqual(5, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('publish_check', method)
@@ -399,16 +428,21 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, cr, None), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[2]
         self.assertEqual('get_pulls', method)
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[2]
+        (method, args, kwargs) = mock_calls[3]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[3]
+        (method, args, kwargs) = mock_calls[4]
         self.assertEqual('hide_all_but_latest_comments', method)
         self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
@@ -474,8 +508,7 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_comment_compare_earlier_with_restricted_unicode(self):
         pr = mock.MagicMock()
-        cr = mock.MagicMock()
-        cr.html_url = 'html://url'
+        cr = mock.MagicMock(html_url='html://url')
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
@@ -1115,7 +1148,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
+            check_run, before_check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -1161,6 +1194,7 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+        self.assertIsNone(before_check_run)
 
         # check the json output has been provided
         title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
@@ -1190,7 +1224,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
+            check_run, before_check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -1228,6 +1262,7 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+        self.assertIsInstance(before_check_run, mock.Mock)
 
         # check the json output has been provided
         title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
@@ -1252,7 +1287,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
+            check_run, before_check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
         create_check_run_kwargs = dict(
@@ -1287,6 +1322,7 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+        self.assertIsNone(before_check_run)
 
     def test_publish_check_with_multiple_annotation_pages(self):
         earlier_commit = 'past'
@@ -1311,7 +1347,7 @@ class TestPublisher(unittest.TestCase):
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run = publisher.publish_check(self.stats, cases, 'conclusion')
+            check_run, before_check_run = publisher.publish_check(self.stats, cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         # we expect a single call to create_check_run
@@ -1347,6 +1383,7 @@ class TestPublisher(unittest.TestCase):
         self.assertIsInstance(check_run, mock.Mock)
         self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
         self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+        self.assertIsInstance(before_check_run, mock.Mock)
 
         # we expect the edit method of the created check to be called for the remaining annotations
         # we expect three calls, each batch starting at these starts,
@@ -1452,21 +1489,58 @@ class TestPublisher(unittest.TestCase):
             }
             gha.set_output.assert_called_once_with('json', json.dumps(expected))
 
-    def test_publish_summary(self):
-        with tempfile.TemporaryDirectory() as path:
-            filepath = os.path.join(path, 'summary.md')
-            settings = self.create_settings(job_summary=True, job_summary_file=filepath)
-            gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
-            publisher = Publisher(settings, gh, gha)
+    def test_publish_job_summary_without_before(self):
+        settings = self.create_settings(job_summary=True)
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+        cr = mock.MagicMock(html_url='http://check-run.url')
+        publisher = Publisher(settings, gh, gha)
 
-            summary = 'Well, this summary is not very interesting'
-        
-            publisher.publish_summary(summary)
+        publisher.publish_job_summary('title', self.stats, cr, None)
+        mock_calls = gha.mock_calls
 
-            with open(filepath, 'r') as summary_file:
-                contents = summary_file.read()
-                self.assertEqual(contents, summary)
-            
+        self.assertEqual(1, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('add_to_job_summary', method)
+        self.assertEqual(('## title\n'
+                          '\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                          '22 tests\u20034 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests")\u20035 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests")\u2003\u205f\u20046 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\u2003\u205f\u20047 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors")\n'
+                          '38 runs\u2006\u20038 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests")\u20039 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests")\u200310 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\u200311 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors")\n'
+                          '\n'
+                          'For more details on these failures and errors, see [this check](http://check-run.url).\n'
+                          '\n'
+                          'Results for commit commit.\n', ), args)
+        self.assertEqual({}, kwargs)
+
+    def test_publish_job_summary_with_before(self):
+        settings = self.create_settings(job_summary=True)
+        gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+        cr = mock.MagicMock(html_url='http://check-run.url')
+        bcr = mock.MagicMock()
+        bs = UnitTestRunResults(
+            files=2, errors=[], suites=3, duration=4,
+            tests=20, tests_succ=5, tests_skip=4, tests_fail=5, tests_error=6,
+            runs=37, runs_succ=10, runs_skip=9, runs_fail=8, runs_error=7,
+            commit='before'
+        )
+        publisher = Publisher(settings, gh, gha)
+        publisher.get_check_run = mock.Mock(return_value=bcr)
+        publisher.get_stats_from_check_run = mock.Mock(return_value=bs)
+
+        publisher.publish_job_summary('title', self.stats, cr, bcr)
+        mock_calls = gha.mock_calls
+
+        self.assertEqual(1, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('add_to_job_summary', method)
+        self.assertEqual(('## title\n'
+                          '\u205f\u20041 files\u2004 \u2006-\u200a1\u2002\u20032 suites\u2004 \u2006-\u200a1\u2002\u2003\u20023s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests") -1s\n'
+                          '22 tests +2\u2002\u20034 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") \u2006-\u200a1\u2002\u20035 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") +1\u2002\u2003\u205f\u20046 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests") +1\u2002\u2003\u205f\u20047 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors") +1\u2002\n'
+                          '38 runs\u2006 +1\u2002\u20038 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") \u2006-\u200a2\u2002\u20039 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") ±0\u2002\u200310 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests") +2\u2002\u200311 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors") +4\u2002\n'
+                          '\n'
+                          'For more details on these failures and errors, see [this check](http://check-run.url).\n'
+                          '\n'
+                          'Results for commit commit.\u2003± Comparison against earlier commit before.\n', ), args)
+        self.assertEqual({}, kwargs)
 
     def test_publish_comment(self):
         settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
@@ -1631,8 +1705,7 @@ class TestPublisher(unittest.TestCase):
         pr.base.ref = 'master'
 
         settings = self.create_settings(event=event, event_name=event_name, pull_request_build=pull_request_build)
-        publisher = mock.MagicMock()
-        publisher._settings = settings
+        publisher = mock.MagicMock(_settings=settings)
         compare = mock.MagicMock()
         compare.merge_base_commit.sha = 'merge base commit sha'
         publisher._repo.compare = mock.Mock(return_value=compare)
@@ -1649,8 +1722,7 @@ class TestPublisher(unittest.TestCase):
             raise Exception()
 
         settings = self.create_settings(event={})
-        publisher = mock.MagicMock()
-        publisher._settings = settings
+        publisher = mock.MagicMock(_settings=settings)
         publisher._repo.compare = mock.Mock(side_effect=exception)
         result = Publisher.get_base_commit_sha(publisher, pr)
 

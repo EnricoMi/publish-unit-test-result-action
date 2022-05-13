@@ -41,32 +41,30 @@ created by [Dependabot](https://docs.github.com/en/github/administering-a-reposi
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
 
-Unit test results are published in the GitHub Actions section of the respective commit:
-
-![checks comment example](misc/github-checks-comment.png)
-
 ***Note:** This action does not fail if unit tests failed. The action that executed the unit tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
 
-Each failing test will produce an annotation with failure details:
-![annotations example](misc/github-checks-annotation.png)
+## Publishing test results
 
-***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
+Test results are published on GitHub at various (configurable) places:
 
-A comment is posted on the pull request of that commit.
-In presence of failures or errors, the comment links to the respective check page with failure details:
+- as [a comment](#pull-request-comment) in related pull requests
+- as [a check](#commit-and-pull-request-checks) in the checks section of a commit and related pull requests
+- as [a job summary](#github-actions-job-summary) of the GitHub Actions workflow
+- as [a check summary](#github-actions-check-summary-of-a-commit) in the GitHub Actions section of the commit
+
+### Pull request comment
+
+A comment is posted on pull requests related to the commit.
 
 ![pull request comment example](misc/github-pull-request-comment.png)
+
+In presence of failures or errors, the comment links to the respective [check summary](#github-actions-check-summary-of-a-commit) with failure details.
 
 Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
 
 ![checks comment example](misc/github-pull-request-comment-update-history.png)
-
-The checks section of the pull request also lists a short summary (here `1 fail, 1 skipped, 17 pass in 12s`),
-and a link to the GitHub Actions section (here `Details`):
-
-![pull request checks example](misc/github-pull-request-checks.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
@@ -78,6 +76,39 @@ Those are highlighted in pull request comments to easily spot unintended test re
 ![pull request comment example with test changes](misc/github-pull-request-comment-with-test-changes.png)
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
+
+### Commit and pull request checks
+
+The checks section of a commit and related pull requests list a short summary (here `1 fail, 1 skipped, …`),
+and a link to the [check summary](#github-actions-check-summary-of-a-commit) in the GitHub Actions section (here `Details`):
+
+Commit checks:
+
+![commit checks example](misc/github-checks-commit.png)
+
+Pull request checks:
+
+![pull request checks example](misc/github-pull-request-checks.png)
+
+### GitHub Actions job summary
+
+The results are added to the job status page of the workflow that runs this action:
+
+![job summary example](misc/github-job-summary-full.png)
+
+In presence of failures or errors, the job summary links to the respective [check summary](#github-actions-check-summary-of-a-commit) with failure details.
+
+### GitHub Actions check summary of a commit
+
+Unit test results are published in the GitHub Actions check summary of the respective commit:
+
+![checks comment example](misc/github-checks-comment.png)
+
+Each failing test will produce an annotation with failure details:
+
+![annotations example](misc/github-checks-annotation.png)
+
+***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
 ## The symbols
 [comment]: <> (This heading is linked to from method get_link_and_tooltip_label_md)
@@ -141,7 +172,7 @@ See the complete list of options below.
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
-|`job_summary`|`true`| Set to `true` to publish summary as Job Step Summary, can be used in addition or replacement of pull request decoration|
+|`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
 |`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
 |`github_retries`|`10`|Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.|

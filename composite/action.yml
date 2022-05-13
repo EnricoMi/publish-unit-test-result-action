@@ -52,6 +52,10 @@ inputs:
     description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
     required: false
     default: 'update last'
+  job_summary:
+    description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
+    required: false
+    default: 'true'
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
     required: false
@@ -87,10 +91,6 @@ inputs:
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
-  job_summary:
-    description: 'Set to `true` to publish summary as Job Step Summary, can be used in addition or replacement of pull request decoration'
-    required: false
-    default: 'true'
 runs:
   using: 'composite'
   steps:

@@ -146,6 +146,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_create,
+                     job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
@@ -175,6 +176,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
+            job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -184,9 +186,7 @@ class Test(unittest.TestCase):
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
-            seconds_between_github_writes=seconds_between_github_writes,
-            job_summary=False,
-            job_summary_file=None,
+            seconds_between_github_writes=seconds_between_github_writes
         )
 
     def test_get_settings(self):
@@ -336,6 +336,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
+    def test_get_settings_job_summary(self):
+        warning = 'Option job_summary has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(JOB_SUMMARY='false', expected=self.get_settings(job_summary=False))
+        self.do_test_get_settings(JOB_SUMMARY='False', expected=self.get_settings(job_summary=False))
+        self.do_test_get_settings(JOB_SUMMARY='true', expected=self.get_settings(job_summary=True))
+        self.do_test_get_settings(JOB_SUMMARY='True', expected=self.get_settings(job_summary=True))
+        self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning)
+        self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
+
     def test_get_settings_hide_comment(self):
         for mode in hide_comments_modes:
             with self.subTest(mode=mode):
@@ -446,13 +455,13 @@ class Test(unittest.TestCase):
                 FILES='files',
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='create new',  # true unless 'false'
+                JOB_SUMMARY='true',
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
                 # annotations config tested in test_get_annotations_config*
                 SECONDS_BETWEEN_GITHUB_READS='1.5',
-                SECONDS_BETWEEN_GITHUB_WRITES='2.5',
-                JOB_SUMMARY='false'
+                SECONDS_BETWEEN_GITHUB_WRITES='2.5'
             )
             options.update(**kwargs)
             for arg in kwargs:
@@ -794,8 +803,7 @@ class Test(unittest.TestCase):
                     GITHUB_EVENT_PATH=file.name,
                     GITHUB_EVENT_NAME='pull_request',
                     GITHUB_REPOSITORY='repo',
-                    EVENT_FILE=None,
-                    JOB_SUMMARY="false"
+                    EVENT_FILE=None
                 ), gha)
             finally:
                 if sys.platform == 'win32':
