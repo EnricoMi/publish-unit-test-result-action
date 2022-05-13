@@ -52,15 +52,15 @@ Test results are published on GitHub at various (configurable) places:
 - as [a comment](#pull-request-comment) in related pull requests
 - as [a check](#commit-and-pull-request-checks) in the checks section of a commit and related pull requests
 - as [a job summary](#github-actions-job-summary) of the GitHub Actions workflow
-- in the GitHub Actions section of the [commit](#github-actions-check-summary-of-a-commit)
+- as [a check summary](#github-actions-check-summary-of-a-commit) in the GitHub Actions section of the commit
 
 ### Pull request comment
 
-A comment is posted on the pull request of that commit.
+A comment is posted on pull requests related to the commit.
 
 ![pull request comment example](misc/github-pull-request-comment.png)
 
-In presence of failures or errors, the comment links to the respective [check page](#github-actions-check-summary-of-a-commit) with failure details.
+In presence of failures or errors, the comment links to the respective [check summary](#github-actions-check-summary-of-a-commit) with failure details.
 
 Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
 
@@ -79,13 +79,15 @@ Those are highlighted in pull request comments to easily spot unintended test re
 
 ### Commit and pull request checks
 
-The checks section of a commit and relevant pull requests also lists a short summary (here `1 fail, 1 skipped, …`),
-and a link to the [GitHub Actions section](#github-actions-check-summary-of-a-commit) (here `Details`):
+The checks section of a commit and related pull requests list a short summary (here `1 fail, 1 skipped, …`),
+and a link to the [check summary](#github-actions-check-summary-of-a-commit) in the GitHub Actions section (here `Details`):
 
 Commit checks:
+
 ![commit checks example](misc/github-checks-commit.png)
 
 Pull request checks:
+
 ![pull request checks example](misc/github-pull-request-checks.png)
 
 ### GitHub Actions job summary
@@ -94,11 +96,11 @@ The results are added to the job status page of the workflow that runs this acti
 
 ![job summary example](misc/github-job-summary-full.png)
 
-In presence of failures or errors, the job summary links to the respective [check page](#github-actions-check-summary-of-a-commit) with failure details.
+In presence of failures or errors, the job summary links to the respective [check summary](#github-actions-check-summary-of-a-commit) with failure details.
 
 ### GitHub Actions check summary of a commit
 
-Unit test results are published in the GitHub Actions section of the respective commit:
+Unit test results are published in the GitHub Actions check summary of the respective commit:
 
 ![checks comment example](misc/github-checks-comment.png)
 
