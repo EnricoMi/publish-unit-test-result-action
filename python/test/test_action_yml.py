@@ -31,6 +31,6 @@ class TestActionYml(unittest.TestCase):
         expected = {key.upper(): f'${{{{ inputs.{key} }}}}' for key in list(action.get('inputs', {}).keys()) + extra_inputs}
 
         steps = action.get('runs', {}).get('steps', [])
-        step = next((step for step in steps if step.get('name') == 'Publish Unit Test Results'), {})
+        step = next((step for step in steps if step.get('name') == 'Publish Test Results'), {})
         inputs = {key.upper(): value for key, value in step.get('env', {}).items()}
         self.assertEqual(expected, inputs)

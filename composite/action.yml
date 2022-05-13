@@ -1,6 +1,6 @@
 name: 'Publish Unit Test Results'
 author: 'EnricoMi'
-description: 'A GitHub Action that publishes unit test results on GitHub'
+description: 'A GitHub Action that publishes test results on GitHub'
 inputs:
   github_token:
     description: 'GitHub API Access Token'
@@ -126,9 +126,9 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
-    - name: Publish Unit Test Results
+    - name: Publish Test Results
       run: |
-        echo '##[group]Publish Unit Test Results'
+        echo '##[group]Publish Test Results'
         python3 $GITHUB_ACTION_PATH/../python/publish_unit_test_results.py
         echo '##[endgroup]'
       env:

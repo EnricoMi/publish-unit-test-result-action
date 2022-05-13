@@ -17,7 +17,7 @@ class TestActionYml(unittest.TestCase):
         docker_image_steps = cicd.get('jobs', []).get('publish-docker-image', {}).get('steps', [])
         docker_image_step = [step
                              for step in docker_image_steps
-                             if step.get('name') == 'Publish Unit Test Results']
+                             if step.get('name') == 'Publish Test Results']
         self.assertEqual(1, len(docker_image_step))
         docker_image_run = docker_image_step[0].get('run')
         self.assertTrue(docker_image_run)

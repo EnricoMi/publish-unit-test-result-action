@@ -1,4 +1,4 @@
-# GitHub Action to Publish Unit Test Results
+# GitHub Action to Publish Test Results
 
 [![CI/CD](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml)
 [![GitHub release badge](https://badgen.net/github/release/EnricoMi/publish-unit-test-result-action/stable)](https://github.com/EnricoMi/publish-unit-test-result-action/releases/latest)
@@ -10,13 +10,13 @@
 ![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
 
-This [GitHub Action](https://github.com/actions) analyses Unit Test result files and
+This [GitHub Action](https://github.com/actions) analyses Test result files and
 publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
 
 You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
 
 ```yaml
-- name: Publish Unit Test Results
+- name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v1
   if: always()
   with:
@@ -27,7 +27,7 @@ Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g
 and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `runs-on: windows-latest`) runners:
 
 ```yaml
-- name: Publish Unit Test Results
+- name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/composite@v1
   if: always()
   with:
@@ -39,9 +39,9 @@ See the [notes on running this action as a composite action](#running-as-a-compo
 Also see the [notes on supporting pull requests from fork repositories and branches](#support-fork-repositories-and-dependabot-branches)
 created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically).
 
-The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
+The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
 
-***Note:** This action does not fail if unit tests failed. The action that executed the unit tests should
+***Note:** This action does not fail if tests failed. The action that executed the tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
 
@@ -100,7 +100,7 @@ In presence of failures or errors, the job summary links to the respective [chec
 
 ### GitHub Actions check summary of a commit
 
-Unit test results are published in the GitHub Actions check summary of the respective commit:
+Test results are published in the GitHub Actions check summary of the respective commit:
 
 ![checks comment example](misc/github-checks-comment.png)
 
@@ -181,7 +181,7 @@ See the complete list of options below.
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`json_file`|no file|Results are written to this JSON file.|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
-|`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If unit tests ran on the actual pushed commit, then set this to `"commit"`.|
+|`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to `"commit"`.|
 |`event_file`|`${{env.GITHUB_EVENT_PATH}}`|An alternative event file to use. Useful to replace a `workflow_run` event file with the actual source event file.|
 |`event_name`|`${{env.GITHUB_EVENT_NAME}}`|An alternative event name to use. Useful to replace a `workflow_run` event name with the actual source event name: `${{ github.event.workflow_run.event }}`.|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
@@ -205,7 +205,7 @@ The gathered test information are accessible as JSON. The `json` output of the a
 through the expression `steps.<id>.outputs.json`.
 
 ```yaml
-- name: Publish Unit Test Results
+- name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v1
   id: test-results
   if: always()
@@ -289,7 +289,7 @@ Compared to above, `errors` and `annotations` contain more information than just
 
 ## Use with matrix strategy
 
-In a scenario where your unit tests run multiple times in different environments (e.g. a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix)),
+In a scenario where your tests run multiple times in different environments (e.g. a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix)),
 the action should run only once over all test results. For this, put the action into a separate job
 that depends on all your test environments. Those need to upload the test results as artifacts, which
 are then all downloaded by your publish job.
@@ -322,15 +322,15 @@ jobs:
       - name: PyTest
         run: python -m pytest test --junit-xml pytest.xml
 
-      - name: Upload Unit Test Results
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: Unit Test Results (Python ${{ matrix.python-version }})
+          name: Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
 
   publish-test-results:
-    name: "Publish Unit Tests Results"
+    name: "Publish Tests Results"
     needs: build-and-test
     runs-on: ubuntu-latest
     permissions:
@@ -352,7 +352,7 @@ jobs:
         with:
           path: artifacts
 
-      - name: Publish Unit Test Results
+      - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           files: "artifacts/**/*.xml"
@@ -361,16 +361,16 @@ jobs:
 ## Support fork repositories and dependabot branches
 [comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
-Getting unit test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
+Getting test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
 or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
 `"Resource not accessible by integration"` error for those situations.
 
-In this setup, your CI workflow does not need to publish unit test results anymore as they are **always** published from a separate workflow.
+In this setup, your CI workflow does not need to publish test results anymore as they are **always** published from a separate workflow.
 
-1. Your CI workflow has to upload the GitHub event file and unit test result files.
+1. Your CI workflow has to upload the GitHub event file and test result files.
 2. Set up an additional workflow on `workflow_run` events, which starts on completion of the CI workflow,
-   downloads the event file and the unit test result files, and runs this action on them.
-   This workflow publishes the unit test results for pull requests from fork repositories and dependabot,
+   downloads the event file and the test result files, and runs this action on them.
+   This workflow publishes the test results for pull requests from fork repositories and dependabot,
    as well as all "ordinary" runs of your CI workflow.
 
 Add the following job to your CI workflow to upload the event file as an artifact:
@@ -387,7 +387,7 @@ event_file:
       path: ${{ github.event_path }}
 ```
 
-Add the following action step to your CI workflow to upload unit test results as artifacts.
+Add the following action step to your CI workflow to upload test results as artifacts.
 Adjust the value of `path` to fit your setup:
 
 ```yaml
@@ -395,7 +395,7 @@ Adjust the value of `path` to fit your setup:
   if: always()
   uses: actions/upload-artifact@v2
   with:
-    name: Unit Test Results
+    name: Test Results
     path: |
       test-results/*.xml
 ```
@@ -404,22 +404,22 @@ If you run tests in a [strategy matrix](https://docs.github.com/en/actions/refer
 make the artifact name unique for each job, e.g.:
 ```yaml
   with:
-    name: Unit Test Results (${{ matrix.python-version }})
+    name: Test Results (${{ matrix.python-version }})
     path: …
 ```
 
-Add the following workflow that publishes unit test results. It downloads and extracts
+Add the following workflow that publishes test results. It downloads and extracts
 all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
 It then runs the action on files matching `artifacts/**/*.xml`.
-Change the `files` pattern with the path to your unit test artifacts if it does not work for you.
+Change the `files` pattern with the path to your test artifacts if it does not work for you.
 The publish action uses the event file of the CI workflow.
 
 Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 
 ```yaml
-name: Unit Test Results
+name: Test Results
 
 on:
   workflow_run:
@@ -429,8 +429,8 @@ on:
 permissions: {}
 
 jobs:
-  unit-test-results:
-    name: Unit Test Results
+  test-results:
+    name: Test Results
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -462,7 +462,7 @@ jobs:
              unzip -d "$name" "$name.zip"
            done
 
-      - name: Publish Unit Test Results
+      - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
@@ -509,19 +509,19 @@ build-and-test:
 
   steps:
   - …
-  - name: Upload Unit Test Results
+  - name: Upload Test Results
     if: always()
     uses: actions/upload-artifact@v2
     with:
-      name: Unit Test Results
+      name: Test Results
       path: "test-results/**/*.xml"
 ```
 
-Your dedicated publish-unit-test-result-workflow then downloads these files and runs the action there:
+Your dedicated publish-test-result-workflow then downloads these files and runs the action there:
 
 ```yaml
 publish-test-results:
-  name: "Publish Unit Tests Results"
+  name: "Publish Tests Results"
   needs: build-and-test
   runs-on: windows-latest
   # the build-and-test job might be skipped, we don't need to run this job then
@@ -533,7 +533,7 @@ publish-test-results:
       with:
         path: artifacts
 
-    - name: Publish Unit Test Results
+    - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v1
       with:
         files: "artifacts/**/*.xml"
@@ -548,7 +548,7 @@ This is usually the case for **Windows** runners (in this example 35 seconds sta
 Mon, 03 May 2021 11:57:00 GMT   ⏵ Run ./composite
 Mon, 03 May 2021 11:57:00 GMT   ⏵ Check for Python3
 Mon, 03 May 2021 11:57:00 GMT   ⏵ Install Python dependencies
-Mon, 03 May 2021 11:57:35 GMT   ⏵ Publish Unit Test Results
+Mon, 03 May 2021 11:57:35 GMT   ⏵ Publish Test Results
 ```
 
 This can be improved by caching the PIP cache directory. If you see the following warning in
@@ -578,7 +578,7 @@ using the `actions/cache` action, and conditionally install the `wheel`package a
   if: steps.cache.outputs.cache-hit != 'true'
   run: python3 -m pip install wheel
 
-- name: Publish Unit Test Results
+- name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/composite@v1
 …
 ```
@@ -594,5 +594,5 @@ With a cache populated by an earlier run, we can see startup time improvement (i
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Run ./composite
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
-Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Unit Test Results
+Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Test Results
 ```
