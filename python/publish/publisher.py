@@ -323,6 +323,7 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url)
         markdown = f'## {title}\n{summary}'
         self._gha.add_to_job_summary(markdown)
+        logger.info(f'created job summary')
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
