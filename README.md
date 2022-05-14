@@ -10,7 +10,7 @@
 ![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
 
-This [GitHub Action](https://github.com/actions) analyses Test result files and
+This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
 
 You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
@@ -517,7 +517,7 @@ build-and-test:
       path: "test-results/**/*.xml"
 ```
 
-Your dedicated publish-test-result-workflow then downloads these files and runs the action there:
+Your dedicated publish-test-results workflow then downloads these files and runs the action there:
 
 ```yaml
 publish-test-results:
