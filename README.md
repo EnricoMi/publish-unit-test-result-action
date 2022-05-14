@@ -92,7 +92,7 @@ Pull request checks:
 
 ### GitHub Actions job summary
 
-The results are added to the job status page of the workflow that runs this action:
+The results are added to the job summary page of the workflow that runs this action:
 
 ![job summary example](misc/github-job-summary-full.png)
 
