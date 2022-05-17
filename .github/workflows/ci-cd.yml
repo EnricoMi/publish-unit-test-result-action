@@ -156,7 +156,7 @@ jobs:
         with:
           label: Tests
           status: ${{ fromJSON( steps.test-results.outputs.json ).title }}
-          color: burlywood4
+          color: 32CD32,FF4500,696969
           path: test-result.svg
 
       - name: Upload badge to gist
