@@ -34,6 +34,7 @@ jobs:
           done
 
       - name: Publish Test Results
+        id: test-results
         uses: EnricoMi/publish-unit-test-result-action/composite@master
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
@@ -42,3 +43,22 @@ jobs:
           event_name: ${{ github.event.workflow_run.event }}
           files: "artifacts/**/*.xml"
           log_level: DEBUG
+
+      - name: Create badge
+        #if: github.ref == 'refs/heads/master'
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: 'Tests'
+          status: fromJSON( steps.test-results.outputs.json ).title
+          color: 'burlywood4'
+          path: 'test-result.svg'
+
+      - name: Upload badge to gist
+        #if: github.ref == 'refs/heads/master'
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 3dfffc96e622253e44d3768c2a2f2bbf
+          gist_description: "Test badge for master"
+          gist_file_name: test-result.master.svg
+          file_path: test-result.svg
