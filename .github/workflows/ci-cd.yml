@@ -165,7 +165,7 @@ jobs:
         uses: emibcn/badge-action@v1.2.1
         with:
           label: Tests
-          status: ${{ fromJSON( steps.test-results.outputs.json ).title }}
+          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests and ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
           color: ${{ env.BADGE_COLOR }}
           path: test-result.svg
 
