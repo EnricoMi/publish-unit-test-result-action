@@ -231,12 +231,18 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        # test *-latest and newer (because newer eventually become 'latest' and should be tested to work before that)
+        os: [macos-latest, macos-12, ubuntu-latest, ubuntu-22.04, windows-latest]
         python: ["installed", "3.6"]
         include:
           - os: macos-latest
             os-label: macOS
+          - os: macos-12
+            os-label: macOS
           - os: ubuntu-latest
+            os-label: Linux
+          - os: ubuntu-22.04
             os-label: Linux
           - os: windows-latest
             os-label: Windows
