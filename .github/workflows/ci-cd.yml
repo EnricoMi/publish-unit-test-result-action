@@ -150,22 +150,33 @@ jobs:
           files: "artifacts/**/*.xml"
           LOG_LEVEL: DEBUG
 
-      - name: Set success color
-        if: fromJSON( steps.test-results.outputs.json ).conclusion == 'success'
-        run: echo "BADGE_COLOR=32CD32" >> $GITHUB_ENV
-      - name: Set failure color
-        if: fromJSON( steps.test-results.outputs.json ).conclusion == 'failure'
-        run: echo "BADGE_COLOR=FF4500" >> $GITHUB_ENV
-      - name: Set neutral color
-        if: fromJSON( steps.test-results.outputs.json ).conclusion == 'neutral'
-        run: echo "BADGE_COLOR=696969" >> $GITHUB_ENV
+      - name: Set badge color
+        #if: github.ref == 'refs/heads/master'
+        shell: bash
+        run: |
+          case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
+
+            success)
+              echo "BADGE_COLOR=008000" >> $GITHUB_ENV
+              ;;
+
+
+            failure)
+              echo "BADGE_COLOR=800000" >> $GITHUB_ENV
+              ;;
+
+
+            neutral)
+              echo "BADGE_COLOR=696969" >> $GITHUB_ENV
+              ;;
+          esac
 
       - name: Create badge
         #if: github.ref == 'refs/heads/master'
         uses: emibcn/badge-action@v1.2.1
         with:
           label: Tests
-          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests and ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }}, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
           color: ${{ env.BADGE_COLOR }}
           path: test-result.svg
 
