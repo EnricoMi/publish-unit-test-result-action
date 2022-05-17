@@ -157,7 +157,7 @@ jobs:
           case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
 
             success)
-              echo "BADGE_COLOR=008000" >> $GITHUB_ENV
+              echo "BADGE_COLOR=31c653" >> $GITHUB_ENV
               ;;
 
 
@@ -176,7 +176,7 @@ jobs:
         uses: emibcn/badge-action@v1.2.1
         with:
           label: Tests
-          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }}, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} test, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
           color: ${{ env.BADGE_COLOR }}
           path: test-result.svg
 
