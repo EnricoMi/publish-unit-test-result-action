@@ -288,6 +288,7 @@ Compared to above, `errors` and `annotations` contain more information than just
 }
 ```
 
+See [Create a badge from test results](#create-a-badge-from-test-results) for an example on how to create a badge from this JSON.
 
 ## Use with matrix strategy
 
@@ -474,6 +475,60 @@ jobs:
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
+
+## Create a badge from test results
+
+This is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
+[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+
+```yaml
+steps:
+- …
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v1
+  id: test-results
+  if: always()
+  with:
+    files: "test-results/**/*.xml"
+
+- name: Set badge color
+  shell: bash
+  run: |
+    case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
+      success)
+        echo "BADGE_COLOR=31c653" >> $GITHUB_ENV
+        ;;
+      failure)
+        echo "BADGE_COLOR=800000" >> $GITHUB_ENV
+        ;;
+      neutral)
+        echo "BADGE_COLOR=696969" >> $GITHUB_ENV
+        ;;
+    esac
+
+- name: Create badge
+  uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
+  with:
+    label: Tests
+    status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+    color: ${{ env.BADGE_COLOR }}
+    path: badge.svg
+
+- name: Upload badge to Gist
+  # Upload only for master branch
+  if: github.ref == 'refs/heads/master'
+  uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+  with:
+    token: ${{ secrets.GIST_TOKEN }}
+    gistURL: https://gist.githubusercontent.com/{user}/{id}
+    file: badge.svg
+```
+
+You have to create a personal access toke (PAT) with `gist` permission only. Add it to your GitHub Actions secrets, in above example with secret name `GIST_TOKEN`.
+
+Set the `gistURL` to the Gist that you want to write the badge file to, in the form of `https://gist.githubusercontent.com/{user}/{id}`.
+
+You can then use the badge via this URL: https://gist.githubusercontent.com/{user}/{id}/raw/badge.svg
 
 ## Running as a composite action
 
