@@ -67,12 +67,12 @@ jobs:
 
       - name: Create badge
         if: github.ref == 'refs/heads/master'
-        uses: emibcn/badge-action@v1.2.1
+        uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
         with:
           label: Tests
           status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
           color: ${{ env.BADGE_COLOR }}
-          path: test-result.master.svg
+          path: badge.svg
 
       - name: Upload badge to Gist
         if: github.ref == 'refs/heads/master'
@@ -81,5 +81,5 @@ jobs:
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/3dfffc96e622253e44d3768c2a2f2bbf
-          file: test-result.master.svg
+          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          file: badge.svg
