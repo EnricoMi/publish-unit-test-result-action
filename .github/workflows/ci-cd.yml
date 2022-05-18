@@ -143,11 +143,19 @@ jobs:
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
 
       - name: Publish Test Results
+        id: test-results
         uses: ./
         with:
           check_name: Test Results (Dockerfile)
           files: "artifacts/**/*.xml"
-          LOG_LEVEL: DEBUG
+          json_file: "tests.json"
+          log_level: DEBUG
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
 
   publish-docker-image:
     name: Publish Test Results (Docker Image)
@@ -188,6 +196,7 @@ jobs:
           path: artifacts
 
       - name: Publish Test Results
+        id: test-results
         if: always()
         run: |
           docker run --workdir $GITHUB_WORKSPACE --rm -e INPUT_CHECK_NAME -e INPUT_FILES -e INPUT_TIME_UNIT -e INPUT_GITHUB_TOKEN -e INPUT_GITHUB_RETRIES -e INPUT_COMMIT -e INPUT_COMMENT_TITLE -e INPUT_FAIL_ON -e INPUT_REPORT_INDIVIDUAL_RUNS -e INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME -e INPUT_IGNORE_RUNS -e INPUT_HIDE_COMMENTS -e INPUT_COMMENT_ON_PR -e INPUT_COMMENT_MODE -e INPUT_COMPARE_TO_EARLIER_COMMIT -e INPUT_PULL_REQUEST_BUILD -e INPUT_EVENT_FILE -e INPUT_EVENT_NAME -e INPUT_TEST_CHANGES_LIMIT -e INPUT_CHECK_RUN_ANNOTATIONS -e INPUT_CHECK_RUN_ANNOTATIONS_BRANCH -e INPUT_SECONDS_BETWEEN_GITHUB_READS -e INPUT_SECONDS_BETWEEN_GITHUB_WRITES -e INPUT_JSON_FILE -e INPUT_JOB_SUMMARY -e HOME -e GITHUB_JOB -e GITHUB_REF -e GITHUB_SHA -e GITHUB_REPOSITORY -e GITHUB_REPOSITORY_OWNER -e GITHUB_RUN_ID -e GITHUB_RUN_NUMBER -e GITHUB_RETENTION_DAYS -e GITHUB_ACTOR -e GITHUB_WORKFLOW -e GITHUB_HEAD_REF -e GITHUB_BASE_REF -e GITHUB_EVENT_NAME -e GITHUB_SERVER_URL -e GITHUB_API_URL -e GITHUB_GRAPHQL_URL -e GITHUB_WORKSPACE -e GITHUB_ACTION -e GITHUB_EVENT_PATH -e GITHUB_ACTION_REPOSITORY -e GITHUB_ACTION_REF -e GITHUB_PATH -e GITHUB_ENV -e GITHUB_STEP_SUMMARY -e RUNNER_OS -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE -e ACTIONS_RUNTIME_URL -e ACTIONS_RUNTIME_TOKEN -e ACTIONS_CACHE_URL -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "$RUNNER_TEMP":"$RUNNER_TEMP" -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" enricomi/publish-unit-test-result-action:latest
@@ -195,6 +204,13 @@ jobs:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_FILES: "artifacts/**/*.xml"
+          INPUT_JSON_FILE: "tests.json"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
 
       - name: Scan for vulnerabilities
         id: scan
@@ -308,10 +324,18 @@ jobs:
         run: python3 -m pip install wheel
 
       - name: Publish Test Results
+        id: test-results
         uses: ./composite
         with:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+          json_file: "tests.json"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
 
   publish-composite-extra:
     name: Publish Test Results (setup-python)
@@ -350,11 +374,19 @@ jobs:
           path: artifacts
 
       - name: Publish Test Results
+        id: test-results
         uses: ./composite
         with:
           check_name: Test Results (setup-python)
           comment_mode: create new
           files: "artifacts/**/*.xml"
+          json_file: "tests.json"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
 
   publish-test-files:
     name: Publish Test Files
@@ -384,54 +416,20 @@ jobs:
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
 
       - name: Publish Test Results
-        id: publish
+        id: test-results
         uses: ./
         with:
           check_name: Test Results (Test Files)
           fail_on: nothing
           files: "test-files/**.xml"
           json_file: "tests.json"
-          LOG_LEVEL: DEBUG
-
-      - name: JSON file
-        if: always() && steps.publish.conclusion == 'success'
-        run: |
-          jq . tests.json
-          jq .conclusion tests.json
+          log_level: DEBUG
 
       - name: JSON output
-        if: always() && steps.publish.conclusion == 'success'
-        env:
-          TITLE: ${{ fromJSON( steps.publish.outputs.json ).title }}
-          SUMMARY: ${{ fromJSON( steps.publish.outputs.json ).summary }}
-          CONCLUSION: ${{ fromJSON( steps.publish.outputs.json ).conclusion }}
-          STATS: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats ) }}
-          STATS_WITH_DELTA: ${{ toJSON( fromJSON( steps.publish.outputs.json ).stats_with_delta ) }}
-          COMMIT: ${{ fromJSON( steps.publish.outputs.json ).stats.commit }}
-          REFERENCE: ${{ fromJSON( steps.publish.outputs.json ).stats_with_delta.reference_commit }}
-          ANNOTATIONS: ${{ fromJSON( steps.publish.outputs.json ).annotations }}
-        run: |
-          echo "title=$TITLE"
-          echo "summary=$SUMMARY"
-          echo "conclusion=$CONCLUSION"
-          echo "stats=$STATS"
-          echo "stats-with-delta=$STATS_WITH_DELTA"
-          echo "commit=$COMMIT"
-          echo "reference=$REFERENCE"
-          echo "annotations=$ANNOTATIONS"
-
-          echo
-          echo "JSON output:"
-          cat <<EOF
-          ${{ steps.publish.outputs.json }}
-          EOF
-          echo
-
-          if [[ "$CONCLUSION" != "success" ]]
-          then
-            echo 'conclusion != "success"'
-            exit 1
-          fi
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
 
   config-deploy:
     name: Configure Deployment
