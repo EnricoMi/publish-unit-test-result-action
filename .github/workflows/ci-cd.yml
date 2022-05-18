@@ -176,19 +176,17 @@ jobs:
         uses: emibcn/badge-action@v1.2.1
         with:
           label: Tests
-          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} test, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
           color: ${{ env.BADGE_COLOR }}
-          path: test-result.svg
+          path: test-result.master.svg
 
-      - name: Upload badge to gist
+      - name: Upload badge to Gist
         #if: github.ref == 'refs/heads/master'
-        uses: exuanbo/actions-deploy-gist@v1
+        uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gist_id: 3dfffc96e622253e44d3768c2a2f2bbf
-          gist_description: 'Test badge for EnricoMi/publish-unit-test-action master'
-          gist_file_name: test-result.master.svg
-          file_path: test-result.svg
+          gistURL: https://gist.githubusercontent.com/EnricoMi/3dfffc96e622253e44d3768c2a2f2bbf
+          file: test-result.master.svg
 
   publish-docker-image:
     name: Publish Test Results (Docker Image)
