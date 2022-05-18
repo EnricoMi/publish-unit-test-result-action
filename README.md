@@ -10,6 +10,8 @@
 ![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
 
+[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+
 This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
 

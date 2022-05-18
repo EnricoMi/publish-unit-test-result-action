@@ -34,6 +34,7 @@ jobs:
           done
 
       - name: Publish Test Results
+        id: test-results
         uses: EnricoMi/publish-unit-test-result-action/composite@master
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
@@ -42,3 +43,43 @@ jobs:
           event_name: ${{ github.event.workflow_run.event }}
           files: "artifacts/**/*.xml"
           log_level: DEBUG
+
+      - name: Set badge color
+        if: github.ref == 'refs/heads/master'
+        shell: bash
+        run: |
+          case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
+
+            success)
+              echo "BADGE_COLOR=31c653" >> $GITHUB_ENV
+              ;;
+
+
+            failure)
+              echo "BADGE_COLOR=800000" >> $GITHUB_ENV
+              ;;
+
+
+            neutral)
+              echo "BADGE_COLOR=696969" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Create badge
+        if: github.ref == 'refs/heads/master'
+        uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
+        with:
+          label: Tests
+          status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+          color: ${{ env.BADGE_COLOR }}
+          path: badge.svg
+
+      - name: Upload badge to Gist
+        if: github.ref == 'refs/heads/master'
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+        uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          file: badge.svg
