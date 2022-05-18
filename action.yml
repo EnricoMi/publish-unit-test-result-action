@@ -1,6 +1,7 @@
 name: 'Publish Unit Test Results'
 author: 'EnricoMi'
 description: 'A GitHub Action that publishes test results on GitHub'
+
 inputs:
   github_token:
     description: 'GitHub API Access Token'
@@ -91,9 +92,15 @@ inputs:
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
+
+outputs:
+  json:
+    description: "Test results as JSON"
+
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v1.35'
+
 branding:
   icon: 'check-circle'
   color: 'green'
