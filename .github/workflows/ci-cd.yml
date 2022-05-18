@@ -453,7 +453,7 @@ jobs:
         # so we need to tell docker/metadata-action to extract docker tags from that version
         id: action
         run: |
-          image=$(grep -A 10 "^runs:" action.yml | grep -E "\s+image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:" | sed -E -e "s/^\s+image:\s*'docker:\/\///" -e "s/'\s*$//")
+          image=$(grep -A 10 "^runs:" action.yml | grep -E "^\s+image:\s" | sed -E -e "s/^\s+image:\s*'//" -e "s/docker:\/\///" -e "s/'\s*$//")
           version=$(cut -d : -f 2 <<< "$image")
           echo "::set-output name=image::$image"
           echo "::set-output name=version::$version"
