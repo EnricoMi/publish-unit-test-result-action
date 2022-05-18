@@ -1,0 +1,59 @@
+name: 'Assert JSON output'
+author: 'EnricoMi'
+description: 'A GitHub Action that asserts the publish action''s JSON output'
+
+inputs:
+  json:
+    description: 'JSON content to assess.'
+    required: true
+  json_file:
+    description: 'Path to the JSON file to assess.'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+  - name: JSON file
+    shell: bash
+    run: |
+      jq . "${{ inputs.json_file }}"
+      jq .conclusion "${{ inputs.json_file }}"
+
+  - name: JSON output
+    if: always()
+    env:
+      TITLE: ${{ fromJSON( inputs.json ).title }}
+      SUMMARY: ${{ fromJSON( inputs.json ).summary }}
+      CONCLUSION: ${{ fromJSON( inputs.json ).conclusion }}
+      STATS: ${{ toJSON( fromJSON( inputs.json ).stats ) }}
+      STATS_WITH_DELTA: ${{ toJSON( fromJSON( inputs.json ).stats_with_delta ) }}
+      COMMIT: ${{ fromJSON( inputs.json ).stats.commit }}
+      REFERENCE: ${{ fromJSON( inputs.json ).stats_with_delta.reference_commit }}
+      ANNOTATIONS: ${{ fromJSON( inputs.json ).annotations }}
+    shell: bash
+    run: |
+      echo "title=$TITLE"
+      echo "summary=$SUMMARY"
+      echo "conclusion=$CONCLUSION"
+      echo "stats=$STATS"
+      echo "stats-with-delta=$STATS_WITH_DELTA"
+      echo "commit=$COMMIT"
+      echo "reference=$REFERENCE"
+      echo "annotations=$ANNOTATIONS"
+
+      echo
+      echo "JSON output:"
+      cat <<EOF
+      ${{ inputs.json }}
+      EOF
+      echo
+
+      if [[ "$CONCLUSION" != "success" ]]
+      then
+        echo 'conclusion != "success"'
+        exit 1
+      fi
+
+branding:
+  icon: 'check-circle'
+  color: 'green'

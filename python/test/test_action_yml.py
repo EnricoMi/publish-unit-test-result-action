@@ -17,8 +17,14 @@ class TestActionYml(unittest.TestCase):
 
         self.assertIn('runs', dockerfile_action)
         self.assertIn('runs', composite_action)
-        dockerfile_action_wo_runs = {k:v for k,v in dockerfile_action.items() if k != 'runs'}
-        composite_action_wo_runs = {k:v for k,v in composite_action.items() if k != 'runs'}
+        dockerfile_action_wo_runs = {k: v for k, v in dockerfile_action.items() if k != 'runs'}
+        composite_action_wo_runs = {k: v for k, v in composite_action.items() if k != 'runs'}
+
+        # composite action has outputs.json.value, which does not exist for dockerfile action
+        self.assertIn('value', composite_action.get('outputs', {}).get('json', {}))
+        del composite_action.get('outputs', {}).get('json', {})['value']
+
+        # compare dockerfile action with composite action
         self.assertEqual(dockerfile_action_wo_runs, composite_action_wo_runs)
         self.assertIn(('using', 'composite'), composite_action.get('runs', {}).items())
 
