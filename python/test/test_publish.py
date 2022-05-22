@@ -1,6 +1,5 @@
 import contextlib
 import locale
-import os
 import pathlib
 import unittest
 
@@ -13,6 +12,7 @@ from publish.unittestresults import get_test_results
 from test import d, n
 
 test_files_path = pathlib.Path(__file__).parent / 'files'
+
 
 @contextlib.contextmanager
 def temp_locale(encoding: str) -> Any:
@@ -560,55 +560,261 @@ class PublishTest(unittest.TestCase):
             reference_type='type', reference_commit='0123456789abcdef'
         )), (f'4 {all_tests_label_md}  - 5  5 {passed_tests_label_md} +6  6 {skipped_tests_label_md}  - 7  7 {failed_tests_label_md} +8  8 {test_errors_label_md}  - 9 '))
 
-    def test_get_long_summary_md_with_single_runs(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunResults(
+    def test_get_details_line_md(self):
+        for fails, errors, parse_errors, expected in [
+            (0, 0, 0, ''),
+            (1, 0, 0, 'failures'),
+            (0, 1, 0, 'errors'),
+            (0, 0, 1, 'parsing errors'),
+            (1, 1, 0, 'failures and errors'),
+            (0, 1, 1, 'parsing errors and errors'),
+            (1, 0, 1, 'parsing errors and failures'),
+            (1, 1, 1, 'parsing errors, failures and errors'),
+        ]:
+            with self.subTest(fails=fails, errors=errors, parse_errors=parse_errors):
+                stats = UnitTestRunResults(
+                    files=1, errors=[None] * parse_errors, suites=2, duration=3,
+                    tests=4, tests_succ=4 - 1 - fails - errors, tests_skip=1, tests_fail=fails, tests_error=errors,
+                    runs=4, runs_succ=4 - 1 - fails - errors, runs_skip=1, runs_fail=fails, runs_error=errors,
+                    commit='commit'
+                )
+                actual = get_details_line_md(stats, 'https://details.url/')
+                if expected:
+                    expected = f'For more details on these {expected}, see [this check](https://details.url/).'
+
+                self.assertEqual(expected, actual)
+
+    def test_get_commit_line_md(self):
+        stats = UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
-        )), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
-            f'\n'
-            f'Results for commit commit.\n'))
+        )
+        self.assertEqual(get_commit_line_md(stats), 'Results for commit commit.')
 
-    def test_get_long_summary_md_with_multiple_runs(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunResults(
+        stats_with_delta = UnitTestRunDeltaResults(
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+            commit='commit', reference_type='type', reference_commit='ref'
+        )
+        self.assertEqual(get_commit_line_md(stats_with_delta), 'Results for commit commit. ± Comparison against type commit ref.')
+
+        for ref_type, ref in [(None, None), ('type', None), (None, 'ref')]:
+            with self.subTest(ref_type=ref_type, ref=ref):
+                stats_with_delta = UnitTestRunDeltaResults(
+                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    commit='commit', reference_type=ref_type, reference_commit=ref
+                )
+                self.assertEqual(get_commit_line_md(stats_with_delta), 'Results for commit commit.')
+
+    ####
+    # test that get_long_summary_md calls into get_long_summary_with_runs_md and get_long_summary_without_runs_md
+    ####
+
+    @staticmethod
+    def test_get_long_summary_md_with_single_runs():
+        with mock.patch('publish.get_long_summary_with_runs_md') as w:
+            with mock.patch('publish.get_long_summary_without_runs_md') as wo:
+                stats = UnitTestRunResults(
+                    files=1, errors=[], suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    commit='commit'
+                )
+                test_changes = mock.Mock()
+                get_long_summary_md(stats, 'url', test_changes, 10)
+                w.assert_not_called()
+                wo.assert_called_once_with(stats, 'url', test_changes, 10)
+
+    @staticmethod
+    def test_get_long_summary_md_with_multiple_runs():
+        with mock.patch('publish.get_long_summary_with_runs_md') as w:
+            with mock.patch('publish.get_long_summary_without_runs_md') as wo:
+                stats = UnitTestRunResults(
+                    files=1, errors=[], suites=2, duration=3,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                    commit='commit'
+                )
+                test_changes = mock.Mock()
+                get_long_summary_md(stats, 'url', test_changes, 10)
+                w.assert_called_once_with(stats, 'url', test_changes, 10)
+                wo.assert_not_called()
+
+    ####
+    # test get_long_summary_with_runs_md
+    ####
+
+    def test_get_long_summary_with_runs_md(self):
+        self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
             commit='commit'
         )), (f'1 files    2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
-            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
-            f'\n'
-            f'Results for commit commit.\n'))
+             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
+             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
+             f'\n'
+             f'Results for commit commit.\n'))
 
-    def test_get_long_summary_md_with_errors(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunResults(
+    def test_get_long_summary_with_runs_md_with_errors(self):
+        self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
         )), (f'1 files    2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
-            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
-            f'\n'
-            f'Results for commit commit.\n'))
+             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
+             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
+             f'\n'
+             f'Results for commit commit.\n'))
 
-    def test_get_long_summary_md_with_deltas(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
+    def test_get_long_summary_with_runs_md_with_deltas(self):
+        self.assertEqual(get_long_summary_with_runs_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )), (f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
-            f'4 tests  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
-            f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
-            f'\n'
-            f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
+             f'4 tests  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
+             f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
+             f'\n'
+             f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
 
-    def test_get_long_summary_md_with_details_url_with_fails(self):
-        self.assertEqual(get_long_summary_md(
+    def test_get_long_summary_with_runs_md_with_details_url_with_fails(self):
+        self.assertEqual(get_long_summary_with_runs_md(
+            UnitTestRunResults(
+                files=1, errors=[], suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), (f'1 files    2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
+            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 12 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            f'\n'
+            f'For more details on these failures, see [this check](https://details.url/).\n'
+            f'\n'
+            f'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_with_runs_md_with_details_url_without_fails(self):
+        self.assertEqual(get_long_summary_with_runs_md(
+            UnitTestRunResults(
+                files=1, errors=[], suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/'
+        ), (f'1 files    2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 0 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            f'\n'
+            f'Results for commit commit.\n')
+        )
+
+    def test_get_long_summary_with_runs_md_with_test_lists(self):
+        self.assertEqual(get_long_summary_with_runs_md(
+            UnitTestRunResults(
+                files=1, errors=[], suites=2, duration=3,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
+                commit='commit'
+            ),
+            'https://details.url/',
+            SomeTestChanges(
+                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
+                ['test2'], ['test5', 'test6']
+            ),
+        ), (f'1 files    2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 0 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            '\n'
+            'Results for commit commit.\n'
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 1 tests. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
+            '\n'
+            '```\n'
+            'test1\n'
+            'test2\n'
+            'test3\n'
+            'test4\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n'
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>removes</b> 1 skipped test and <b>adds</b> 1 skipped test. '
+            '<i>Note that renamed tests count towards both.</i></summary>\n'
+            '\n'
+            '```\n'
+            'test2\n'
+            '```\n'
+            '\n'
+            '```\n'
+            'test6\n'
+            '```\n'
+            '</details>\n'
+            '\n'
+            '<details>\n'
+            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
+            '\n'
+            '```\n'
+            'test5\n'
+            '```\n'
+            '</details>\n')
+        )
+
+    ####
+    # test get_long_summary_without_runs_md
+    ####
+
+    def test_get_long_summary_without_runs_md(self):
+        self.assertEqual(get_long_summary_md(UnitTestRunResults(
+            files=1, errors=[], suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
+            commit='commit'
+        )), (f'1 files  2 suites   3s {duration_label_md}\n'
+             f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md}\n'
+             f'\n'
+             f'Results for commit commit.\n'))
+
+    def test_get_long_summary_without_runs_md_with_errors(self):
+        self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
+            files=1, errors=[], suites=2, duration=3,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+            commit='commit'
+        )), (f'1 files  2 suites   3s {duration_label_md}\n'
+             f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+             f'\n'
+             f'Results for commit commit.\n'))
+
+    def test_get_long_summary_without_runs_md_with_deltas(self):
+        self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
+            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9),
+            commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
+        )), (f'1 files  +2  2 suites   - 3   3s {duration_label_md} +4s\n'
+             f'4 tests  - 5  5 {passed_tests_label_md} +6  6 {skipped_tests_label_md}  - 7  7 {failed_tests_label_md} +8  8 {test_errors_label_md}  - 9 \n'
+             f'\n'
+             f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
+
+    def test_get_long_summary_without_runs_md_with_details_url_with_fails(self):
+        self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
@@ -624,59 +830,8 @@ class PublishTest(unittest.TestCase):
             f'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_details_url_with_errors(self):
-        self.assertEqual(get_long_summary_md(
-            UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=8,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=8,
-                commit='commit'
-            ),
-            'https://details.url/'
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md} 8 {test_errors_label_md}\n'
-            f'\n'
-            f'For more details on these errors, see [this check](https://details.url/).\n'
-            f'\n'
-            f'Results for commit commit.\n')
-        )
-
-    def test_get_long_summary_md_with_details_url_with_parse_errors(self):
-        self.assertEqual(get_long_summary_md(
-            UnitTestRunResults(
-                files=2, errors=errors, suites=2, duration=3,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
-                commit='commit'
-            ),
-            'https://details.url/'
-        ), (f'2 files  1 errors  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'\n'
-            f'For more details on these parsing errors, see [this check](https://details.url/).\n'
-            f'\n'
-            f'Results for commit commit.\n')
-        )
-
-    def test_get_long_summary_md_with_details_url_with_fails_and_errors_and_parse_errors(self):
-        self.assertEqual(get_long_summary_md(
-            UnitTestRunResults(
-                files=1, errors=errors, suites=2, duration=3,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
-                commit='commit'
-            ),
-            'https://details.url/'
-        ), (f'1 files  1 errors  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
-            f'\n'
-            f'For more details on these parsing errors, failures and errors, see [this check](https://details.url/).\n'
-            f'\n'
-            f'Results for commit commit.\n')
-        )
-
-    def test_get_long_summary_md_with_details_url_without_fails_or_errors_or_parse_errors(self):
-        self.assertEqual(get_long_summary_md(
+    def test_get_long_summary_without_runs_md_with_details_url_without_fails(self):
+        self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
@@ -690,8 +845,8 @@ class PublishTest(unittest.TestCase):
             f'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_test_lists(self):
-        self.assertEqual(get_long_summary_md(
+    def test_get_long_summary_without_runs_md_with_test_lists(self):
+        self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
@@ -746,88 +901,8 @@ class PublishTest(unittest.TestCase):
             '</details>\n')
         )
 
-    def test_get_long_summary_md_with_test_lists_and_limit(self):
-        self.assertEqual(get_long_summary_md(
-            UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
-                commit='commit'
-            ),
-            'https://details.url/',
-            SomeTestChanges(
-                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6', 'test7'],
-                ['test1', 'test2'], ['test5', 'test6', 'test7']
-            ),
-            3
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            '\n'
-            'Results for commit commit.\n'
-            '\n'
-            '<details>\n'
-            '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 2 tests. '
-            '<i>Note that renamed tests count towards both.</i></summary>\n'
-            '\n'
-            '```\n'
-            'test1\n'
-            'test2\n'
-            'test3\n'
-            '…\n'
-            '```\n'
-            '\n'
-            '```\n'
-            'test6\n'
-            'test7\n'
-            '```\n'
-            '</details>\n'
-            '\n'
-            '<details>\n'
-            '  <summary>This pull request <b>removes</b> 2 skipped tests and <b>adds</b> 2 skipped tests. '
-            '<i>Note that renamed tests count towards both.</i></summary>\n'
-            '\n'
-            '```\n'
-            'test1\n'
-            'test2\n'
-            '```\n'
-            '\n'
-            '```\n'
-            'test6\n'
-            'test7\n'
-            '```\n'
-            '</details>\n'
-            '\n'
-            '<details>\n'
-            '  <summary>This pull request <b>skips</b> 1 test.</summary>\n'
-            '\n'
-            '```\n'
-            'test5\n'
-            '```\n'
-            '</details>\n')
-        )
-
-    def test_get_long_summary_md_with_test_lists_and_zero_limit(self):
-        self.assertEqual(get_long_summary_md(
-            UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
-                commit='commit'
-            ),
-            'https://details.url/',
-            SomeTestChanges(
-                ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6', 'test7'],
-                ['test1', 'test2'], ['test5', 'test6', 'test7']
-            ),
-            0
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'\n'
-            f'Results for commit commit.\n')
-        )
-
-    def test_get_long_summary_md_with_all_tests_removed(self):
-        self.assertEqual(get_long_summary_md(
+    def test_get_long_summary_without_runs_md_with_all_tests_removed(self):
+        self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=0, errors=[], suites=0, duration=0,
                 tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
@@ -845,8 +920,8 @@ class PublishTest(unittest.TestCase):
             f'Results for commit commit.\n')
         )
 
-    def test_get_long_summary_md_with_some_files_but_all_tests_removed(self):
-        self.assertEqual(get_long_summary_md(
+    def test_get_long_summary_without_runs_md_with_some_files_but_all_tests_removed(self):
+        self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=2, errors=[], suites=0, duration=0,
                 tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
