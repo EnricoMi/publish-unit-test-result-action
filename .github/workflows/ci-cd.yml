@@ -431,6 +431,49 @@ jobs:
           json: '${{ steps.test-results.outputs.json }}'
           json_file: 'tests.json'
 
+  publish-test-file:
+    name: Publish Test File
+    # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
+    needs: test
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Copy test junit xml files
+        run: |
+          mkdir -p test-files
+          cp -v python/test/files/*.xml test-files/
+
+      - name: Prepare publish action from this branch
+        run: |
+          sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+
+      - name: Publish Test Results
+        id: test-results
+        uses: ./
+        with:
+          check_name: Test Results (Test File)
+          fail_on: nothing
+          files: "test-files/junit.gloo.standalone.xml"
+          json_file: "tests.json"
+          log_level: DEBUG
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
+
   config-deploy:
     name: Configure Deployment
     needs: test
@@ -470,7 +513,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-files, config-deploy]
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-file, publish-test-files, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
