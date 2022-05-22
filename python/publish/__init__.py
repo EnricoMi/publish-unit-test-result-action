@@ -216,13 +216,22 @@ def abbreviate(string: Optional[str], length: int) -> Optional[str]:
 
 
 def get_formatted_digits(*numbers: Union[Optional[int], Numeric]) -> Tuple[int, int]:
+    def get_abs_number(num):
+        if isinstance(num, dict):
+            return abs(num.get('number')) if num.get('number') is not None else None
+        return abs(num)
+
+    def get_abs_delta(num):
+        if isinstance(num, dict):
+            return abs(num.get('delta')) if num.get('delta') is not None else None
+        return 0
+
     if isinstance(numbers[0], dict):
-        # TODO: is not None else None?!?
-        number_digits = max([len(as_stat_number(abs(number.get('number')) if number.get('number') is not None else None))
-                             for number in numbers])
-        delta_digits = max([len(as_stat_number(abs(number.get('delta')) if number.get('delta') is not None else None))
-                            for number in numbers])
+        # only the first number is a dict, other still might be an int
+        number_digits = max([len(as_stat_number(get_abs_number(number))) for number in numbers])
+        delta_digits = max([len(as_stat_number(get_abs_delta(number))) for number in numbers])
         return number_digits, delta_digits
+
     return max([len(as_stat_number(abs(number) if number is not None else None))
                 for number in numbers]), 0
 
@@ -615,8 +624,11 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     )
 
 
-def new_line(text: str) -> str:
-    return ('\n' + text) if text else text
+def new_line(text: str, before: bool = True) -> str:
+    if before:
+        return ('\n' + text) if text else text
+    else:
+        return (text + '\n') if text else text
 
 
 def new_lines(text: str) -> str:
@@ -627,9 +639,46 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
                                      details_url: Optional[str] = None,
                                      test_changes: Optional[SomeTestChanges] = None,
                                      test_list_changes_limit: Optional[int] = None) -> str:
-    return '\n'.join([line
-                      for line in get_long_summary_with_runs_md(stats, details_url, test_changes, test_list_changes_limit).split('\n')
-                      if 'runs' not in line])
+    sep = '  '
+
+    errors = len(stats.errors)
+    tests_digits, tests_delta_digits = get_formatted_digits(stats.tests, stats.suites, stats.files, errors)
+    passs_digits, passs_delta_digits = get_formatted_digits(stats.tests_succ, stats.tests_skip, stats.tests_fail, stats.tests_error)
+
+    tests = as_stat_number(stats.tests, tests_digits, tests_delta_digits, all_tests_label_md + ' ')
+    suites = as_stat_number(stats.suites, tests_digits, tests_delta_digits, 'suites')
+    files = as_stat_number(stats.files, tests_digits, tests_delta_digits, 'files  ')
+    parse_errors = as_stat_number(errors, tests_digits, tests_delta_digits, 'errors') if errors else ''
+
+    passs = as_stat_number(stats.tests_succ, passs_digits, passs_delta_digits, passed_tests_label_md)
+    skips = as_stat_number(stats.tests_skip, passs_digits, passs_delta_digits, skipped_tests_label_md)
+    fails = as_stat_number(stats.tests_fail, passs_digits, passs_delta_digits, failed_tests_label_md)
+
+    duration = as_stat_duration(stats.duration, duration_label_md)
+    errors = sep + as_stat_number(stats.tests_error, label=test_errors_label_md) if stats.tests_error else ''
+
+    details_line = get_details_line_md(stats, details_url)
+    commit_line = get_commit_line_md(stats)
+    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit) if stats.tests else ''
+
+    return '{tests}{sep}{passs}{sep}{duration}\n' \
+           '{suites}{sep}{skips}\n' \
+           '{files}{sep}{fails}{errors}\n' \
+           '{parse_errors}{details}{commit}{test_changes_details}'.format(
+                sep=sep,
+                tests=tests,
+                passs=passs,
+                duration=duration,
+                suites=suites,
+                skips=skips,
+                files=files,
+                fails=fails,
+                errors=errors,
+                parse_errors=new_line(parse_errors, before=False),
+                details=new_lines(details_line),
+                commit=new_lines(commit_line),
+                test_changes_details=new_line(test_changes_details)
+            )
 
 
 def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,

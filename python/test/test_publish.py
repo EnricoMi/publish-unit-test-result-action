@@ -680,7 +680,7 @@ class PublishTest(unittest.TestCase):
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )), (f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
-             f'4 tests  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
+             f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
              f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
              f'\n'
              f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
@@ -696,7 +696,7 @@ class PublishTest(unittest.TestCase):
             'https://details.url/'
         ), (f'1 files    2 suites   3s {duration_label_md}\n'
             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
-            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 12 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
             f'\n'
             f'For more details on these failures, see [this check](https://details.url/).\n'
             f'\n'
@@ -714,7 +714,7 @@ class PublishTest(unittest.TestCase):
             'https://details.url/'
         ), (f'1 files    2 suites   3s {duration_label_md}\n'
             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 0 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             f'\n'
             f'Results for commit commit.\n')
         )
@@ -734,7 +734,7 @@ class PublishTest(unittest.TestCase):
             ),
         ), (f'1 files    2 suites   3s {duration_label_md}\n'
             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'9 runs  10 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests") 11 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests") 0 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -786,8 +786,9 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
             commit='commit'
-        )), (f'1 files  2 suites   3s {duration_label_md}\n'
-             f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md}\n'
+        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
+             f'2 suites  6 {skipped_tests_label_md}\n'
+             f'1 files    7 {failed_tests_label_md}\n'
              f'\n'
              f'Results for commit commit.\n'))
 
@@ -797,8 +798,9 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
-        )), (f'1 files  2 suites   3s {duration_label_md}\n'
-             f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+             f'2 suites  6 {skipped_tests_label_md}\n'
+             f'1 files    7 {failed_tests_label_md}  8 {test_errors_label_md}\n'
              f'\n'
              f'Results for commit commit.\n'))
 
@@ -808,8 +810,9 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        )), (f'1 files  +2  2 suites   - 3   3s {duration_label_md} +4s\n'
-             f'4 tests  - 5  5 {passed_tests_label_md} +6  6 {skipped_tests_label_md}  - 7  7 {failed_tests_label_md} +8  8 {test_errors_label_md}  - 9 \n'
+        )), (f'4 {all_tests_label_md}   - 5   5 {passed_tests_label_md} +6   3s {duration_label_md} +4s\n'
+             f'2 suites  - 3   6 {skipped_tests_label_md}  - 7 \n'
+             f'1 files   +2   7 {failed_tests_label_md} +8   8 {test_errors_label_md}  - 9 \n'
              f'\n'
              f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
 
@@ -822,8 +825,9 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md}\n'
+        ), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
+            f'2 suites  6 {skipped_tests_label_md}\n'
+            f'1 files    7 {failed_tests_label_md}\n'
             f'\n'
             f'For more details on these failures, see [this check](https://details.url/).\n'
             f'\n'
@@ -839,8 +843,9 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        ), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
+            f'2 suites  6 {skipped_tests_label_md}\n'
+            f'1 files    0 {failed_tests_label_md}\n'
             f'\n'
             f'Results for commit commit.\n')
         )
@@ -858,11 +863,12 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
                 ['test2'], ['test5', 'test6']
             ),
-        ), (f'1 files  2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            '\n'
-            'Results for commit commit.\n'
-            '\n'
+        ), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
+            f'2 suites  6 {skipped_tests_label_md}\n'
+            f'1 files    0 {failed_tests_label_md}\n'
+            f'\n'
+            f'Results for commit commit.\n'
+            f'\n'
             '<details>\n'
             '  <summary>This pull request <b>removes</b> 4 and <b>adds</b> 1 tests. '
             '<i>Note that renamed tests count towards both.</i></summary>\n'
@@ -914,8 +920,9 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], [],
                 ['test2'], []
             ),
-        ), (f'0 files  0 suites   0s {duration_label_md}\n'
-            f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        ), (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s {duration_label_md}\n'
+            f'0 suites  0 {skipped_tests_label_md}\n'
+            f'0 files    0 {failed_tests_label_md}\n'
             f'\n'
             f'Results for commit commit.\n')
         )
@@ -933,8 +940,9 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], [],
                 ['test2'], []
             ),
-        ), (f'2 files  0 suites   0s {duration_label_md}\n'
-            f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        ), (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s {duration_label_md}\n'
+            f'0 suites  0 {skipped_tests_label_md}\n'
+            f'2 files    0 {failed_tests_label_md}\n'
             f'\n'
             f'Results for commit commit.\n')
         )
@@ -951,8 +959,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files  2 suites   3s {duration_label_md}\n'
-                                 f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}\n'
+        self.assertEqual(actual, f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
+                                 f'2 suites  6 {skipped_tests_label_md}\n'
+                                 f'1 files    7 {failed_tests_label_md}  8 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -1976,8 +1985,9 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'1 files  1 suites   0s {duration_label_md}\n'
-                              f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                              f'1 suites  0 {skipped_tests_label_md}\n'
+                              f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit a commit.\n'))
 
@@ -1986,8 +1996,9 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'1 files  1 suites   0s {duration_label_md}\n'
-                              f'6 {all_tests_label_md} 3 {passed_tests_label_md} 2 {skipped_tests_label_md} 1 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'6 {all_tests_label_md}   3 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                              f'1 suites  2 {skipped_tests_label_md}\n'
+                              f'1 files    1 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit a commit.\n'))
 
@@ -1996,8 +2007,10 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'1 files  1 errors  0 suites   0s {duration_label_md}\n'
-                              f'0 {all_tests_label_md} 0 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                              f'0 suites  0 {skipped_tests_label_md}\n'
+                              f'1 files    0 {failed_tests_label_md}\n'
+                              f'1 errors\n'
                               f'\n'
                               f'Results for commit a commit.\n'))
 
@@ -2006,8 +2019,9 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'1 files  1 suites   4s {duration_label_md}\n'
-                              f'5 {all_tests_label_md} 5 {passed_tests_label_md} 0 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                              f'1 suites  0 {skipped_tests_label_md}\n'
+                              f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
 
@@ -2026,8 +2040,9 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'  10 files    10 suites   39m 1s {duration_label_md}\n'
-                              f'373 {all_tests_label_md} 333 {passed_tests_label_md} 40 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'373 {all_tests_label_md}   333 {passed_tests_label_md}  39m 1s {duration_label_md}\n'
+                              f'  10 suites    40 {skipped_tests_label_md}\n'
+                              f'  10 files        0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
 
