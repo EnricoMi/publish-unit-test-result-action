@@ -1,0 +1,92 @@
+<!-- based on https://github.com/x97mdr/pickles/tree/d901d975c61e07351acaeb395bd4a428f755731c/src/Pickles/Pickles.Test -->
+<assembly name="c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\bin\Debug\Pickles.TestHarness.xUnit.dll" run-date="2012-01-14" run-time="10:21:10"
+          configFile="c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\bin\Debug\Pickles.TestHarness.xUnit.dll.config"
+          time="0.185" total="4" passed="3" failed="1" skipped="0" environment="32-bit .NET 4.0.30319.239" test-framework="xUnit.net 1.9.0.1566">
+﻿  <class time="0.185" name="Pickles.TestHarness.xUnit.AdditionFeature" total="4" passed="3" failed="1" skipped="0">
+    <test name="Pickles.TestHarness.xUnit.AdditionFeature.AddTwoNumbers"
+          type="Pickles.TestHarness.xUnit.AdditionFeature" method="AddTwoNumbers" result="Pass" time="0.153">
+      <traits>
+        <trait name="Description" value="Add two numbers" />
+        <trait name="FeatureTitle" value="Addition" />
+      </traits>
+      <output>
+        Given I have entered 50 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+        And I have entered 70 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) (0.0s)
+        When I press add
+        -&gt; done: Steps.WhenIPressAdd() (0.0s)
+        Then the result should be 120 on the screen
+        -&gt; done: Steps.ThenTheResultShouldBePass(120) (0.0s)
+      </output>
+    </test>
+    <test name="Pickles.TestHarness.xUnit.AdditionFeature.AddingSeveralNumbers(firstNumber: &quot;40&quot;, secondNumber: &quot;50&quot;, result: &quot;90&quot;, exampleTags: System.String[])"
+          type="Pickles.TestHarness.xUnit.AdditionFeature" method="AddingSeveralNumbers" result="Pass" time="0.006">
+      <traits>
+        <trait name="Description" value="Adding several numbers" />
+        <trait name="FeatureTitle" value="Addition" />
+      </traits>
+      <output>
+        Given I have entered 40 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(40) (0.0s)
+        And I have entered 50 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+        When I press add
+        -&gt; done: Steps.WhenIPressAdd() (0.0s)
+        Then the result should be 90 on the screen
+        -&gt; done: Steps.ThenTheResultShouldBePass(90) (0.0s)
+      </output>
+    </test>
+    <test name="Pickles.TestHarness.xUnit.AdditionFeature.AddingSeveralNumbers(firstNumber: &quot;60&quot;, secondNumber: &quot;70&quot;, result: &quot;130&quot;, exampleTags: System.String[])"
+          type="Pickles.TestHarness.xUnit.AdditionFeature" method="AddingSeveralNumbers" result="Pass" time="0.003">
+      <traits>
+        <trait name="Description" value="Adding several numbers" />
+        <trait name="FeatureTitle" value="Addition" />
+      </traits>
+      <output>
+        Given I have entered 60 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(60) (0.0s)
+        And I have entered 70 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) (0.0s)
+        When I press add
+        -&gt; done: Steps.WhenIPressAdd() (0.0s)
+        Then the result should be 130 on the screen
+        -&gt; done: Steps.ThenTheResultShouldBePass(130) (0.0s)
+      </output>
+    </test>
+    <test name="Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers"
+          type="Pickles.TestHarness.xUnit.AdditionFeature" method="FailToAddTwoNumbers" result="Fail" time="0.023">
+      <traits>
+        <trait name="Description" value="Fail to add two numbers" />
+        <trait name="FeatureTitle" value="Addition" />
+      </traits>
+      <output>
+        Given I have entered 50 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+        And I have entered -1 into the calculator
+        -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(-1) (0.0s)
+        When I press add
+        -&gt; done: Steps.WhenIPressAdd() (0.0s)
+        Then the result should be -50 on the screen
+        -&gt; error: This is a fake failure message
+      </output>
+      <failure exception-type="System.InvalidOperationException">
+        <message>
+          System.InvalidOperationException : This is a fake failure message
+        </message>
+        <stack-trace>
+          at Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Steps.cs:line 26
+          at lambda_method(Closure , IContextManager , Int32 )
+          at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
+          at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan&amp; duration)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(StepArgs stepArgs)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep()
+          at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()
+          at Pickles.TestHarness.xUnit.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature.cs:line 0
+          at Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature:line 18
+        </stack-trace>
+      </failure>
+    </test>
+  </class>
+</assembly>

@@ -6,15 +6,15 @@ from lxml import etree
 
 from publish.junit import JUnitTreeOrException, ParsedJUnitFile
 
-with (pathlib.Path(__file__).parent / 'xslt' / 'trx-to-junit.xslt').open('r', encoding='utf-8') as r:
-    transform_trx_to_junit = etree.XSLT(etree.parse(r))
+with (pathlib.Path(__file__).parent / 'xslt' / 'xunit-to-junit.xslt').open('r', encoding='utf-8') as r:
+    transform_xunit_to_junit = etree.XSLT(etree.parse(r))
 
 
-def parse_trx_files(files: Iterable[str],
-                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
-    """Parses trx files."""
+def parse_xunit_files(files: Iterable[str],
+                      progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    """Parses xunit files."""
     def parse(path: str) -> JUnitTreeOrException:
-        """Parses a trx file and returns either a JUnitTree or an Exception."""
+        """Parses an xunit file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:
@@ -22,7 +22,7 @@ def parse_trx_files(files: Iterable[str],
 
         try:
             trx = etree.parse(path)
-            return transform_trx_to_junit(trx)
+            return transform_xunit_to_junit(trx)
         except BaseException as e:
             return e
 
