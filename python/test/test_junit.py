@@ -5,7 +5,7 @@ from typing import Optional
 
 from junitparser import JUnitXml, Element, version
 
-from publish.junit import parse_junit_xml_files, get_results, get_result, get_content, get_message, Disabled
+from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, get_message, Disabled
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 test_files_path = pathlib.Path(__file__).parent / 'files'
@@ -27,9 +27,9 @@ class TestElement(Element):
 
 class TestJunit(unittest.TestCase):
 
-    def test_parse_junit_xml_files_with_no_files(self):
+    def test_process_parse_junit_xml_files_with_no_files(self):
         self.assertEqual(
-            parse_junit_xml_files([]),
+            process_junit_xml_elems(parse_junit_xml_files([])),
             ParsedUnitTestResults(
                 files=0,
                 errors=[],
@@ -42,10 +42,10 @@ class TestJunit(unittest.TestCase):
                 cases=[]
             ))
 
-    def test_parse_junit_xml_files_with_spark_diff_file(self):
+    def test_process_parse_junit_xml_files_with_spark_diff_file(self):
         result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -114,10 +114,10 @@ class TestJunit(unittest.TestCase):
                 ]
             ))
 
-    def test_parse_junit_xml_files_with_horovod_file(self):
+    def test_process_parse_junit_xml_files_with_horovod_file(self):
         result_file = str(test_files_path / 'junit.mpi.integration.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -164,10 +164,10 @@ class TestJunit(unittest.TestCase):
                 ]
             ))
 
-    def test_parse_junit_xml_files_with_spark_extension_file(self):
+    def test_process_parse_junit_xml_files_with_spark_extension_file(self):
         result_file = str(test_files_path / 'junit.fail.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -261,10 +261,10 @@ class TestJunit(unittest.TestCase):
                 ]
             ))
 
-    def test_parse_junit_xml_files_with_minimal_attributes_file(self):
+    def test_process_parse_junit_xml_files_with_minimal_attributes_file(self):
         result_file = str(test_files_path / 'minimal-attributes.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 cases=[
                     UnitTestCase(
@@ -325,7 +325,7 @@ class TestJunit(unittest.TestCase):
     def test_parse_xunit_xml_file(self):
         result_file = str(test_files_path / 'xunit.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 cases=[
                     UnitTestCase(
@@ -361,10 +361,10 @@ class TestJunit(unittest.TestCase):
                 suites=1
             ))
 
-    def test_parse_junit_xml_files_with_no_attributes_file(self):
+    def test_process_parse_junit_xml_files_with_no_attributes_file(self):
         result_file = str(test_files_path / 'no-attributes.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
@@ -377,10 +377,10 @@ class TestJunit(unittest.TestCase):
                 suites=1
             ))
 
-    def test_parse_junit_xml_files_with_empty_file(self):
+    def test_process_parse_junit_xml_files_with_empty_file(self):
         result_file = str(test_files_path / 'empty.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
@@ -393,12 +393,12 @@ class TestJunit(unittest.TestCase):
                 suites=0
             ))
 
-    def test_parse_junit_xml_files_with_non_xml_file(self):
+    def test_process_parse_junit_xml_files_with_non_xml_file(self):
         result_file = test_files_path / 'non-xml.xml'
         result_filename = str(result_file)
         expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_filename]),
+            process_junit_xml_elems(parse_junit_xml_files([result_filename])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[ParseError(file=result_filename, message=f"Start tag expected, '<' not found, line 1, column 1 ({expected_filename}, line 1)")],
@@ -411,12 +411,12 @@ class TestJunit(unittest.TestCase):
                 cases=[]
             ))
 
-    def test_parse_junit_xml_files_with_corrupt_xml_file(self):
+    def test_process_parse_junit_xml_files_with_corrupt_xml_file(self):
         result_file = test_files_path / 'corrupt-xml.xml'
         result_filename = str(result_file)
         expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_filename]),
+            process_junit_xml_elems(parse_junit_xml_files([result_filename])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[ParseError(file=result_filename, message=f'Premature end of data in tag skipped line 9, line 11, column 22 ({expected_filename}, line 11)')],
@@ -429,10 +429,10 @@ class TestJunit(unittest.TestCase):
                 cases=[]
             ))
 
-    def test_parse_junit_xml_files_with_non_junit_file(self):
+    def test_process_parse_junit_xml_files_with_non_junit_file(self):
         result_file = str(test_files_path / 'non-junit.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[ParseError(file=result_file, message='Invalid format.')],
@@ -445,9 +445,9 @@ class TestJunit(unittest.TestCase):
                 cases=[]
             ))
 
-    def test_parse_junit_xml_files_with_non_existing_file(self):
+    def test_process_parse_junit_xml_files_with_non_existing_file(self):
         self.assertEqual(
-            parse_junit_xml_files(['files/does_not_exist.xml']),
+            process_junit_xml_elems(parse_junit_xml_files(['files/does_not_exist.xml'])),
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
@@ -468,17 +468,17 @@ class TestJunit(unittest.TestCase):
     @unittest.skipIf(LooseVersion(version) < LooseVersion('2.0.0'),
                      'multiple results per test case not supported by junitparser')
     def test_parse_junit_xml_file_with_multiple_results(self):
-        junit = parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')])
+        junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')]))
         self.assertEqual(4, len(junit.cases))
         self.assertEqual("error", junit.cases[0].result)
         self.assertEqual("failure", junit.cases[1].result)
         self.assertEqual("skipped", junit.cases[2].result)
         self.assertEqual("success", junit.cases[3].result)
 
-    def test_parse_junit_xml_file_with_disabled_tests(self):
+    def test_process_parse_junit_xml_file_with_disabled_tests(self):
         result_file = str(test_files_path / 'disabled.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 cases=[UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='positive_arguments_must_produce_expected_result[0]', result='success', message=None, content=None, time=0.0),
                        UnitTestCase(result_file=result_file, test_file=None, line=None, class_name=None, test_name='factorial_of_value_from_fixture', result='failure', message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: check_eq(3628800, 3628801)', content=None, time=0.0),
@@ -521,10 +521,10 @@ class TestJunit(unittest.TestCase):
                 suites=2
             ))
 
-    def test_parse_junit_xml_files_xml_entities_in_test_names(self):
+    def test_process_parse_junit_xml_files_xml_entities_in_test_names(self):
         result_file = str(test_files_path / 'with-xml-entities.xml')
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
                 files=1,
                 errors=[],
@@ -542,12 +542,12 @@ class TestJunit(unittest.TestCase):
                 ]
             ))
 
-    def test_parse_junit_xml_files_with_time_factor(self):
+    def test_process_parse_junit_xml_files_with_time_factor(self):
         result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 self.assertEqual(
-                    parse_junit_xml_files([result_file], time_factor),
+                    process_junit_xml_elems(parse_junit_xml_files([result_file]), time_factor),
                     ParsedUnitTestResults(
                         files=1,
                         errors=[],

@@ -119,9 +119,8 @@ class DropTestCaseBuilder(etree.TreeBuilder):
 
 
 def parse_junit_xml_files(files: Iterable[str],
-                          time_factor: float = 1.0,
                           drop_testcases: bool = False,
-                          progress: Callable[[Tuple[str, Union[JUnitXml, BaseException]]], Tuple[str, Union[JUnitXml, BaseException]]] = lambda x: x) -> ParsedUnitTestResults:
+                          progress: Callable[[Tuple[str, Union[JUnitXml, BaseException]]], Tuple[str, Union[JUnitXml, BaseException]]] = lambda x: x) -> Iterable[Tuple[str, Union[JUnitXml, BaseException]]]:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[JUnitXml, BaseException]:
         if not os.path.exists(path):
@@ -137,17 +136,22 @@ def parse_junit_xml_files(files: Iterable[str],
         except BaseException as e:
             return e
 
-    parsed_files = [progress((result_file, parse(result_file))) for result_file in files]
+    return [progress((result_file, parse(result_file))) for result_file in files]
+
+
+def process_junit_xml_elems(elems: Iterable[Tuple[str, Union[JUnitXml, BaseException]]],
+                            time_factor: float = 1.0) -> ParsedUnitTestResults:
     junits = [(result_file, junit)
-              for result_file, junit in parsed_files
+              for result_file, junit in elems
               if not isinstance(junit, BaseException)]
     errors = [ParseError.from_exception(result_file, exception)
-              for result_file, exception in parsed_files
+              for result_file, exception in elems
               if isinstance(exception, BaseException)]
 
     suites = [(result_file, suite)
               for result_file, junit in junits
               for suite in (junit if junit._tag == "testsuites" else [junit])]
+
     suite_tests = sum([suite.tests for result_file, suite in suites])
     suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites])
     suite_failures = sum([suite.failures for result_file, suite in suites])
@@ -192,7 +196,7 @@ def parse_junit_xml_files(files: Iterable[str],
     ]
 
     return ParsedUnitTestResults(
-        files=len(parsed_files),
+        files=len(list(elems)),
         errors=errors,
         # test state counts from suites
         suites=len(suites),

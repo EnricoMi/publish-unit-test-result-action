@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pathlib
 import sys
 import tempfile
 import unittest
@@ -13,8 +14,10 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
-    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, main
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test import chdir
+
+test_files_path = pathlib.Path(__file__).parent / 'files'
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
@@ -790,6 +793,46 @@ class Test(unittest.TestCase):
             files = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
+
+    def test_parse_files(self):
+        gha = mock.MagicMock()
+        settings = self.get_settings(junit_files_glob=str(test_files_path / '*.xml'),
+                                     trx_files_glob=str(test_files_path / '*.trx'))
+        actual = parse_files(settings, gha)
+        self.assertEqual(27, actual.files)
+        self.assertEqual(4, len(actual.errors))
+        self.assertEqual(24, actual.suites)
+        self.assertEqual(454, actual.suite_tests)
+        self.assertEqual(57, actual.suite_skipped)
+        self.assertEqual(29, actual.suite_failures)
+        self.assertEqual(7, actual.suite_errors)
+        self.assertEqual(2361, actual.suite_time)
+        self.assertEqual(444, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+        gha.warning.assert_not_called()
+        gha.error.assert_not_called()
+
+    def test_parse_files_no_matches(self):
+        gha = mock.MagicMock()
+        with tempfile.TemporaryDirectory() as path:
+            settings = self.get_settings(junit_files_glob=str(pathlib.Path(path) / 'junit-not-there'),
+                                         trx_files_glob=str(pathlib.Path(path) / 'trx-not-there'))
+        actual = parse_files(settings, gha)
+        self.assertEqual(0, actual.files)
+        self.assertEqual(0, len(actual.errors))
+        self.assertEqual(0, actual.suites)
+        self.assertEqual(0, actual.suite_tests)
+        self.assertEqual(0, actual.suite_skipped)
+        self.assertEqual(0, actual.suite_failures)
+        self.assertEqual(0, actual.suite_errors)
+        self.assertEqual(0, actual.suite_time)
+        self.assertEqual(0, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+        gha.warning.assert_has_calls([
+            mock.call(f'Could not find any files for {path}/junit-not-there'),
+            mock.call(f'Could not find any files for {path}/trx-not-there')
+        ])
+        gha.error.assert_not_called()
 
     def test_throttle_gh_request_raw(self):
         logging.root.level = logging.getLevelName('INFO')

@@ -1,6 +1,8 @@
 # dataclasses does not exist before Python3.7, needed as dependency
 dataclasses;python_version<"3.7"
 humanize==3.14.0
+# importlib.resources does not exist before Python3.7, needed as dependency
+importlib_resources;python_version<"3.7"
 junitparser==2.5.0
 lxml==4.8.0
 psutil==5.9.1
