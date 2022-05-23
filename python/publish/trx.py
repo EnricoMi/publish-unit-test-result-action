@@ -1,17 +1,11 @@
 import os
+import pathlib
 from typing import Iterable, Tuple, Union, Callable
 
 from junitparser import JUnitXml
 from lxml import etree
 
-from . import xslt
-
-try:
-    import importlib.resources as pkg_resources
-except ImportError:
-    import importlib_resources as pkg_resources
-
-with pkg_resources.open_text(xslt, 'trx-to-junit.xslt') as r:
+with (pathlib.Path(__file__).parent / 'xslt' / 'trx-to-junit.xslt').open('r', encoding='utf-8') as r:
     transform_trx_to_junit = etree.XSLT(etree.parse(r))
 
 

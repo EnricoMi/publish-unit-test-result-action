@@ -799,6 +799,10 @@ class Test(unittest.TestCase):
         settings = self.get_settings(junit_files_glob=str(test_files_path / '*.xml'),
                                      trx_files_glob=str(test_files_path / '*.trx'))
         actual = parse_files(settings, gha)
+
+        gha.warning.assert_not_called()
+        gha.error.assert_not_called()
+
         self.assertEqual(27, actual.files)
         self.assertEqual(4, len(actual.errors))
         self.assertEqual(24, actual.suites)
@@ -809,8 +813,6 @@ class Test(unittest.TestCase):
         self.assertEqual(2361, actual.suite_time)
         self.assertEqual(444, len(actual.cases))
         self.assertEqual('commit', actual.commit)
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
@@ -818,6 +820,13 @@ class Test(unittest.TestCase):
             settings = self.get_settings(junit_files_glob=str(pathlib.Path(path) / 'junit-not-there'),
                                          trx_files_glob=str(pathlib.Path(path) / 'trx-not-there'))
         actual = parse_files(settings, gha)
+
+        gha.warning.assert_has_calls([
+            mock.call(f'Could not find any files for {path}/junit-not-there'),
+            mock.call(f'Could not find any files for {path}/trx-not-there')
+        ])
+        gha.error.assert_not_called()
+
         self.assertEqual(0, actual.files)
         self.assertEqual(0, len(actual.errors))
         self.assertEqual(0, actual.suites)
@@ -828,11 +837,6 @@ class Test(unittest.TestCase):
         self.assertEqual(0, actual.suite_time)
         self.assertEqual(0, len(actual.cases))
         self.assertEqual('commit', actual.commit)
-        gha.warning.assert_has_calls([
-            mock.call(f'Could not find any files for {path}/junit-not-there'),
-            mock.call(f'Could not find any files for {path}/trx-not-there')
-        ])
-        gha.error.assert_not_called()
 
     def test_throttle_gh_request_raw(self):
         logging.root.level = logging.getLevelName('INFO')
