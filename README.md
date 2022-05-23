@@ -169,7 +169,7 @@ See the complete list of options below.
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `"test-results/**/*.xml"`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
+|`junit_files`|`*.xml`|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
