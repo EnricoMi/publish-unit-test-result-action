@@ -127,6 +127,7 @@ ParsedJUnitFile = Tuple[str, JUnitTreeOrException]
 def parse_junit_xml_files(files: Iterable[str],
                           drop_testcases: bool = False,
                           progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    """Parses junit xml files."""
     def parse(path: str) -> JUnitTreeOrException:
         """Parses a junit xml file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):

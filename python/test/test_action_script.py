@@ -134,8 +134,10 @@ class Test(unittest.TestCase):
     @classmethod
     def get_settings_no_default_files(cls,
                                       junit_files_glob=None,
+                                      xunit_files_glob=None,
                                       trx_files_glob=None) -> Settings:
         return cls.get_settings(junit_files_glob=junit_files_glob,
+                                xunit_files_glob=xunit_files_glob,
                                 trx_files_glob=trx_files_glob)
 
     @staticmethod
@@ -151,6 +153,7 @@ class Test(unittest.TestCase):
                      fail_on_errors=True,
                      fail_on_failures=True,
                      junit_files_glob='junit-files',
+                     xunit_files_glob='xunit-files',
                      trx_files_glob='trx-files',
                      time_factor=1.0,
                      check_name='check name',
@@ -184,6 +187,7 @@ class Test(unittest.TestCase):
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             junit_files_glob=junit_files_glob,
+            xunit_files_glob=xunit_files_glob,
             trx_files_glob=trx_files_glob,
             time_factor=time_factor,
             check_name=check_name,
@@ -248,15 +252,18 @@ class Test(unittest.TestCase):
 
     def test_get_settings_any_files(self):
         for junit in [None, 'junit-file']:
-            for trx in [None, 'trx-file']:
-                with self.subTest(junit=junit, trx=trx):
-                    any_flavour_set = any([flavour is not None for flavour in [junit, trx]])
-                    expected = self.get_settings(junit_files_glob=junit if any_flavour_set else '*.xml',
-                                                 trx_files_glob=trx)
-                    warnings = None if any_flavour_set else 'At least one of the *_FILES options has to be set! ' \
-                                                            'Falling back to deprecated default "*.xml"'
+            for xunit in [None, 'xunit-file']:
+                for trx in [None, 'trx-file']:
+                    with self.subTest(junit=junit, xunit=xunit, trx=trx):
+                        any_flavour_set = any([flavour is not None for flavour in [junit, xunit, trx]])
+                        expected = self.get_settings(junit_files_glob=junit if any_flavour_set else '*.xml',
+                                                     xunit_files_glob=xunit,
+                                                     trx_files_glob=trx)
+                        warnings = None if any_flavour_set else 'At least one of the *_FILES options has to be set! ' \
+                                                                'Falling back to deprecated default "*.xml"'
 
-                    self.do_test_get_settings(JUNIT_FILES=junit, TRX_FILES=trx, expected=expected, warning=warnings)
+                        self.do_test_get_settings(JUNIT_FILES=junit, XUNIT_FILES=xunit, TRX_FILES=trx,
+                                                  expected=expected, warning=warnings)
 
     def test_get_settings_junit_files(self):
         self.do_test_get_settings_no_default_files(JUNIT_FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'))
@@ -268,6 +275,16 @@ class Test(unittest.TestCase):
         self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
         self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
         self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+    def test_get_settings_xunit_files(self):
+        self.do_test_get_settings_no_default_files(XUNIT_FILES='file', expected=self.get_settings_no_default_files(xunit_files_glob='file'))
+        self.do_test_get_settings_no_default_files(XUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(xunit_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(XUNIT_FILES=None, expected=self.get_settings_no_default_files(xunit_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+    def test_get_settings_trx_files(self):
+        self.do_test_get_settings_no_default_files(TRX_FILES='file', expected=self.get_settings_no_default_files(trx_files_glob='file'))
+        self.do_test_get_settings_no_default_files(TRX_FILES='file\nfile2', expected=self.get_settings_no_default_files(trx_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(TRX_FILES=None, expected=self.get_settings_no_default_files(trx_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
 
     def test_get_settings_time_unit(self):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
@@ -479,7 +496,7 @@ class Test(unittest.TestCase):
                                               expected: Settings = get_settings.__func__(),
                                               **kwargs):
         options = dict(**kwargs)
-        for flavour in ['JUNIT', 'TRX']:
+        for flavour in ['JUNIT', 'XUNIT', 'TRX']:
             if f'{flavour}_FILES' not in kwargs:
                 options[f'{flavour}_FILES'] = None
 
@@ -513,6 +530,7 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 JUNIT_FILES='junit-files',
+                XUNIT_FILES='xunit-files',
                 TRX_FILES='trx-files',
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='always',
@@ -797,6 +815,7 @@ class Test(unittest.TestCase):
     def test_parse_files(self):
         gha = mock.MagicMock()
         settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                                     xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
                                      trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
         actual = parse_files(settings, gha)
 
@@ -818,13 +837,16 @@ class Test(unittest.TestCase):
         gha = mock.MagicMock()
         with tempfile.TemporaryDirectory() as path:
             missing_junit = str(pathlib.Path(path) / 'junit-not-there')
+            missing_xunit = str(pathlib.Path(path) / 'xunit-not-there')
             missing_trx = str(pathlib.Path(path) / 'trx-not-there')
             settings = self.get_settings(junit_files_glob=missing_junit,
+                                         xunit_files_glob=missing_xunit,
                                          trx_files_glob=missing_trx)
         actual = parse_files(settings, gha)
 
         gha.warning.assert_has_calls([
             mock.call(f'Could not find any files for {missing_junit}'),
+            mock.call(f'Could not find any files for {missing_xunit}'),
             mock.call(f'Could not find any files for {missing_trx}')
         ])
         gha.error.assert_not_called()

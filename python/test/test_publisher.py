@@ -106,6 +106,7 @@ class TestPublisher(unittest.TestCase):
             fail_on_errors=True,
             fail_on_failures=True,
             junit_files_glob='*.xml',
+            xunit_files_glob=None,
             trx_files_glob=None,
             time_factor=1.0,
             check_name='Check Name',
