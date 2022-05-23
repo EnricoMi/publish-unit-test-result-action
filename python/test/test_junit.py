@@ -399,7 +399,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
+                errors=[ParseError(file=result_file, message="Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)", line=None, column=None)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -415,7 +415,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
+                errors=[ParseError(file=result_file, message='Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)', line=None, column=None)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,

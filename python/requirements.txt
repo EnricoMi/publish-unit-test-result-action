@@ -4,3 +4,4 @@ junitparser==2.5.0
 PyGithub==1.55
 urllib3==1.26.9
 requests==2.27.1
+lxml==4.8.0

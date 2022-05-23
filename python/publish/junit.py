@@ -1,12 +1,18 @@
 import os
 from collections import defaultdict
-from typing import Optional, Iterable, Union, Any, List, Dict
+from typing import Optional, Iterable, Union, Tuple, List, Dict
 
 import junitparser
 from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
 from junitparser.junitparser import etree
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+
+try:
+    import lxml
+    lxml_available = True
+except ImportError:
+    lxml_available = False
 
 
 def get_results(results: Union[Element, List[Element]], status: Optional[str] = None) -> List[Element]:
@@ -97,10 +103,24 @@ class DropTestCaseBuilder(etree.TreeBuilder):
             if self._stack:
                 self._stack.pop()
 
+    def close(self) -> Element:
+        # when lxml is around, we have to return an ElementTree here, otherwise
+        #   XMLParser(target=...).parse(..., parser=...)
+        # returns an Element, not a ElementTree, but junitparser expects an ElementTree
+        #
+        # https://lxml.de/parsing.html:
+        #   Note that the parser does not build a tree when using a parser target. The result of the parser run is
+        #   whatever the target object returns from its .close() method. If you want to return an XML tree here, you
+        #   have to create it programmatically in the target object.
+        if lxml_available:
+            return lxml.etree.ElementTree(super().close())
+        else:
+            return super().close()
+
 
 def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0, drop_testcases: bool = False) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
-    def parse(path: str) -> Union[str, Any]:
+    def parse(path: str) -> Union[JUnitXml, BaseException]:
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:
@@ -114,8 +134,7 @@ def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0, drop_t
         except BaseException as e:
             return e
 
-    parsed_files = [(result_file, parse(result_file))
-                    for result_file in files]
+    parsed_files = [(result_file, parse(result_file)) for result_file in files]
     junits = [(result_file, junit)
               for result_file, junit in parsed_files
               if not isinstance(junit, BaseException)]
