@@ -22,7 +22,7 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
   uses: EnricoMi/publish-unit-test-result-action@v1
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 ```
 
 Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
@@ -33,7 +33,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
   uses: EnricoMi/publish-unit-test-result-action/composite@v1
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 ```
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
@@ -160,7 +160,7 @@ There have to be at least one pattern starting without a `!`:
 
 ```yaml
 with:
-  files: |
+  junit_files: |
     *.xml
     !config.xml
 ```
@@ -212,7 +212,7 @@ through the expression `steps.<id>.outputs.json`.
   id: test-results
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 
 - name: Conclusion
   run: echo "Conclusion is ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}"
@@ -358,7 +358,7 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          files: "artifacts/**/*.xml"
+          junit_files: "artifacts/**/*.xml"
 ```
 
 ## Support fork repositories and dependabot branches
@@ -471,7 +471,7 @@ jobs:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
-          files: "artifacts/**/*.xml"
+          junit_files: "artifacts/**/*.xml"
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
@@ -489,7 +489,7 @@ steps:
   id: test-results
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 
 - name: Set badge color
   shell: bash
@@ -593,7 +593,7 @@ publish-test-results:
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v1
       with:
-        files: "artifacts/**/*.xml"
+        junit_files: "artifacts/**/*.xml"
 ```
 
 ### Slow startup of composite action

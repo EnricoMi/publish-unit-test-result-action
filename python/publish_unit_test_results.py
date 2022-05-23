@@ -243,6 +243,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
+    if get_var('FILES', options):
+        gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
+
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
     time_factor = time_factors.get(time_unit.lower())
@@ -280,7 +283,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         json_file=get_var('JSON_FILE', options),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
-        files_glob=get_var('FILES', options) or '*.xml',
+        junit_files_glob=get_var('JUNIT_FILES', options) or get_var('FILES', options) or '*.xml',
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,

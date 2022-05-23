@@ -33,7 +33,7 @@ class TestActionYml(unittest.TestCase):
             action = yaml.safe_load(r)
 
         # these are not documented in the action.yml files but still needs to be forwarded
-        extra_inputs = ['root_log_level', 'log_level']
+        extra_inputs = ['files', 'root_log_level', 'log_level']
         expected = {key.upper(): f'${{{{ inputs.{key} }}}}' for key in list(action.get('inputs', {}).keys()) + extra_inputs}
 
         steps = action.get('runs', {}).get('steps', [])

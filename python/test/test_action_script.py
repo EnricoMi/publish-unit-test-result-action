@@ -141,7 +141,7 @@ class Test(unittest.TestCase):
                      commit='commit',
                      fail_on_errors=True,
                      fail_on_failures=True,
-                     files_glob='files',
+                     junit_files_glob='junit-files',
                      time_factor=1.0,
                      check_name='check name',
                      comment_title='title',
@@ -171,7 +171,7 @@ class Test(unittest.TestCase):
             json_file=json_file,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
-            files_glob=files_glob,
+            junit_files_glob=junit_files_glob,
             time_factor=time_factor,
             check_name=check_name,
             comment_title=comment_title,
@@ -233,10 +233,16 @@ class Test(unittest.TestCase):
                     self.do_test_get_settings(GITHUB_RETRIES=retries, expected=None)
                 self.assertIn(f'GITHUB_RETRIES must be a positive integer or 0: {retries}', re.exception.args)
 
-    def test_get_settings_files(self):
-        self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
-        self.do_test_get_settings(FILES='file\nfile2', expected=self.get_settings(files_glob='file\nfile2'))
-        self.do_test_get_settings(FILES=None, expected=self.get_settings(files_glob='*.xml'))
+    def test_get_settings_junit_files(self):
+        self.do_test_get_settings(JUNIT_FILES='file', expected=self.get_settings(junit_files_glob='file'))
+        self.do_test_get_settings(JUNIT_FILES='file\nfile2', expected=self.get_settings(junit_files_glob='file\nfile2'))
+        self.do_test_get_settings(JUNIT_FILES=None, expected=self.get_settings(junit_files_glob='*.xml'))
+
+        # this is the deprecated version of JUNIT_FILES
+        self.do_test_get_settings(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings(JUNIT_FILES=None, FILES='file', expected=self.get_settings(junit_files_glob='file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings(junit_files_glob='file\nfile2'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings(JUNIT_FILES=None, FILES=None, expected=self.get_settings(junit_files_glob='*.xml'))
 
     def test_get_settings_time_unit(self):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
@@ -452,7 +458,7 @@ class Test(unittest.TestCase):
                 GITHUB_TOKEN='token',
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
-                FILES='files',
+                JUNIT_FILES='junit-files',
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='create new',  # true unless 'false'
                 JOB_SUMMARY='true',

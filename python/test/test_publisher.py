@@ -68,7 +68,7 @@ class TestPublisher(unittest.TestCase):
             json_file=json_file,
             fail_on_errors=True,
             fail_on_failures=True,
-            files_glob='*.xml',
+            junit_files_glob='*.xml',
             time_factor=1.0,
             check_name='Check Name',
             comment_title='Comment Title',
