@@ -11,6 +11,7 @@ from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseEr
 
 test_files_path = pathlib.Path(__file__).parent / 'files'
 
+
 class TestElement(Element):
     __test__ = False
 
@@ -394,12 +395,17 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_non_xml_file(self):
-        result_file = str(test_files_path / 'non-xml.xml')
+        result_file = test_files_path / 'non-xml.xml'
+        result_filename = str(result_file)
+        expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message="Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)", line=None, column=None)],
+                errors=[ParseError(file=result_filename,
+                                   message=f"Start tag expected, '<' not found, line 1, column 1 ({expected_filename}, line 1)",
+                                   line=None,
+                                   column=None)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -410,12 +416,17 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_corrupt_xml_file(self):
-        result_file = str(test_files_path / 'corrupt-xml.xml')
+        result_file = test_files_path / 'corrupt-xml.xml'
+        result_filename = str(result_file)
+        expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)', line=None, column=None)],
+                errors=[ParseError(file=result_filename,
+                                   message=f'Premature end of data in tag skipped line 9, line 11, column 22 ({expected_filename}, line 11)',
+                                   line=None,
+                                   column=None)],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
