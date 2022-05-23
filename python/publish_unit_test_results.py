@@ -70,11 +70,11 @@ def main(settings: Settings, gha: GithubAction) -> None:
         return
 
     # resolve the files_glob to files
-    files = get_files(settings.files_glob)
+    files = get_files(settings.junit_files_glob)
     if len(files) == 0:
-        gha.warning(f'Could not find any files for {settings.files_glob}')
+        gha.warning(f'Could not find any files for {settings.junit_files_glob}')
     else:
-        logger.info(f'reading {settings.files_glob}')
+        logger.info(f'reading {settings.junit_files_glob}')
         logger.debug(f'reading {list(files)}')
 
     # get the unit test results
