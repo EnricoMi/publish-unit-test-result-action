@@ -1,4 +1,3 @@
-import os
 import pathlib
 import unittest
 from distutils.version import LooseVersion
@@ -385,7 +384,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError(result_file, 'File is empty.', None, None)],
+                errors=[ParseError(result_file, 'File is empty.')],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
@@ -402,10 +401,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_filename,
-                                   message=f"Start tag expected, '<' not found, line 1, column 1 ({expected_filename}, line 1)",
-                                   line=None,
-                                   column=None)],
+                errors=[ParseError(file=result_filename, message=f"Start tag expected, '<' not found, line 1, column 1 ({expected_filename}, line 1)")],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -423,10 +419,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_filename,
-                                   message=f'Premature end of data in tag skipped line 9, line 11, column 22 ({expected_filename}, line 11)',
-                                   line=None,
-                                   column=None)],
+                errors=[ParseError(file=result_filename, message=f'Premature end of data in tag skipped line 9, line 11, column 22 ({expected_filename}, line 11)')],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -442,7 +435,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='Invalid format.', line=None, column=None)],
+                errors=[ParseError(file=result_file, message='Invalid format.')],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -458,7 +451,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.', None, None)],
+                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.')],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,

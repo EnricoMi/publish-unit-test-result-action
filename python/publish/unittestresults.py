@@ -29,8 +29,8 @@ class UnitTestCaseResults(defaultdict):
 class ParseError:
     file: str
     message: str
-    line: Optional[int]
-    column: Optional[int]
+    line: Optional[int] = None
+    column: Optional[int] = None
 
     @staticmethod
     def from_exception(file: str, exception: BaseException):
@@ -45,7 +45,7 @@ class ParseError:
             elif msg.startswith('Invalid format.'):
                 msg = f'File is not a valid JUnit file:\n{msg}'
             return ParseError(file=file, message=msg, line=line, column=column)
-        return ParseError(file=file, message=str(exception), line=None, column=None)
+        return ParseError(file=file, message=str(exception))
 
 
 @dataclass(frozen=True)

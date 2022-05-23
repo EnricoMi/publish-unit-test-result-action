@@ -8,7 +8,7 @@ from publish.unittestresults import get_test_results, get_stats, get_stats_delta
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
 from test import d, n
 
-errors = [ParseError('file', 'error', None, None)]
+errors = [ParseError('file', 'error')]
 errors_dict = [dataclasses.asdict(e) for e in errors]
 
 
@@ -26,12 +26,12 @@ class TestUnitTestResults(unittest.TestCase):
         error = FileNotFoundError(2, 'No such file or directory')
         error.filename = 'some file path'
         actual = ParseError.from_exception('file', error)
-        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'", None, None)
+        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'")
         self.assertEqual(expected, actual)
 
     def test_parse_error_from_error(self):
         actual = ParseError.from_exception('file', ValueError('error'))
-        expected = ParseError('file', 'error', None, None)
+        expected = ParseError('file', 'error')
         self.assertEqual(expected, actual)
 
     def test_parsed_unit_test_results_with_commit(self):
@@ -390,7 +390,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), UnitTestRunResults(
             files=3,
-            errors=[ParseError('other file', 'other error', None, None)],
+            errors=[ParseError('other file', 'other error')],
             suites=5,
             duration=7,
 
