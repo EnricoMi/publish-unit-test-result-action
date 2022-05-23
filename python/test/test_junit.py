@@ -1,4 +1,3 @@
-import os
 import pathlib
 import unittest
 from distutils.version import LooseVersion
@@ -10,6 +9,7 @@ from publish.junit import parse_junit_xml_files, get_results, get_result, get_co
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 test_files_path = pathlib.Path(__file__).parent / 'files'
+
 
 class TestElement(Element):
     __test__ = False
@@ -384,7 +384,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError(result_file, 'File is empty.', None, None)],
+                errors=[ParseError(result_file, 'File is empty.')],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
@@ -394,12 +394,14 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_non_xml_file(self):
-        result_file = str(test_files_path / 'non-xml.xml')
+        result_file = test_files_path / 'non-xml.xml'
+        result_filename = str(result_file)
+        expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nsyntax error: line 1, column 0', line=1, column=0)],
+                errors=[ParseError(file=result_filename, message=f"Start tag expected, '<' not found, line 1, column 1 ({expected_filename}, line 1)")],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -410,12 +412,14 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_parse_junit_xml_files_with_corrupt_xml_file(self):
-        result_file = str(test_files_path / 'corrupt-xml.xml')
+        result_file = test_files_path / 'corrupt-xml.xml'
+        result_filename = str(result_file)
+        expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
-            parse_junit_xml_files([result_file]),
+            parse_junit_xml_files([result_filename]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='File is not a valid XML file:\nno element found: line 11, column 21', line=11, column=21)],
+                errors=[ParseError(file=result_filename, message=f'Premature end of data in tag skipped line 9, line 11, column 22 ({expected_filename}, line 11)')],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -431,7 +435,7 @@ class TestJunit(unittest.TestCase):
             parse_junit_xml_files([result_file]),
             ParsedUnitTestResults(
                 files=1,
-                errors=[ParseError(file=result_file, message='Invalid format.', line=None, column=None)],
+                errors=[ParseError(file=result_file, message='Invalid format.')],
                 suites=0,
                 suite_tests=0,
                 suite_skipped=0,
@@ -447,7 +451,7 @@ class TestJunit(unittest.TestCase):
             ParsedUnitTestResults(
                 cases=[],
                 files=1,
-                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.', None, None)],
+                errors=[ParseError('files/does_not_exist.xml', 'File does not exist.')],
                 suite_errors=0,
                 suite_failures=0,
                 suite_skipped=0,
