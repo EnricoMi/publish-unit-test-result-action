@@ -23,6 +23,7 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
   if: always()
   with:
     junit_files: "test-results/**/*.xml"
+    trx_files: "test-results/**/*.trx"
 ```
 
 Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
@@ -34,6 +35,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
   if: always()
   with:
     junit_files: "test-results/**/*.xml"
+    trx_files: "test-results/**/*.trx"
 ```
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
@@ -180,9 +182,11 @@ With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Configuration
 
-Files can be selected via the `files` option, which is optional and defaults to `*.xml` in the current working directory.
-[It supports wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
+Files can be selected via the `junit_files` and `trx_files` options.
+They support [glob wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
 The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
+
+At least one of `junit_files` and `trx_files` options have to be set.
 
 You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
 There have to be at least one pattern starting without a `!`:
@@ -198,7 +202,8 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`junit_files`|`*.xml`|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`junit_files`|One of `*_files` must be set|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`trx_files`|One of `*_files` must be set|File patterns of TRX test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|

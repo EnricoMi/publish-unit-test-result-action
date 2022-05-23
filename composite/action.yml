@@ -32,6 +32,9 @@ inputs:
   junit_files:
     description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
     required: false
+  trx_files:
+    description: 'File patterns of TRX test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
   time_unit:
     description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
@@ -154,6 +157,7 @@ runs:
         # deprecated
         FILES: ${{ inputs.files }}
         JUNIT_FILES: ${{ inputs.junit_files }}
+        TRX_FILES: ${{ inputs.trx_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
