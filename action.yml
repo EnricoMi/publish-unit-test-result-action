@@ -25,9 +25,9 @@ inputs:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     default: 'test failures'
     required: false
-  files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
-    required: true
+  junit_files:
+    description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
   time_unit:
     description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
@@ -54,11 +54,11 @@ inputs:
     default: 'update last'
     required: false
   job_summary:
-    description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run'
     required: false
     default: 'true'
   compare_to_earlier_commit:
-    description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits'
     default: 'true'
     required: false
   pull_request_build:

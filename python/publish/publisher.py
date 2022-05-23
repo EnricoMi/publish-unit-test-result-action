@@ -37,7 +37,7 @@ class Settings:
     json_file: Optional[str]
     fail_on_errors: bool
     fail_on_failures: bool
-    files_glob: str
+    junit_files_glob: str
     time_factor: float
     check_name: str
     comment_title: str

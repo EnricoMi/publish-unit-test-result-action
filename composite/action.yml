@@ -25,9 +25,9 @@ inputs:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     required: false
     default: 'test failures'
-  files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
-    required: true
+  junit_files:
+    description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
   time_unit:
     description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
@@ -54,11 +54,11 @@ inputs:
     required: false
     default: 'update last'
   job_summary:
-    description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run'
     required: false
     default: 'true'
   compare_to_earlier_commit:
-    description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits'
     required: false
     default: 'true'
   pull_request_build:
@@ -146,7 +146,9 @@ runs:
         CHECK_NAME: ${{ inputs.check_name }}
         COMMENT_TITLE: ${{ inputs.comment_title }}
         FAIL_ON: ${{ inputs.fail_on }}
+        # deprecated
         FILES: ${{ inputs.files }}
+        JUNIT_FILES: ${{ inputs.junit_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
@@ -165,7 +167,9 @@ runs:
         SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
         JSON_FILE: ${{ inputs.json_file }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
+        # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+        # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
 
