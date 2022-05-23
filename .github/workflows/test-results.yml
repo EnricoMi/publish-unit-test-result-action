@@ -69,7 +69,9 @@ jobs:
 
       - name: Upload badge to Gist
         # Upload only for master branch
-        if: github.ref == 'refs/heads/master'
+        if: >
+          github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'master' ||
+          github.event_name != 'workflow_run' && github.ref == 'refs/heads/master'
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
