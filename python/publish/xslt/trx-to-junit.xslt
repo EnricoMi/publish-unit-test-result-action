@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- based on https://raw.githubusercontent.com/ekyoung/personal-site-dotnet/7c2f6953960b9abf8d4f520ba0f257034b9a7371/trx-to-junit.xslt -->
+<!-- based on https://github.com/ekyoung/personal-site-dotnet/blob/7c2f6953960b9abf8d4f520ba0f257034b9a7371/trx-to-junit.xslt -->
+<!-- and https://github.com/medlab/xunitparserx/blob/2cc8b68b0c5ce9c60da2934cb2cce10c8330536e/trx-to-junit.xslt -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010" >
   <xsl:output method="xml" indent="yes" />
   <xsl:template match="/">
