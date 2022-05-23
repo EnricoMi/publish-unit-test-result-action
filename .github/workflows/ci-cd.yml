@@ -422,8 +422,8 @@ jobs:
         with:
           check_name: Test Results (Test Files)
           fail_on: nothing
-          junit_files: "test-files/*.xml"
-          trx_files: "test-files/*.trx"
+          junit_files: "test-files/junit-xml/**/*.xml"
+          trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
           log_level: DEBUG
 

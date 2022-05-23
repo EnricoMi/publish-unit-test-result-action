@@ -6,13 +6,13 @@ from lxml import etree
 from publish.junit import process_junit_xml_elems, ParsedUnitTestResults, UnitTestCase
 from publish.trx import parse_trx_files, transform_trx_to_junit
 
-test_files_path = pathlib.Path(__file__).parent / 'files'
+test_files_path = pathlib.Path(__file__).parent / 'files' / 'trx'
 
 
 class TestTrx(unittest.TestCase):
 
     def test_transform(self):
-        result_file = str(test_files_path / 'mstest.trx')
+        result_file = str(test_files_path / 'mstest' / 'pickles.trx')
         trx = etree.parse(str(result_file))
         junit = transform_trx_to_junit(trx)
 
@@ -51,7 +51,7 @@ class TestTrx(unittest.TestCase):
         )
 
     def test_process_parse_trx_files_with_time_factor(self):
-        result_file = str(test_files_path / 'mstest.trx')
+        result_file = str(test_files_path / 'mstest' / 'pickles.trx')
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 actual = process_junit_xml_elems(parse_trx_files([result_file]), time_factor=time_factor)

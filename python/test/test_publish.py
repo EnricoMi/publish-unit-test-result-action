@@ -23,7 +23,8 @@ from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
 from test import d, n
 
-test_files_path = pathlib.Path(__file__).parent / 'files'
+test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
+
 
 
 @contextlib.contextmanager
@@ -2008,16 +2009,16 @@ class PublishTest(unittest.TestCase):
 
     def test_files(self):
         parsed = process_junit_xml_elems(
-            parse_junit_xml_files([str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
-                                   str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
-                                   str(test_files_path / 'junit.gloo.elastic.xml'),
-                                   str(test_files_path / 'junit.gloo.standalone.xml'),
-                                   str(test_files_path / 'junit.gloo.static.xml'),
-                                   str(test_files_path / 'junit.mpi.integration.xml'),
-                                   str(test_files_path / 'junit.mpi.standalone.xml'),
-                                   str(test_files_path / 'junit.mpi.static.xml'),
-                                   str(test_files_path / 'junit.spark.integration.1.xml'),
-                                   str(test_files_path / 'junit.spark.integration.2.xml')])).with_commit('example')
+            parse_junit_xml_files([str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.tf.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.torch.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.elastic.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.standalone.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.static.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.integration.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')])).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2075,16 +2076,16 @@ class PublishTest(unittest.TestCase):
     def test_files_without_annotations(self):
         parsed = process_junit_xml_elems(
             parse_junit_xml_files(
-                [str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
-                 str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
-                 str(test_files_path / 'junit.gloo.elastic.xml'),
-                 str(test_files_path / 'junit.gloo.standalone.xml'),
-                 str(test_files_path / 'junit.gloo.static.xml'),
-                 str(test_files_path / 'junit.mpi.integration.xml'),
-                 str(test_files_path / 'junit.mpi.standalone.xml'),
-                 str(test_files_path / 'junit.mpi.static.xml'),
-                 str(test_files_path / 'junit.spark.integration.1.xml'),
-                 str(test_files_path / 'junit.spark.integration.2.xml')],
+                [str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.tf.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.torch.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.elastic.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.standalone.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.static.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.integration.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
+                 str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
+                 str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')],
                 drop_testcases=True
             )
         ).with_commit('example')

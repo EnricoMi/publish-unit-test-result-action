@@ -796,8 +796,8 @@ class Test(unittest.TestCase):
 
     def test_parse_files(self):
         gha = mock.MagicMock()
-        settings = self.get_settings(junit_files_glob=str(test_files_path / '*.xml'),
-                                     trx_files_glob=str(test_files_path / '*.trx'))
+        settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                                     trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
         actual = parse_files(settings, gha)
 
         gha.warning.assert_not_called()

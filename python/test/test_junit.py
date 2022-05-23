@@ -8,7 +8,7 @@ from junitparser import JUnitXml, Element, version
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, get_message, Disabled
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
-test_files_path = pathlib.Path(__file__).parent / 'files'
+test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
 
 
 class TestElement(Element):
@@ -43,7 +43,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_spark_diff_file(self):
-        result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
+        result_file = str(test_files_path / 'scalatest' / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         self.assertEqual(
             process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
@@ -115,7 +115,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_horovod_file(self):
-        result_file = str(test_files_path / 'junit.mpi.integration.xml')
+        result_file = str(test_files_path / 'pytest' / 'junit.mpi.integration.xml')
         self.assertEqual(
             process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
@@ -165,7 +165,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_spark_extension_file(self):
-        result_file = str(test_files_path / 'junit.fail.xml')
+        result_file = str(test_files_path / 'pytest' / 'junit.fail.xml')
         self.assertEqual(
             process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
@@ -322,45 +322,6 @@ class TestJunit(unittest.TestCase):
                 suites=1
             ))
 
-    def test_parse_xunit_xml_file(self):
-        result_file = str(test_files_path / 'xunit.xml')
-        self.assertEqual(
-            process_junit_xml_elems(parse_junit_xml_files([result_file])),
-            ParsedUnitTestResults(
-                cases=[
-                    UnitTestCase(
-                        class_name=None,
-                        content=None,
-                        result_file=result_file,
-                        test_file=None,
-                        line=None,
-                        message=None,
-                        result='success',
-                        test_name='mytestapp.Tests.AttriubteTests.SetTestNoFeature',
-                        time=0.4540354
-                    ),
-                    UnitTestCase(
-                        class_name=None,
-                        content=None,
-                        result_file=result_file,
-                        test_file=None,
-                        line=None,
-                        message=None,
-                        result='success',
-                        test_name='mytestapp.Tests.AttriubteTests.GetTestNoFeature',
-                        time=0.0039778
-                    )
-                ],
-                files=1,
-                errors=[],
-                suite_errors=0,
-                suite_failures=0,
-                suite_skipped=0,
-                suite_tests=2,
-                suite_time=0,
-                suites=1
-            ))
-
     def test_process_parse_junit_xml_files_with_no_attributes_file(self):
         result_file = str(test_files_path / 'no-attributes.xml')
         self.assertEqual(
@@ -412,7 +373,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_corrupt_xml_file(self):
-        result_file = test_files_path / 'corrupt-xml.xml'
+        result_file = test_files_path / 'pytest' / 'corrupt-xml.xml'
         result_filename = str(result_file)
         expected_filename = ('file:/' + result_file.absolute().as_posix()) if result_file.drive else result_file.name
         self.assertEqual(
@@ -430,7 +391,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_non_junit_file(self):
-        result_file = str(test_files_path / 'non-junit.xml')
+        result_file = str(test_files_path / 'pytest' / 'small.xml')
         self.assertEqual(
             process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
@@ -462,13 +423,13 @@ class TestJunit(unittest.TestCase):
 
     # tests https://github.com/weiwei/junitparser/issues/64
     def test_junitparser_locale(self):
-        junit = JUnitXml.fromfile(str(test_files_path / 'junit.spark.integration.1.xml'))
+        junit = JUnitXml.fromfile(str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'))
         self.assertAlmostEqual(162.933, junit.time, 3)
 
     @unittest.skipIf(LooseVersion(version) < LooseVersion('2.0.0'),
                      'multiple results per test case not supported by junitparser')
     def test_parse_junit_xml_file_with_multiple_results(self):
-        junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')]))
+        junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'pytest' / 'junit.multiresult.xml')]))
         self.assertEqual(4, len(junit.cases))
         self.assertEqual("error", junit.cases[0].result)
         self.assertEqual("failure", junit.cases[1].result)
@@ -476,7 +437,7 @@ class TestJunit(unittest.TestCase):
         self.assertEqual("success", junit.cases[3].result)
 
     def test_process_parse_junit_xml_file_with_disabled_tests(self):
-        result_file = str(test_files_path / 'disabled.xml')
+        result_file = str(test_files_path / 'tst' / 'disabled.xml')
         self.assertEqual(
             process_junit_xml_elems(parse_junit_xml_files([result_file])),
             ParsedUnitTestResults(
@@ -543,7 +504,7 @@ class TestJunit(unittest.TestCase):
             ))
 
     def test_process_parse_junit_xml_files_with_time_factor(self):
-        result_file = str(test_files_path / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
+        result_file = str(test_files_path / 'scalatest' / 'TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml')
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 self.assertEqual(
