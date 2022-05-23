@@ -817,13 +817,15 @@ class Test(unittest.TestCase):
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
         with tempfile.TemporaryDirectory() as path:
-            settings = self.get_settings(junit_files_glob=str(pathlib.Path(path) / 'junit-not-there'),
-                                         trx_files_glob=str(pathlib.Path(path) / 'trx-not-there'))
+            missing_junit = str(pathlib.Path(path) / 'junit-not-there')
+            missing_trx = str(pathlib.Path(path) / 'trx-not-there')
+            settings = self.get_settings(junit_files_glob=missing_junit,
+                                         trx_files_glob=missing_trx)
         actual = parse_files(settings, gha)
 
         gha.warning.assert_has_calls([
-            mock.call(f'Could not find any files for {path}/junit-not-there'),
-            mock.call(f'Could not find any files for {path}/trx-not-there')
+            mock.call(f'Could not find any files for {missing_junit}'),
+            mock.call(f'Could not find any files for {missing_trx}')
         ])
         gha.error.assert_not_called()
 
