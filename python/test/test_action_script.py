@@ -822,15 +822,15 @@ class Test(unittest.TestCase):
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
-        self.assertEqual(35, actual.files)
+        self.assertEqual(36, actual.files)
         self.assertEqual(4, len(actual.errors))
-        self.assertEqual(32, actual.suites)
-        self.assertEqual(1397, actual.suite_tests)
+        self.assertEqual(33, actual.suites)
+        self.assertEqual(1401, actual.suite_tests)
         self.assertEqual(96, actual.suite_skipped)
-        self.assertEqual(48, actual.suite_failures)
+        self.assertEqual(49, actual.suite_failures)
         self.assertEqual(7, actual.suite_errors)
         self.assertEqual(2392, actual.suite_time)
-        self.assertEqual(1387, len(actual.cases))
+        self.assertEqual(1391, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
     def test_parse_files_no_matches(self):
