@@ -13,7 +13,7 @@
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
 
 This [GitHub Action](https://github.com/actions) analyses test result files and
-publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
+publishes the results on GitHub. It supports the JUnit XML and TRX file formats, and runs on Linux, macOS and Windows.
 
 You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
 
@@ -202,12 +202,11 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`junit_files`|One of `*_files` must be set|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
-|`trx_files`|One of `*_files` must be set|File patterns of TRX test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`junit_files`<br/>`trx_files`| |At least one of these `*_files` must be set. File patterns of JUnit XML and TRX test result files, respectively. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
-|`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
+|`ignore_runs`|`false`|Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.|
 
 <details>
 <summary>Options related to Git and GitHub</summary>
@@ -656,7 +655,7 @@ If this conflicts with actions that later run Python in the same workflow (which
 it is recommended to run this action as the last step in your workflow, or to run it in an isolated workflow.
 Running it in an isolated workflow is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
 
-To run the composite action in an isolated workflow, your CI workflow should upload all test result XML files:
+To run the composite action in an isolated workflow, your CI workflow should upload all test result files:
 
 ```yaml
 build-and-test:

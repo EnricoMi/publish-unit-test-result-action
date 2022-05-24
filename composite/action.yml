@@ -36,7 +36,7 @@ inputs:
     description: 'File patterns of TRX test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
     required: false
   time_unit:
-    description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
+    description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
     required: false
   report_individual_runs:
@@ -46,7 +46,7 @@ inputs:
     description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise'
     required: false
   ignore_runs:
-    description: 'Does not process test run information by ignoring <testcase> elements in the XML files, which is useful for very large XML files. This disables any check run annotations'
+    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
     default: 'false'
     required: false
   hide_comments:
