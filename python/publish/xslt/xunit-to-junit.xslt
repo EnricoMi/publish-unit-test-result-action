@@ -16,7 +16,7 @@
           <xsl:attribute name="skipped"><xsl:value-of select="@skipped"/></xsl:attribute>
           <xsl:attribute name="timestamp"><xsl:value-of select="@run-date"/>T<xsl:value-of select="@run-time"/></xsl:attribute>
 
-          <xsl:for-each select="collection">
+          <xsl:for-each select="class">
             <xsl:sort select="@type" />
             <testsuite>
               <xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
