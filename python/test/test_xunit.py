@@ -1,13 +1,27 @@
 import pathlib
 import unittest
 
+from lxml import etree
+
 from publish.junit import process_junit_xml_elems, ParsedUnitTestResults, UnitTestCase
-from publish.xunit import parse_xunit_files
+from publish.xunit import parse_xunit_files, transform_xunit_to_junit
 
 test_files_path = pathlib.Path(__file__).parent / 'files' / 'xunit'
 
 
 class TestXunit(unittest.TestCase):
+    def test_transform(self):
+        result_file = str(test_files_path / 'mstest' / 'pickles.xml')
+        trx = etree.parse(str(result_file))
+        junit = transform_xunit_to_junit(trx)
+
+        self.assertEqual(
+            str(junit),
+            '<testsuites>\n'
+            '  <testsuite name="c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarness.xUnit\\bin\\Debug\\Pickles.TestHarness.xUnit.dll" tests="4" failures="1" time="0.185" skipped="0" timestamp="2012-01-14T10:21:10"/>\n'
+            '</testsuites>\n'
+        )
+
     def test_process_parse_xunit_files_with_time_factor(self):
         result_file = str(test_files_path / 'mstest' / 'pickles.xml')
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
