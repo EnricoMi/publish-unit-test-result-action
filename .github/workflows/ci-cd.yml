@@ -410,9 +410,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+        run: cp -rv python/test/files test-files
 
       - name: Prepare publish action from this branch
         run: |
@@ -424,7 +422,8 @@ jobs:
         with:
           check_name: Test Results (Test Files)
           fail_on: nothing
-          junit_files: "test-files/**.xml"
+          junit_files: "test-files/*.xml"
+          trx_files: "test-files/*.trx"
           json_file: "tests.json"
           log_level: DEBUG
 
