@@ -23,7 +23,7 @@ class TestXunit(unittest.TestCase, JUnitXmlParseTest):
         return self
 
     @staticmethod
-    def test_files_path():
+    def _test_files_path():
         return test_files_path
 
     @staticmethod
