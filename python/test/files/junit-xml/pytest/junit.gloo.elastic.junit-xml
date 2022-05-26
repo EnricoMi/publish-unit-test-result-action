@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="35025c9f4f28" name="pytest" skipped="4" tests="14" time="72.194" timestamp="2020-08-31T09:25:25.803505">
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/test_elastic_torch.py" line="29" name="test_all_hosts_blacklisted" time="0.003">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/2030" type="pytest.skip">/horovod/test/integration/test_elastic_torch.py:30: This test fails due to https://github.com/horovod/horovod/issues/2030</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/elastic_common.py" line="196" name="test_all_ranks_failure" time="2.874"/>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/elastic_common.py" line="170" name="test_fault_tolerance_without_scaling" time="4.280"/>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/elastic_common.py" line="115" name="test_hosts_added_and_removed" time="6.847"/>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/test_elastic_torch.py" line="34" name="test_min_hosts_timeout" time="0.003">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/2030" type="pytest.skip">/horovod/test/integration/test_elastic_torch.py:35: This test fails due to https://github.com/horovod/horovod/issues/2030</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/elastic_common.py" line="242" name="test_reset_limit" time="6.490"/>
+    <testcase classname="test.integration.test_elastic_torch.ElasticTorchTests" file="test/integration/elastic_common.py" line="142" name="test_single_rank_failure" time="5.264"/>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/test_elastic_tensorflow.py" line="29" name="test_all_hosts_blacklisted" time="0.003">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/2030" type="pytest.skip">/horovod/test/integration/test_elastic_tensorflow.py:30: This test fails due to https://github.com/horovod/horovod/issues/2030</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/elastic_common.py" line="196" name="test_all_ranks_failure" time="4.603"/>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/elastic_common.py" line="170" name="test_fault_tolerance_without_scaling" time="8.349"/>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/elastic_common.py" line="115" name="test_hosts_added_and_removed" time="12.640"/>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/test_elastic_tensorflow.py" line="34" name="test_min_hosts_timeout" time="0.003">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/2030" type="pytest.skip">/horovod/test/integration/test_elastic_tensorflow.py:35: This test fails due to https://github.com/horovod/horovod/issues/2030</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/elastic_common.py" line="242" name="test_reset_limit" time="12.210"/>
+    <testcase classname="test.integration.test_elastic_tensorflow.ElasticTensorFlowTests" file="test/integration/elastic_common.py" line="142" name="test_single_rank_failure" time="8.455"/>
+  </testsuite>
+</testsuites>

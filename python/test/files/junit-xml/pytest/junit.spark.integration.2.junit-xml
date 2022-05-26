@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="9ac64b1edc14" name="pytest" skipped="2" tests="35" time="172.773" timestamp="2020-08-31T09:23:44.734943">
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="454" name="test_batch_generator_fn" time="0.006"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="385" name="test_calculate_shuffle_buffer_size" time="0.006"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="371" name="test_calculate_shuffle_buffer_size_small_row_size" time="0.005"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="410" name="test_convert_custom_sparse_to_dense_bare_keras_fn" time="0.004"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="399" name="test_custom_sparse_to_dense_fn" time="0.038"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="75" name="test_fit_model" time="12.424"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="103" name="test_fit_model_multiclass" time="31.925"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="186" name="test_keras_direct_parquet_train" time="11.570"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="225" name="test_keras_model_checkpoint_callback" time="14.517"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="322" name="test_model_serialization" time="7.223"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="575" name="test_prep_data_tf_keras_fn_with_sparse_col" time="0.051"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="612" name="test_prep_data_tf_keras_fn_without_sparse_col" time="0.034"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="416" name="test_prepare_data_bare_keras_fn" time="0.004"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="528" name="test_reshape" time="0.040"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="139" name="test_restore_from_checkpoint" time="8.920"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="test/test_spark_keras.py" line="361" name="test_serialize_param_value" time="0.003"/>
+    <testcase classname="test.test_spark_keras.SparkKerasTests" file="../usr/local/lib/python3.6/dist-packages/tensorflow_core/python/framework/test_util.py" line="2075" name="test_session" time="0.003">
+      <skipped message="Not a test." type="pytest.skip">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/framework/test_util.py:2076: Not a test.</skipped>
+    </testcase>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="372" name="test_calculate_loss_with_sample_weight" time="0.025"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="401" name="test_calculate_loss_without_sample_weight" time="0.004"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="198" name="test_calculate_shuffle_buffer_size" time="0.004"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="184" name="test_calculate_shuffle_buffer_size_small_row_size" time="0.005"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="227" name="test_construct_metric_value_holders_one_metric_for_all_labels" time="0.003"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="73" name="test_fit_model" time="13.773"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="269" name="test_get_metric_avgs" time="0.007"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="433" name="test_happy_run_elastic" time="9.573"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="447" name="test_happy_run_elastic_fault_tolerant" time="27.560"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="468" name="test_happy_run_elastic_fault_tolerant_fails" time="0.003">
+      <skipped message="elastic horovod does not support shutdown from the spark driver while elastic driver is waiting for hosts to come up" type="pytest.skip">/horovod/test/test_spark_torch.py:469: elastic horovod does not support shutdown from the spark driver while elastic driver is waiting for hosts to come up</skipped>
+    </testcase>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="213" name="test_metric_class" time="0.023"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="251" name="test_prepare_np_data" time="7.061"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="167" name="test_pytorch_get_optimizer_with_unscaled_lr" time="0.005"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="103" name="test_restore_from_checkpoint" time="8.464"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="335" name="test_torch_direct_parquet_train" time="9.825"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="325" name="test_torch_param_serialize" time="0.003"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="140" name="test_transform_multi_class" time="7.384"/>
+    <testcase classname="test.test_spark_torch.SparkTorchTests" file="test/test_spark_torch.py" line="291" name="test_update_metrics" time="0.008"/>
+  </testsuite>
+</testsuites>

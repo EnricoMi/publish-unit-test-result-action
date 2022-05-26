@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <testsuites>
     <testsuite errors="2" failures="2" skipped="2" name="pytest" tests="7" time="8.61">
-        <testcase file="test/test-1.py" line="1" name="test 1 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓" time="1.23"></testcase>
+        <testcase file="test/test-1.py" line="1" name="test 1 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓" time="1.23"/>
         <testcase file="test/test-2.py" line="2" name="test 2" time="1.23">
             <skipped message="Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">skipped
             </skipped>

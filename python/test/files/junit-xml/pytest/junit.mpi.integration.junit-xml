@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="c93885159d81" name="pytest" skipped="0" tests="3" time="15.583" timestamp="2020-08-31T09:23:24.337853">
+    <testcase classname="test.test_interactiverun.InteractiveRunTests" file="test/test_interactiverun.py" line="78" name="test_failed_run" time="9.386"/>
+    <testcase classname="test.test_interactiverun.InteractiveRunTests" file="test/test_interactiverun.py" line="35" name="test_happy_run" time="4.012"/>
+    <testcase classname="test.test_interactiverun.InteractiveRunTests" file="test/test_interactiverun.py" line="63" name="test_happy_run_elastic" time="1.898"/>
+  </testsuite>
+</testsuites>

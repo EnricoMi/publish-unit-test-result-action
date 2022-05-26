@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+    <testsuite>
+        <testcase name="Test with &quot;quotes&quot; in the test name" time="0.0">
+            <skipped message="A message with &quot;quotes&quot;">Content with "quotes"</skipped>
+        </testcase>
+        <testcase name="Test with 'apostrophe' in the test name" time="0.0">
+            <failure message="A message with 'apostrophes'">Content with 'apostrophes'</failure>
+        </testcase>
+        <testcase name="Test with &amp; in the test name" time="0.0">
+            <error message="A message with &amp;">Content with &amp;</error>
+        </testcase>
+        <testcase name="Test with &lt; and &gt; in the test name" time="0.0">
+            <skipped message="A message with &lt; and &gt;">Content with &lt; and &gt;</skipped>
+        </testcase>
+    </testsuite>
+</testsuites>

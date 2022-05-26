@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="e7c56d2483fc" name="pytest" skipped="2" tests="22" time="627.416" timestamp="2020-08-31T09:24:53.988790">
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/test_elastic_spark_tensorflow.py" line="34" name="test_auto_scale_down_by_discovery" time="0.002">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/1994" type="pytest.skip">/horovod/test/integration/test_elastic_spark_tensorflow.py:35: This test fails due to https://github.com/horovod/horovod/issues/1994</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="681" name="test_auto_scale_down_by_exception" time="22.073"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="710" name="test_auto_scale_no_spark_black_list" time="55.445"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse" time="49.354"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse_in_app" time="41.024"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse_same_task" time="40.743"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_node_reuse" time="40.671"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_node_reuse_in_app" time="40.612"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="626" name="test_auto_scale_up" time="30.312"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="613" name="test_fault_tolerance_all_hosts_lost" time="12.623"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="584" name="test_fault_tolerance_exception_all_ranks" time="15.757"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="558" name="test_fault_tolerance_exception_single_rank" time="26.113"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="598" name="test_fault_tolerance_exception_with_min_hosts_timeout" time="26.650"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/test_elastic_spark_tensorflow.py" line="31" name="test_fault_tolerance_hosts_added_and_removed" time="0.002">
+      <skipped message="This test fails due to https://github.com/horovod/horovod/issues/1994" type="pytest.skip">/horovod/test/integration/test_elastic_spark_tensorflow.py:32: This test fails due to https://github.com/horovod/horovod/issues/1994</skipped>
+    </testcase>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="503" name="test_fault_tolerance_no_spark_blacklist" time="25.879"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse" time="26.382"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse_in_app" time="26.381"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse_same_task" time="26.389"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_node_reuse" time="26.403"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_node_reuse_in_app" time="26.404"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="472" name="test_fault_tolerance_unused_hosts_added_and_removed" time="46.667"/>
+    <testcase classname="test.integration.test_elastic_spark_tensorflow.ElasticSparkTensorflowTests" file="test/integration/elastic_spark_common.py" line="394" name="test_happy_run" time="21.082"/>
+  </testsuite>
+</testsuites>

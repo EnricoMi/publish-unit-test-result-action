@@ -3,7 +3,7 @@ from collections import defaultdict
 from typing import Optional, Iterable, Union, Any, List, Dict, Callable, Tuple
 
 import junitparser
-from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
+from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
 from junitparser.junitparser import etree
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
@@ -118,9 +118,12 @@ class DropTestCaseBuilder(etree.TreeBuilder):
             return super().close()
 
 
+JUnitTree = etree.ElementTree
+
+
 def parse_junit_xml_files(files: Iterable[str],
                           drop_testcases: bool = False,
-                          progress: Callable[[Tuple[str, Union[JUnitXml, BaseException]]], Tuple[str, Union[JUnitXml, BaseException]]] = lambda x: x) -> Iterable[Tuple[str, Union[JUnitXml, BaseException]]]:
+                          progress: Callable[[Tuple[str, Union[JUnitTree, BaseException]]], Tuple[str, Union[JUnitTree, BaseException]]] = lambda x: x) -> Iterable[Tuple[str, Union[JUnitTree, BaseException]]]:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[JUnitXml, BaseException]:
         if not os.path.exists(path):
@@ -131,21 +134,36 @@ def parse_junit_xml_files(files: Iterable[str],
         try:
             if drop_testcases:
                 builder = DropTestCaseBuilder()
-                return JUnitXml.fromfile(path, parse_func=builder.parse)
-            return JUnitXml.fromfile(path)
+                return etree.parse(path, parser=etree.XMLParser(target=builder, encoding='utf-8'))
+            return etree.parse(path)
         except BaseException as e:
             return e
 
     return [progress((result_file, parse(result_file))) for result_file in files]
 
 
-def process_junit_xml_elems(elems: Iterable[Tuple[str, Union[JUnitXml, BaseException]]],
+def process_junit_xml_elems(trees: Iterable[Tuple[str, Union[JUnitTree, BaseException]]],
                             time_factor: float = 1.0) -> ParsedUnitTestResults:
+    # TODO: move upstream into JUnitTree
+    def create_junitxml(filepath: str, tree: JUnitTree) -> Union[JUnitXml, JUnitXmlError]:
+        root_elem = tree.getroot()
+        if root_elem.tag == "testsuites":
+            instance = JUnitXml()
+        elif root_elem.tag == "testsuite":
+            instance = TestSuite()
+        else:
+            return JUnitXmlError("Invalid format.")
+        instance._elem = root_elem
+        instance.filepath = filepath
+        return instance
+
+    processed = [(result_file, create_junitxml(result_file, tree) if not isinstance(tree, BaseException) else tree)
+                  for result_file, tree in trees]
     junits = [(result_file, junit)
-              for result_file, junit in elems
+              for result_file, junit in processed
               if not isinstance(junit, BaseException)]
     errors = [ParseError.from_exception(result_file, exception)
-              for result_file, exception in elems
+              for result_file, exception in processed
               if isinstance(exception, BaseException)]
 
     suites = [(result_file, suite)
@@ -196,7 +214,7 @@ def process_junit_xml_elems(elems: Iterable[Tuple[str, Union[JUnitXml, BaseExcep
     ]
 
     return ParsedUnitTestResults(
-        files=len(list(elems)),
+        files=len(list(trees)),
         errors=errors,
         # test state counts from suites
         suites=len(suites),
