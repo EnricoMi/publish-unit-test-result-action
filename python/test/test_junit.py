@@ -43,7 +43,7 @@ class JUnitXmlParseTest:
         raise NotImplementedError()
 
     @staticmethod
-    def test_files_path() -> pathlib.Path:
+    def _test_files_path() -> pathlib.Path:
         raise NotImplementedError()
 
     @staticmethod
@@ -62,7 +62,7 @@ class JUnitXmlParseTest:
 
     @classmethod
     def shorten_filename(cls, filename):
-        return filename[len(str(cls.test_files_path().resolve().as_posix()))+1:]
+        return filename[len(str(cls._test_files_path().resolve().as_posix())) + 1:]
 
     def do_test_parse_and_process_files(self, filename: str):
         for locale in [None, 'en_US.UTF-8', 'de_DE.UTF-8']:
@@ -122,7 +122,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         return self
 
     @staticmethod
-    def test_files_path() -> pathlib.Path:
+    def _test_files_path() -> pathlib.Path:
         return test_files_path
 
     @staticmethod

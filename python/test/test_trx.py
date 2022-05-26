@@ -22,7 +22,7 @@ class TestTrx(unittest.TestCase, JUnitXmlParseTest):
         return self
 
     @staticmethod
-    def test_files_path() -> pathlib.Path:
+    def _test_files_path() -> pathlib.Path:
         return test_files_path
 
     @staticmethod
