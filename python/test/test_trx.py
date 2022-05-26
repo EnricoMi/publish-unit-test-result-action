@@ -4,13 +4,11 @@ import unittest
 from glob import glob
 from typing import List, Union
 
-from lxml import etree
-
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
-from publish.junit import process_junit_xml_elems, ParsedUnitTestResults, UnitTestCase, JUnitTree
-from publish.trx import parse_trx_files, transform_trx_to_junit
+from publish.junit import JUnitTree
+from publish.trx import parse_trx_files
 from test_junit import JUnitXmlParseTest
 
 test_files_path = pathlib.Path(__file__).parent / 'files' / 'trx'
