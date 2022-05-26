@@ -16,7 +16,7 @@ from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_re
     get_message, Disabled, JUnitTree
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
 
-test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'junit-xml'
+test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
 pp.install_extras()
 
 
@@ -40,7 +40,7 @@ class JUnitXmlParseTest:
         raise NotImplementedError()
 
     @staticmethod
-    def test_files_path():
+    def test_files_path() -> pathlib.Path:
         raise NotImplementedError()
 
     @staticmethod
@@ -59,7 +59,7 @@ class JUnitXmlParseTest:
 
     @classmethod
     def shorten_filename(cls, filename):
-        return filename[len(str(cls.test_files_path()))+1:]
+        return filename[len(str(cls.test_files_path().resolve().as_posix()))+1:]
 
     def do_test_parse_and_process_files(self, filename: str):
         actual = self.parse_file(filename)
@@ -74,7 +74,7 @@ class JUnitXmlParseTest:
             self.assert_expectation(self.test, actual_tree, xml_expectation_path)
 
             results_expectation_path = path.parent / (path.stem + '.results')
-            actual_results = process_junit_xml_elems([(self.shorten_filename(str(path.resolve())), actual)])
+            actual_results = process_junit_xml_elems([(self.shorten_filename(str(path.resolve().as_posix())), actual)])
             self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
     def test_parse_and_process_files(self):
@@ -97,7 +97,7 @@ class JUnitXmlParseTest:
                     xml = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True)
                     w.write(xml.decode('utf-8'))
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
-                    results = process_junit_xml_elems([(cls.shorten_filename(str(path.resolve())), actual)])
+                    results = process_junit_xml_elems([(cls.shorten_filename(str(path.resolve().as_posix())), actual)])
                     w.write(pp.pformat(results, indent=2))
 
 
@@ -109,7 +109,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         return self
 
     @staticmethod
-    def test_files_path():
+    def test_files_path() -> pathlib.Path:
         return test_files_path
 
     @staticmethod

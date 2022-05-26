@@ -13,7 +13,7 @@ from publish.junit import process_junit_xml_elems, ParsedUnitTestResults, UnitTe
 from publish.trx import parse_trx_files, transform_trx_to_junit
 from test_junit import JUnitXmlParseTest
 
-test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'trx'
+test_files_path = pathlib.Path(__file__).parent / 'files' / 'trx'
 
 
 class TestTrx(unittest.TestCase, JUnitXmlParseTest):
@@ -24,7 +24,7 @@ class TestTrx(unittest.TestCase, JUnitXmlParseTest):
         return self
 
     @staticmethod
-    def test_files_path():
+    def test_files_path() -> pathlib.Path:
         return test_files_path
 
     @staticmethod
