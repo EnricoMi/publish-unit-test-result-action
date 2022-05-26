@@ -1,0 +1,81 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=4,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='Pickles.TestHarness.xUnit.AdditionFeature',
+      test_name='AddTwoNumbers',
+      result='success',
+      message=None,
+      content=None,
+      time=0.153
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='Pickles.TestHarness.xUnit.AdditionFeature',
+      test_name='AddingSeveralNumbers',
+      result='success',
+      message=None,
+      content=None,
+      time=0.006
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='Pickles.TestHarness.xUnit.AdditionFeature',
+      test_name='AddingSeveralNumbers',
+      result='success',
+      message=None,
+      content=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='Pickles.TestHarness.xUnit.AdditionFeature',
+      test_name='FailToAddTwoNumbers',
+      result='failure',
+      message='\n          System.InvalidOperationException : This is a fake '
+        'failure message\n        ',
+      content='<![CDATA[\n          at '
+        'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
+        'result) in '
+        'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.xUnit\\Steps.cs:line 26\n          at lambda_method(Closure , '
+        'IContextManager , Int32 )\n          at '
+        'TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager'
+        ' contextManager, Object[] arguments, ITestTracer testTracer, '
+        'TimeSpan& duration)\n          at '
+        'TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManag'
+        'er contextManager, ITestTracer testTracer, Object[] arguments, '
+        'TimeSpan& duration)\n          at '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch'
+        '(BindingMatch match, Object[] arguments)\n          at '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(Step'
+        'Args stepArgs)\n          at '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep('
+        ')\n          at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()\n'
+        '          at '
+        'Pickles.TestHarness.xUnit.AdditionFeature.ScenarioCleanup() in '
+        'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.xUnit\\Addition.feature.cs:line 0\n          at '
+        'Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in '
+        'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.xUnit\\Addition.feature:line 18\n        ]]>',
+      time=0.023
+    )
+  ]
+)
