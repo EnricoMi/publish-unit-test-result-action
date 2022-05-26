@@ -1,11 +1,15 @@
 import pathlib
+import pathlib
 import unittest
 from distutils.version import LooseVersion
-from typing import Optional
+from glob import glob
+from typing import Optional, Union, List
+from xml.etree import ElementTree
 
 from junitparser import JUnitXml, Element, version
 
-from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, get_message, Disabled
+from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
+    get_message, Disabled
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
@@ -25,7 +29,63 @@ class TestElement(Element):
         return self._elem.text
 
 
-class TestJunit(unittest.TestCase):
+class JUnitXmlParseTest:
+    @property
+    def test(self):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_test_files() -> List[str]:
+        raise NotImplementedError()
+
+    @staticmethod
+    def parse_file(filename) -> Union[JUnitXml, BaseException]:
+        raise NotImplementedError()
+
+    def do_test_parse_file(self, filename: str):
+        actual = self.parse_file(filename)
+        path = pathlib.Path(filename)
+        if isinstance(actual, BaseException):
+            with open(path.parent / (path.stem + '.exception'), 'r', encoding='utf-8') as r:
+                expected = r.read()
+            self.test.assertEqual(expected, actual)
+        else:
+            with open(path.parent / (path.stem + '.junit-xml'), 'r', encoding='utf-8') as r:
+                expected = r.read()
+            self.test.assertEqual(expected, ElementTree.tostring(actual._elem, encoding='unicode'))
+
+    def test_parse_junit_xml_files(self):
+        for file in self.get_test_files():
+            with self.test.subTest(file=file[len(str(test_files_path))+1:]):
+                self.do_test_parse_file(file)
+
+    @classmethod
+    def update_expectations(cls):
+        print('updating expectations')
+        for filename in cls.get_test_files():
+            actual = cls.parse_file(filename)
+            path = pathlib.Path(filename)
+            if isinstance(actual, BaseException):
+                with open(path.parent / (path.stem + '.exception'), 'w', encoding='utf-8') as w:
+                    w.write(str(actual))
+            else:
+                with open(path.parent / (path.stem + '.junit-xml'), 'w', encoding='utf-8') as w:
+                    w.write(actual)
+
+
+class TestJunit(JUnitXmlParseTest, unittest.TestCase):
+
+    @property
+    def test(self):
+        return self
+
+    @staticmethod
+    def get_test_files() -> List[str]:
+        return glob(str(test_files_path / '**' / '*.xml'), recursive=True)
+
+    @staticmethod
+    def parse_file(filename):
+        return list(parse_junit_xml_files([filename]))[0][1]
 
     def test_process_parse_junit_xml_files_with_no_files(self):
         self.assertEqual(
@@ -671,3 +731,7 @@ class TestJunit(unittest.TestCase):
             with self.subTest(results=results):
                 actual = get_content(results)
                 self.assertEqual(expected, actual)
+
+
+if __name__ == "__main__":
+    TestJunit.update_expectations()
