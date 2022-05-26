@@ -1,1 +1,1 @@
-Exception('File is empty.')
+Exception: 'File is empty.'

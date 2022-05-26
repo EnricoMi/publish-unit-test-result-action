@@ -1,4 +1,5 @@
 import pathlib
+import re
 import sys
 import unittest
 from distutils.version import LooseVersion
@@ -66,7 +67,7 @@ class JUnitXmlParseTest:
         path = pathlib.Path(filename)
         if isinstance(actual, BaseException):
             expectation_path = path.parent / (path.stem + '.exception')
-            actual = actual.__repr__()
+            actual = self.prettify_exception(actual)
             self.assert_expectation(self.test, actual, expectation_path)
         else:
             xml_expectation_path = path.parent / (path.stem + '.junit-xml')
@@ -91,7 +92,7 @@ class JUnitXmlParseTest:
             path = pathlib.Path(filename)
             if isinstance(actual, BaseException):
                 with open(path.parent / (path.stem + '.exception'), 'w', encoding='utf-8') as w:
-                    w.write(actual.__repr__())
+                    w.write(cls.prettify_exception(actual))
             else:
                 with open(path.parent / (path.stem + '.junit-xml'), 'w', encoding='utf-8') as w:
                     xml = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True)
@@ -99,6 +100,13 @@ class JUnitXmlParseTest:
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
                     results = process_junit_xml_elems([(cls.shorten_filename(str(path.resolve().as_posix())), actual)])
                     w.write(pp.pformat(results, indent=2))
+
+    @staticmethod
+    def prettify_exception(exception) -> str:
+        exception = exception.__repr__()
+        exception = re.sub(r'\(', ': ', exception, 1)
+        exception = re.sub(r',?\s*\)$', '', exception)
+        return exception
 
 
 class TestJunit(unittest.TestCase, JUnitXmlParseTest):
