@@ -48,7 +48,10 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='Pickles.TestHarness.MSTest.AdditionFeature',
       test_name='FailToAddTwoNumbers',
       result='failure',
-      message=None,
+      message='\n            Test method '
+        'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw '
+        'exception:\n            Should.Core.Exceptions.NotEqualException: '
+        'Assert.NotEqual() Failure\n          ',
       content='\n            Test method '
         'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw '
         'exception:\n            Should.Core.Exceptions.NotEqualException: '
@@ -57,7 +60,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'result) in '
         'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
         's.MSTest\\Steps.cs:line 28\n            at lambda_method(Closure , '
-        'IContextManager , Int32 )\n            at '
+        'IContextManager , Int32 )<...>\n            at '
         'TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager'
         ' contextManager, Object[] arguments, ITestTracer testTracer, '
         'TimeSpan& duration)\n            at '

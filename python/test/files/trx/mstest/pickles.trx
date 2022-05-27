@@ -163,7 +163,7 @@
           </Message>
           <StackTrace>
             at Pickles.TestHarness.MSTest.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Steps.cs:line 28
-            at lambda_method(Closure , IContextManager , Int32 )
+            at lambda_method(Closure , IContextManager , Int32 )&lt;...&gt;
             at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
             at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan&amp; duration)
             at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)

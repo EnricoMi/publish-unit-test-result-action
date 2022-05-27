@@ -56,14 +56,18 @@
 
                 <xsl:if test="contains($outcome, 'Failed')">
                   <failure>
-                    <xsl:value-of select="$message" />
-                    <xsl:value-of select="$stacktrace" />
+                    <xsl:call-template name="failure">
+                      <xsl:with-param name="message" select="$message" />
+                      <xsl:with-param name="stacktrace" select="$stacktrace" />
+                    </xsl:call-template>
                   </failure>
                 </xsl:if>
                 <xsl:if test="contains($outcome, 'Error')">
                   <error>
-                    <xsl:value-of select="$message" />
-                    <xsl:value-of select="$stacktrace" />
+                    <xsl:call-template name="failure">
+                      <xsl:with-param name="message" select="$message" />
+                      <xsl:with-param name="stacktrace" select="$stacktrace" />
+                    </xsl:call-template>
                   </error>
                 </xsl:if>
               </testcase>
@@ -107,20 +111,21 @@
             <xsl:variable name="currentTestId" select="@id"/>
             <xsl:if test="$currentTestId = $testId" >
               <xsl:variable name="className" select="substring-before(b:TestMethod/@className, ',')"/>
-              <testcase classname="{$className}"
-                name="{$testName}"
-                time="{$totalduration}">
-
+              <testcase classname="{$className}" name="{$testName}" time="{$totalduration}">
                 <xsl:if test="contains($outcome, 'Failed')">
                   <failure>
-                    <xsl:value-of select="$message" />
-                    <xsl:value-of select="$stacktrace" />
+                    <xsl:call-template name="failure">
+                      <xsl:with-param name="message" select="$message" />
+                      <xsl:with-param name="stacktrace" select="$stacktrace" />
+                    </xsl:call-template>
                   </failure>
                 </xsl:if>
                 <xsl:if test="contains($outcome, 'Error')">
                   <error>
-                    <xsl:value-of select="$message" />
-                    <xsl:value-of select="$stacktrace" />
+                    <xsl:call-template name="failure">
+                      <xsl:with-param name="message" select="$message" />
+                      <xsl:with-param name="stacktrace" select="$stacktrace" />
+                    </xsl:call-template>
                   </error>
                 </xsl:if>
               </testcase>
@@ -131,4 +136,13 @@
       </testsuite>
     </testsuites>
   </xsl:template>
+
+  <xsl:template name="failure">
+    <xsl:param name="message"/>
+    <xsl:param name="stacktrace"/>
+    <xsl:attribute name="message"><xsl:value-of select="$message"/></xsl:attribute>
+    <xsl:value-of select="$message"/>
+    <xsl:value-of select="$stacktrace"/>
+  </xsl:template>
+
 </xsl:stylesheet>
