@@ -49,13 +49,10 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='FailToAddTwoNumbers',
       result='failure',
       message=None,
-      content='\n                    MESSAGE:\n                    \n            '
-        'Test method '
+      content='\n            Test method '
         'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw '
         'exception:\n            Should.Core.Exceptions.NotEqualException: '
-        'Assert.NotEqual() Failure\n          \n                    '
-        '+++++++++++++++++++\n                    STACK TRACE:\n               '
-        '     \n            at '
+        'Assert.NotEqual() Failure\n          \n            at '
         'Pickles.TestHarness.MSTest.Steps.ThenTheResultShouldBePass(Int32 '
         'result) in '
         'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'

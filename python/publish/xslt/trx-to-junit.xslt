@@ -56,19 +56,13 @@
 
                 <xsl:if test="contains($outcome, 'Failed')">
                   <failure>
-                    MESSAGE:
                     <xsl:value-of select="$message" />
-                    +++++++++++++++++++
-                    STACK TRACE:
                     <xsl:value-of select="$stacktrace" />
                   </failure>
                 </xsl:if>
                 <xsl:if test="contains($outcome, 'Error')">
                   <error>
-                    MESSAGE:
                     <xsl:value-of select="$message" />
-                    +++++++++++++++++++
-                    STACK TRACE:
                     <xsl:value-of select="$stacktrace" />
                   </error>
                 </xsl:if>
@@ -115,24 +109,17 @@
               <xsl:variable name="className" select="substring-before(b:TestMethod/@className, ',')"/>
               <testcase classname="{$className}"
                 name="{$testName}"
-                time="{$totalduration}"
-                  >
+                time="{$totalduration}">
 
                 <xsl:if test="contains($outcome, 'Failed')">
                   <failure>
-                    MESSAGE:
                     <xsl:value-of select="$message" />
-                    +++++++++++++++++++
-                    STACK TRACE:
                     <xsl:value-of select="$stacktrace" />
                   </failure>
                 </xsl:if>
                 <xsl:if test="contains($outcome, 'Error')">
                   <error>
-                    MESSAGE:
                     <xsl:value-of select="$message" />
-                    +++++++++++++++++++
-                    STACK TRACE:
                     <xsl:value-of select="$stacktrace" />
                   </error>
                 </xsl:if>
