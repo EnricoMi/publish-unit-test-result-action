@@ -1,5 +1,3 @@
-import contextlib
-import locale
 import pathlib
 import unittest
 from collections import defaultdict
@@ -21,38 +19,9 @@ from publish import Annotation, UnitTestCaseResults, UnitTestRunResults, UnitTes
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
-from test import d, n
+from test_utils import temp_locale, d, n
 
 test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
-
-
-
-@contextlib.contextmanager
-def temp_locale(encoding: str) -> Any:
-    old_locale = locale.getlocale()
-    encodings = [
-        f'{encoding}.utf8', f'{encoding}.utf-8',
-        f'{encoding}.UTF8', f'{encoding}.UTF-8',
-        encoding
-    ]
-
-    locale_set = False
-    for encoding in encodings:
-        try:
-            locale.setlocale(locale.LC_ALL, encoding)
-            locale_set = True
-            break
-        except:
-            pass
-
-    if not locale_set:
-        raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
-
-    try:
-        res = yield
-    finally:
-        locale.setlocale(locale.LC_ALL, old_locale)
-    return res
 
 
 errors = [ParseError('file', 'error', 1, 2)]

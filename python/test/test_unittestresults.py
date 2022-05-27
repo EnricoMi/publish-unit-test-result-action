@@ -7,7 +7,7 @@ from publish.unittestresults import get_test_results, get_stats, get_stats_delta
     ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
     UnitTestCase, UnitTestResults, UnitTestCaseResults, \
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
-from test import d, n
+from test_utils import d, n
 
 errors = [ParseError('file', 'error')]
 errors_dict = [dataclasses.asdict(e) for e in errors]

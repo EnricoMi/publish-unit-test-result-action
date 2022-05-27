@@ -12,10 +12,12 @@ from junitparser import JUnitXml, Element
 from lxml import etree
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
+sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTree
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
+from test_utils import temp_locale
 
 test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
 pp.install_extras()
@@ -63,20 +65,23 @@ class JUnitXmlParseTest:
         return filename[len(str(cls.test_files_path().resolve().as_posix()))+1:]
 
     def do_test_parse_and_process_files(self, filename: str):
-        actual = self.parse_file(filename)
-        path = pathlib.Path(filename)
-        if isinstance(actual, BaseException):
-            expectation_path = path.parent / (path.stem + '.exception')
-            actual = self.prettify_exception(actual)
-            self.assert_expectation(self.test, actual, expectation_path)
-        else:
-            xml_expectation_path = path.parent / (path.stem + '.junit-xml')
-            actual_tree = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True).decode('utf-8')
-            self.assert_expectation(self.test, actual_tree, xml_expectation_path)
+        for locale in [None, 'en_US.UTF-8', 'de_DE.UTF-8']:
+            with self.test.subTest(locale=locale):
+                with temp_locale(locale):
+                    actual = self.parse_file(filename)
+                    path = pathlib.Path(filename)
+                    if isinstance(actual, BaseException):
+                        expectation_path = path.parent / (path.stem + '.exception')
+                        actual = self.prettify_exception(actual)
+                        self.assert_expectation(self.test, actual, expectation_path)
+                    else:
+                        xml_expectation_path = path.parent / (path.stem + '.junit-xml')
+                        actual_tree = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True).decode('utf-8')
+                        self.assert_expectation(self.test, actual_tree, xml_expectation_path)
 
-            results_expectation_path = path.parent / (path.stem + '.results')
-            actual_results = process_junit_xml_elems([(self.shorten_filename(str(path.resolve().as_posix())), actual)])
-            self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
+                        results_expectation_path = path.parent / (path.stem + '.results')
+                        actual_results = process_junit_xml_elems([(self.shorten_filename(str(path.resolve().as_posix())), actual)])
+                        self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
     def test_parse_and_process_files(self):
         for file in self.get_test_files():

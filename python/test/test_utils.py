@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import locale
 import os
 from contextlib import contextmanager
+from typing import Any, Optional
 
 
 def n(number, delta=None):
@@ -26,6 +28,38 @@ def d(duration, delta=None):
     if delta is None:
         return dict(duration=duration)
     return dict(duration=duration, delta=delta)
+
+
+@contextmanager
+def temp_locale(encoding: Optional[str]) -> Any:
+    if encoding is None:
+        res = yield
+        return res
+
+    old_locale = locale.setlocale(locale.LC_ALL)
+    encodings = [
+        f'{encoding}.utf8', f'{encoding}.utf-8',
+        f'{encoding}.UTF8', f'{encoding}.UTF-8',
+        encoding
+    ]
+
+    locale_set = False
+    for encoding in encodings:
+        try:
+            locale.setlocale(locale.LC_ALL, encoding)
+            locale_set = True
+            break
+        except:
+            pass
+
+    if not locale_set:
+        raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
+
+    try:
+        res = yield
+    finally:
+        locale.setlocale(locale.LC_ALL, old_locale)
+    return res
 
 
 @contextmanager

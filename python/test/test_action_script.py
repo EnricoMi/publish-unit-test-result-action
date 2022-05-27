@@ -15,7 +15,7 @@ from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
-from test import chdir
+from test_utils import chdir
 
 test_files_path = pathlib.Path(__file__).parent / 'files'
 
