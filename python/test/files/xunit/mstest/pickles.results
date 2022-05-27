@@ -50,7 +50,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='\n          System.InvalidOperationException : This is a fake '
         'failure message\n        ',
-      content='<![CDATA[\n          at '
+      content='\n          at '
         'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
         'result) in '
         'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
@@ -74,7 +74,7 @@ publish.unittestresults.ParsedUnitTestResults(
         's.xUnit\\Addition.feature.cs:line 0\n          at '
         'Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in '
         'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
-        's.xUnit\\Addition.feature:line 18\n        ]]>',
+        's.xUnit\\Addition.feature:line 18\n        ',
       time=0.023
     )
   ]

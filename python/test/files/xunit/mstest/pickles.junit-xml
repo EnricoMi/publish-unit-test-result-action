@@ -6,7 +6,7 @@
       <testcase name="AddingSeveralNumbers" time="0.006" classname="Pickles.TestHarness.xUnit.AdditionFeature"/>
       <testcase name="AddingSeveralNumbers" time="0.003" classname="Pickles.TestHarness.xUnit.AdditionFeature"/>
       <testcase name="FailToAddTwoNumbers" time="0.023" classname="Pickles.TestHarness.xUnit.AdditionFeature">
-        <failure type="System.InvalidOperationException" message="&#10;          System.InvalidOperationException : This is a fake failure message&#10;        "><![CDATA[
+        <failure type="System.InvalidOperationException" message="&#10;          System.InvalidOperationException : This is a fake failure message&#10;        ">
           at Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Steps.cs:line 26
           at lambda_method(Closure , IContextManager , Int32 )
           at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
@@ -17,7 +17,7 @@
           at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()
           at Pickles.TestHarness.xUnit.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature.cs:line 0
           at Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature:line 18
-        ]]></failure>
+        </failure>
       </testcase>
     </testsuite>
   </testsuite>
