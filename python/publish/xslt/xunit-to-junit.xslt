@@ -57,9 +57,7 @@
         <xsl:attribute name="type"><xsl:value-of select="@exception-type"/></xsl:attribute>
       </xsl:if>
       <xsl:attribute name="message"><xsl:value-of select="message"/></xsl:attribute>
-      <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
       <xsl:value-of select="stack-trace"/>
-      <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
      </failure>
   </xsl:template>
 
