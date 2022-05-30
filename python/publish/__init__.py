@@ -95,6 +95,9 @@ class SomeTestChanges:
             return None
         return self._all_tests_before.intersection(self._all_tests_current)
 
+    def has_no_tests(self) -> bool:
+        return (len(self._all_tests_current) == 0) if self._all_tests_current is not None else False
+
     def skips(self) -> Optional[Set[str]]:
         if self._skipped_tests_before is None or self._skipped_tests_current is None:
             return None
@@ -216,13 +219,22 @@ def abbreviate(string: Optional[str], length: int) -> Optional[str]:
 
 
 def get_formatted_digits(*numbers: Union[Optional[int], Numeric]) -> Tuple[int, int]:
+    def get_abs_number(num):
+        if isinstance(num, dict):
+            return abs(num.get('number')) if num.get('number') is not None else None
+        return abs(num)
+
+    def get_abs_delta(num):
+        if isinstance(num, dict):
+            return abs(num.get('delta')) if num.get('delta') is not None else None
+        return 0
+
     if isinstance(numbers[0], dict):
-        # TODO: is not None else None?!?
-        number_digits = max([len(as_stat_number(abs(number.get('number')) if number.get('number') is not None else None))
-                             for number in numbers])
-        delta_digits = max([len(as_stat_number(abs(number.get('delta')) if number.get('delta') is not None else None))
-                            for number in numbers])
+        # only the first number is a dict, other still might be an int
+        number_digits = max([len(as_stat_number(get_abs_number(number))) for number in numbers])
+        delta_digits = max([len(as_stat_number(get_abs_delta(number))) for number in numbers])
         return number_digits, delta_digits
+
     return max([len(as_stat_number(abs(number) if number is not None else None))
                 for number in numbers]), 0
 
@@ -423,7 +435,7 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
 
 
 def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
-    if not changes or list_limit == 0:
+    if not changes or list_limit == 0 or changes.has_no_tests():
         return ''
 
     test_changes_details = []
@@ -520,22 +532,56 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
                         test_changes: Optional[SomeTestChanges] = None,
                         test_list_changes_limit: Optional[int] = None) -> str:
     """Provides a long summary in Markdown notation for the given stats."""
-    hide_runs = stats.runs == stats.tests and \
-                stats.runs_succ == stats.tests_succ and \
-                stats.runs_skip == stats.tests_skip and \
-                stats.runs_fail == stats.tests_fail and \
-                stats.runs_error == stats.tests_error
+    trivial_runs = stats.runs == stats.tests and \
+        stats.runs_succ == stats.tests_succ and \
+        stats.runs_skip == stats.tests_skip and \
+        stats.runs_fail == stats.tests_fail and \
+        stats.runs_error == stats.tests_error
 
+    if trivial_runs:
+        return get_long_summary_without_runs_md(stats, details_url, test_changes, test_list_changes_limit)
+    else:
+        return get_long_summary_with_runs_md(stats, details_url, test_changes, test_list_changes_limit)
+
+
+def get_details_line_md(stats: UnitTestRunResultsOrDeltaResults,
+                        details_url: Optional[str] = None) -> str:
+    errors = len(stats.errors)
+    details_on = (['parsing errors'] if errors > 0 else []) + \
+                 (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
+                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+    details_on = details_on[0:-2] + [' and '.join(details_on[-2:])] if details_on else []
+
+    return 'For more details on these {details_on}, see [this check]({url}).'.format(
+        details_on=', '.join(details_on),
+        url=details_url
+    ) if details_url and details_on else ''
+
+
+def get_commit_line_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
+    commit = stats.commit
+    is_delta_stats = isinstance(stats, UnitTestRunDeltaResults)
+    reference_type = stats.reference_type if is_delta_stats else None
+    reference_commit = stats.reference_commit if is_delta_stats else None
+
+    return 'Results for commit {commit}.{compare}'.format(
+        commit=as_short_commit(commit),
+        compare=' ± Comparison against {reference_type} commit {reference_commit}.'.format(
+            reference_type=reference_type,
+            reference_commit=as_short_commit(reference_commit)
+        ) if reference_type and reference_commit else ''
+    )
+
+
+def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
+                                  details_url: Optional[str] = None,
+                                  test_changes: Optional[SomeTestChanges] = None,
+                                  test_list_changes_limit: Optional[int] = None) -> str:
     files_digits, files_delta_digits = get_formatted_digits(stats.files, stats.tests, stats.runs)
     success_digits, success_delta_digits = get_formatted_digits(stats.suites, stats.tests_succ, stats.runs_succ)
     skip_digits, skip_delta_digits = get_formatted_digits(stats.tests_skip, stats.runs_skip)
     fail_digits, fail_delta_digits = get_formatted_digits(stats.tests_fail, stats.runs_fail)
     error_digits, error_delta_digits = get_formatted_digits(stats.tests_error, stats.runs_error)
-
-    commit = stats.commit
-    is_delta_stats = isinstance(stats, UnitTestRunDeltaResults)
-    reference_type = stats.reference_type if is_delta_stats else None
-    reference_commit = stats.reference_commit if is_delta_stats else None
 
     errors = len(stats.errors)
     misc_line = '{files} {errors}{suites}  {duration}\n'.format(
@@ -567,35 +613,75 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         runs_error_part=runs_error_part,
     )
 
-    details_on = (['parsing errors'] if errors > 0 else []) + \
-                 (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
-                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
-    details_on = details_on[0:-2] + [' and '.join(details_on[-2:])] if details_on else []
-
-    details_line = '\nFor more details on these {details_on}, see [this check]({url}).\n'.format(
-        details_on=', '.join(details_on),
-        url=details_url
-    )
-
+    details_line = get_details_line_md(stats, details_url)
+    commit_line = get_commit_line_md(stats)
     test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
-    test_changes_details = ('\n' + test_changes_details) if stats.tests and test_changes_details else ''
-
-    commit_line = '\nResults for commit {commit}.{compare}\n'.format(
-        commit=as_short_commit(commit),
-        compare=' ± Comparison against {reference_type} commit {reference_commit}.'.format(
-            reference_type=reference_type,
-            reference_commit=as_short_commit(reference_commit)
-        ) if reference_type and reference_commit else ''
-    )
 
     return '{misc}{tests}{runs}{details}{commit}{test_changes_details}'.format(
         misc=misc_line,
         tests=tests_line,
-        runs=runs_line if not hide_runs else '',
-        details=details_line if details_url and details_on else '',
-        commit=commit_line,
-        test_changes_details=test_changes_details
+        runs=runs_line,
+        details=new_lines(details_line),
+        commit=new_lines(commit_line),
+        test_changes_details=new_line(test_changes_details)
     )
+
+
+def new_line(text: str, before: bool = True) -> str:
+    if before:
+        return ('\n' + text) if text else text
+    else:
+        return (text + '\n') if text else text
+
+
+def new_lines(text: str) -> str:
+    return ('\n' + text + '\n') if text else text
+
+
+def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
+                                     details_url: Optional[str] = None,
+                                     test_changes: Optional[SomeTestChanges] = None,
+                                     test_list_changes_limit: Optional[int] = None) -> str:
+    sep = '  '
+
+    errors = len(stats.errors)
+    tests_digits, tests_delta_digits = get_formatted_digits(stats.tests, stats.suites, stats.files, errors)
+    passs_digits, passs_delta_digits = get_formatted_digits(stats.tests_succ, stats.tests_skip, stats.tests_fail, stats.tests_error)
+
+    tests = as_stat_number(stats.tests, tests_digits, tests_delta_digits, all_tests_label_md + ' ')
+    suites = as_stat_number(stats.suites, tests_digits, tests_delta_digits, 'suites')
+    files = as_stat_number(stats.files, tests_digits, tests_delta_digits, 'files  ')
+    parse_errors = as_stat_number(errors, tests_digits, tests_delta_digits, 'errors') if errors else ''
+
+    passs = as_stat_number(stats.tests_succ, passs_digits, passs_delta_digits, passed_tests_label_md)
+    skips = as_stat_number(stats.tests_skip, passs_digits, passs_delta_digits, skipped_tests_label_md)
+    fails = as_stat_number(stats.tests_fail, passs_digits, passs_delta_digits, failed_tests_label_md)
+
+    duration = as_stat_duration(stats.duration, duration_label_md)
+    errors = sep + as_stat_number(stats.tests_error, label=test_errors_label_md) if get_magnitude(stats.tests_error) else ''
+
+    details_line = get_details_line_md(stats, details_url)
+    commit_line = get_commit_line_md(stats)
+    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
+
+    return '{tests}{sep}{passs}{sep}{duration}\n' \
+           '{suites}{sep}{skips}\n' \
+           '{files}{sep}{fails}{errors}\n' \
+           '{parse_errors}{details}{commit}{test_changes_details}'.format(
+                sep=sep,
+                tests=tests,
+                passs=passs,
+                duration=duration,
+                suites=suites,
+                skips=skips,
+                files=files,
+                fails=fails,
+                errors=errors,
+                parse_errors=new_line(parse_errors, before=False),
+                details=new_lines(details_line),
+                commit=new_lines(commit_line),
+                test_changes_details=new_line(test_changes_details)
+            )
 
 
 def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
