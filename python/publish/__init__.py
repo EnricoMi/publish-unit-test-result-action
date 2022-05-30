@@ -95,6 +95,9 @@ class SomeTestChanges:
             return None
         return self._all_tests_before.intersection(self._all_tests_current)
 
+    def has_no_tests(self) -> bool:
+        return (len(self._all_tests_current) == 0) if self._all_tests_current is not None else False
+
     def skips(self) -> Optional[Set[str]]:
         if self._skipped_tests_before is None or self._skipped_tests_current is None:
             return None
@@ -432,7 +435,7 @@ def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
 
 
 def get_test_changes_summary_md(changes: Optional[SomeTestChanges], list_limit: Optional[int]) -> str:
-    if not changes or list_limit == 0:
+    if not changes or list_limit == 0 or changes.has_no_tests():
         return ''
 
     test_changes_details = []
@@ -612,7 +615,7 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
 
     details_line = get_details_line_md(stats, details_url)
     commit_line = get_commit_line_md(stats)
-    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit) if stats.tests else ''
+    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
 
     return '{misc}{tests}{runs}{details}{commit}{test_changes_details}'.format(
         misc=misc_line,
@@ -659,7 +662,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
 
     details_line = get_details_line_md(stats, details_url)
     commit_line = get_commit_line_md(stats)
-    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit) if stats.tests else ''
+    test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
 
     return '{tests}{sep}{passs}{sep}{duration}\n' \
            '{suites}{sep}{skips}\n' \

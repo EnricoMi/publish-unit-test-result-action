@@ -96,6 +96,16 @@ class PublishTest(unittest.TestCase):
         self.assertIsNone(changes.remaining_and_un_skipped())
         self.assertIsNone(changes.removed_skips())
 
+    def test_test_changes_has_no_tests(self):
+        for default in [None, 'one']:
+            self.assertEqual(SomeTestChanges(default, None, default, None).has_no_tests(), False)
+            self.assertEqual(SomeTestChanges(default, [], default, None).has_no_tests(), True)
+            self.assertEqual(SomeTestChanges(default, None, default, []).has_no_tests(), False)
+            self.assertEqual(SomeTestChanges(default, [], default, []).has_no_tests(), True)
+            self.assertEqual(SomeTestChanges(default, ['one'], default, []).has_no_tests(), False)
+            self.assertEqual(SomeTestChanges(default, [], default, ['two']).has_no_tests(), True)
+            self.assertEqual(SomeTestChanges(default, ['one'], default, ['two']).has_no_tests(), False)
+
     def test_restrict_unicode(self):
         self.assertEqual(None, restrict_unicode(None))
         self.assertEqual('', restrict_unicode(''))
@@ -1203,6 +1213,7 @@ class PublishTest(unittest.TestCase):
     def test_get_test_changes_summary_md_with_nones(self):
         expected = ''
         changes = mock.Mock(SomeTestChanges)
+        changes.has_no_tests = mock.Mock(return_value=False)
         changes.removes = mock.Mock(return_value=None)
         changes.adds = mock.Mock(return_value=None)
         changes.remaining_and_skipped = mock.Mock(return_value=None)
