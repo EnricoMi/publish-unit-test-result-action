@@ -41,6 +41,7 @@ jobs:
           check_name: Test Results (reference)
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
+          check_run_annotations_branch: "master, devel-1.0, devel-2.0"
           files: "artifacts/**/*.xml"
           log_level: DEBUG
 
