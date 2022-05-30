@@ -655,7 +655,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     fails = as_stat_number(stats.tests_fail, passs_digits, passs_delta_digits, failed_tests_label_md)
 
     duration = as_stat_duration(stats.duration, duration_label_md)
-    errors = sep + as_stat_number(stats.tests_error, label=test_errors_label_md) if stats.tests_error else ''
+    errors = sep + as_stat_number(stats.tests_error, label=test_errors_label_md) if get_magnitude(stats.tests_error) else ''
 
     details_line = get_details_line_md(stats, details_url)
     commit_line = get_commit_line_md(stats)

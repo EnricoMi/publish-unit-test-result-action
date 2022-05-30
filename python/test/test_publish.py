@@ -781,7 +781,7 @@ class PublishTest(unittest.TestCase):
     ####
 
     def test_get_long_summary_without_runs_md(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunResults(
+        self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
@@ -804,8 +804,20 @@ class PublishTest(unittest.TestCase):
              f'\n'
              f'Results for commit commit.\n'))
 
-    def test_get_long_summary_without_runs_md_with_deltas(self):
-        self.assertEqual(get_long_summary_md(UnitTestRunDeltaResults(
+    def test_get_long_summary_without_runs_md_with_delta(self):
+        self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(0, 0),
+            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(0, 0),
+            commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
+        )), (f'4 {all_tests_label_md}   - 5   5 {passed_tests_label_md} +6   3s {duration_label_md} +4s\n'
+             f'2 suites  - 3   6 {skipped_tests_label_md}  - 7 \n'
+             f'1 files   +2   7 {failed_tests_label_md} +8 \n'
+             f'\n'
+             f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
+
+    def test_get_long_summary_without_runs_md_with_errors_and_deltas(self):
+        self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9),
