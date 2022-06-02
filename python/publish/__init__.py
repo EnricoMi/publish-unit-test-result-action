@@ -353,7 +353,7 @@ def ungest_string(string: str) -> str:
 def get_digest_from_stats(stats: UnitTestRunResults) -> str:
     d = stats.to_dict()
     del d['errors']  # we don't need errors in the digest
-    return digest_string(json.dumps(d))
+    return digest_string(json.dumps(d, ensure_ascii=False))
 
 
 def get_stats_from_digest(digest: str) -> UnitTestRunResults:
