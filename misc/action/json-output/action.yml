@@ -27,6 +27,8 @@ runs:
       CONCLUSION: ${{ fromJSON( inputs.json ).conclusion }}
       STATS: ${{ toJSON( fromJSON( inputs.json ).stats ) }}
       STATS_WITH_DELTA: ${{ toJSON( fromJSON( inputs.json ).stats_with_delta ) }}
+      FORMATTED_STATS: ${{ toJSON( fromJSON( inputs.json ).formatted.stats ) }}
+      FORMATTED_STATS_WITH_DELTA: ${{ toJSON( fromJSON( inputs.json ).formatted.stats_with_delta ) }}
       COMMIT: ${{ fromJSON( inputs.json ).stats.commit }}
       REFERENCE: ${{ fromJSON( inputs.json ).stats_with_delta.reference_commit }}
       ANNOTATIONS: ${{ fromJSON( inputs.json ).annotations }}
@@ -37,6 +39,8 @@ runs:
       echo "conclusion=$CONCLUSION"
       echo "stats=$STATS"
       echo "stats-with-delta=$STATS_WITH_DELTA"
+      echo "formatted-stats=$FORMATTED_STATS"
+      echo "formatted-stats-with-delta=$FORMATTED_STATS_WITH_DELTA"
       echo "commit=$COMMIT"
       echo "reference=$REFERENCE"
       echo "annotations=$ANNOTATIONS"

@@ -92,6 +92,10 @@ inputs:
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
+  json_thousands_separator:
+    description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
+    default: ' '
+    required: false
 
 outputs:
   json:
@@ -164,6 +168,7 @@ runs:
         SECONDS_BETWEEN_GITHUB_READS: ${{ inputs.seconds_between_github_reads }}
         SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
         JSON_FILE: ${{ inputs.json_file }}
+        JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
         LOG_LEVEL: ${{ inputs.log_level }}

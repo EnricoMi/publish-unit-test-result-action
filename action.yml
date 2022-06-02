@@ -92,6 +92,10 @@ inputs:
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
+  json_thousands_separator:
+    description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
+    default: ' '
+    required: false
 
 outputs:
   json:
