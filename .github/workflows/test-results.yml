@@ -13,9 +13,10 @@ jobs:
     if: github.event.workflow_run.conclusion != 'skipped'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       checks: write
       pull-requests: write
+      # required by download step to access artifacts API
+      actions: read
 
     steps:
       - name: Download and Extract Artifacts
