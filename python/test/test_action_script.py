@@ -10,7 +10,7 @@ import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
-    hide_comments_modes, pull_request_build_modes
+    hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -157,7 +157,8 @@ class Test(unittest.TestCase):
                      check_run_annotation=[],
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
-                     json_file=None):
+                     json_file=None,
+                     json_thousands_separator=punctuation_space):
         return Settings(
             token=token,
             api_url=api_url,
@@ -169,6 +170,7 @@ class Test(unittest.TestCase):
             repo=repo,
             commit=commit,
             json_file=json_file,
+            json_thousands_separator=json_thousands_separator,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             files_glob=files_glob,
@@ -412,6 +414,12 @@ class Test(unittest.TestCase):
             with self.subTest(json_file=json_file):
                 self.do_test_get_settings(JSON_FILE=json_file, expected=self.get_settings(json_file=json_file))
 
+    def test_get_settings_json_thousands_separator(self):
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=None, expected=self.get_settings(json_thousands_separator=punctuation_space))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=',', expected=self.get_settings(json_thousands_separator=','))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR='.', expected=self.get_settings(json_thousands_separator='.'))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=' ', expected=self.get_settings(json_thousands_separator=' '))
+
     def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
@@ -435,7 +443,7 @@ class Test(unittest.TestCase):
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'event.json')
             with open(filepath, 'wt', encoding='utf-8') as w:
-                w.write(json.dumps(event))
+                w.write(json.dumps(event, ensure_ascii=False))
 
             for key in ['GITHUB_EVENT_PATH', 'INPUT_GITHUB_EVENT_PATH']:
                 if key in kwargs and kwargs[key]:

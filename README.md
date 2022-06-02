@@ -208,6 +208,7 @@ The list of most notable options:
 |`check_run_annotations_branch`|`event.repository.default_branch` or `"main, master"`|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 |`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
 |`json_file`|no file|Results are written to this JSON file.|
+|`json_thousands_separator`|`" "`|Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
@@ -272,6 +273,19 @@ Here is an example JSON:
     "reference_type": "earlier",
     "reference_commit": "d8ce4b6c62ebfafe1890c55bf7ea30058ebf77f2"
   },
+  "formatted": {
+     "stats": {
+        "duration": "2 352",
+        …
+     },
+     "stats_with_delta": {
+        "duration": {
+           "number": "2 352",
+           "delta": "+12"
+        },
+        …
+     }
+  },
   "annotations": 31
 }
 ```
@@ -279,6 +293,11 @@ Here is an example JSON:
 
 <details>
 <summary>Access JSON via file</summary>
+
+The `formatted` key provides a copy of `stats` and `stats_with_delta`, where numbers are formatted to strings.
+For example, `"duration": 2352` is formatted as `"duration": "2 352"`. The thousands separator can be configured
+via `json_thousands_separator`. Formatted numbers are especially useful when those values are used where formatting
+is not easily available, e.g. when [creating a badge from test results](#create-a-badge-from-test-results).
 
 The optional `json_file` allows to configure a file where extended JSON information are to be written.
 Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
@@ -555,7 +574,7 @@ steps:
   uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
   with:
     label: Tests
-    status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+    status: '${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
     color: ${{ env.BADGE_COLOR }}
     path: badge.svg
 
