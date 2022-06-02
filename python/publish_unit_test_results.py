@@ -14,7 +14,7 @@ from urllib3.util.retry import Retry
 import publish.github_action
 from publish import hide_comments_modes, none_list, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_update, comment_modes
+    comment_mode_off, comment_mode_update, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.publisher import Publisher, Settings
@@ -281,6 +281,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         repo=get_var('GITHUB_REPOSITORY', options),
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         json_file=get_var('JSON_FILE', options),
+        json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
         junit_files_glob=get_var('JUNIT_FILES', options) or get_var('FILES', options) or '*.xml',

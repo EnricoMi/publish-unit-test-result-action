@@ -4,7 +4,8 @@ import logging
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Any, Optional, Tuple, Mapping, Dict
+from typing import List, Any, Optional, Tuple, Mapping, Dict, Union
+from copy import deepcopy
 
 from github import Github, GithubException
 from github.CheckRun import CheckRun
@@ -35,6 +36,7 @@ class Settings:
     repo: str
     commit: str
     json_file: Optional[str]
+    json_thousands_separator: str
     fail_on_errors: bool
     fail_on_failures: bool
     junit_files_glob: str
@@ -64,20 +66,59 @@ class PublishData:
     stats_with_delta: Optional[UnitTestRunDeltaResults]
     annotations: List[Annotation]
 
-    def to_dict(self) -> Mapping[str, Any]:
+    @classmethod
+    def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
+        if isinstance(value, int):
+            return f'{value:,}'.replace(',', thousands_separator)
+        if isinstance(value, Mapping):
+            return {k: cls._format_digit(v, thousands_separator) for (k, v) in value.items()}
+        return value
+
+    @classmethod
+    def _format(cls, stats: Mapping[str, Any], thousands_separator: str) -> Dict[str, Any]:
+        return {k: cls._format_digit(v, thousands_separator) for (k, v) in stats.items()}
+
+    @classmethod
+    def _formatted_stats_and_delta(cls,
+                                   stats: Optional[Mapping[str, Any]],
+                                   stats_with_delta: Optional[Mapping[str, Any]],
+                                   thousands_separator: str) -> Mapping[str, Any]:
+        d = {}
+        if stats is not None:
+            d.update(stats=cls._format(stats, thousands_separator))
+        if stats_with_delta is not None:
+            d.update(stats_with_delta=cls._format(stats_with_delta, thousands_separator))
+        return d
+
+    def _as_dict(self) -> Dict[str, Any]:
+        # the dict_factory removes None values
         return dataclasses.asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
-    def reduced(self) -> Mapping[str, Any]:
-        data = self.to_dict()
+    def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
+        d = self._as_dict()
+        d.update(formatted=self._formatted_stats_and_delta(
+            d.get('stats'), d.get('stats_with_delta'), thousands_separator
+        ))
+        return d
+
+    def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
+        data = self._as_dict()
 
         # replace some large fields with their lengths
-        if data.get('stats', {}).get('errors') is not None:
-            data['stats']['errors'] = len(data['stats']['errors'])
-        if data.get('stats_with_delta', {}).get('errors') is not None:
-            data['stats_with_delta']['errors'] = len(data['stats_with_delta']['errors'])
-        if data.get('annotations') is not None:
-            data['annotations'] = len(data['annotations'])
+        def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
+            d = deepcopy(d)
+            if d.get('stats', {}).get('errors') is not None:
+                d['stats']['errors'] = len(d['stats']['errors'])
+            if d.get('stats_with_delta', {}).get('errors') is not None:
+                d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
+            if d.get('annotations') is not None:
+                d['annotations'] = len(d['annotations'])
+            return d
 
+        data = reduce(data)
+        data.update(formatted=self._formatted_stats_and_delta(
+            data.get('stats'), data.get('stats_with_delta'), thousands_separator
+        ))
         return data
 
 
@@ -300,7 +341,7 @@ class Publisher:
         if self._settings.json_file:
             try:
                 with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
-                    json.dump(data.to_dict(), w, ensure_ascii=False)
+                    json.dump(data.to_dict(self._settings.json_thousands_separator), w, ensure_ascii=False)
             except Exception as e:
                 self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:
@@ -309,7 +350,7 @@ class Publisher:
                     pass
 
         # provide a reduced version to Github actions
-        self._gha.set_output('json', json.dumps(data.reduced(), ensure_ascii=False))
+        self._gha.set_output('json', json.dumps(data.to_reduced_dict(self._settings.json_thousands_separator), ensure_ascii=False))
 
     def publish_job_summary(self,
                             title: str,

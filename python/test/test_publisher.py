@@ -53,6 +53,7 @@ class TestPublisher(unittest.TestCase):
                         event: Optional[dict] = {'before': 'before'},
                         event_name: str = 'event name',
                         json_file: Optional[str] = None,
+                        json_thousands_separator: str = punctuation_space,
                         pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5):
         return Settings(
@@ -66,6 +67,7 @@ class TestPublisher(unittest.TestCase):
             repo='owner/repo',
             commit='commit',
             json_file=json_file,
+            json_thousands_separator=json_thousands_separator,
             fail_on_errors=True,
             fail_on_failures=True,
             junit_files_glob='*.xml',
@@ -607,7 +609,7 @@ class TestPublisher(unittest.TestCase):
                           '```\n'
                           'class ‑ skipped \\U0001d486\n'
                           '```\n'
-                          '</details>\n',), args)
+                          '</details>\n', ), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -1206,7 +1208,10 @@ class TestPublisher(unittest.TestCase):
             f'"summary": "  1 files  {summary_errors}2 suites   3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"duration of all tests\\")\\n22 tests 4 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 5 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\")   6 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\")   7 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n38 runs  8 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 9 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") 10 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") 11 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n\\nResults for commit commit.\\n", '
             '"conclusion": "conclusion", '
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
-            f'"annotations": {len(annotations)}'
+            f'"annotations": {len(annotations)}, '
+            '"formatted": {'
+            '"stats": {"files": "1", ' + f'"errors": "{len(errors)}", ' + '"suites": "2", "duration": "3", "tests": "22", "tests_succ": "4", "tests_skip": "5", "tests_fail": "6", "tests_error": "7", "runs": "38", "runs_succ": "8", "runs_skip": "9", "runs_fail": "10", "runs_error": "11", "commit": "commit"}'
+            '}'
             '}'
         )
 
@@ -1275,7 +1280,11 @@ class TestPublisher(unittest.TestCase):
             '"conclusion": "conclusion", '
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
             '"stats_with_delta": {"files": {"number": 1, "delta": 0}, ' + f'"errors": {len(errors)}, ' + '"suites": {"number": 2, "delta": 0}, "duration": {"duration": 3, "delta": 0}, "tests": {"number": 22, "delta": 1}, "tests_succ": {"number": 4, "delta": -8}, "tests_skip": {"number": 5, "delta": 1}, "tests_fail": {"number": 6, "delta": 4}, "tests_error": {"number": 7, "delta": 4}, "runs": {"number": 38, "delta": 1}, "runs_succ": {"number": 8, "delta": -17}, "runs_skip": {"number": 9, "delta": 2}, "runs_fail": {"number": 10, "delta": 6}, "runs_error": {"number": 11, "delta": 10}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}, '
-            f'"annotations": {4 + len(errors)}'
+            f'"annotations": {4 + len(errors)}, '
+            '"formatted": {'
+            '"stats": {"files": "1", ' + f'"errors": "{len(errors)}", ' + '"suites": "2", "duration": "3", "tests": "22", "tests_succ": "4", "tests_skip": "5", "tests_fail": "6", "tests_error": "7", "runs": "38", "runs_succ": "8", "runs_skip": "9", "runs_fail": "10", "runs_error": "11", "commit": "commit"}, '
+            '"stats_with_delta": {"files": {"number": "1", "delta": "0"}, ' + f'"errors": "{len(errors)}", ' + '"suites": {"number": "2", "delta": "0"}, "duration": {"duration": "3", "delta": "0"}, "tests": {"number": "22", "delta": "1"}, "tests_succ": {"number": "4", "delta": "-8"}, "tests_skip": {"number": "5", "delta": "1"}, "tests_fail": {"number": "6", "delta": "4"}, "tests_error": {"number": "7", "delta": "4"}, "runs": {"number": "38", "delta": "1"}, "runs_succ": {"number": "8", "delta": "-17"}, "runs_skip": {"number": "9", "delta": "2"}, "runs_fail": {"number": "10", "delta": "6"}, "runs_error": {"number": "11", "delta": "10"}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}'
+            '}'
             '}'
         )
 
@@ -1416,78 +1425,289 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(check_run.edit.call_args_list, [mock.call(output=output) for output in outputs])
 
+    publish_data = PublishData(
+        title='title',
+        summary='summary',
+        conclusion='conclusion',
+        stats=UnitTestRunResults(
+            files=12345,
+            errors=[ParseError('file', 'message', 1, 2)],
+            suites=2,
+            duration=3456,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8901,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=1345,
+            commit='commit'
+        ),
+        stats_with_delta=UnitTestRunDeltaResults(
+            files={'number': 1234, 'delta': -1234},
+            errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)],
+            suites={'number': 2, 'delta': -2},
+            duration={'number': 3456, 'delta': -3456},
+            tests={'number': 4, 'delta': -4}, tests_succ={'number': 5, 'delta': -5},
+            tests_skip={'number': 6, 'delta': -6}, tests_fail={'number': 7, 'delta': -7},
+            tests_error={'number': 8, 'delta': -8},
+            runs={'number': 9, 'delta': -9}, runs_succ={'number': 10, 'delta': -10},
+            runs_skip={'number': 11, 'delta': -11}, runs_fail={'number': 12, 'delta': -12},
+            runs_error={'number': 1345, 'delta': -1345},
+            commit='commit',
+            reference_type='type', reference_commit='ref'
+        ),
+        annotations=[Annotation(
+            path='path',
+            start_line=1,
+            end_line=2,
+            start_column=3,
+            end_column=4,
+            annotation_level='failure',
+            message='message',
+            title=f'Error processing result file',
+            raw_details='file'
+        )]
+    )
+
+    def test_publish_data(self):
+        for separator in ['.', ',', ' ', punctuation_space]:
+            with self.subTest(json_thousands_separator=separator):
+                self.maxDiff = None
+                self.assertEqual({
+                    'title': 'title',
+                    'summary': 'summary',
+                    'conclusion': 'conclusion',
+                    'stats': {'commit': 'commit',
+                              'duration': 3456,
+                              'errors': [{'column': 2,
+                                          'file': 'file',
+                                          'line': 1,
+                                          'message': 'message'}],
+                              'files': 12345,
+                              'runs': 9,
+                              'runs_error': 1345,
+                              'runs_fail': 12,
+                              'runs_skip': 11,
+                              'runs_succ': 10,
+                              'suites': 2,
+                              'tests': 4,
+                              'tests_error': 8901,
+                              'tests_fail': 7,
+                              'tests_skip': 6,
+                              'tests_succ': 5},
+                    'stats_with_delta': {'commit': 'commit',
+                                         'duration': {'delta': -3456, 'number': 3456},
+                                         'errors': [{'column': 2,
+                                                     'file': 'file',
+                                                     'line': 1,
+                                                     'message': 'message'},
+                                                    {'column': 4,
+                                                     'file': 'file2',
+                                                     'line': 2,
+                                                     'message': 'message2'}],
+                                         'files': {'delta': -1234, 'number': 1234},
+                                         'reference_commit': 'ref',
+                                         'reference_type': 'type',
+                                         'runs': {'delta': -9, 'number': 9},
+                                         'runs_error': {'delta': -1345, 'number': 1345},
+                                         'runs_fail': {'delta': -12, 'number': 12},
+                                         'runs_skip': {'delta': -11, 'number': 11},
+                                         'runs_succ': {'delta': -10, 'number': 10},
+                                         'suites': {'delta': -2, 'number': 2},
+                                         'tests': {'delta': -4, 'number': 4},
+                                         'tests_error': {'delta': -8, 'number': 8},
+                                         'tests_fail': {'delta': -7, 'number': 7},
+                                         'tests_skip': {'delta': -6, 'number': 6},
+                                         'tests_succ': {'delta': -5, 'number': 5}},
+                    'formatted': {'stats': {'commit': 'commit',
+                                            'duration': "3" + separator + "456",
+                                            'errors': [{'column': 2,
+                                                        'file': 'file',
+                                                        'line': 1,
+                                                        'message': 'message'}],
+                                            'files': "12" + separator + "345",
+                                            'runs': "9",
+                                            'runs_error': "1" + separator + "345",
+                                            'runs_fail': "12",
+                                            'runs_skip': "11",
+                                            'runs_succ': "10",
+                                            'suites': "2",
+                                            'tests': "4",
+                                            'tests_error': "8" + separator + "901",
+                                            'tests_fail': "7",
+                                            'tests_skip': "6",
+                                            'tests_succ': "5"},
+                                  'stats_with_delta': {'commit': 'commit',
+                                                       'duration': {'delta': "-3" + separator + "456", 'number': "3" + separator + "456"},
+                                                       'errors': [{'column': 2,
+                                                                   'file': 'file',
+                                                                   'line': 1,
+                                                                   'message': 'message'},
+                                                                  {'column': 4,
+                                                                   'file': 'file2',
+                                                                   'line': 2,
+                                                                   'message': 'message2'}],
+                                                       'files': {'delta': "-1" + separator + "234", 'number': "1" + separator + "234"},
+                                                       'reference_commit': 'ref',
+                                                       'reference_type': 'type',
+                                                       'runs': {'delta': "-9", 'number': "9"},
+                                                       'runs_error': {'delta': "-1" + separator + "345", 'number': "1" + separator + "345"},
+                                                       'runs_fail': {'delta': "-12", 'number': "12"},
+                                                       'runs_skip': {'delta': "-11", 'number': "11"},
+                                                       'runs_succ': {'delta': "-10", 'number': "10"},
+                                                       'suites': {'delta': "-2", 'number': "2"},
+                                                       'tests': {'delta': "-4", 'number': "4"},
+                                                       'tests_error': {'delta': "-8", 'number': "8"},
+                                                       'tests_fail': {'delta': "-7", 'number': "7"},
+                                                       'tests_skip': {'delta': "-6", 'number': "6"},
+                                                       'tests_succ': {'delta': "-5", 'number': "5"}}},
+                    'annotations': [{'annotation_level': 'failure',
+                                     'end_column': 4,
+                                     'end_line': 2,
+                                     'message': 'message',
+                                     'path': 'path',
+                                     'raw_details': 'file',
+                                     'start_column': 3,
+                                     'start_line': 1,
+                                     'title': 'Error processing result file'}]},
+                    self.publish_data.to_dict(separator))
+
+                self.assertEqual({
+                    'title': 'title',
+                    'summary': 'summary',
+                    'conclusion': 'conclusion',
+                    'stats': {'commit': 'commit',
+                              'duration': 3456,
+                              'errors': 1,
+                              'files': 12345,
+                              'runs': 9,
+                              'runs_error': 1345,
+                              'runs_fail': 12,
+                              'runs_skip': 11,
+                              'runs_succ': 10,
+                              'suites': 2,
+                              'tests': 4,
+                              'tests_error': 8901,
+                              'tests_fail': 7,
+                              'tests_skip': 6,
+                              'tests_succ': 5},
+                    'stats_with_delta': {'commit': 'commit',
+                                         'duration': {'delta': -3456, 'number': 3456},
+                                         'errors': 2,
+                                         'files': {'delta': -1234, 'number': 1234},
+                                         'reference_commit': 'ref',
+                                         'reference_type': 'type',
+                                         'runs': {'delta': -9, 'number': 9},
+                                         'runs_error': {'delta': -1345, 'number': 1345},
+                                         'runs_fail': {'delta': -12, 'number': 12},
+                                         'runs_skip': {'delta': -11, 'number': 11},
+                                         'runs_succ': {'delta': -10, 'number': 10},
+                                         'suites': {'delta': -2, 'number': 2},
+                                         'tests': {'delta': -4, 'number': 4},
+                                         'tests_error': {'delta': -8, 'number': 8},
+                                         'tests_fail': {'delta': -7, 'number': 7},
+                                         'tests_skip': {'delta': -6, 'number': 6},
+                                         'tests_succ': {'delta': -5, 'number': 5}},
+                    'formatted': {'stats': {'commit': 'commit',
+                                            'duration': "3" + separator + "456",
+                                            'errors': "1",
+                                            'files': "12" + separator + "345",
+                                            'runs': "9",
+                                            'runs_error': "1" + separator + "345",
+                                            'runs_fail': "12",
+                                            'runs_skip': "11",
+                                            'runs_succ': "10",
+                                            'suites': "2",
+                                            'tests': "4",
+                                            'tests_error': "8" + separator + "901",
+                                            'tests_fail': "7",
+                                            'tests_skip': "6",
+                                            'tests_succ': "5"},
+                                  'stats_with_delta': {'commit': 'commit',
+                                                       'duration': {'delta': "-3" + separator + "456", 'number': "3" + separator + "456"},
+                                                       'errors': "2",
+                                                       'files': {'delta': "-1" + separator + "234", 'number': "1" + separator + "234"},
+                                                       'reference_commit': 'ref',
+                                                       'reference_type': 'type',
+                                                       'runs': {'delta': "-9", 'number': "9"},
+                                                       'runs_error': {'delta': "-1" + separator + "345", 'number': "1" + separator + "345"},
+                                                       'runs_fail': {'delta': "-12", 'number': "12"},
+                                                       'runs_skip': {'delta': "-11", 'number': "11"},
+                                                       'runs_succ': {'delta': "-10", 'number': "10"},
+                                                       'suites': {'delta': "-2", 'number': "2"},
+                                                       'tests': {'delta': "-4", 'number': "4"},
+                                                       'tests_error': {'delta': "-8", 'number': "8"},
+                                                       'tests_fail': {'delta': "-7", 'number': "7"},
+                                                       'tests_skip': {'delta': "-6", 'number': "6"},
+                                                       'tests_succ': {'delta': "-5", 'number': "5"}}},
+                    'annotations': 1},
+                    self.publish_data.to_reduced_dict(separator))
+
     def test_publish_json(self):
-        with tempfile.TemporaryDirectory() as path:
-            filepath = os.path.join(path, 'file.json')
-            settings = self.create_settings(json_file=filepath)
+        for separator in ['.', ',', ' ', punctuation_space]:
+            with self.subTest(json_thousands_separator=separator):
+                with tempfile.TemporaryDirectory() as path:
+                    filepath = os.path.join(path, 'file.json')
+                    settings = self.create_settings(json_file=filepath, json_thousands_separator=separator)
 
-            gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
-            publisher = Publisher(settings, gh, gha)
+                    gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
+                    publisher = Publisher(settings, gh, gha)
 
-            data = PublishData(
-                title='title',
-                summary='summary',
-                conclusion='conclusion',
-                stats=UnitTestRunResults(
-                    files=1,
-                    errors=[ParseError('file', 'message', 1, 2)],
-                    suites=2,
-                    duration=3,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
-                    commit='commit'
-                ),
-                stats_with_delta=UnitTestRunDeltaResults(
-                    files={'number': 1, 'delta': -1},
-                    errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)],
-                    suites={'number': 2, 'delta': -2},
-                    duration={'number': 3, 'delta': -3},
-                    tests={'number': 4, 'delta': -4}, tests_succ={'number': 5, 'delta': -5}, tests_skip={'number': 6, 'delta': -6}, tests_fail={'number': 7, 'delta': -7}, tests_error={'number': 8, 'delta': -8},
-                    runs={'number': 9, 'delta': -9}, runs_succ={'number': 10, 'delta': -10}, runs_skip={'number': 11, 'delta': -11}, runs_fail={'number': 12, 'delta': -12}, runs_error={'number': 13, 'delta': -13},
-                    commit='commit',
-                    reference_type='type', reference_commit='ref'
-                ),
-                annotations=[Annotation(
-                    path='path',
-                    start_line=1,
-                    end_line=2,
-                    start_column=3,
-                    end_column=4,
-                    annotation_level='failure',
-                    message='message',
-                    title=f'Error processing result file',
-                    raw_details='file'
-                )]
-            )
-            publisher.publish_json(data)
-            gha.error.assert_not_called()
+                    publisher.publish_json(self.publish_data)
+                    gha.error.assert_not_called()
 
-            # assert the file
-            with open(filepath, encoding='utf-8') as r:
-                actual = r.read()
-                self.assertEqual(
-                    '{'
-                    '"title": "title", '
-                    '"summary": "summary", '
-                    '"conclusion": "conclusion", '
-                    '"stats": {"files": 1, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 13, "commit": "commit"}, '
-                    '"stats_with_delta": {"files": {"number": 1, "delta": -1}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3, "delta": -3}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 13, "delta": -13}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
-                    '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}]'
-                    '}',
-                    actual
-                )
+                    # assert the file
+                    with open(filepath, encoding='utf-8') as r:
+                        actual = r.read()
+                        self.assertEqual(
+                            '{'
+                            '"title": "title", '
+                            '"summary": "summary", '
+                            '"conclusion": "conclusion", '
+                            '"stats": {"files": 12345, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3456, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8901, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 1345, "commit": "commit"}, '
+                            '"stats_with_delta": {"files": {"number": 1234, "delta": -1234}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3456, "delta": -3456}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
+                            '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}], '
+                            '"formatted": {'
+                            '"stats": {"files": "12' + separator + '345", "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": "2", "duration": "3' + separator + '456", "tests": "4", "tests_succ": "5", "tests_skip": "6", "tests_fail": "7", "tests_error": "8' + separator + '901", "runs": "9", "runs_succ": "10", "runs_skip": "11", "runs_fail": "12", "runs_error": "1' + separator + '345", "commit": "commit"}, '
+                            '"stats_with_delta": {"files": {"number": "1' + separator + '234", "delta": "-1' + separator + '234"}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": "2", "delta": "-2"}, "duration": {"number": "3' + separator + '456", "delta": "-3' + separator + '456"}, "tests": {"number": "4", "delta": "-4"}, "tests_succ": {"number": "5", "delta": "-5"}, "tests_skip": {"number": "6", "delta": "-6"}, "tests_fail": {"number": "7", "delta": "-7"}, "tests_error": {"number": "8", "delta": "-8"}, "runs": {"number": "9", "delta": "-9"}, "runs_succ": {"number": "10", "delta": "-10"}, "runs_skip": {"number": "11", "delta": "-11"}, "runs_fail": {"number": "12", "delta": "-12"}, "runs_error": {"number": "1' + separator + '345", "delta": "-1' + separator + '345"}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}'
+                            '}'
+                            '}',
+                            actual
+                        )
 
-            # data is being sent to GH action output 'json'
-            # some list fields are replaced by their length
-            expected = {
-                "title": "title",
-                "summary": "summary",
-                "conclusion": "conclusion",
-                "stats": {"files": 1, "errors": 1, "suites": 2, "duration": 3, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 13, "commit": "commit"},
-                "stats_with_delta": {"files": {"number": 1, "delta": -1}, "errors": 2, "suites": {"number": 2, "delta": -2}, "duration": {"number": 3, "delta": -3}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 13, "delta": -13}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"},
-                "annotations": 1
-            }
-            gha.set_output.assert_called_once_with('json', json.dumps(expected))
+                    # data is being sent to GH action output 'json'
+                    # some list fields are replaced by their length
+                    expected = {
+                        "title": "title",
+                        "summary": "summary",
+                        "conclusion": "conclusion",
+                        "stats": {"files": 12345, "errors": 1, "suites": 2, "duration": 3456, "tests": 4, "tests_succ": 5,
+                                  "tests_skip": 6, "tests_fail": 7, "tests_error": 8901, "runs": 9, "runs_succ": 10,
+                                  "runs_skip": 11, "runs_fail": 12, "runs_error": 1345, "commit": "commit"},
+                        "stats_with_delta": {"files": {"number": 1234, "delta": -1234}, "errors": 2,
+                                             "suites": {"number": 2, "delta": -2}, "duration": {"number": 3456, "delta": -3456},
+                                             "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5},
+                                             "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7},
+                                             "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9},
+                                             "runs_succ": {"number": 10, "delta": -10},
+                                             "runs_skip": {"number": 11, "delta": -11},
+                                             "runs_fail": {"number": 12, "delta": -12},
+                                             "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit",
+                                             "reference_type": "type", "reference_commit": "ref"},
+                        "annotations": 1,
+                        "formatted": {
+                            "stats": {"files": "12" + separator + "345", "errors": "1", "suites": "2", "duration": "3" + separator + "456", "tests": "4", "tests_succ": "5",
+                                      "tests_skip": "6", "tests_fail": "7", "tests_error": "8" + separator + "901", "runs": "9", "runs_succ": "10",
+                                      "runs_skip": "11", "runs_fail": "12", "runs_error": "1" + separator + "345", "commit": "commit"},
+                            "stats_with_delta": {"files": {"number": "1" + separator + "234", "delta": "-1" + separator + "234"}, "errors": "2",
+                                                 "suites": {"number": "2", "delta": "-2"}, "duration": {"number": "3" + separator + "456", "delta": "-3" + separator + "456"},
+                                                 "tests": {"number": "4", "delta": "-4"}, "tests_succ": {"number": "5", "delta": "-5"},
+                                                 "tests_skip": {"number": "6", "delta": "-6"}, "tests_fail": {"number": "7", "delta": "-7"},
+                                                 "tests_error": {"number": "8", "delta": "-8"}, "runs": {"number": "9", "delta": "-9"},
+                                                 "runs_succ": {"number": "10", "delta": "-10"},
+                                                 "runs_skip": {"number": "11", "delta": "-11"},
+                                                 "runs_fail": {"number": "12", "delta": "-12"},
+                                                 "runs_error": {"number": "1" + separator + "345", "delta": "-1" + separator + "345"}, "commit": "commit",
+                                                 "reference_type": "type", "reference_commit": "ref"}
+                        }
+                    }
+                    gha.set_output.assert_called_once_with('json', json.dumps(expected, ensure_ascii=False))
 
     def test_publish_job_summary_without_before(self):
         settings = self.create_settings(job_summary=True)

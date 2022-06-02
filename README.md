@@ -38,8 +38,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
 
-Also see the [notes on supporting pull requests from fork repositories and branches](#support-fork-repositories-and-dependabot-branches)
-created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically).
+Also see the [notes on supporting pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
 
@@ -66,11 +65,15 @@ In presence of failures or errors, the comment links to the respective [check su
 
 Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
 
-![checks comment example](misc/github-pull-request-comment-update-history.png)
+![pull request comment history example](misc/github-pull-request-comment-update-history.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
 changes in the number of runs as well.
+
+When tests run only a single time, no run information is displayed. Results are then shown differently then:
+
+![pull request comment example without runs](misc/github-pull-request-comment-without-runs.png)
 
 The change statistics (e.g. 5 tests ±0) might sometimes hide test removal.
 Those are highlighted in pull request comments to easily spot unintended test removal:
@@ -165,46 +168,65 @@ with:
     !config.xml
 ```
 
-See the complete list of options below.
+The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
 |`junit_files`|`*.xml`|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
-|`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
-|`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
-|`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
-|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
+
+<details>
+<summary>Options related to Git and GitHub</summary>
+
+|Option|Default Value|Description|
+|:-----|:-----:|:----------|
+|`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
 |`github_retries`|`10`|Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.|
 |`seconds_between_github_reads`|`0.25`|Sets the number of seconds the action waits between concurrent read requests to the GitHub API.|
 |`seconds_between_github_writes`|`2.0`|Sets the number of seconds the action waits between concurrent write requests to the GitHub API.|
-|`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
-|`json_file`|no file|Results are written to this JSON file.|
-|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
-|`pull_request_build`|`"merge"`|GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to `"commit"`.|
+|`pull_request_build`|`"merge"`|As part of pull requests, GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to `"commit"`.|
 |`event_file`|`${{env.GITHUB_EVENT_PATH}}`|An alternative event file to use. Useful to replace a `workflow_run` event file with the actual source event file.|
 |`event_name`|`${{env.GITHUB_EVENT_NAME}}`|An alternative event name to use. Useful to replace a `workflow_run` event name with the actual source event name: `${{ github.event.workflow_run.event }}`.|
-|`test_changes_limit`|`10`|Limits the number of removed or skipped tests listed on pull request comments. This can be disabled with a value of `0`.|
+</details>
+
+<details>
+<summary>Options related to reporting test results</summary>
+
+|Option|Default Value|Description|
+|:-----|:-----:|:----------|
+|`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
+|`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
+|`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
+|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
+|`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
+|`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
 |`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
+|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run. This is a comma-separated list of any of the following values:<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests<br> Set to `none` to add no extra annotations at all.|
+|`check_run_annotations_branch`|`event.repository.default_branch` or `"main, master"`|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 |`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
-|`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
-|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run (comma-separated list):<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests,<br>`none` - no extra annotations at all|
-|`check_run_annotations_branch`|default branch|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
+|`json_file`|no file|Results are written to this JSON file.|
+|`json_thousands_separator`|`" "`|Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).|
+|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
 Those removed or skipped tests are added as a list, which is limited in length by `test_changes_limit`,
-which defaults to `10`. Listing these tests can be disabled entirely by setting this limit to `0`.
+which defaults to `10`. Reporting these tests can be disabled entirely by setting this limit to `0`.
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
+</details>
 
 ## JSON result
 
-The gathered test information are accessible as JSON. The `json` output of the action can be accessed
-through the expression `steps.<id>.outputs.json`.
+The gathered test information are accessible as JSON via [GitHub Actions steps outputs](https://docs.github.com/en/actions/learn-github-actions/contexts#steps-context) string or JSON file.
+
+<details>
+<summary>Access JSON via step outputs</summary>
+
+The `json` output of the action can be accessed through the expression `steps.<id>.outputs.json`.
 
 ```yaml
 - name: Publish Test Results
@@ -251,12 +273,34 @@ Here is an example JSON:
     "reference_type": "earlier",
     "reference_commit": "d8ce4b6c62ebfafe1890c55bf7ea30058ebf77f2"
   },
+  "formatted": {
+     "stats": {
+        "duration": "2 352",
+        …
+     },
+     "stats_with_delta": {
+        "duration": {
+           "number": "2 352",
+           "delta": "+12"
+        },
+        …
+     }
+  },
   "annotations": 31
 }
 ```
+</details>
+
+<details>
+<summary>Access JSON via file</summary>
+
+The `formatted` key provides a copy of `stats` and `stats_with_delta`, where numbers are formatted to strings.
+For example, `"duration": 2352` is formatted as `"duration": "2 352"`. The thousands separator can be configured
+via `json_thousands_separator`. Formatted numbers are especially useful when those values are used where formatting
+is not easily available, e.g. when [creating a badge from test results](#create-a-badge-from-test-results).
 
 The optional `json_file` allows to configure a file where extended JSON information are to be written.
-Compared to above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
+Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
 
 ```json
 {
@@ -287,6 +331,7 @@ Compared to above, `errors` and `annotations` contain more information than just
    ]
 }
 ```
+</details>
 
 See [Create a badge from test results](#create-a-badge-from-test-results) for an example on how to create a badge from this JSON.
 
@@ -296,6 +341,9 @@ In a scenario where your tests run multiple times in different environments (e.g
 the action should run only once over all test results. For this, put the action into a separate job
 that depends on all your test environments. Those need to upload the test results as artifacts, which
 are then all downloaded by your publish job.
+
+<details>
+<summary>Example workflow YAML</summary>
 
 ```yaml
 name: CI
@@ -360,12 +408,17 @@ jobs:
         with:
           junit_files: "artifacts/**/*.xml"
 ```
+</details>
+
+Please consider to [support fork repositories and dependabot branches](#support-fork-repositories-and-dependabot-branches)
+together with your matrix strategy.
 
 ## Support fork repositories and dependabot branches
 [comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
-Getting test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
-or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
+Getting test results of pull requests created by contributors from fork repositories or by
+[Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
+requires some additional setup. Without this, the action will fail with the
 `"Resource not accessible by integration"` error for those situations.
 
 In this setup, your CI workflow does not need to publish test results anymore as they are **always** published from a separate workflow.
@@ -376,7 +429,10 @@ In this setup, your CI workflow does not need to publish test results anymore as
    This workflow publishes the test results for pull requests from fork repositories and dependabot,
    as well as all "ordinary" runs of your CI workflow.
 
-Add the following job to your CI workflow to upload the event file as an artifact:
+<details>
+<summary>Step-by-step instructions</summary>
+
+1. Add the following job to your CI workflow to upload the event file as an artifact:
 
 ```yaml
 event_file:
@@ -390,7 +446,7 @@ event_file:
       path: ${{ github.event_path }}
 ```
 
-Add the following action step to your CI workflow to upload test results as artifacts.
+2. Add the following action step to your CI workflow to upload test results as artifacts.
 Adjust the value of `path` to fit your setup:
 
 ```yaml
@@ -403,7 +459,7 @@ Adjust the value of `path` to fit your setup:
       test-results/*.xml
 ```
 
-If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
+3. If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
 make the artifact name unique for each job, e.g.:
 ```yaml
   with:
@@ -411,15 +467,15 @@ make the artifact name unique for each job, e.g.:
     path: …
 ```
 
-Add the following workflow that publishes test results. It downloads and extracts
+4. Add the following workflow that publishes test results. It downloads and extracts
 all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
-It then runs the action on files matching `artifacts/**/*.xml`.
+
+   It then runs the action on files matching `artifacts/**/*.xml`.
 Change the `files` pattern with the path to your test artifacts if it does not work for you.
 The publish action uses the event file of the CI workflow.
 
-Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
-
+   Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 ```yaml
 name: Test Results
@@ -435,11 +491,12 @@ jobs:
   test-results:
     name: Test Results
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion != 'skipped'
+
     permissions:
-      actions: read
       checks: write
 
-      # only needed unless run with comment_mode: off
+      # needed unless run with comment_mode: off
       pull-requests: write
 
       # only needed for private repository
@@ -447,7 +504,9 @@ jobs:
 
       # only needed for private repository
       issues: read
-    if: github.event.workflow_run.conclusion != 'skipped'
+
+      # required by download step to access artifacts API
+      actions: read
 
     steps:
       - name: Download and Extract Artifacts
@@ -475,11 +534,16 @@ jobs:
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
+This event is therefore not use here intentionally!
+</details>
 
 ## Create a badge from test results
 
-This is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
+Here is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+
+<details>
+<summary>Example worklow YAML</summary>
 
 ```yaml
 steps:
@@ -510,7 +574,7 @@ steps:
   uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
   with:
     label: Tests
-    status: '${{ fromJSON( steps.test-results.outputs.json ).stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
+    status: '${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
     color: ${{ env.BADGE_COLOR }}
     path: badge.svg
 
@@ -531,6 +595,7 @@ You have to create a personal access toke (PAT) with `gist` permission only. Add
 Set the `gistURL` to the Gist that you want to write the badge file to, in the form of `https://gist.githubusercontent.com/{user}/{id}`.
 
 You can then use the badge via this URL: https://gist.githubusercontent.com/{user}/{id}/raw/badge.svg
+</details>
 
 ## Running as a composite action
 
@@ -552,7 +617,8 @@ Self-hosted runners for Windows require Bash shell to be installed. Easiest way 
 Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
 environment variable seen by the self-hosted runner.
 
-### Isolating composite action from your workflow
+<details>
+<summary>Isolating composite action from your workflow</summary>
 
 Note that the composite action modifies this Python environment by installing dependency packages.
 If this conflicts with actions that later run Python in the same workflow (which is a rare case),
@@ -597,8 +663,10 @@ publish-test-results:
       with:
         junit_files: "artifacts/**/*.xml"
 ```
+</details>
 
-### Slow startup of composite action
+<details>
+<summary>Slow startup of composite action</summary>
 
 In some environments, the composite action startup can be slow due to the installation of Python dependencies.
 This is usually the case for **Windows** runners (in this example 35 seconds startup time):
@@ -655,3 +723,4 @@ Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
 Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Test Results
 ```
+</details>
