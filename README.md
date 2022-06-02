@@ -435,11 +435,12 @@ jobs:
   test-results:
     name: Test Results
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion != 'skipped'
+
     permissions:
-      actions: read
       checks: write
 
-      # only needed unless run with comment_mode: off
+      # needed unless run with comment_mode: off
       pull-requests: write
 
       # only needed for private repository
@@ -447,7 +448,9 @@ jobs:
 
       # only needed for private repository
       issues: read
-    if: github.event.workflow_run.conclusion != 'skipped'
+
+      # required by download step to access artifacts API
+      actions: read
 
     steps:
       - name: Download and Extract Artifacts
