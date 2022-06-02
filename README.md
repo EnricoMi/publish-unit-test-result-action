@@ -66,11 +66,15 @@ In presence of failures or errors, the comment links to the respective [check su
 
 Subsequent runs of the action will update this comment. You can access earlier results in the comment edit history:
 
-![checks comment example](misc/github-pull-request-comment-update-history.png)
+![pull request comment history example](misc/github-pull-request-comment-update-history.png)
 
 The result distinguishes between tests and runs. In some situations, tests run multiple times,
 e.g. in different environments. Displaying the number of runs allows spotting unexpected
 changes in the number of runs as well.
+
+When tests run only a single time, no run information is displayed. Results are then shown differently then:
+
+![pull request comment example without runs](misc/github-pull-request-comment-without-runs.png)
 
 The change statistics (e.g. 5 tests ±0) might sometimes hide test removal.
 Those are highlighted in pull request comments to easily spot unintended test removal:
