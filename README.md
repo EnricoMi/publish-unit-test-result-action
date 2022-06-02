@@ -38,8 +38,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
 
-Also see the [notes on supporting pull requests from fork repositories and branches](#support-fork-repositories-and-dependabot-branches)
-created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically).
+Also see the [notes on supporting pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
 
@@ -169,7 +168,8 @@ with:
     !config.xml
 ```
 
-See the complete list of options below.
+<details>
+<summary>The complete list of options</summary>
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
@@ -204,11 +204,16 @@ which defaults to `10`. Listing these tests can be disabled entirely by setting 
 This feature requires `check_run_annotations` to contain `all tests` in order to detect test addition
 and removal, and `skipped tests` to detect new skipped and un-skipped tests, as well as
 `check_run_annotations_branch` to contain your default branch.
+</details>
 
 ## JSON result
 
-The gathered test information are accessible as JSON. The `json` output of the action can be accessed
-through the expression `steps.<id>.outputs.json`.
+The gathered test information are accessible as JSON via [GitHub Actions steps outputs](https://docs.github.com/en/actions/learn-github-actions/contexts#steps-context) string or JSON file.
+
+<details>
+<summary>Access JSON via step outputs</summary>
+
+The `json` output of the action can be accessed through the expression `steps.<id>.outputs.json`.
 
 ```yaml
 - name: Publish Test Results
@@ -258,9 +263,13 @@ Here is an example JSON:
   "annotations": 31
 }
 ```
+</details>
+
+<details>
+<summary>Access JSON via file</summary>
 
 The optional `json_file` allows to configure a file where extended JSON information are to be written.
-Compared to above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
+Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
 
 ```json
 {
@@ -291,6 +300,7 @@ Compared to above, `errors` and `annotations` contain more information than just
    ]
 }
 ```
+</details>
 
 See [Create a badge from test results](#create-a-badge-from-test-results) for an example on how to create a badge from this JSON.
 
@@ -300,6 +310,9 @@ In a scenario where your tests run multiple times in different environments (e.g
 the action should run only once over all test results. For this, put the action into a separate job
 that depends on all your test environments. Those need to upload the test results as artifacts, which
 are then all downloaded by your publish job.
+
+<details>
+<summary>Example workflow YAML</summary>
 
 ```yaml
 name: CI
@@ -364,12 +377,17 @@ jobs:
         with:
           files: "artifacts/**/*.xml"
 ```
+</details>
+
+Please consider to [support fork repositories and dependabot branches](#support-fork-repositories-and-dependabot-branches)
+together with your matrix strategy.
 
 ## Support fork repositories and dependabot branches
 [comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
-Getting test results of pull requests created by [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
-or by contributors from fork repositories requires some additional setup. Without this, the action will fail with the
+Getting test results of pull requests created by contributors from fork repositories or by
+[Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
+requires some additional setup. Without this, the action will fail with the
 `"Resource not accessible by integration"` error for those situations.
 
 In this setup, your CI workflow does not need to publish test results anymore as they are **always** published from a separate workflow.
@@ -380,7 +398,10 @@ In this setup, your CI workflow does not need to publish test results anymore as
    This workflow publishes the test results for pull requests from fork repositories and dependabot,
    as well as all "ordinary" runs of your CI workflow.
 
-Add the following job to your CI workflow to upload the event file as an artifact:
+<details>
+<summary>Step by step instructions</summary>
+
+1. Add the following job to your CI workflow to upload the event file as an artifact:
 
 ```yaml
 event_file:
@@ -394,7 +415,7 @@ event_file:
       path: ${{ github.event_path }}
 ```
 
-Add the following action step to your CI workflow to upload test results as artifacts.
+2. Add the following action step to your CI workflow to upload test results as artifacts.
 Adjust the value of `path` to fit your setup:
 
 ```yaml
@@ -407,7 +428,7 @@ Adjust the value of `path` to fit your setup:
       test-results/*.xml
 ```
 
-If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
+3. If you run tests in a [strategy matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
 make the artifact name unique for each job, e.g.:
 ```yaml
   with:
@@ -415,15 +436,15 @@ make the artifact name unique for each job, e.g.:
     path: …
 ```
 
-Add the following workflow that publishes test results. It downloads and extracts
+4. Add the following workflow that publishes test results. It downloads and extracts
 all artifacts into `artifacts/ARTIFACT_NAME/`, where `ARTIFACT_NAME` will be `Upload Test Results`
 when setup as above, or `Upload Test Results (…)` when run in a strategy matrix.
-It then runs the action on files matching `artifacts/**/*.xml`.
+
+   It then runs the action on files matching `artifacts/**/*.xml`.
 Change the `files` pattern with the path to your test artifacts if it does not work for you.
 The publish action uses the event file of the CI workflow.
 
-Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
-
+   Also adjust the value of `workflows` (here `"CI"`) to fit your setup:
 
 ```yaml
 name: Test Results
@@ -482,11 +503,16 @@ jobs:
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
+This event is therefore not use here intentionally!
+</details>
 
 ## Create a badge from test results
 
-This is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
+Here is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+
+<details>
+<summary>Example worklow YAML</summary>
 
 ```yaml
 steps:
@@ -538,6 +564,7 @@ You have to create a personal access toke (PAT) with `gist` permission only. Add
 Set the `gistURL` to the Gist that you want to write the badge file to, in the form of `https://gist.githubusercontent.com/{user}/{id}`.
 
 You can then use the badge via this URL: https://gist.githubusercontent.com/{user}/{id}/raw/badge.svg
+</details>
 
 ## Running as a composite action
 
@@ -559,7 +586,8 @@ Self-hosted runners for Windows require Bash shell to be installed. Easiest way 
 Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
 environment variable seen by the self-hosted runner.
 
-### Isolating composite action from your workflow
+<details>
+<summary>Isolating composite action from your workflow</summary>
 
 Note that the composite action modifies this Python environment by installing dependency packages.
 If this conflicts with actions that later run Python in the same workflow (which is a rare case),
@@ -604,8 +632,10 @@ publish-test-results:
       with:
         files: "artifacts/**/*.xml"
 ```
+</details>
 
-### Slow startup of composite action
+<details>
+<summary>Slow startup of composite action</summary>
 
 In some environments, the composite action startup can be slow due to the installation of Python dependencies.
 This is usually the case for **Windows** runners (in this example 35 seconds startup time):
@@ -662,3 +692,4 @@ Mon, 03 May 2021 16:00:00 GMT   ⏵ Check for Python3
 Mon, 03 May 2021 16:00:00 GMT   ⏵ Install Python dependencies
 Mon, 03 May 2021 16:00:11 GMT   ⏵ Publish Test Results
 ```
+</details>
