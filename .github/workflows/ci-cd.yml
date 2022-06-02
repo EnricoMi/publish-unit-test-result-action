@@ -95,18 +95,20 @@ jobs:
       - name: PyTest (EST)
         env:
           TZ: US/Eastern
+          LANG: "en_US.UTF-8"
           PYTHONPATH: ..
         run: |
           cd python/test
           python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
 
-      - name: PyTest (AEST)
+      - name: PyTest (CET)
         env:
-          TZ: Australia/Canberra
+          TZ: Europe/Berlin
+          LANG: "de_DE.UTF-8"
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-aest.xml
+          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
 
       - name: Upload Test Results
         if: always()
