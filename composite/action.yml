@@ -16,15 +16,15 @@ inputs:
     required: false
   check_name:
     description: 'Name of the created check run'
-    required: false
     default: 'Unit Test Results'
+    required: false
   comment_title:
     description: 'Title of PR comments, defaults to value of check_name input'
     required: false
   fail_on:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
-    required: false
     default: 'test failures'
+    required: false
   files:
     description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
     required: true
@@ -44,27 +44,27 @@ inputs:
     required: false
   hide_comments:
     description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
-    required: false
     default: 'all but latest'
+    required: false
   comment_on_pr:
     description: 'Deprecated, please use comment_mode instead!'
     required: false
   comment_mode:
     description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
-    required: false
     default: 'update last'
+    required: false
   job_summary:
     description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
-    required: false
     default: 'true'
+    required: false
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
-    required: false
     default: 'true'
-  pull_request_build:
-    description: 'Pull request events build a merge of the branch and the target branch, not just the commit that has been pushed. When your workflow deviates from this behaviour and builds the actual commit, then set this option to "commit". Defaults to "merge".'
     required: false
+  pull_request_build:
+    description: 'As part of pull requests, GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to "commit". Defaults to "merge".'
     default: 'merge'
+    required: false
   event_file:
     description: 'An alternative event file to use. Useful to replace a "workflow_run" event file with the actual source event file.'
     required: false
@@ -72,23 +72,23 @@ inputs:
     description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
     required: false
   test_changes_limit:
-    description: 'Limits the number of removed or skipped tests listed on PR comments. This can be disabled with a value of 0. The default is 10.'
+    description: 'Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of 0. The default is 10.'
     required: false
   check_run_annotations:
-    description: 'Adds additional information to the check run (comma-separated list): all tests - list all found tests, skipped tests - list all skipped tests, none - no extra annotations at all'
-    required: false
+    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
     default: 'all tests, skipped tests'
+    required: false
   check_run_annotations_branch:
-    description: 'Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. main or master. Comma separated list of branch names allowed, asterisk "*" matches all branches.'
+    description: 'Adds check run annotations only on given branches. Comma separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
-    required: false
     default: '0.25'
+    required: false
   seconds_between_github_writes:
     description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
-    required: false
     default: '2.0'
+    required: false
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
