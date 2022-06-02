@@ -414,6 +414,12 @@ class Test(unittest.TestCase):
             with self.subTest(json_file=json_file):
                 self.do_test_get_settings(JSON_FILE=json_file, expected=self.get_settings(json_file=json_file))
 
+    def test_get_settings_json_thousands_separator(self):
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=None, expected=self.get_settings(json_thousands_separator=punctuation_space))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=',', expected=self.get_settings(json_thousands_separator=','))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR='.', expected=self.get_settings(json_thousands_separator='.'))
+        self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=' ', expected=self.get_settings(json_thousands_separator=' '))
+
     def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
