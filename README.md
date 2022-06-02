@@ -204,7 +204,7 @@ The list of most notable options:
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
 |`deduplicate_classes_by_file_name`|`false`|De-duplicates classes with same name by their file name when set `true`, combines test results for those classes otherwise.|
-|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run. This is a comma-separated list of the following values:<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests<br> Set to `none` to add no extra annotations at all.|
+|`check_run_annotations`|`all tests, skipped tests`|Adds additional information to the check run. This is a comma-separated list of any of the following values:<br>`all tests` - list all found tests,<br>`skipped tests` - list all skipped tests<br> Set to `none` to add no extra annotations at all.|
 |`check_run_annotations_branch`|`event.repository.default_branch` or `"main, master"`|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`|
 |`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
 |`json_file`|no file|Results are written to this JSON file.|
@@ -411,7 +411,7 @@ In this setup, your CI workflow does not need to publish test results anymore as
    as well as all "ordinary" runs of your CI workflow.
 
 <details>
-<summary>Step by step instructions</summary>
+<summary>Step-by-step instructions</summary>
 
 1. Add the following job to your CI workflow to upload the event file as an artifact:
 

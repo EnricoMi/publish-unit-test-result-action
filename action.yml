@@ -75,7 +75,7 @@ inputs:
     description: 'Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of 0. The default is 10.'
     required: false
   check_run_annotations:
-    description: 'Adds additional information to the check run. This is a comma-separated list of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
+    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
     default: 'all tests, skipped tests'
     required: false
   check_run_annotations_branch:
