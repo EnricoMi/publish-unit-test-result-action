@@ -1,0 +1,152 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=11,
+  suite_skipped=1,
+  suite_failures=5,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Timeout_Test',
+      result='success',
+      message=None,
+      content=None,
+      time=0.1084258
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Passing_Test',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0001365
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Should be even number(i: 3)',
+      result='failure',
+      message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
+      content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+        'DotnetTests.XUnitTests.CalculatorTests.Theory_With_Custom_Name(Int32 '
+        'i) in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.XUnitTests\\CalculatorTests.cs:line 67',
+      time=0.0006537
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Skipped_Test',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Custom Name',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0001371
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Should be even number(i: 2)',
+      result='success',
+      message=None,
+      content=None,
+      time=9.7e-06
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Exception_In_TargetTest',
+      result='failure',
+      message='System.DivideByZeroException : Attempted to divide by zero.',
+      content='System.DivideByZeroException : Attempted to divide by zero.   at '
+        'DotnetTests.Unit.Calculator.Div(Int32 a, Int32 b) in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.Unit\\Calculator.cs:line 9\r\n   at '
+        'DotnetTests.XUnitTests.CalculatorTests.Exception_In_TargetTest() in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.XUnitTests\\CalculatorTests.cs:line 33',
+      time=0.0008377
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Exception_In_Test',
+      result='failure',
+      message='System.Exception : Test',
+      content='System.Exception : Test   at '
+        'DotnetTests.XUnitTests.CalculatorTests.Exception_In_Test() in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.XUnitTests\\CalculatorTests.cs:line 39',
+      time=0.0025175
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Failing_Test',
+      result='failure',
+      message='Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2',
+      content='Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2   at '
+        'DotnetTests.XUnitTests.CalculatorTests.Failing_Test() in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.XUnitTests\\CalculatorTests.cs:line 27',
+      time=0.0038697
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(i: 2)',
+      result='success',
+      message=None,
+      content=None,
+      time=7.8e-06
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/dotnet-trx.trx',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(i: 3)',
+      result='failure',
+      message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
+      content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+        'DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(Int32 i) in '
+        'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
+        'sts.XUnitTests\\CalculatorTests.cs:line 59',
+      time=0.0004141
+    )
+  ]
+)

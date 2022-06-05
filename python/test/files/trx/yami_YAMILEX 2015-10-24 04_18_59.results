@@ -1,0 +1,318 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=25,
+  suite_skipped=21,
+  suite_failures=2,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.UnitTest1',
+      test_name='TestMethod1',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0099709
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='CompareTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='ClearListTest',
+      result='success',
+      message=None,
+      content=None,
+      time=0.4619928
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='EST_INTER_TEMPTest',
+      result='failure',
+      message='El método de prueba '
+        'Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest produjo la '
+        'excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba '
+        'fuera del intervalo. Debe ser un valor no negativo e inferior al '
+        'tamaño de la colección.\nNombre del parámetro: index',
+      content='El método de prueba '
+        'Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest produjo la '
+        'excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba '
+        'fuera del intervalo. Debe ser un valor no negativo e inferior al '
+        'tamaño de la colección.\nNombre del parámetro: index    en '
+        'System.ThrowHelper.ThrowArgumentOutOfRangeException()\n   en '
+        'System.Collections.Generic.List`1.set_Item(Int32 index, T value)\n   '
+        'en '
+        'TMC.Components.TemperatureControl.SIARAlgorithm.EST_INTER_TEMP(Double'
+        ' TAMP, Int32 TEXTERN) en '
+        'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
+        ' 363\n   en Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest() en '
+        'E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 199\n',
+      time=19.039413
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='EST_LAMB_TEMPTest',
+      result='failure',
+      message='El método de prueba '
+        'Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest produjo la '
+        'excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba '
+        'fuera del intervalo. Debe ser un valor no negativo e inferior al '
+        'tamaño de la colección.\nNombre del parámetro: index',
+      content='El método de prueba '
+        'Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest produjo la '
+        'excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba '
+        'fuera del intervalo. Debe ser un valor no negativo e inferior al '
+        'tamaño de la colección.\nNombre del parámetro: index    en '
+        'System.ThrowHelper.ThrowArgumentOutOfRangeException()\n   en '
+        'System.Collections.Generic.List`1.get_Item(Int32 index)\n   en '
+        'TMC.Components.TemperatureControl.SIARAlgorithm.EST_LAMB_TEMP(Double '
+        'TINTPP, Double TAMP, Int32 TEXTERN, Int32 CRPBuscar) en '
+        'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
+        ' 474\n   en Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest() en '
+        'E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 217\n',
+      time=2.5091335
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='EST_SEG_TEMPTest',
+      result='success',
+      message=None,
+      content=None,
+      time=4.6492659
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='GetAlphaExternoTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='GetComposicionTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='GetDiseñoTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='GetSpesorTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='LamdaTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='SiSParcialTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='CostoTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='EspesorTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='FlujoCaloricoTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='MaterialesTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='PerdidaTotalTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='PesoTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='ProjectTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='ProjectObjectTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='SpesorTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='TDataSetTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='TempExternaTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='VolumenTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      test_file=None,
+      line=None,
+      class_name='Prueba_Sistema.SIARAlgorithmTest',
+      test_name='SIARAlgorithmConstructorTest',
+      result='success',
+      message=None,
+      content=None,
+      time=float('nan')
+    )
+  ]
+)

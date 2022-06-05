@@ -66,7 +66,7 @@ class JUnitXmlParseTest:
 
     def do_test_parse_and_process_files(self, filename: str):
         for locale in [None, 'en_US.UTF-8', 'de_DE.UTF-8']:
-            with self.test.subTest(locale=locale):
+            with self.test.subTest(file=self.shorten_filename(filename), locale=locale):
                 with temp_locale(locale):
                     actual = self.parse_file(filename)
                     path = pathlib.Path(filename)
@@ -85,8 +85,7 @@ class JUnitXmlParseTest:
 
     def test_parse_and_process_files(self):
         for file in self.get_test_files():
-            with self.test.subTest(file=self.shorten_filename(file)):
-                self.do_test_parse_and_process_files(file)
+            self.do_test_parse_and_process_files(file)
 
     @classmethod
     def update_expectations(cls):

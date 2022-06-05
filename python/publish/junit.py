@@ -1,6 +1,7 @@
+import math
 import os
 from collections import defaultdict
-from typing import Optional, Iterable, Union, Any, List, Dict, Callable, Tuple
+from typing import Optional, Iterable, Union, List, Dict, Callable, Tuple
 
 import junitparser
 from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
@@ -174,7 +175,7 @@ def process_junit_xml_elems(trees: Iterable[Tuple[str, Union[JUnitTree, BaseExce
     suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites])
     suite_failures = sum([suite.failures for result_file, suite in suites])
     suite_errors = sum([suite.errors for result_file, suite in suites])
-    suite_time = int(sum([suite.time for result_file, suite in suites]) * time_factor)
+    suite_time = int(sum([suite.time for result_file, suite in suites if not math.isnan(suite.time)]) * time_factor)
 
     def int_opt(string: Optional[str]) -> Optional[int]:
         try:

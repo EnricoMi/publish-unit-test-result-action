@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="38c36b95-f444-45e1-9360-90c50e7b5425" name="kurt@DESKTOP-1B2SI9I 2021-04-02 08:50:53" runUser="DESKTOP-1B2SI9I\kurt" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2021-04-02T08:50:53.7590503+10:00" queuing="2021-04-02T08:50:53.7590511+10:00" start="2021-04-02T08:50:51.5193145+10:00" finish="2021-04-02T08:50:53.7909990+10:00" />
+  <TestSettings name="default" id="e5154b2c-ebb2-490c-b55d-48f8f8aa278b">
+    <Deployment runDeploymentRoot="kurt_DESKTOP-1B2SI9I_2021-04-02_08_50_53" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e075a9fb-739e-4bec-8697-621a6466f1e8" testId="86d7141e-a907-0c22-50ce-45af7da0b541" testName="SampleProject.xUnit.TestServiceTests.TestTheory(expected: False)" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0200000" startTime="2021-04-02T08:50:53.3297361+10:00" endTime="2021-04-02T08:50:53.3297361+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e075a9fb-739e-4bec-8697-621a6466f1e8">
+      <Output>
+        <StdOut>Running SampleProject.Tests.xUnit tests</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 29</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9b91c31f-dddf-4523-a9a1-b168c6453d0c" testId="72498b64-7ad2-afcd-2598-5ea669ec1284" testName="SampleProject.xUnit.TestServiceTests.FailTest" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0010000" startTime="2021-04-02T08:50:53.5681921+10:00" endTime="2021-04-02T08:50:53.5681921+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b91c31f-dddf-4523-a9a1-b168c6453d0c">
+      <Output>
+        <StdOut>Running SampleProject.Tests.xUnit tests&#xD;
+This test will fail</StdOut>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at SampleProject.xUnit.TestServiceTests.FailTest() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 65</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7222eca3-aef6-4c18-b954-50c014fb466c" testId="a9a98515-6fcb-5544-72b6-a195586fc225" testName="SampleProject.xUnit.TestServiceTests.SkipTest" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0010000" startTime="2021-04-02T08:50:53.3317342+10:00" endTime="2021-04-02T08:50:53.3317342+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7222eca3-aef6-4c18-b954-50c014fb466c">
+      <Output>
+        <StdOut>Skipped</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e49d1949-6ba9-4227-b0b2-9a5dedf352e4" testId="2b82bff7-086d-bce1-40c0-30d3f1c97762" testName="SampleProject.xUnit.TestServiceTests.TestThrowingException" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0010000" startTime="2021-04-02T08:50:53.5631925+10:00" endTime="2021-04-02T08:50:53.5631925+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e49d1949-6ba9-4227-b0b2-9a5dedf352e4">
+      <Output>
+        <StdOut>Running SampleProject.Tests.xUnit tests</StdOut>
+        <ErrorInfo>
+          <Message>System.Exception : Pretty good exception</Message>
+          <StackTrace>   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#xD;
+   at SampleProject.xUnit.TestServiceTests.TestThrowingException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 54</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f2b3aa81-6080-4afd-bf24-86407b19d826" testId="523e0597-5608-ea65-93ef-c81e04c806c6" testName="SampleProject.xUnit.TestServiceTests.TestTheory(expected: True)" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0250000" startTime="2021-04-02T08:50:53.2416188+10:00" endTime="2021-04-02T08:50:53.2416188+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2b3aa81-6080-4afd-bf24-86407b19d826">
+      <Output>
+        <StdOut>Running SampleProject.Tests.xUnit tests</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8725b2a3-b623-47aa-9e43-62d0f1ff9076" testId="fb6215ca-5096-3751-3703-6fa81fb1aba1" testName="SampleProject.xUnit.TestServiceTests.PassingTest" computerName="DESKTOP-1B2SI9I" duration="00:00:00.0010000" startTime="2021-04-02T08:50:53.5651919+10:00" endTime="2021-04-02T08:50:53.5651919+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8725b2a3-b623-47aa-9e43-62d0f1ff9076">
+      <Output>
+        <StdOut>Running SampleProject.Tests.xUnit tests</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.TestTheory(expected: False)" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="86d7141e-a907-0c22-50ce-45af7da0b541">
+      <Execution id="e075a9fb-739e-4bec-8697-621a6466f1e8" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="TestTheory" />
+    </UnitTest>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.PassingTest" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="fb6215ca-5096-3751-3703-6fa81fb1aba1">
+      <Execution id="8725b2a3-b623-47aa-9e43-62d0f1ff9076" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="PassingTest" />
+    </UnitTest>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.TestThrowingException" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="2b82bff7-086d-bce1-40c0-30d3f1c97762">
+      <Execution id="e49d1949-6ba9-4227-b0b2-9a5dedf352e4" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="TestThrowingException" />
+    </UnitTest>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.TestTheory(expected: True)" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="523e0597-5608-ea65-93ef-c81e04c806c6">
+      <Execution id="f2b3aa81-6080-4afd-bf24-86407b19d826" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="TestTheory" />
+    </UnitTest>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.SkipTest" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="a9a98515-6fcb-5544-72b6-a195586fc225">
+      <Execution id="7222eca3-aef6-4c18-b954-50c014fb466c" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="SkipTest" />
+    </UnitTest>
+    <UnitTest name="SampleProject.xUnit.TestServiceTests.FailTest" storage="c:\dev\liquidtestreports\test\sampleproject\sampleproject.tests.xunit\bin\debug\net461\sampleproject.xunit.dll" id="72498b64-7ad2-afcd-2598-5ea669ec1284">
+      <Execution id="9b91c31f-dddf-4523-a9a1-b168c6453d0c" />
+      <TestMethod codeBase="C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\bin\Debug\net461\SampleProject.xUnit.dll" adapterTypeName="executor://xunit/VsTestRunner2/net" className="SampleProject.xUnit.TestServiceTests" name="FailTest" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="86d7141e-a907-0c22-50ce-45af7da0b541" executionId="e075a9fb-739e-4bec-8697-621a6466f1e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72498b64-7ad2-afcd-2598-5ea669ec1284" executionId="9b91c31f-dddf-4523-a9a1-b168c6453d0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9a98515-6fcb-5544-72b6-a195586fc225" executionId="7222eca3-aef6-4c18-b954-50c014fb466c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b82bff7-086d-bce1-40c0-30d3f1c97762" executionId="e49d1949-6ba9-4227-b0b2-9a5dedf352e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="523e0597-5608-ea65-93ef-c81e04c806c6" executionId="f2b3aa81-6080-4afd-bf24-86407b19d826" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb6215ca-5096-3751-3703-6fa81fb1aba1" executionId="8725b2a3-b623-47aa-9e43-62d0f1ff9076" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="5" passed="2" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.4.3+1b45f5407b (32-bit Desktop .NET 4.0.30319.42000)&#xD;
+[xUnit.net 00:00:00.65]   Discovering: SampleProject.xUnit&#xD;
+[xUnit.net 00:00:00.77]   Discovered:  SampleProject.xUnit&#xD;
+[xUnit.net 00:00:00.78]   Starting:    SampleProject.xUnit&#xD;
+[xUnit.net 00:00:01.01]       Assert.Equal() Failure&#xD;
+[xUnit.net 00:00:01.01]       Expected: False&#xD;
+[xUnit.net 00:00:01.01]       Actual:   True&#xD;
+[xUnit.net 00:00:01.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.01]         TestServiceTests.cs(29,0): at SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected)&#xD;
+[xUnit.net 00:00:01.01]       Output:&#xD;
+[xUnit.net 00:00:01.01]         Running SampleProject.Tests.xUnit tests&#xD;
+[xUnit.net 00:00:01.01]       Skipped&#xD;
+[xUnit.net 00:00:01.24]       System.Exception : Pretty good exception&#xD;
+[xUnit.net 00:00:01.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.24]         C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs(19,0): at SampleProject.TestService.GetException()&#xD;
+[xUnit.net 00:00:01.24]         TestServiceTests.cs(54,0): at SampleProject.xUnit.TestServiceTests.TestThrowingException()&#xD;
+[xUnit.net 00:00:01.24]       Output:&#xD;
+[xUnit.net 00:00:01.24]         Running SampleProject.Tests.xUnit tests&#xD;
+[xUnit.net 00:00:01.25]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:01.25]       Expected: True&#xD;
+[xUnit.net 00:00:01.25]       Actual:   False&#xD;
+[xUnit.net 00:00:01.25]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.25]         TestServiceTests.cs(65,0): at SampleProject.xUnit.TestServiceTests.FailTest()&#xD;
+[xUnit.net 00:00:01.25]       Output:&#xD;
+[xUnit.net 00:00:01.25]         Running SampleProject.Tests.xUnit tests&#xD;
+[xUnit.net 00:00:01.25]         This test will fail&#xD;
+[xUnit.net 00:00:01.25]   Finished:    SampleProject.xUnit&#xD;
+Test 'SampleProject.xUnit.TestServiceTests.SkipTest' was skipped in the test run.&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="DESKTOP-1B2SI9I" outcome="Error" timestamp="2021-04-02T08:50:53.3277991+10:00">
+        <Text>[xUnit.net 00:00:01.01]     SampleProject.xUnit.TestServiceTests.TestTheory(expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="DESKTOP-1B2SI9I" outcome="Warning" timestamp="2021-04-02T08:50:53.3314910+10:00">
+        <Text>[xUnit.net 00:00:01.01]     SampleProject.xUnit.TestServiceTests.SkipTest [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="DESKTOP-1B2SI9I" outcome="Error" timestamp="2021-04-02T08:50:53.5635150+10:00">
+        <Text>[xUnit.net 00:00:01.24]     SampleProject.xUnit.TestServiceTests.TestThrowingException [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="DESKTOP-1B2SI9I" outcome="Error" timestamp="2021-04-02T08:50:53.5681148+10:00">
+        <Text>[xUnit.net 00:00:01.25]     SampleProject.xUnit.TestServiceTests.FailTest [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
