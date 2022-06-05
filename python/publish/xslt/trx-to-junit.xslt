@@ -26,11 +26,14 @@
                 <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
                 <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#########')"/>
               </xsl:when>
-              <xsl:otherwise>
+              <xsl:when test="@startTime and @endTime">
                 <xsl:variable name="d_seconds" select="substring(@endTime, 18,10) - substring(@startTime, 18,10)"/>
                 <xsl:variable name="d_minutes" select="substring(@endTime, 15,2) - substring(@startTime, 15,2 )"/>
                 <xsl:variable name="d_hours" select="substring(@endTime, 12,2) - substring(@startTime, 12, 2)"/>
                 <xsl:value-of select="format-number($d_hours*3600 + $d_minutes*60 + $d_seconds, '#.#########')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="'0'"/>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:variable>
@@ -112,11 +115,14 @@
                 <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
                 <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#########')"/>
               </xsl:when>
-              <xsl:otherwise>
+              <xsl:when test="@startTime and @endTime">
                 <xsl:variable name="d_seconds" select="substring(@endTime, 18,10) - substring(@startTime, 18,10)"/>
                 <xsl:variable name="d_minutes" select="substring(@endTime, 15,2) - substring(@startTime, 15,2 )"/>
                 <xsl:variable name="d_hours" select="substring(@endTime, 12,2) - substring(@startTime, 12, 2)"/>
                 <xsl:value-of select="format-number($d_hours*3600 + $d_minutes*60 + $d_seconds, '#.#########')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="'0'"/>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:variable>

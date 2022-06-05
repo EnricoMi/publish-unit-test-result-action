@@ -2,7 +2,7 @@
 <testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <testsuite name="MSTestSuite" tests="25" failures="2" errors="0" skipped="21">
     <testcase classname="Prueba_Sistema.UnitTest1" name="TestMethod1" time="0.0099709"/>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CompareTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CompareTest" time="0">
       <skipped message="UTA007: la firma del m&#xE9;todo CompareTest definido en la clase Prueba_Sistema.SIARAlgorithmTest no es correcta. El m&#xE9;todo de prueba marcado con el atributo [TestMethod] debe ser no est&#xE1;tico, p&#xFA;blico, no debe devolver ning&#xFA;n valor ni tomar ning&#xFA;n par&#xE1;metro. Por ejemplo: public void Test.Class1.Test().">UTA007: la firma del método CompareTest definido en la clase Prueba_Sistema.SIARAlgorithmTest no es correcta. El método de prueba marcado con el atributo [TestMethod] debe ser no estático, público, no debe devolver ningún valor ni tomar ningún parámetro. Por ejemplo: public void Test.Class1.Test().</skipped>
     </testcase>
     <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ClearListTest" time="0.4619928"/>
@@ -27,61 +27,61 @@ Nombre del parámetro: index    en System.ThrowHelper.ThrowArgumentOutOfRangeExc
     <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EST_SEG_TEMPTest" time="4.6492659">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetAlphaExternoTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetAlphaExternoTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetComposicionTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetComposicionTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetDise&#xF1;oTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetDise&#xF1;oTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetSpesorTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetSpesorTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="LamdaTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="LamdaTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SiSParcialTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SiSParcialTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CostoTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CostoTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EspesorTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EspesorTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="FlujoCaloricoTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="FlujoCaloricoTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="MaterialesTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="MaterialesTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PerdidaTotalTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PerdidaTotalTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PesoTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PesoTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectObjectTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectObjectTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SpesorTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SpesorTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TDataSetTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TDataSetTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TempExternaTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TempExternaTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="VolumenTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="VolumenTest" time="0">
       <skipped message=""/>
     </testcase>
-    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SIARAlgorithmConstructorTest" time="NaN">
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SIARAlgorithmConstructorTest" time="0">
       <skipped message=""/>
     </testcase>
   </testsuite>
