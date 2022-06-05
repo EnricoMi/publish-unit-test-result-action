@@ -25,9 +25,17 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='CompareTest',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='UTA007: la firma del método CompareTest definido en la clase '
+        'Prueba_Sistema.SIARAlgorithmTest no es correcta. El método de prueba '
+        'marcado con el atributo [TestMethod] debe ser no estático, público, '
+        'no debe devolver ningún valor ni tomar ningún parámetro. Por '
+        'ejemplo: public void Test.Class1.Test().',
+      content='UTA007: la firma del método CompareTest definido en la clase '
+        'Prueba_Sistema.SIARAlgorithmTest no es correcta. El método de prueba '
+        'marcado con el atributo [TestMethod] debe ser no estático, público, '
+        'no debe devolver ningún valor ni tomar ningún parámetro. Por '
+        'ejemplo: public void Test.Class1.Test().',
       time=float('nan')
     ),
     publish.unittestresults.UnitTestCase(
@@ -100,7 +108,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='EST_SEG_TEMPTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=4.6492659
@@ -111,7 +119,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='GetAlphaExternoTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -122,7 +130,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='GetComposicionTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -133,7 +141,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='GetDiseñoTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -144,7 +152,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='GetSpesorTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -155,7 +163,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='LamdaTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -166,7 +174,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='SiSParcialTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -177,7 +185,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='CostoTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -188,7 +196,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='EspesorTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -199,7 +207,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='FlujoCaloricoTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -210,7 +218,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='MaterialesTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -221,7 +229,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='PerdidaTotalTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -232,7 +240,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='PesoTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -243,7 +251,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='ProjectTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -254,7 +262,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='ProjectObjectTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -265,7 +273,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='SpesorTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -276,7 +284,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='TDataSetTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -287,7 +295,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='TempExternaTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -298,7 +306,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='VolumenTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')
@@ -309,7 +317,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
       test_name='SIARAlgorithmConstructorTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=float('nan')

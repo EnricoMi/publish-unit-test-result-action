@@ -7,7 +7,9 @@
    at SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 25&#13;
 </failure>
     </testcase>
-    <testcase classname="" name="SkipTest" time="0"/>
+    <testcase classname="" name="SkipTest" time="0">
+      <skipped message="Ignore test">Ignore test</skipped>
+    </testcase>
     <testcase classname="" name="TestTheory(True)" time="0.018"/>
     <testcase classname="" name="TestThrowingException" time="0.005">
       <failure message="System.Exception : Pretty good exception">System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#13;

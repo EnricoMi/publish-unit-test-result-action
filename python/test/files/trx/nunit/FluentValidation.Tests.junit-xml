@@ -180,7 +180,9 @@
     <testcase classname="" name="FluentValidation.Tests.RuleDependencyTests.Treats_root_level_RuleFor_call_as_dependent_rule_if_user_forgets_to_use_DependentRulesBuilder" time="0.0003687"/>
     <testcase classname="" name="FluentValidation.Tests.RegularExpressionValidatorTests.When_the_text_does_not_match_the_lambda_regular_expression_then_the_validator_should_fail" time="0.0001392"/>
     <testcase classname="" name="FluentValidation.Tests.EmailValidatorTests.Fails_email_validation_aspnetcore_compatible(email: &quot;@someDomain.com&quot;)" time="0.0000248"/>
-    <testcase classname="" name="FluentValidation.Tests.AccessorCacheTests.Benchmark" time="0.001"/>
+    <testcase classname="" name="FluentValidation.Tests.AccessorCacheTests.Benchmark" time="0.001">
+      <skipped message=""/>
+    </testcase>
     <testcase classname="" name="FluentValidation.Tests.LessThanValidatorTester.Should_set_default_validation_message_when_validation_fails" time="0.000352"/>
     <testcase classname="" name="FluentValidation.Tests.LocalisedMessagesTester.Uses_func_to_get_message" time="0.0002383"/>
     <testcase classname="" name="FluentValidation.Tests.GreaterThanOrEqualToValidatorTester.Validates_with_nullable_when_property_not_null_cross_property" time="0.0002763"/>

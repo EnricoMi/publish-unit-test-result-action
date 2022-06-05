@@ -28,9 +28,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='SkipTest',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Ignore test',
+      content='Ignore test',
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(

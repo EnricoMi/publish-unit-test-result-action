@@ -42,7 +42,7 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='SampleProject.xUnit.TestServiceTests.SkipTest',
-      result='success',
+      result='skipped',
       message=None,
       content=None,
       time=0.001

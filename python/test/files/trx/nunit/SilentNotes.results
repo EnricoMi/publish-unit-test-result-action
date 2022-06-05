@@ -36,9 +36,11 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoOpenAuthorizationPageInBrowser',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Opens the authorization page in the system browse, to get a real '
+        'access-token',
+      content='Opens the authorization page in the system browse, to get a real '
+        'access-token',
       time=8.4e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -157,9 +159,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoRefreshToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Refreshes a real token',
+      content='Refreshes a real token',
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -190,9 +192,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ThrowsWithInvalidUrl',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Too many consecutive fails seems to block an FTP server.',
+      content='Too many consecutive fails seems to block an FTP server.',
       time=1.3e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -498,9 +500,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoFetchToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Gets a real access-token',
+      content='Gets a real access-token',
       time=0.0004562
     ),
     publish.unittestresults.UnitTestCase(
@@ -509,9 +511,11 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoOpenAuthorizationPageInBrowser',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
+      content='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -619,9 +623,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoFetchToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Gets a real access-token',
+      content='Gets a real access-token',
       time=3.2e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -652,9 +656,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoFetchToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Gets a real access-token',
+      content='Gets a real access-token',
       time=3.3e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -663,9 +667,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoRefreshToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Refreshes a real token',
+      content='Refreshes a real token',
       time=5.94e-05
     ),
     publish.unittestresults.UnitTestCase(
@@ -696,9 +700,11 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoOpenAuthorizationPageInBrowser',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
+      content='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -718,9 +724,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ThrowsWithInvalidUsername',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Too many consecutive fails seems to block an FTP server.',
+      content='Too many consecutive fails seems to block an FTP server.',
       time=9e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -784,9 +790,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ThrowsWithInvalidPassword',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Too many consecutive fails seems to block an FTP server.',
+      content='Too many consecutive fails seems to block an FTP server.',
       time=1.31e-05
     ),
     publish.unittestresults.UnitTestCase(
@@ -850,9 +856,9 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='ReallyDoRefreshToken',
-      result='success',
-      message=None,
-      content=None,
+      result='skipped',
+      message='Refreshes a real token',
+      content='Refreshes a real token',
       time=1.1e-06
     ),
     publish.unittestresults.UnitTestCase(

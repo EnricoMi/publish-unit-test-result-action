@@ -11,7 +11,9 @@ Actual:   True   at SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expe
 Expected: True&#13;
 Actual:   False   at SampleProject.xUnit.TestServiceTests.FailTest() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 65</failure>
     </testcase>
-    <testcase classname="" name="SampleProject.xUnit.TestServiceTests.SkipTest" time="0.001"/>
+    <testcase classname="" name="SampleProject.xUnit.TestServiceTests.SkipTest" time="0.001">
+      <skipped message=""/>
+    </testcase>
     <testcase classname="" name="SampleProject.xUnit.TestServiceTests.TestThrowingException" time="0.001">
       <failure message="System.Exception : Pretty good exception">System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#13;
    at SampleProject.xUnit.TestServiceTests.TestThrowingException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 54</failure>

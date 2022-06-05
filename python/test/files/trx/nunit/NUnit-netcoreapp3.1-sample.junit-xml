@@ -7,7 +7,9 @@
    at SampleProject.NUnit.TestServiceTests.FailTest() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 61&#13;
 </failure>
     </testcase>
-    <testcase classname="" name="SkipTest" time="0.000447"/>
+    <testcase classname="" name="SkipTest" time="0.000447">
+      <skipped message="Ignore test">Ignore test</skipped>
+    </testcase>
     <testcase classname="" name="TestThrowingException" time="0.003151">
       <failure message="System.Exception : Pretty good exception">System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#13;
    at SampleProject.NUnit.TestServiceTests.TestThrowingException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 50</failure>
