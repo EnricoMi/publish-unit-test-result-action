@@ -49,57 +49,54 @@
           </xsl:variable>
           <xsl:variable name="message" select="a:Output/a:ErrorInfo/a:Message"/>
           <xsl:variable name="stacktrace" select="a:Output/a:ErrorInfo/a:StackTrace"/>
-          <xsl:for-each select="//a:UnitTest">
-            <xsl:variable name="currentExecutionId" select="a:Execution/@id"/>
-            <xsl:if test="$currentExecutionId = $executionId" >
-              <xsl:variable name="className">
-                <xsl:choose>
-                  <xsl:when test="contains(a:TestMethod/@className, ',')">
-                    <xsl:value-of select="substring-before(a:TestMethod/@className, ',')"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="a:TestMethod/@className"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:variable>
-              <!-- sometimes $testName starts with $className: $className.$shortTestName-->
-              <xsl:variable name="shortTestName">
-                <xsl:choose>
-                  <xsl:when test="starts-with($testName, concat($className, '.'))">
-                    <xsl:value-of select="substring-after($testName, concat($className, '.'))"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="$testName"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:variable>
-              <testcase classname="{$className}" name="{$shortTestName}" time="{$totalduration}">
-                <xsl:if test="not(contains($outcome, 'Passed') or contains($outcome, 'Failed') or contains($outcome, 'Error'))">
-                  <skipped>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" as="" />
-                    </xsl:call-template>
-                  </skipped>
-                </xsl:if>
-                <xsl:if test="contains($outcome, 'Failed')">
-                  <failure>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" select="$stacktrace" />
-                    </xsl:call-template>
-                  </failure>
-                </xsl:if>
-                <xsl:if test="contains($outcome, 'Error')">
-                  <error>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" select="$stacktrace" />
-                    </xsl:call-template>
-                  </error>
-                </xsl:if>
-              </testcase>
-            </xsl:if>
+          <xsl:for-each select="//a:UnitTest[a:Execution/@id = $executionId]">
+            <xsl:variable name="className">
+              <xsl:choose>
+                <xsl:when test="contains(a:TestMethod/@className, ',')">
+                  <xsl:value-of select="substring-before(a:TestMethod/@className, ',')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="a:TestMethod/@className"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <!-- sometimes $testName starts with $className: $className.$shortTestName-->
+            <xsl:variable name="shortTestName">
+              <xsl:choose>
+                <xsl:when test="starts-with($testName, concat($className, '.'))">
+                  <xsl:value-of select="substring-after($testName, concat($className, '.'))"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$testName"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <testcase classname="{$className}" name="{$shortTestName}" time="{$totalduration}">
+              <xsl:if test="not(contains($outcome, 'Passed') or contains($outcome, 'Failed') or contains($outcome, 'Error'))">
+                <skipped>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" as="" />
+                  </xsl:call-template>
+                </skipped>
+              </xsl:if>
+              <xsl:if test="contains($outcome, 'Failed')">
+                <failure>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" select="$stacktrace" />
+                  </xsl:call-template>
+                </failure>
+              </xsl:if>
+              <xsl:if test="contains($outcome, 'Error')">
+                <error>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" select="$stacktrace" />
+                  </xsl:call-template>
+                </error>
+              </xsl:if>
+            </testcase>
           </xsl:for-each>
         </xsl:for-each>
 
@@ -138,57 +135,54 @@
           </xsl:variable>
           <xsl:variable name="message" select="b:Output/b:ErrorInfo/b:Message"/>
           <xsl:variable name="stacktrace" select="b:Output/b:ErrorInfo/b:StackTrace"/>
-          <xsl:for-each select="//b:UnitTest">
-            <xsl:variable name="currentTestId" select="@id"/>
-            <xsl:if test="$currentTestId = $testId" >
-              <xsl:variable name="className">
-                <xsl:choose>
-                  <xsl:when test="contains(b:TestMethod/@className, ',')">
-                    <xsl:value-of select="substring-before(b:TestMethod/@className, ',')"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="b:TestMethod/@className"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:variable>
-              <!-- sometimes $testName starts with $className: $className.$shortTestName-->
-              <xsl:variable name="shortTestName">
-                <xsl:choose>
-                  <xsl:when test="starts-with($testName, concat($className, '.'))">
-                    <xsl:value-of select="substring-after($testName, concat($className, '.'))"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="$testName"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:variable>
-              <testcase classname="{$className}" name="{$shortTestName}" time="{$totalduration}">
-                <xsl:if test="not(contains($outcome, 'Passed') or contains($outcome, 'Failed') or contains($outcome, 'Error'))">
-                  <skipped>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" as="" />
-                    </xsl:call-template>
-                  </skipped>
-                </xsl:if>
-                <xsl:if test="contains($outcome, 'Failed')">
-                  <failure>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" select="$stacktrace" />
-                    </xsl:call-template>
-                  </failure>
-                </xsl:if>
-                <xsl:if test="contains($outcome, 'Error')">
-                  <error>
-                    <xsl:call-template name="result">
-                      <xsl:with-param name="message" select="$message" />
-                      <xsl:with-param name="stacktrace" select="$stacktrace" />
-                    </xsl:call-template>
-                  </error>
-                </xsl:if>
-              </testcase>
-            </xsl:if>
+          <xsl:for-each select="//b:UnitTest[@id = $testId]">
+            <xsl:variable name="className">
+              <xsl:choose>
+                <xsl:when test="contains(b:TestMethod/@className, ',')">
+                  <xsl:value-of select="substring-before(b:TestMethod/@className, ',')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="b:TestMethod/@className"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <!-- sometimes $testName starts with $className: $className.$shortTestName-->
+            <xsl:variable name="shortTestName">
+              <xsl:choose>
+                <xsl:when test="starts-with($testName, concat($className, '.'))">
+                  <xsl:value-of select="substring-after($testName, concat($className, '.'))"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$testName"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <testcase classname="{$className}" name="{$shortTestName}" time="{$totalduration}">
+              <xsl:if test="not(contains($outcome, 'Passed') or contains($outcome, 'Failed') or contains($outcome, 'Error'))">
+                <skipped>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" as="" />
+                  </xsl:call-template>
+                </skipped>
+              </xsl:if>
+              <xsl:if test="contains($outcome, 'Failed')">
+                <failure>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" select="$stacktrace" />
+                  </xsl:call-template>
+                </failure>
+              </xsl:if>
+              <xsl:if test="contains($outcome, 'Error')">
+                <error>
+                  <xsl:call-template name="result">
+                    <xsl:with-param name="message" select="$message" />
+                    <xsl:with-param name="stacktrace" select="$stacktrace" />
+                  </xsl:call-template>
+                </error>
+              </xsl:if>
+            </testcase>
           </xsl:for-each>
         </xsl:for-each>
 
