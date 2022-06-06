@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="[assemblyLocation]" tests="7" failures="3" time="1.234" skipped="1" timestamp="YYYY-MM-DDTHH:MM:SS">
+    <testsuite name="[genericTestClass]" tests="3" failures="1" time="1.234" skipped="0">
+      <testcase name="ShouldBeString" time="1.234" classname="[genericTestClass]"/>
+      <testcase name="ShouldBeString" time="1.234" classname="[genericTestClass]"/>
+      <testcase name="ShouldBeString" time="1.234" classname="[genericTestClass]">
+        <failure type="Fixie.Tests.Assertions.AssertException" message="Expected: System.String&#10;Actual:   System.Int32">Expected: System.String
+Actual:   System.Int32   at [genericTestClassForStackTrace].ShouldBeString[T](T genericArgument) in [fileLocation]:line #</failure>
+      </testcase>
+    </testsuite>
+    <testsuite name="[testClass]" tests="4" failures="2" time="1.234" skipped="1">
+      <testcase name="Fail" time="1.234" classname="[testClass]">
+        <failure type="Fixie.Tests.FailureException" message="'Fail' failed!">'Fail' failed!   at [testClassForStackTrace].Fail() in [fileLocation]:line #</failure>
+      </testcase>
+      <testcase name="FailByAssertion" time="1.234" classname="[testClass]">
+        <failure type="Fixie.Tests.Assertions.AssertException" message="Expected: 2&#10;Actual:   1">Expected: 2
+Actual:   1   at [testClassForStackTrace].FailByAssertion() in [fileLocation]:line #</failure>
+      </testcase>
+      <testcase name="Pass" time="1.234" classname="[testClass]"/>
+      <testcase name="Skip" time="1.234" classname="[testClass]">
+        <skipped message="&#x26A0; Skipped with attribute."/>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>
