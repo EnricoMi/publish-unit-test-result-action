@@ -24,13 +24,20 @@
                 <xsl:variable name="duration_seconds" select="substring(@duration, 7)"/>
                 <xsl:variable name="duration_minutes" select="substring(@duration, 4,2 )"/>
                 <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
-                <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#########')"/>
+                <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#######')"/>
               </xsl:when>
               <xsl:when test="@startTime and @endTime">
-                <xsl:variable name="d_seconds" select="substring(@endTime, 18,10) - substring(@startTime, 18,10)"/>
-                <xsl:variable name="d_minutes" select="substring(@endTime, 15,2) - substring(@startTime, 15,2 )"/>
-                <xsl:variable name="d_hours" select="substring(@endTime, 12,2) - substring(@startTime, 12, 2)"/>
-                <xsl:value-of select="format-number($d_hours*3600 + $d_minutes*60 + $d_seconds, '#.#########')"/>
+                <xsl:variable name="startSeconds">
+                  <xsl:call-template name="dateTime-to-unix">
+                    <xsl:with-param name="dateTime" select="@startTime"/>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="endSeconds">
+                  <xsl:call-template name="dateTime-to-unix">
+                    <xsl:with-param name="dateTime" select="@endTime"/>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:value-of select="format-number($endSeconds - $startSeconds, '#.#######')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="'0'"/>
@@ -110,13 +117,20 @@
                 <xsl:variable name="duration_seconds" select="substring(@duration, 7)"/>
                 <xsl:variable name="duration_minutes" select="substring(@duration, 4,2 )"/>
                 <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
-                <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#########')"/>
+                <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#######')"/>
               </xsl:when>
               <xsl:when test="@startTime and @endTime">
-                <xsl:variable name="d_seconds" select="substring(@endTime, 18,10) - substring(@startTime, 18,10)"/>
-                <xsl:variable name="d_minutes" select="substring(@endTime, 15,2) - substring(@startTime, 15,2 )"/>
-                <xsl:variable name="d_hours" select="substring(@endTime, 12,2) - substring(@startTime, 12, 2)"/>
-                <xsl:value-of select="format-number($d_hours*3600 + $d_minutes*60 + $d_seconds, '#.#########')"/>
+                <xsl:variable name="startSeconds">
+                  <xsl:call-template name="dateTime-to-unix">
+                    <xsl:with-param name="dateTime" select="@startTime"/>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="endSeconds">
+                  <xsl:call-template name="dateTime-to-unix">
+                    <xsl:with-param name="dateTime" select="@endTime"/>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:value-of select="format-number($endSeconds - $startSeconds, '#.#######')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="'0'"/>
@@ -196,6 +210,56 @@
     <xsl:attribute name="message"><xsl:value-of select="$message"/></xsl:attribute>
     <xsl:value-of select="$message"/>
     <xsl:value-of select="$stacktrace"/>
+  </xsl:template>
+
+  <!-- https://stackoverflow.com/a/38615456/13070239 -->
+  <xsl:template name="dateTime-to-unix">
+    <xsl:param name="dateTime"/>
+
+    <xsl:variable name="date" select="substring-before($dateTime, 'T')" />
+    <xsl:variable name="time" select="substring-after($dateTime, 'T')" />
+
+    <xsl:variable name="local-time" select="substring($time, 1, string-length($time) - 6)" />
+    <xsl:variable name="offset" select="substring-after($time, $local-time)" />
+
+    <xsl:variable name="year" select="substring($date, 1, 4)" />
+    <xsl:variable name="month" select="substring($date, 6, 2)" />
+    <xsl:variable name="day" select="substring($date, 9, 2)" />
+
+    <xsl:variable name="hour" select="substring($local-time, 1, 2)" />
+    <xsl:variable name="minute" select="substring($local-time, 4, 2)" />
+    <xsl:variable name="second-and-fraction" select="substring($local-time, 7)" />
+    <xsl:variable name="second">
+      <xsl:choose>
+        <xsl:when test="contains($second-and-fraction, '.')">
+          <xsl:value-of select="substring-before($second-and-fraction, '.')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$second-and-fraction"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="fraction">
+      <xsl:choose>
+        <xsl:when test="contains($second-and-fraction, '.')">
+          <xsl:value-of select="substring-after($second-and-fraction, $second)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="'.0'"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="offset-sign" select="1 - 2 * starts-with($offset, '-')" />
+    <xsl:variable name="offset-hour" select="substring($offset, 2, 2) * $offset-sign" />
+    <xsl:variable name="offset-minute" select="substring($offset, 5, 2) * $offset-sign" />
+
+    <xsl:variable name="a" select="floor((14 - $month) div 12)"/>
+    <xsl:variable name="y" select="$year + 4800 - $a"/>
+    <xsl:variable name="m" select="$month + 12*$a - 3"/>
+    <xsl:variable name="jd" select="$day + floor((153*$m + 2) div 5) + 365*$y + floor($y div 4) - floor($y div 100) + floor($y div 400) - 32045" />
+
+    <xsl:value-of select="concat(86400*$jd + 3600*$hour + 60*$minute + $second - 3600*$offset-hour - 60*$offset-minute - 210866803200, $fraction)" />
   </xsl:template>
 
 </xsl:stylesheet>

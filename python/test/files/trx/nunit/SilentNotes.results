@@ -43,7 +43,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'access-token',
       content='Opens the authorization page in the system browse, to get a real '
         'access-token',
-      time=8.4e-06
+      time=8.3e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -205,7 +205,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
-      time=1.3e-06
+      time=1.4e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -528,7 +528,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
-      time=0.0004562
+      time=0.0004561
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -656,7 +656,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
-      time=3.2e-06
+      time=3.1e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -740,7 +740,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'authorization-code',
       content='Opens the authorization page in the system browse, to get a real '
         'authorization-code',
-      time=1e-06
+      time=1.2e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -763,7 +763,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
-      time=9e-07
+      time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
@@ -899,7 +899,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
-      time=1.1e-06
+      time=1.2e-06
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit/SilentNotes.trx',
