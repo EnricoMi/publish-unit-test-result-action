@@ -19,7 +19,7 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   if: always()
   with:
     junit_files: "test-results/**/*.xml"
@@ -30,7 +30,7 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+  uses: EnricoMi/publish-unit-test-result-action/composite@v2
   if: always()
   with:
     junit_files: "test-results/**/*.xml"
@@ -256,7 +256,7 @@ The `json` output of the action can be accessed through the expression `steps.<i
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
   if: always()
   with:
@@ -430,7 +430,7 @@ jobs:
           path: artifacts
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           junit_files: "artifacts/**/*.xml"
 ```
@@ -551,7 +551,7 @@ jobs:
            done
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/Event File/event.json
@@ -575,7 +575,7 @@ Here is an example how to use the [JSON](#json-result) output of this action to 
 steps:
 - …
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
   if: always()
   with:
@@ -685,7 +685,7 @@ publish-test-results:
         path: artifacts
 
     - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
       with:
         junit_files: "artifacts/**/*.xml"
 ```
@@ -732,7 +732,7 @@ using the `actions/cache` action, and conditionally install the `wheel`package a
   run: python3 -m pip install wheel
 
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+  uses: EnricoMi/publish-unit-test-result-action/composite@v2
 …
 ```
 
