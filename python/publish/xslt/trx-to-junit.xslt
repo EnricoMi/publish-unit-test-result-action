@@ -258,8 +258,10 @@
     <xsl:variable name="y" select="$year + 4800 - $a"/>
     <xsl:variable name="m" select="$month + 12*$a - 3"/>
     <xsl:variable name="jd" select="$day + floor((153*$m + 2) div 5) + 365*$y + floor($y div 4) - floor($y div 100) + floor($y div 400) - 32045" />
+    <!-- computes unix seconds as double not integer, formatted as integer string -->
+    <xsl:variable name="unix-seconds" select="format-number(86400.0*$jd + 3600*$hour + 60*$minute + $second - 3600*$offset-hour - 60*$offset-minute - 210866803200, '#')" />
 
-    <xsl:value-of select="concat(86400*$jd + 3600*$hour + 60*$minute + $second - 3600*$offset-hour - 60*$offset-minute - 210866803200, $fraction)" />
+    <xsl:value-of select="concat($unix-seconds, $fraction)" />
   </xsl:template>
 
 </xsl:stylesheet>
