@@ -527,12 +527,10 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
+          flavor: latest=false
           tags: |
             type=sha
             type=ref,event=tag
-            type=match,pattern=(v\d+),group=1
-            type=match,pattern=(v\d+.\d+),group=1
-            type=match,pattern=(v\d+.\d+.\d+),group=1
             type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}.0
             type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}.0
 
