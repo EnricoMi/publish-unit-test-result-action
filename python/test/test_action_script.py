@@ -302,11 +302,11 @@ class Test(unittest.TestCase):
 
     def test_get_settings_check_name(self):
         self.do_test_get_settings(CHECK_NAME='name', expected=self.get_settings(check_name='name'))
-        self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Unit Test Results'))
+        self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Test Results'))
 
     def test_get_settings_comment_title(self):
-        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME=None, expected=self.get_settings(comment_title='Unit Test Results', check_name='Unit Test Results'))
-        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME=None, expected=self.get_settings(comment_title='title', check_name='Unit Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME=None, expected=self.get_settings(comment_title='Test Results', check_name='Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME=None, expected=self.get_settings(comment_title='title', check_name='Test Results'))
         self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME='name', expected=self.get_settings(comment_title='title', check_name='name'))
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
@@ -462,7 +462,7 @@ class Test(unittest.TestCase):
                 GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
                 GITHUB_RETRIES='2',
                 TEST_CHANGES_LIMIT='10',  # not an int
-                CHECK_NAME='check name',  # defaults to 'Unit Test Results'
+                CHECK_NAME='check name',  # defaults to 'Test Results'
                 GITHUB_TOKEN='token',
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)

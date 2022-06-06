@@ -77,7 +77,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
         logger.info(f'reading {settings.junit_files_glob}')
         logger.debug(f'reading {list(files)}')
 
-    # get the unit test results
+    # get the test results
     parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
     [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
      for error in parsed.errors]
@@ -253,7 +253,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
                                                  f'It is optional, but when given must be one of these values: '
                                                  f'{", ".join(time_factors.keys())}')
 
-    check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
+    check_name = get_var('CHECK_NAME', options) or 'Test Results'
     comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
     annotations = get_annotations_config(options, event)
 

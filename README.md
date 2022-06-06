@@ -46,6 +46,32 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
 
+## What is new in version 2
+
+<details>
+<summary>These changes have to be considered when moving from version 1 to version 2:</summary>
+
+### Default value for `check_name` changed
+Unless `check_name` is set in your config, the check name used to publish test results changes from `"Unit Test Results"` to `"Test Results"`.
+
+**Impact:**
+The check with the old name will not be updated once moved to version 2.
+
+**Workaround to get version 1 behaviour:**
+Add `check_name: "Unit Test Results"` to your config.
+
+### Default value for `comment_title` changed
+Unless `comment_title` or `check_name` are set in your config, the title used to comment on open pull requests changes from `"Unit Test Results"` to `"Test Results"`.
+
+**Impact:**
+Existing comments with the old title will not be updated once moved to version 2, but a new comment is created.
+
+**Workaround to get version 1 behaviour:**
+See workaround for `check_name`.
+
+</details>
+
+
 ## Publishing test results
 
 Test results are published on GitHub at various (configurable) places:
@@ -173,7 +199,7 @@ The list of most notable options:
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
 |`junit_files`|`*.xml`|File patterns of JUnit XML test result files. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
-|`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
+|`check_name`|`"Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 
 <details>

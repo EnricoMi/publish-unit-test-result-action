@@ -16,7 +16,7 @@ inputs:
     required: false
   check_name:
     description: 'Name of the created check run'
-    default: 'Unit Test Results'
+    default: 'Test Results'
     required: false
   comment_title:
     description: 'Title of PR comments, defaults to value of check_name input'

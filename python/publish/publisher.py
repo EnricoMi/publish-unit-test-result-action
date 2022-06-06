@@ -588,7 +588,7 @@ class Publisher:
 
         # hide all those comments
         for node_id, comment_commit_sha in comment_ids:
-            logger.info(f'hiding unit test result comment for commit {comment_commit_sha}')
+            logger.info(f'hiding test result comment for commit {comment_commit_sha}')
             self.hide_comment(node_id)
 
     def hide_all_but_latest_comments(self, pull: PullRequest) -> None:
@@ -605,5 +605,5 @@ class Publisher:
 
         # hide all those comments
         for node_id in comment_ids:
-            logger.info(f'hiding unit test result comment {node_id}')
+            logger.info(f'hiding test result comment {node_id}')
             self.hide_comment(node_id)
