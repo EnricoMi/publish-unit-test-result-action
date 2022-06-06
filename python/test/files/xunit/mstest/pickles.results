@@ -50,7 +50,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='\n          System.InvalidOperationException : This is a fake '
         'failure message\n        ',
-      content='\n          at '
+      content='\n          System.InvalidOperationException : This is a fake '
+        'failure message\n        \n          at '
         'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
         'result) in '
         'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'

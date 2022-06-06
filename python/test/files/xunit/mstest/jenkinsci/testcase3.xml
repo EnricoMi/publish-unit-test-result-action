@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assemblies>
+  <assembly name="C:\Jenkins\jobs\my-project\workspace\MyProject\MyProject.Tests\bin\Release\MyProject.Tests.DLL" environment="64-bit .NET 4.0.30319.18444 [collection-per-class, parallel]" test-framework="xUnit.net 2.0.0.2785" run-date="2014-12-18" run-time="14:34:32" config-file="C:\Jenkins\jobs\my-project\workspace\MyProject\xunit\xunit.console.exe.Config" total="3" passed="1" failed="1" skipped="1" time="0,288" errors="0">
+    <errors />
+    <collection total="3" passed="1" failed="1" skipped="1" name="Test collection for MyProject.Tests.SampleFact" time="0,025">
+      <test name="MyProject.Tests.SampleFact.FailedTest" type="MyProject.Tests.SampleFact" method="FailedTest" time="0,014" result="Fail">
+        <failure exception-type="Xunit.Sdk.TrueException">
+          <message><![CDATA[Assert.True() Failure]]></message>
+          <stack-trace><![CDATA[   at MyProject.Tests.SampleFact.FailedTest() in c:\Jenkins\jobs\my-project\workspace\MyProject\MyProject.Tests\SampleFact.cs:line 16]]></stack-trace>
+        </failure>
+      </test>
+      <test name="MyProject.Tests.SampleFact.SuccessfulTest" type="MyProject.Tests.SampleFact" method="SuccessfulTest" time="0,010" result="Pass" />
+      <test name="MyProject.Tests.SampleFact.SkippedTest" type="MyProject.Tests.SampleFact" method="SkippedTest" time="0,000" result="Skip">
+        <reason><![CDATA[On Purpose]]></reason>
+      </test>
+    </collection>
+  </assembly>
+</assemblies>
