@@ -409,7 +409,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Copy test junit xml files
+      - name: Copy test files
         run: cp -rv python/test/files test-files
 
       - name: Prepare publish action from this branch
@@ -452,9 +452,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Copy test junit xml files
-        run: |
-          mkdir -p test-files
-          cp -v python/test/files/*.xml test-files/
+        run: cp -rv python/test/files/junit-xml test-files
 
       - name: Prepare publish action from this branch
         run: |
@@ -466,7 +464,7 @@ jobs:
         with:
           check_name: Test Results (Test File)
           fail_on: nothing
-          files: "test-files/junit.gloo.standalone.xml"
+          files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
           log_level: DEBUG
 
