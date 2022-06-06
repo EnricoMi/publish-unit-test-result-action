@@ -3,7 +3,7 @@ publish.unittestresults.ParsedUnitTestResults(
   errors=[],
   suites=2,
   suite_tests=31,
-  suite_skipped=5,
+  suite_skipped=0,
   suite_failures=19,
   suite_errors=1,
   suite_time=0,

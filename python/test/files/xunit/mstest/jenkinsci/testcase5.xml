@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies timestamp="06/15/2018 18:09:29">
+  <assembly name="C:\jenkins\workspace\Pipeline-Test-Client\UnitTest.DLL" environment="32-bit .NET 4.0.30319.42000 [collection-per-class, parallel (2 threads)]" test-framework="xUnit.net 2.3.1.3858" run-date="2018-06-15" run-time="18:07:56" config-file="C:\jenkins\workspace\Pipeline-Test-Client\UnitTest.dll.config" total="5" passed="5" failed="0" skipped="0" time="92.728" errors="0">
+    <errors />
+    <collection total="5" passed="5" failed="0" skipped="0" name="Test collection for UnitTest.UnitTest" time="92.327">
+      <test name="Uninstall application if it is installed." type="UnitTest.UnitTest" method="UninstallApplicationIfInstalled" time="48.3914131" result="Pass">
+        <output><![CDATA[Starting test: UninstallApplicationIfInstalled
+Sleeping 3 second(s)
+Sleeping 10 second(s)
+Sleeping 5 second(s)
+Sleeping 5 second(s)
+Sleeping 10 second(s)
+Sleeping 15 second(s)
+]]></output>
+      </test>
+      <test name="Install application." type="UnitTest.UnitTest" method="InstallApplication" time="33.1446488" result="Pass">
+        <output><![CDATA[Starting test: InstallApplication
+Sleeping 3 second(s)
+Starting installation
+Sleeping 5 second(s)
+Sleeping 5 second(s)
+Sleeping 5 second(s)
+Sleeping 10 second(s)
+Sleeping 5 second(s)
+]]></output>
+      </test>
+      <test name="Check if all installed files are there." type="UnitTest.UnitTest" method="CheckIfAllFilesAreThere" time="3.0399824" result="Pass">
+        <output><![CDATA[Starting test: CheckIfAllFilesAreThere
+Sleeping 3 second(s)
+]]></output>
+      </test>
+      <test name="Check if the files were signed." type="UnitTest.UnitTest" method="CheckIfFilesWereSinged" time="4.7233194" result="Pass">
+        <output><![CDATA[Starting test: CheckIfFilesWereSinged
+Sleeping 3 second(s)
+]]></output>
+      </test>
+      <test name="Check if the app is running." type="UnitTest.UnitTest" method="CheckIfAppIsRunning" time="3.0279026" result="Pass">
+        <output><![CDATA[Starting test: CheckIfAppIsRunning
+Sleeping 3 second(s)
+]]></output>
+      </test>
+    </collection>
+  </assembly>
+</assemblies>
