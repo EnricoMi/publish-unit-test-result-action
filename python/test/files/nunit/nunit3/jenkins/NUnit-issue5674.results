@@ -1,0 +1,120 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=3,
+  suite_tests=9,
+  suite_skipped=0,
+  suite_failures=3,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("IE")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.023
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("FireFox")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("Safari")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("IE")',
+      result='failure',
+      message=None,
+      content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
+        'C:\\Users\\Samw\\Documents\\Visual Studio '
+        '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
+        'ne 27\n',
+      time=0.005
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("FireFox")',
+      result='failure',
+      message=None,
+      content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
+        'C:\\Users\\Samw\\Documents\\Visual Studio '
+        '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
+        'ne 27\n',
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("Safari")',
+      result='failure',
+      message=None,
+      content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
+        'C:\\Users\\Samw\\Documents\\Visual Studio '
+        '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
+        'ne 27\n',
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("IE")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("FireFox")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue5674.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("Safari")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    )
+  ]
+)

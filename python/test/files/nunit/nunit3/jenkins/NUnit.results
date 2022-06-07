@@ -1,0 +1,61 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=2,
+  suite_tests=4,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.MainClassTest.TestPropertyValue',
+      result='success',
+      message=None,
+      content=None,
+      time=0.146
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.MainClassTest.TestMethodUpdateValue',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.MainClassTest.TestFailure',
+      result='failure',
+      message='  Expected failure\n  Expected: 30\n  But was:  20\n',
+      content='  at UnitTests.MainClassTest.TestFailure () [0x00000] \n  at '
+        '<0x00000> <unknown method>\n  at (wrapper managed-to-native) '
+        'System.Reflection.MonoMethod:InternalInvoke (object,object[])\n  at '
+        'System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags '
+        'invokeAttr, System.Reflection.Binder binder, System.Object[] '
+        'parameters, System.Globalization.CultureInfo culture) [0x00000] \n',
+      time=0.092
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='AnotherNS.OtherMainClassTest.TestPropertyValueAgain',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    )
+  ]
+)

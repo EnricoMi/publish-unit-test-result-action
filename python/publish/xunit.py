@@ -21,8 +21,8 @@ def parse_xunit_files(files: Iterable[str],
             return Exception(f'File is empty.')
 
         try:
-            trx = etree.parse(path)
-            return transform_xunit_to_junit(trx)
+            xunit = etree.parse(path)
+            return transform_xunit_to_junit(xunit)
         except BaseException as e:
             return e
 

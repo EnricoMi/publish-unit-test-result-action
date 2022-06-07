@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="UnitTests.dll" total="4" failures="0" not-run="2" date="2007-10-31" time="21:30:07">
+  <environment nunit-version="2.4.1.0" clr-version="2.0.50727.312" os-version="Microsoft Windows NT 6.0.6000.0" platform="Win32NT" cwd="C:\Users\Paulina\Documents\Visual Studio 2005\Projects\UnitTests\UnitTests\bin\Release" machine-name="ASTERIX" user="Paulina" user-domain="asterix" />
+  <culture-info current-culture="sv-SE" current-uiculture="sv-SE" />
+  <test-suite name="UnitTests.dll" success="True" time="0.169" asserts="0">
+    <results>
+      <test-suite name="UnitTests" success="True" time="0.002" asserts="0">
+        <results>
+          <test-suite name="OtherMainClassTest" success="True" time="0.001" asserts="0">
+            <results>
+              <test-case name="UnitTests.OtherMainClassTest.TestIgnored" executed="False">
+                <reason>
+                  <message><![CDATA[]]></message>
+                </reason>
+              </test-case>
+              <test-case name="UnitTests.OtherMainClassTest.TestIgnoredWithText" executed="False">
+                <reason>
+                  <message><![CDATA[Dont do this]]></message>
+                </reason>
+              </test-case>
+              <test-case name="UnitTests.OtherMainClassTest.TestPropertyValue" executed="True" success="True" time="0.001" asserts="1" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

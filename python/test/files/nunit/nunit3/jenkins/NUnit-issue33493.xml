@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="1" failed="0" inconclusive="1" skipped="0" asserts="1" engine-version="3.6.1.0" clr-version="4.0.30319.42000" start-time="2017-04-29 20:49:41Z" end-time="2017-04-29 20:49:49Z" duration="8.113627">
+  <command-line><![CDATA[nunit3-console  "C:\Users\admingnwador\Desktop\Automation\Automation\bin\Debug\Automation.dll"]]></command-line>
+  <test-suite type="Assembly" id="0-1005" name="Automation.dll" fullname="C:\Users\admingnwador\Desktop\Automation\Automation\bin\Debug\Automation.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-04-29 20:49:42Z" end-time="2017-04-29 20:49:49Z" duration="7.195350" total="2" passed="1" failed="0" warnings="0" inconclusive="1" skipped="0" asserts="1">
+    <environment framework-version="3.6.1.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.3.9600.0" platform="Win32NT" cwd="C:\Program Files (x86)\NUnit.org\nunit-console" machine-name="SDB-SPTST-02" user="admingnwador" user-domain="TGG" culture="en-US" uiculture="en-US" os-architecture="x64" />
+    <settings>
+      <setting name="DisposeRunners" value="True" />
+      <setting name="WorkDirectory" value="C:\Program Files (x86)\NUnit.org\nunit-console" />
+      <setting name="ImageRuntimeVersion" value="4.0.30319" />
+      <setting name="ImageTargetFrameworkName" value=".NETFramework,Version=v4.5.2" />
+      <setting name="ImageRequiresX86" value="False" />
+      <setting name="ImageRequiresDefaultAppDomainAssemblyResolver" value="False" />
+      <setting name="NumberOfTestWorkers" value="2" />
+    </settings>
+    <properties>
+      <property name="_PID" value="13728" />
+      <property name="_APPDOMAIN" value="domain-" />
+    </properties>
+    <test-suite type="TestSuite" id="0-1006" name="Automation" fullname="Automation" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-04-29 20:49:42Z" end-time="2017-04-29 20:49:49Z" duration="7.167615" total="2" passed="1" failed="0" warnings="0" inconclusive="1" skipped="0" asserts="1">
+      <test-suite type="TestSuite" id="0-1007" name="Features" fullname="Automation.Features" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-04-29 20:49:42Z" end-time="2017-04-29 20:49:49Z" duration="7.162903" total="2" passed="1" failed="0" warnings="0" inconclusive="1" skipped="0" asserts="1">
+        <test-suite type="TestFixture" id="0-1003" name="CMFeature" fullname="Automation.Features.CMFeature" classname="Automation.Features.CMFeature" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-04-29 20:49:42Z" end-time="2017-04-29 20:49:43Z" duration="0.741677" total="1" passed="0" failed="0" warnings="0" inconclusive="1" skipped="0" asserts="0">
+          <properties>
+            <property name="Description" value="CM" />
+          </properties>
+          <test-case id="0-1004" name="AddTwoNumbers" fullname="Automation.Features.CMFeature.AddTwoNumbers" methodname="AddTwoNumbers" classname="Automation.Features.CMFeature" runstate="Runnable" seed="1384866106" result="Inconclusive" start-time="2017-04-29 20:49:43Z" end-time="2017-04-29 20:49:43Z" duration="0.186579" asserts="0">
+            <properties>
+              <property name="Description" value="Add two numbers" />
+              <property name="Category" value="smoke" />
+            </properties>
+            <reason>
+              <message><![CDATA[No matching step definition found for one or more steps.
+using System;
+using TechTalk.SpecFlow;
+
+namespace MyNamespace
+{
+    [Binding]
+    public class StepDefinitions
+    {
+        [Given(@"I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredIntoTheCalculator(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+        [When(@"I press add")]
+public void WhenIPressAdd()
+{
+    ScenarioContext.Current.Pending();
+}
+
+        [Then(@"the result should be (.*) on the screen")]
+public void ThenTheResultShouldBeOnTheScreen(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+    }
+}
+]]></message>
+            </reason>
+            <output><![CDATA[Given I have entered 50 into the calculator
+No matching step definition found for the step. Use the following code to create one:
+        [Given(@"I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredIntoTheCalculator(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+And I have entered 70 into the calculator
+No matching step definition found for the step. Use the following code to create one:
+        [Given(@"I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredIntoTheCalculator(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+When I press add
+No matching step definition found for the step. Use the following code to create one:
+        [When(@"I press add")]
+public void WhenIPressAdd()
+{
+    ScenarioContext.Current.Pending();
+}
+
+Then the result should be 120 on the screen
+No matching step definition found for the step. Use the following code to create one:
+        [Then(@"the result should be (.*) on the screen")]
+public void ThenTheResultShouldBeOnTheScreen(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+]]></output>
+          </test-case>
+        </test-suite>
+        <test-suite type="TestFixture" id="0-1000" name="SubFeature" fullname="Automation.Features.SubFeature" classname="Automation.Features.SubFeature" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-04-29 20:49:43Z" end-time="2017-04-29 20:49:49Z" duration="6.409498" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+          <properties>
+            <property name="Description" value="Sub" />
+          </properties>
+          <test-suite type="ParameterizedMethod" id="0-1002" name="SubSmokeTest" fullname="Automation.Features.SubFeature.SubSmokeTest" classname="Automation.Features.SubFeature" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-04-29 20:49:43Z" end-time="2017-04-29 20:49:49Z" duration="6.405431" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+            <properties>
+              <property name="Description" value="Sub Smoke Test" />
+              <property name="Category" value="browser" />
+            </properties>
+            <test-case id="0-1001" name="SubSmokeTest(&quot;Geo&quot;,&quot;Geonw&quot;,&quot;dev1234567&quot;,System.String[])" fullname="Automation.Features.SubFeature.SubSmokeTest(&quot;Geo&quot;,&quot;Geonw&quot;,&quot;dev1234567&quot;,System.String[])" methodname="SubSmokeTest" classname="Automation.Features.SubFeature" runstate="Runnable" seed="1912144563" result="Passed" start-time="2017-04-29 20:49:43Z" end-time="2017-04-29 20:49:49Z" duration="6.402030" asserts="1">
+              <output><![CDATA[Given I have an active Sub user Geo with username Geonw and password dev1234567
+done: LoginSteps.GivenIHaveAnActiveSubUserWithUsernameAndPassword("Geo", "Geonw", "dev1234567") (0.0s)
+And he is on Sub login page
+done: LoginSteps.GivenHeIsOnSubLoginPage() (0.6s)
+When he logs in using his credentials
+done: LoginSteps.WhenHeLogsInUsingHisCredentials() (1.8s)
+Then he should land on the Accounts homepage
+done: LoginSteps.ThenHeShouldLandOnTheAccountsHomePage() (0.3s)
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

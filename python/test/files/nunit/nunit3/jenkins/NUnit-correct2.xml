@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\dev\ImageApprox\imG.Approx.Tests\bin\Debug\imG.Approx.Tests.dll" total="218" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2015-03-13" time="16:40:26">
+    <environment nunit-version="2.5.10.11092" clr-version="4.0.30319.18063" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE" machine-name="PI91158" user="beaudouxex" user-domain="CHU-LYON" />
+    <culture-info current-culture="fr-FR" current-uiculture="fr-FR" />
+    <test-suite type="Assembly" name="C:\dev\ImageApprox\imG.Approx.Tests\bin\Debug\imG.Approx.Tests.dll" executed="True" result="Success" success="True" time="1.392" asserts="0">
+        <results>
+            <test-suite type="Namespace" name="imG" executed="True" result="Success" success="True" time="1.388" asserts="0">
+                <results>
+                    <test-suite type="Namespace" name="Approx" executed="True" result="Success" success="True" time="1.388" asserts="0">
+                        <results>
+                            <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="1.388" asserts="0">
+                                <results>
+                                    <test-suite type="Namespace" name="Components" executed="True" result="Success" success="True" time="0.922" asserts="0">
+                                        <results>
+                                            <test-suite type="Namespace" name="BuildingBlocks" executed="True" result="Success" success="True" time="0.149" asserts="0">
+                                                <results>
+                                                    <test-suite type="TestFixture" name="AmountTests+Clone" executed="True" result="Success" success="True" time="0.027" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.should_return_different_object" executed="True" result="Success" success="True" time="0.012" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.should_return_same_value" executed="True" result="Success" success="True" time="0.007" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AmountTests+MutableComponents" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+MutableComponents.should_return_empty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AmountTests+Nudge" executed="True" result="Success" success="True" time="0.014" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_change_value_in_range" executed="True" result="Success" success="True" time="0.013" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-2,8)" executed="True" result="Success" success="True" time="0.006" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-100,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-10,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(1000,1000,321)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,2,12)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AmountTests+RandomizeValues" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+RandomizeValues.should_randomize_value_in_range" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AngleTests+Clone" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.should_return_different_object" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.should_return_same_value" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AngleTests+MutableComponents" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+MutableComponents.should_return_empty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AngleTests+Nudge" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_wrap_by_a_value_between_1_and_max_value_in_both_directions" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,40,False,330)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,355,True,5)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,6,False,4)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,40,True,50)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AngleTests+RandomizeValue" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+RandomizeValue.should_select_a_value_between_0_and_360" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+Clone" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.should_clone_component" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.should_copy_values" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+Constructor" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Constructor.should_initialize_data" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+ImplicitConversionToDrawingColor" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+ImplicitConversionToDrawingColor.should_convert_to_drawing_color" executed="True" result="Success" success="True" time="0.002" asserts="4" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+MutableComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+MutableComponents.should_not_contain_anything" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+RandomizeAlpha" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeAlpha.should_randomize_alpha_in_range" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+RandomizeBlue" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeBlue.should_randomize_alpha_in_range" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+RandomizeGreen" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeGreen.should_randomize_alpha_in_range" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+RandomizeRed" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeRed.should_randomize_alpha_in_range" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="ColorTests+RandomizeValues" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeValues.should_randomize_colors_in_the_range" executed="True" result="Success" success="True" time="0.004" asserts="4" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PenSizeTests+Clone" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.should_return_different_object" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.should_return_same_value" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PenSizeTests+MutableComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+MutableComponents.should_return_empty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PenSizeTests+Nudge" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_change_value_in_range" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-100,1)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,10,16)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,2,12)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-2,8)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-10,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PenSizeTests+RandomizeValues" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+RandomizeValues.should_randomize_value_in_range" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PositionTests+Clone" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.should_return_different_object" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.should_return_same_value" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PositionTests+MutableComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+MutableComponents.should_return_empty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PositionTests+Nudge" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_change_value_in_range" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1,True,11,11)" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,100,False,0,0)" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1,False,9,9)" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1000,True,321,654)" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PositionTests+RandomizeValues" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+RandomizeValues.should_return_value_inside_target_limits" executed="True" result="Success" success="True" time="0.007" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="DrawingTest+Clone" executed="True" result="Success" success="True" time="0.012" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Clone.should_clone_all_shapes" executed="True" result="Success" success="True" time="0.007" asserts="3" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Clone.should_clone_inner_components" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Clone.should_copy_properties" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Clone.should_create_clone_of_target" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="DrawingTest+Constructor" executed="True" result="Success" success="True" time="0.000" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Constructor.should_keep_data" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="DrawingTest+Draw" executed="True" result="Success" success="True" time="0.015" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Draw.should_draw_all_shapes" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Draw.should_fill_image_with_background_color" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+Draw.should_return_correct_size_image" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="DrawingTest+MutableComponents" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+MutableComponents.should_contain_all_shapes" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Components.DrawingTest+MutableComponents.should_contain_color" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="Namespace" name="Shapes" executed="True" result="Success" success="True" time="0.727" asserts="0">
+                                                <results>
+                                                    <test-suite type="TestFixture" name="AreaTests+Clone" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AreaTests+Draw" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.004" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AreaTests+InitializeComponents" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="6" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="AreaTests+MutableComponents" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Angle)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BezierTests+Clone" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BezierTests+Draw" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.004" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BezierTests+InitializeComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="12" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BezierTests+MutableComponents" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.PenSize)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BlobTests+Clone" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Blob,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Blob,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BlobTests+Draw" executed="True" result="Success" success="True" time="0.007" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.006" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BlobTests+InitializeComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="8" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="BlobTests+MutableComponents" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="CircleTests+Clone" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="CircleTests+Draw" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="CircleTests+InitializeComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.000" asserts="6" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="CircleTests+MutableComponents" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Amount)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="Namespace" name="Factories" executed="True" result="Success" success="True" time="0.544" asserts="0">
+                                                        <results>
+                                                            <test-suite type="Namespace" name="ConcreteFactory" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-suite type="TestFixture" name="ShapeFactoryTests+GetShape" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                                        <results>
+                                                                            <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+GetShape.should_return_shape" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                        </results>
+                                                                    </test-suite>
+                                                                    <test-suite type="TestFixture" name="ShapeFactoryTests+Name" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                                        <results>
+                                                                            <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+Name.should_return_name_by_default" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                        </results>
+                                                                    </test-suite>
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+ActiveFactories" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+ActiveFactories.should_return_only_active_factories" executed="True" result="Success" success="True" time="0.007" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+Disable" executed="True" result="Success" success="True" time="0.011" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Disable.should_enable_factories_named" executed="True" result="Success" success="True" time="0.011" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+DisableAll" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+DisableAll.should_disable_all_factories" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+Enable" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Enable.should_enable_factories_named" executed="True" result="Success" success="True" time="0.003" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+EnableAll" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+EnableAll.should_enable_all_factories" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+Register" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Register.should_add_factory" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                            <test-suite type="TestFixture" name="ShapeFactoryCatalogTests+RegisterAllFactories" executed="True" result="Success" success="True" time="0.504" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+RegisterAllFactories.should_register_all_factories" executed="True" result="Success" success="True" time="0.504" asserts="2" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="LineTests+Clone" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="LineTests+Draw" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="LineTests+InitializeComponents" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="8" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="LineTests+MutableComponents" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.PenSize)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PolygonTests+Clone" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Polygon,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Polygon,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PolygonTests+Draw" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PolygonTests+InitializeComponents" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="8" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="PolygonTests+MutableComponents" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="RectangleTests+Clone" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="RectangleTests+Draw" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="RectangleTests+InitializeComponents" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.000" asserts="8" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="RectangleTests+MutableComponents" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Amount)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Amount)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="TriangleTests+Clone" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_different_object" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="TriangleTests+Draw" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+Draw.should_draw" executed="True" result="Success" success="True" time="0.001" asserts="0" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="TriangleTests+InitializeComponents" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+InitializeComponents.should_randomize_elements" executed="True" result="Success" success="True" time="0.001" asserts="8" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="TestFixture" name="TriangleTests+MutableComponents" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-suite type="ParameterizedTest" name="should_return_components" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                                <results>
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Color)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                    <test-case name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                                </results>
+                                                            </test-suite>
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="Namespace" name="Mutation" executed="True" result="Success" success="True" time="0.399" asserts="0">
+                                        <results>
+                                            <test-suite type="TestFixture" name="MutagenTests+ChooseMutation" executed="True" result="Success" success="True" time="0.018" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_return_mutation_description_determined_by_random_provider" executed="True" result="Success" success="True" time="0.016" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,0,0)" executed="True" result="Success" success="True" time="0.009" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,6,0)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,0,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,6,1)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,7,0)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,7,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_null_if_no_mutation_exists" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutagenTests+GetMutationsFor" executed="True" result="Success" success="True" time="0.010" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_active_and_applicable_and_selectable_mutations" executed="True" result="Success" success="True" time="0.004" asserts="4" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_empty_if_mutable_is_unknown" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_mutations_recursively" executed="True" result="Success" success="True" time="0.001" asserts="5" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutagenTests+NoOpDescription" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_have_occasions_to_mutate" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_mutate_without_doing_anything_to_the_target" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_target_IMutableType" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_be_always_able_to_mutate" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_be_always_active" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutagenTests+SelectMutation" executed="True" result="Success" success="True" time="0.012" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_a_mutation" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_matching_selected_mutation" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_the_default_mutation_if_no_mutation_exists" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                    <test-suite type="ParameterizedTest" name="should_throw_if_any_component_is_null" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_throw_if_any_component_is_null(null,Castle.Proxies.IMutableProxy)" executed="True" result="Success" success="True" time="0.003" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_throw_if_any_component_is_null(imG.Approx.Mutation.Process,null)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionCatalogTest+DeclareMutation" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+DeclareMutation.should_add_description_to_catalog" executed="True" result="Success" success="True" time="0.003" asserts="3" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+DeclareMutation.should_throw_when_the_same_description_is_declared_twice" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionCatalogTest+For" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_empty_list_for_unknown_mutable_type" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                    <test-suite type="ParameterizedTest" name="should_return_list_of_descriptions_for_type" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1])" executed="True" result="Success" success="True" time="0.000" asserts="3" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionCatalogTest+RegisterAllMutations" executed="True" result="Success" success="True" time="0.205" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+RegisterAllMutations.should_register_all_mutations_declared_by_registrars" executed="True" result="Success" success="True" time="0.204" asserts="3" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionTests+CanMutate" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+CanMutate.lambda_is_called_when_checking" executed="True" result="Success" success="True" time="0.004" asserts="3" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionTests+Constructor" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_refuse_odds_that_are_not_positive" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(-1000)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(0)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(-1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionTests+GetMutationTargetType" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+GetMutationTargetType.should_return_type_of_generic" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="MutationDescriptionTests+Mutate" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Mutate.lambda_is_called_when_mutating" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="ProcessTests+Constructor" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_throw_if_any_argument_is_null" executed="True" result="Success" success="True" time="0.008" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(null,Castle.Proxies.IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,Castle.Proxies.IShapeFactoryCatalogProxy)" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,null,Castle.Proxies.ITargetProxy,Castle.Proxies.IShapeFactoryCatalogProxy)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,Castle.Proxies.IMutationDescriptionCatalogProxy,null,Castle.Proxies.IShapeFactoryCatalogProxy)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,Castle.Proxies.IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,null)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="ProcessTests+Mutate" executed="True" result="Success" success="True" time="0.018" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_always_keep_best_drawing_according_to_distance" executed="True" result="Success" success="True" time="0.007" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_always_keep_best_drawing_according_to_distance(False)" description="Evolution négative" executed="True" result="Success" success="True" time="0.005" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_always_keep_best_drawing_according_to_distance(True)" description="Evolution positive" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_increase_evolutions_when_drawing_is_better" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_increase_generation_number" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_trigger_event_when_drawing_is_better" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_trigger_event_when_drawing_is_worse" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="ProcessTests+SetupDrawing" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_compute_the_distance_only_the_first_time" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_create_drawing_based_on_target" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_create_the_drawing_only_the_first_time" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="RandomizationProviderTests+Constructor" executed="True" result="Success" success="True" time="0.002" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Constructor.should_keep_the_seed" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="RandomizationProviderTests+Next" executed="True" result="Success" success="True" time="0.003" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Next.should_return_integer" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="TargetTests+Constructor" executed="True" result="Success" success="True" time="0.012" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_keep_initialized_data" executed="True" result="Success" success="True" time="0.012" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+Constructor.should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.Target,System.Object],25)" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+Constructor.should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.Target,System.Object],&quot;data\\red.png&quot;)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="TargetTests+DistanceTo" executed="True" result="Success" success="True" time="0.011" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_not_throw_if_dimensions_are_identical" executed="True" result="Success" success="True" time="0.002" asserts="0" />
+                                                    <test-suite type="ParameterizedTest" name="should_throw_if_dimensions_are_different" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="TargetTests+LoadImageData" executed="True" result="Success" success="True" time="0.026" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_load_dimensions_from_image" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                    <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_load_image_data" executed="True" result="Success" success="True" time="0.001" asserts="375" />
+                                                    <test-suite type="ParameterizedTest" name="should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension(100)" executed="True" result="Success" success="True" time="0.003" asserts="5" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension(50)" executed="True" result="Success" success="True" time="0.001" asserts="5" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_resize_if_image_dimensions_are_over_maxDimension" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                                                    <test-suite type="ParameterizedTest" name="should_set_ratio_to_correct_value_when_loading" executed="True" result="Success" success="True" time="0.010" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(10,0.2f)" executed="True" result="Success" success="True" time="0.002" asserts="3" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(25,0.5f)" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(99,1.0f)" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                            <test-case name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(50,1.0f)" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="TargetTests+Name" executed="True" result="Success" success="True" time="0.001" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Mutation.TargetTests+Name.should_return_filename" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="Namespace" name="Tools" executed="True" result="Success" success="True" time="0.029" asserts="0">
+                                        <results>
+                                            <test-suite type="TestFixture" name="TestValues+Clamp" executed="True" result="Success" success="True" time="0.021" asserts="0">
+                                                <results>
+                                                    <test-suite type="ParameterizedTest" name="should_return_max_value_between_original_and_min_value" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,1,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,0,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,10,10)" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-suite type="ParameterizedTest" name="should_return_min_value_between_original_and_max_value" executed="True" result="Success" success="True" time="0.004" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,10,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,1,1)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,0,0)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                    <test-case name="imG.Approx.Tests.Tools.TestValues+Clamp.should_throw_if_min_is_above_max" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                </results>
+                                            </test-suite>
+                                            <test-suite type="TestFixture" name="TestValues+Wrap" executed="True" result="Success" success="True" time="0.006" asserts="0">
+                                                <results>
+                                                    <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_throw_if_min_is_above_max" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                                                    <test-suite type="ParameterizedTest" name="should_wrap_back_to_range" executed="True" result="Success" success="True" time="0.005" asserts="0">
+                                                        <results>
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(-101,10,20,19)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(16,10,25,16)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(10,10,25,10)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(25,10,25,10)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                            <test-case name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(101,10,20,11)" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                                                        </results>
+                                                    </test-suite>
+                                                </results>
+                                            </test-suite>
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                        </results>
+                    </test-suite>
+                </results>
+            </test-suite>
+        </results>
+    </test-suite>
+</test-results>

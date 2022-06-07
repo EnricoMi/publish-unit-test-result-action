@@ -1,0 +1,86 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=2,
+  suite_tests=10,
+  suite_skipped=0,
+  suite_failures=5,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DoATest',
+      result='success',
+      message=None,
+      content=None,
+      time=0.03631
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='FailThisTest',
+      result='failure',
+      message='Oh no the test failed!',
+      content='   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files '
+        '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
+        'rldTests.cs:Zeile 18.\n',
+      time=0.018525
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='TestWithParameters("Foo")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.018378
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='TestWithParameters("Bar")',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000179
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='TestWithParameters("Ä")',
+      result='failure',
+      message='  Expected: greater than 2\n  But was:  1\n',
+      content='   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in '
+        'C:\\Program Files '
+        '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
+        'rldTests.cs:Zeile 27.\n',
+      time=0.00291
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue50162.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='TestWithParameters("Ö")',
+      result='failure',
+      message='  Expected: greater than 2\n  But was:  1\n',
+      content='   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in '
+        'C:\\Program Files '
+        '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
+        'rldTests.cs:Zeile 27.\n',
+      time=0.001015
+    )
+  ]
+)

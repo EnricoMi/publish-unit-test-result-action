@@ -1,18 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuites>
-  <testsuite name="Pickles.TestHarness.AdditionFeature" tests="2" time="0.157" failures="0" errors="0" skipped="0">
-    <testcase classname="Pickles.TestHarness.AdditionFeature" name="AddingSeveralNumbers(&quot;60&quot;,&quot;70&quot;,&quot;130&quot;,System.String[])" time="0.137"/>
-    <testcase classname="Pickles.TestHarness.AdditionFeature" name="AddingSeveralNumbers(&quot;40&quot;,&quot;50&quot;,&quot;90&quot;,System.String[])" time="0.009"/>
-  </testsuite>
-  <testsuite name="Pickles.TestHarness" tests="2" time="0.724" failures="1" errors="0" skipped="0">
-    <testcase classname="Pickles.TestHarness" name="AdditionFeature.AddTwoNumbers" time="0.004"/>
-    <testcase classname="Pickles.TestHarness" name="AdditionFeature.FailToAddTwoNumbers" time="0.028">
-      <failure>
-MESSAGE:
-
-+++++++++++++++++++
-STACK TRACE:
-
+<testsuites tests="4" failures="1" skipped="0" errors="0">
+  
+  
+  
+    
+      
+        
+          
+            
+              <testsuite time="0.724" name="Pickles.TestHarness.AdditionFeature"><testcase name="Pickles.TestHarness.AdditionFeature.AddTwoNumbers" classname="" status="Success" time="0.004">
+                    
+                      
+                    
+                  </testcase><testcase name="Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers" classname="" status="Failure" time="0.028">
+                    
+                      
+                    
+                    <failure message="">
                         at Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Steps.cs:line 26
 at lambda_method(Closure , IContextManager , Int32 )
 at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
@@ -25,6 +29,11 @@ at Pickles.TestHarness.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-resul
 at Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Addition.feature:line 18
 
                       </failure>
-    </testcase>
-  </testsuite>
+                  </testcase></testsuite>
+            
+          
+        
+      
+    
+  
 </testsuites>
