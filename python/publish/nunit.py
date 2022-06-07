@@ -6,7 +6,7 @@ from lxml import etree
 
 from publish.junit import JUnitTreeOrException, ParsedJUnitFile
 
-with (pathlib.Path(__file__).parent / 'xslt' / 'nunit-to-junit.xslt').open('r', encoding='utf-8') as r:
+with (pathlib.Path(__file__).parent / 'xslt' / 'nunit3-to-junit.xslt').open('r', encoding='utf-8') as r:
     transform_nunit_to_junit = etree.XSLT(etree.parse(r))
 
 
@@ -21,8 +21,8 @@ def parse_nunit_files(files: Iterable[str],
             return Exception(f'File is empty.')
 
         try:
-            trx = etree.parse(path)
-            return transform_nunit_to_junit(trx)
+            nunit = etree.parse(path)
+            return transform_nunit_to_junit(nunit)
         except BaseException as e:
             return e
 

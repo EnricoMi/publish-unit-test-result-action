@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" name="testrunner.exe" fullname="C:/Project/Assemblies/testrunner.exe" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.849036" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="226544" random-seed="1379193878">
+  <command-line><![CDATA["C:\Project\Assemblies\testrunner.exe"  --result=IntTestResults\example.xml --params=LicenceServer=LICSERVER;ProjectFilename=C:\Data\example.dat;Author=AUTHOR;NAME=" "]]></command-line>
+  <filter />
+  <test-suite type="Assembly" id="1005" name="testrunner.exe" fullname="C:/Project/Assemblies/testrunner.exe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.849036" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226544">
+    <environment framework-version="3.9.0.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.1.7601.65536" platform="Win32NT" cwd="C:\Project\Assemblies" machine-name="102541L" user="user.name" user-domain="DOMAIN" culture="en-GB" uiculture="en-US" os-architecture="x64" />
+    <settings>
+      <setting name="WorkDirectory" value="C:\Project\Assemblies" />
+      <setting name="TestParametersDictionary" value="[LicenceServer, LICSERVER], [ProjectFilename, C:\Data\example.dat], [Author, AUTHOR], [NAME,  ]">
+        <item key="LicenceServer" value="LICSERVER" />
+        <item key="ProjectFilename" value="C:\Data\example.dat" />
+        <item key="Author" value="AUTHOR" />
+        <item key="NAME" value=" " />
+      </setting>
+      <setting name="NumberOfTestWorkers" value="4" />
+    </settings>
+    <properties>
+      <property name="_PID" value="14836" />
+      <property name="_APPDOMAIN" value="testrunner.exe" />
+    </properties>
+    <test-suite type="TestSuite" id="1006" name="NS" fullname="NS" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.834111" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226544">
+      <test-suite type="TestSuite" id="1007" name="IP" fullname="NS.APP" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.833326" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226544">
+        <test-suite type="TestSuite" id="1008" name="Wombat" fullname="NS.APP.Wombat" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.833314" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226544">
+          <test-suite type="TestSuite" id="1009" name="TestIntegration" fullname="NS.APP.Wombat.TestIntegration" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:54Z" duration="17.833307" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226544">
+            <test-suite type="TestFixture" id="1000" name="TestGetData" fullname="NS.APP.Wombat.TestIntegration.TestGetData" classname="NS.APP.Wombat.TestIntegration.TestGetData" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:48Z" duration="11.630328" total="2" passed="2" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="226062">
+              <test-case id="1002" name="TestAllRawData" fullname="NS.APP.Wombat.TestIntegration.TestGetData.TestAllRawData" methodname="TestAllRawData" classname="NS.APP.Wombat.TestIntegration.TestGetData" runstate="Runnable" seed="1858456508" result="Passed" start-time="2017-12-15 18:14:36Z" end-time="2017-12-15 18:14:48Z" duration="11.129426" asserts="205141">
+                <output><![CDATA[Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+Checking 241 log ids
+]]></output>
+              </test-case>
+              <test-case id="1001" name="TestFirst10RawData" fullname="NS.APP.Wombat.TestIntegration.TestGetData.TestFirst10RawData" methodname="TestFirst10RawData" classname="NS.APP.Wombat.TestIntegration.TestGetData" runstate="Runnable" seed="1045053054" result="Passed" start-time="2017-12-15 18:14:48Z" end-time="2017-12-15 18:14:48Z" duration="0.482340" asserts="20921">
+                <output><![CDATA[Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+Checking 10 log ids
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1003" name="TestGetCurveInfo" fullname="NS.APP.Wombat.TestIntegration.TestGetCurveInfo" classname="NS.APP.Wombat.TestIntegration.TestGetCurveInfo" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-12-15 18:14:48Z" end-time="2017-12-15 18:14:54Z" duration="6.196414" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="482">
+              <test-case id="1004" name="TestAllInfo" fullname="NS.APP.Wombat.TestIntegration.TestGetCurveInfo.TestAllInfo" methodname="TestAllInfo" classname="NS.APP.Wombat.TestIntegration.TestGetCurveInfo" runstate="Runnable" seed="1540024750" result="Passed" start-time="2017-12-15 18:14:48Z" end-time="2017-12-15 18:14:54Z" duration="6.195858" asserts="482">
+                <output><![CDATA[Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

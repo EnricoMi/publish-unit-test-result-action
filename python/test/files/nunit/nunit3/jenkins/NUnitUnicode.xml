@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="/home/erik/coding/test/nunittests/Tests.dll" total="4" failures="1" not-run="0" date="2007-07-27" time="11:18:43">
+  <environment nunit-version="2.2.8.0" clr-version="2.0.50727.42" os-version="Unix 2.6.18.4" platform="Unix" cwd="/home/erik/coding/test/nunittests" machine-name="akira.ramfelt.se" user="erik" user-domain="akira.ramfelt.se" />
+  <culture-info current-culture="sv-SE" current-uiculture="sv-SE" />
+  <test-suite name="/home/erik/coding/test/nunittests/Tests.dll" success="False" time="0.404" asserts="0">
+    <results>
+      <test-suite name="UnitTests" success="False" time="0.393" asserts="0">
+        <results>
+          <test-suite name="UnitTests.UnicodeClassTest" success="False" time="0.289" asserts="0">
+            <results>
+              <test-case name="UnitTests.UnicodeClassTest.TestFailure" executed="True" success="False" time="0.092" asserts="1">
+                <failure>
+                  <message><![CDATA[  Expected failure
+  Expected: ü
+  But was:  â
+]]></message>
+                  <stack-trace><![CDATA[  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
+

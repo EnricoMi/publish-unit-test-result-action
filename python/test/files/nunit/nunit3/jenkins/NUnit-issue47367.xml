@@ -1,0 +1,16 @@
+<test-suite type="TestFixture" name="CryptUtilsTests" executed="True" result="Success" success="True" time="0.562" asserts="0">
+    <results>
+        <test-suite type="ParameterizedTest" name="ComputerSha256HashAndCompareWithExpectedResult" executed="True" result="Success" success="True" time="0.011" asserts="0">
+            <results>
+                <test-case name="Base.Tests.CryptUtilsTests.ComputerSha256HashAndCompareWithExpectedResult("pass","50B5BD8E4DAD7A3A725000FEB82ESDFFDFDFF556568F1")" executed="True" result="Success" success="True" time="0.005" asserts="1" />
+                <test-case name="Base.Tests.CryptUtilsTests.ComputerSha256HashAndCompareWithExpectedResult("Horst","17B3359247428B9855DSFRGFDGDG44FD")" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                <test-case name="Base.Tests.CryptUtilsTests.ComputerSha256HashAndCompareWithExpectedResult("Hugo","D74C8E69A60EASDFDSSDEW62DC8FFD")" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                <test-case name="Base.Tests.CryptUtilsTests.ComputerSha256HashAndCompareWithExpectedResult("GeheimesPasswort!","1B44CF4HDVBFLFB456780A82835F62D46B7")" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+            </results>
+        </test-suite>
+        <test-case name="Base.Tests.CryptUtilsTests.ComputesSaltAndPasswordHashCorrectly" executed="True" result="Success" success="True" time="0.003" asserts="4" />
+        <test-case name="Base.Tests.CryptUtilsTests.ComputesSaltAndPasswordHashFromDifferentTasksCorrectly" executed="True" result="Success" success="True" time="0.258" asserts="1" />
+        <test-case name="Base.Tests.CryptUtilsTests.ComputesSaltAndPasswordHashFromDifferentThreadsCorrectly" executed="True" result="Success" success="True" time="0.106" asserts="1" />
+        <test-case name="Base.Tests.CryptUtilsTests.EncyrptAndDecryptWindows" executed="True" result="Success" success="True" time="0.176" asserts="15" />
+    </results>
+</test-suite>

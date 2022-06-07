@@ -1,0 +1,44 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=2,
+  suite_tests=2,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=6,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue33493.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='AddTwoNumbers',
+      result='skipped',
+      message='No matching step definition found for one or more steps.\nusing '
+        'System;\nusing TechTalk.SpecFlow;\n\nnamespace MyNamespace\n{\n    '
+        '[Binding]\n    public class StepDefinitions\n    {\n        '
+        '[Given(@"I have entered (.*) into the calculator")]\npublic void '
+        'GivenIHaveEnteredIntoTheCalculator(int p0)\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n\n        [When(@"I press '
+        'add")]\npublic void WhenIPressAdd()\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n\n        [Then(@"the result '
+        'should be (.*) on the screen")]\npublic void '
+        'ThenTheResultShouldBeOnTheScreen(int p0)\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n    }\n}\n',
+      content=None,
+      time=0.186579
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue33493.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='SubSmokeTest("Geo","Geonw","dev1234567",System.String[])',
+      result='success',
+      message=None,
+      content=None,
+      time=6.40203
+    )
+  ]
+)
