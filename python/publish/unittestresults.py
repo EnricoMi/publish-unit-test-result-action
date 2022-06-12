@@ -150,7 +150,8 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
 @dataclass(frozen=True)
 class UnitTestRunResults:
     files: int
-    errors: List[ParseError]
+    # when deserialized from dict, this is a list of dicts
+    errors: Union[List[ParseError], List[Mapping[str, Any]]]
     suites: int
     duration: int
 
@@ -230,9 +231,17 @@ class UnitTestRunResults:
 
 
 def patch_ne(orig_ne):
+    def dict_errors(results: UnitTestRunResults) -> List[Mapping[str, Any]]:
+        errors = results.errors
+        if len(errors) and isinstance(errors[0], ParseError):
+            errors = [dataclasses.asdict(error) for error in errors]
+        return errors
+
     def ne_without_duration_and_commit(self: UnitTestRunResults, other) -> bool:
         if isinstance(other, UnitTestRunResults):
-            other = dataclasses.replace(other, duration=self.duration, commit=self.commit)
+            other = dataclasses.replace(other, errors=dict_errors(other), duration=self.duration, commit=self.commit)
+        if self.errors:
+            self = dataclasses.replace(self, errors=dict_errors(self))
         return orig_ne(self, other)
 
     return ne_without_duration_and_commit

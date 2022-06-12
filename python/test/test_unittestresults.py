@@ -500,6 +500,15 @@ class TestUnitTestResults(unittest.TestCase):
         with self.subTest(different_in='type'):
             self.assertEqual(True, stats != object())
 
+        stats = create_unit_test_run_results(errors=errors)
+        with self.subTest(different_in='error instance'):
+            self.assertEqual(False, stats != create_unit_test_run_results(errors=[dataclasses.replace(error) for error in errors]))
+
+        with self.subTest(different_in='error dict'):
+            other = create_unit_test_run_results(errors=errors_dict)
+            self.assertEqual(False, stats != other)
+            self.assertEqual(False, other != stats)
+
     def unit_test_run_results_has_failures(self):
         def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
             return create_unit_test_run_results(errors=errors, tests_fail=tests_fail, tests_error=tests_error, runs_fail=runs_fail, runs_error=runs_error)
