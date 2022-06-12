@@ -529,7 +529,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_comment_compare_earlier(self):
-        pr = mock.MagicMock()
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
@@ -574,25 +574,15 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(1, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
         self.assertEqual(('## title\nbody', ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('number.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('create_issue_comment().html_url.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
     def test_publish_comment_compare_earlier_with_restricted_unicode(self):
-        pr = mock.MagicMock()
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock(html_url='html://url')
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
@@ -655,7 +645,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(1, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
@@ -706,16 +696,6 @@ class TestPublisher(unittest.TestCase):
                           f'{expected_digest}', ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('number.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('create_issue_comment().html_url.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
     def test_publish_comment_compare_with_itself(self):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
@@ -742,7 +722,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(0, len(mock_calls))
 
     def test_publish_comment_compare_with_None(self):
-        pr = mock.MagicMock()
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
@@ -778,25 +758,15 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(3, len(mock_calls))
+        self.assertEqual(1, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
         self.assertEqual(('## title\nbody', ), args)
         self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('number.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('create_issue_comment().html_url.__str__', method)
-        self.assertEqual((), args)
-        self.assertEqual({}, kwargs)
-
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
-        pr = mock.MagicMock()
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         lc = mock.MagicMock(body='latest comment') if one_exists else None
         stats = self.stats
@@ -842,27 +812,12 @@ class TestPublisher(unittest.TestCase):
             self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
-        self.assertEqual(1 if one_exists else 3, len(mock_calls))
+        self.assertEqual(0 if one_exists else 1, len(mock_calls))
 
-        if one_exists:
-            (method, args, kwargs) = mock_calls[0]
-            self.assertEqual('number.__str__', method)
-            self.assertEqual((), args)
-            self.assertEqual({}, kwargs)
-        else:
+        if not one_exists:
             (method, args, kwargs) = mock_calls[0]
             self.assertEqual('create_issue_comment', method)
             self.assertEqual(('## title\nbody', ), args)
-            self.assertEqual({}, kwargs)
-
-            (method, args, kwargs) = mock_calls[1]
-            self.assertEqual('number.__str__', method)
-            self.assertEqual((), args)
-            self.assertEqual({}, kwargs)
-
-            (method, args, kwargs) = mock_calls[2]
-            self.assertEqual('create_issue_comment().html_url.__str__', method)
-            self.assertEqual((), args)
             self.assertEqual({}, kwargs)
 
     def test_publish_comment_with_reuse_comment_none_existing(self):
