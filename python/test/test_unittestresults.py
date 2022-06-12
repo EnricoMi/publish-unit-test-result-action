@@ -18,7 +18,8 @@ def create_unit_test_run_results(files=1,
                                  suites=2,
                                  duration=3,
                                  tests=22, tests_succ=4, tests_skip=5, tests_fail=6, tests_error=7,
-                                 runs=38, runs_succ=8, runs_skip=9, runs_fail=10, runs_error=11) -> UnitTestRunResults:
+                                 runs=38, runs_succ=8, runs_skip=9, runs_fail=10, runs_error=11,
+                                 commit='commit') -> UnitTestRunResults:
     return UnitTestRunResults(
         files=files,
         errors=list(errors),
@@ -26,7 +27,7 @@ def create_unit_test_run_results(files=1,
         duration=duration,
         tests=tests, tests_succ=tests_succ, tests_skip=tests_skip, tests_fail=tests_fail, tests_error=tests_error,
         runs=runs, runs_succ=runs_succ, runs_skip=runs_skip, runs_fail=runs_fail, runs_error=runs_error,
-        commit='commit'
+        commit=commit
     )
 
 
@@ -491,9 +492,13 @@ class TestUnitTestResults(unittest.TestCase):
                                       ('runs success', create_other(runs_succ=stats.runs_succ+1), True),
                                       ('runs skips', create_other(runs_skip=stats.runs_skip+1), True),
                                       ('runs failures', create_other(runs_fail=stats.runs_fail+1), True),
-                                      ('runs errors', create_other(runs_error=stats.runs_error+1), True)]:
+                                      ('runs errors', create_other(runs_error=stats.runs_error+1), True),
+                                      ('commit', create_other(commit='other'), False)]:
             with self.subTest(different_in=diff):
                 self.assertEqual(stats != other, expected, msg=diff)
+
+        with self.subTest(different_in='type'):
+            self.assertEqual(True, stats != object())
 
     def unit_test_run_results_has_failures(self):
         def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:

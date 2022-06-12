@@ -461,7 +461,7 @@ class Publisher:
         # are we required to create a comment on this PR?
         earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
         if not self.require_comment(stats_with_delta, earlier_stats, test_changes):
-            logger.info(f'No comment required as comment_on condition {self._settings.comment_conditions} is not met')
+            logger.info(f'No comment required as comment_on condition {", ".join(self._settings.comment_conditions)} is not met')
             return
 
         details_url = check_run.html_url if check_run else None

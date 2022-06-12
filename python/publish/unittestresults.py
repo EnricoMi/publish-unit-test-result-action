@@ -229,16 +229,17 @@ class UnitTestRunResults:
         )
 
 
-def patch_ne_duration(orig_ne):
-    def ne_without_duration(self, other) -> bool:
-        other = dataclasses.replace(other, duration=self.duration)
+def patch_ne(orig_ne):
+    def ne_without_duration_and_commit(self: UnitTestRunResults, other) -> bool:
+        if isinstance(other, UnitTestRunResults):
+            other = dataclasses.replace(other, duration=self.duration, commit=self.commit)
         return orig_ne(self, other)
 
-    return ne_without_duration
+    return ne_without_duration_and_commit
 
 
 # patch UnitTestRunResults.__ne__ to not include duration
-UnitTestRunResults.__ne__ = patch_ne_duration(UnitTestRunResults.__ne__)
+UnitTestRunResults.__ne__ = patch_ne(UnitTestRunResults.__ne__)
 
 
 Numeric = Mapping[str, int]
