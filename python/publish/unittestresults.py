@@ -292,10 +292,10 @@ class UnitTestRunDeltaResults:
 
     def without_delta(self) -> UnitTestRunResults:
         def v(value: Numeric) -> int:
-            return value.get('number')
+            return value['number']
 
         def d(value: Numeric) -> int:
-            return value.get('duration')
+            return value['duration']
 
         return UnitTestRunResults(files=v(self.files), errors=self.errors, suites=v(self.suites), duration=d(self.duration),
                                   tests=v(self.tests), tests_succ=v(self.tests_succ), tests_skip=v(self.tests_skip), tests_fail=v(self.tests_fail), tests_error=v(self.tests_error),
