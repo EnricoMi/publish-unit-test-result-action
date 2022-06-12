@@ -288,6 +288,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
     annotations = get_annotations_config(options, event)
 
+    comment_on = get_var('COMMENT_ON', options) or comment_condition_always
+    comment_on = {comment_condition.strip() for comment_condition in comment_on.split(',')}
+
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
     # here we decide that we want to fail on errors when we fail on test failures, like log level escalation
@@ -320,7 +323,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if comment_on_pr else comment_mode_off),
-        comment_condition=get_var('COMMENT_ON', options) or comment_condition_always,
+        comment_conditions=comment_on,
         job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
@@ -338,7 +341,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
-    check_var(settings.comment_condition, 'COMMENT_ON', 'Comment condition', comment_conditions)
+    check_var(list(settings.comment_conditions), 'COMMENT_ON', 'Comment conditions', list(comment_conditions))
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)

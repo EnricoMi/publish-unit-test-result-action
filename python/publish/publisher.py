@@ -4,7 +4,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Any, Optional, Tuple, Mapping, Dict, Union
+from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union
 from copy import deepcopy
 
 from github import Github, GithubException
@@ -47,7 +47,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
-    comment_condition: str
+    comment_conditions: Set[str]
     job_summary: bool
     compare_earlier: bool
     pull_request_build: str
@@ -451,17 +451,17 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        # we need to fetch the latest comment if comment_condition != comment_condition_always
+        # we need to fetch the latest comment if comment_condition_always not in comment_conditions
         # or self._settings.comment_mode == comment_mode_update
         latest_comment = None
-        if self._settings.comment_condition != comment_condition_always or self._settings.comment_mode == comment_mode_update:
+        if comment_condition_always not in self._settings.comment_conditions or self._settings.comment_mode == comment_mode_update:
             latest_comment = self.get_latest_comment(pull_request)
         latest_comment_body = latest_comment.body if latest_comment else None
 
         # are we required to create a comment on this PR?
         earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
         if not self.require_comment(stats_with_delta, earlier_stats, test_changes):
-            logger.info(f'No comment required as comment_on condition {self._settings.comment_condition} is not met')
+            logger.info(f'No comment required as comment_on condition {self._settings.comment_conditions} is not met')
             return
 
         details_url = check_run.html_url if check_run else None
@@ -480,18 +480,18 @@ class Publisher:
                         stats: UnitTestRunResultsOrDeltaResults,
                         earlier_stats: Optional[UnitTestRunResults],
                         test_changes: SomeTestChanges) -> bool:
-        return (self._settings.comment_condition == comment_condition_always
+        return (comment_condition_always in self._settings.comment_conditions
                 or
-                self._settings.comment_condition == comment_condition_changes and (
+                comment_condition_changes in self._settings.comment_conditions and (
                         earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats) or
                         not stats.is_delta or stats.has_changes or
                         test_changes.has_changes)
                 or
-                self._settings.comment_condition == comment_condition_failures and (
-                        earlier_stats is not None and (earlier_stats.has_failures or earlier_stats.has_errors) or
-                        stats.has_failures or stats.has_errors)
+                comment_condition_failures in self._settings.comment_conditions and (
+                        earlier_stats is not None and earlier_stats.has_failures or
+                        stats.has_failures)
                 or
-                self._settings.comment_condition == comment_condition_errors and (
+                comment_condition_errors in self._settings.comment_conditions and (
                         earlier_stats is not None and earlier_stats.has_errors or
                         stats.has_errors)
                 )

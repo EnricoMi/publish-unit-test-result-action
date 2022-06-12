@@ -5,12 +5,13 @@ import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List
-
+from itertools import combinations
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
-    comment_condition_always, comment_conditions, hide_comments_modes, pull_request_build_modes, punctuation_space
+    comment_condition_always, comment_condition_changes, comment_condition_failures, comment_condition_errors, \
+    comment_conditions, hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -146,7 +147,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_create,
-                     comment_condition=comment_condition_always,
+                     comment_conditions={comment_condition_always},
                      job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
@@ -179,7 +180,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
-            comment_condition=comment_condition,
+            comment_conditions=comment_conditions,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -332,15 +333,19 @@ class Test(unittest.TestCase):
         self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
 
     def test_get_settings_comment_condition(self):
-        for cond in comment_conditions:
-            with self.subTest(condition=cond):
-                self.do_test_get_settings(COMMENT_ON=cond, expected=self.get_settings(comment_condition=cond))
+        with self.subTest(condition=None):
+            self.do_test_get_settings(COMMENT_ON=None, expected=self.get_settings(comment_conditions={comment_condition_always}))
 
-        self.do_test_get_settings(COMMENT_ON=None, expected=self.get_settings(comment_condition=comment_condition_always))
+        for cond in [cond
+                     for card in range(1, len(comment_conditions)+1)
+                     for cond in combinations(comment_conditions, card)]:
+            with self.subTest(condition=', '.join(cond)):
+                self.do_test_get_settings(COMMENT_ON=', '.join(cond), expected=self.get_settings(comment_conditions=set(cond)))
 
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(COMMENT_ON='condition')
-        self.assertEqual(f"Value 'condition' is not supported for variable COMMENT_ON, expected: always, changes, test failures, test errors", str(re.exception))
+        with self.subTest(condition='unknown'):
+            with self.assertRaises(RuntimeError) as re:
+                self.do_test_get_settings(COMMENT_ON='condition')
+            self.assertEqual(f"Some values in 'condition' are not supported for variable COMMENT_ON, allowed: always, changes, failures, errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'
@@ -475,7 +480,7 @@ class Test(unittest.TestCase):
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='files',
                 COMMENT_TITLE='title',  # defaults to check name
-                COMMENT_MODE='create new',  # true unless 'false'
+                COMMENT_MODE='create new',
                 JOB_SUMMARY='true',
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'

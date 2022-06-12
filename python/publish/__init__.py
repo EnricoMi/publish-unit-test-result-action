@@ -29,8 +29,8 @@ comment_modes = [
 
 comment_condition_always = 'always'
 comment_condition_changes = 'changes'
-comment_condition_failures = 'test failures'
-comment_condition_errors = 'test errors'
+comment_condition_failures = 'failures'
+comment_condition_errors = 'errors'
 comment_conditions = [
     comment_condition_always,
     comment_condition_changes,

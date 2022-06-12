@@ -22,7 +22,7 @@ inputs:
     description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
     required: false
   comment_on:
-    description: 'Create pull request comments only in some cases: When there are "changes" in the number of tests, failures or runs, when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
+    description: 'Create pull request comments only in some cases. This is a comma-separated list of any of the following values: "changes" - when there are changes in the number of tests, failures or runs (compared to target branch), "failures` - when test failures exist, "errors" - when test errors exist. Example: "changes, failures, errors". Defaults to `always`.'
     default: 'always'
     required: false
   fail_on:
@@ -83,7 +83,7 @@ inputs:
     default: 'all tests, skipped tests'
     required: false
   check_run_annotations_branch:
-    description: 'Adds check run annotations only on given branches. Comma separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
+    description: 'Adds check run annotations only on given branches. Comma-separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
