@@ -127,6 +127,7 @@ class TestUnitTestResults(unittest.TestCase):
         )
         self.assertEqual(expected, actual)
 
+    # results from dicts usually do not contain errors
     def test_unit_test_run_results_from_dict(self):
         actual = UnitTestRunResults.from_dict(dict(
             files=1, errors=errors_dict, suites=2, duration=3,
@@ -480,7 +481,7 @@ class TestUnitTestResults(unittest.TestCase):
         create_other = create_unit_test_run_results
         for diff, other, expected in [('nothing', create_other(), False),
                                       ('files', create_other(files=stats.files+1), True),
-                                      ('errors', create_other(errors=errors), True),
+                                      ('errors', create_other(errors=errors), False),
                                       ('suites', create_other(suites=stats.suites+1), True),
                                       ('duration', create_other(duration=stats.duration+1), False),
                                       ('tests', create_other(tests=stats.tests+1), True),
@@ -499,15 +500,6 @@ class TestUnitTestResults(unittest.TestCase):
 
         with self.subTest(different_in='type'):
             self.assertEqual(True, stats != object())
-
-        stats = create_unit_test_run_results(errors=errors)
-        with self.subTest(different_in='error instance'):
-            self.assertEqual(False, stats != create_unit_test_run_results(errors=[dataclasses.replace(error) for error in errors]))
-
-        with self.subTest(different_in='error dict'):
-            other = create_unit_test_run_results(errors=errors_dict)
-            self.assertEqual(False, stats != other)
-            self.assertEqual(False, other != stats)
 
     def unit_test_run_results_has_failures(self):
         def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
