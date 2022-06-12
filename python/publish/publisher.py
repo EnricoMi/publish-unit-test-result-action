@@ -480,21 +480,47 @@ class Publisher:
                         stats: UnitTestRunResultsOrDeltaResults,
                         earlier_stats: Optional[UnitTestRunResults],
                         test_changes: SomeTestChanges) -> bool:
-        return (comment_condition_always in self._settings.comment_conditions
-                or
-                comment_condition_changes in self._settings.comment_conditions and (
-                        earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats) or
-                        not stats.is_delta or stats.has_changes or
-                        test_changes.has_changes)
-                or
-                comment_condition_failures in self._settings.comment_conditions and (
-                        earlier_stats is not None and earlier_stats.has_failures or
-                        stats.has_failures)
-                or
-                comment_condition_errors in self._settings.comment_conditions and (
-                        earlier_stats is not None and earlier_stats.has_errors or
-                        stats.has_errors)
-                )
+        if comment_condition_always in self._settings.comment_conditions:
+            logger.debug(f'Comment required as condition contains {comment_condition_always}')
+            return True
+
+        if comment_condition_changes in self._settings.comment_conditions:
+            if earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats):
+                logger.debug(f'Comment required as condition contains {comment_condition_changes} and stats different to earlier')
+                logger.debug(f'earlier: {earlier_stats}')
+                logger.debug(f'current: {stats}')
+                if stats.is_delta:
+                    logger.debug(f'current without delta: {stats.without_delta()}')
+                return True
+            if not stats.is_delta:
+                logger.debug(f'Comment required as condition contains {comment_condition_changes} and no delta available')
+                return True
+            if stats.has_changes:
+                logger.debug(f'Comment required as condition contains {comment_condition_changes} and changes exist')
+                logger.debug(f'current: {stats}')
+                return True
+            if test_changes.has_changes:
+                logger.debug(f'Comment required as condition contains {comment_condition_changes} and tests changed')
+                logger.debug(f'tests: {test_changes}')
+                return True
+
+        if comment_condition_failures in self._settings.comment_conditions:
+            if earlier_stats is not None and earlier_stats.has_failures:
+                logger.debug(f'Comment required as condition contains {comment_condition_failures} and earlier failures exist')
+                return True
+            if stats.has_failures:
+                logger.debug(f'Comment required as condition contains {comment_condition_failures} and failures exist')
+                return True
+
+        if comment_condition_errors in self._settings.comment_conditions:
+            if earlier_stats is not None and earlier_stats.has_errors:
+                logger.debug(f'Comment required as condition contains {comment_condition_errors} and earlier errors exist')
+                return True
+            if stats.has_errors:
+                logger.debug(f'Comment required as condition contains {comment_condition_errors} and errors exist')
+                return True
+
+        return False
 
     def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
