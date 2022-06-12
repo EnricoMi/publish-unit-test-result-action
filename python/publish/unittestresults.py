@@ -230,12 +230,12 @@ class UnitTestRunResults:
 
 
 def patch_ne(orig_ne):
-    def ne_without_duration_and_commit(self: UnitTestRunResults, other) -> bool:
+    def patched_ne(self: UnitTestRunResults, other) -> bool:
         if isinstance(other, UnitTestRunResults):
             other = dataclasses.replace(other, errors=self.errors, duration=self.duration, commit=self.commit)
         return orig_ne(self, other)
 
-    return ne_without_duration_and_commit
+    return patched_ne
 
 
 # patch UnitTestRunResults.__ne__ to not include duration
