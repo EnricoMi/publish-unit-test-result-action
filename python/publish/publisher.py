@@ -451,7 +451,7 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        # we need fetch the latest comment if comment_condition != comment_condition_always
+        # we need to fetch the latest comment if comment_condition != comment_condition_always
         # or self._settings.comment_mode == comment_mode_update
         latest_comment = None
         if self._settings.comment_condition != comment_condition_always or self._settings.comment_mode == comment_mode_update:

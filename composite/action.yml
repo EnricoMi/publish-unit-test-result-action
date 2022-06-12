@@ -19,10 +19,10 @@ inputs:
     default: 'Unit Test Results'
     required: false
   comment_title:
-    description: 'Title of PR comments, defaults to value of check_name input'
+    description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
     required: false
   comment_on:
-    description: 'Create PR comments only in some cases: When there are "changes" in the number of tests, failures or runs, when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
+    description: 'Create pull request comments only in some cases: When there are "changes" in the number of tests, failures or runs, when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
     default: 'always'
     required: false
   fail_on:
@@ -54,7 +54,7 @@ inputs:
     description: 'Deprecated, please use comment_mode instead!'
     required: false
   comment_mode:
-    description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
+    description: 'Control pull request comments: off - disable pull request comments, create new - create comments on PRs, each time a new one, update last - create comment on pull request, reuse an existing one'
     default: 'update last'
     required: false
   job_summary:
@@ -76,7 +76,7 @@ inputs:
     description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
     required: false
   test_changes_limit:
-    description: 'Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of 0. The default is 10.'
+    description: 'Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of 0. The default is 10.'
     required: false
   check_run_annotations:
     description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
