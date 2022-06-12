@@ -169,6 +169,10 @@ class UnitTestRunResults:
     commit: str
 
     @property
+    def is_delta(self) -> bool:
+        return False
+
+    @property
     def has_failures(self):
         return self.tests_fail > 0 or self.runs_fail > 0
 
@@ -225,6 +229,18 @@ class UnitTestRunResults:
         )
 
 
+def patch_ne_duration(orig_ne):
+    def ne_without_duration(self, other) -> bool:
+        other = dataclasses.replace(other, duration=self.duration)
+        return orig_ne(self, other)
+
+    return ne_without_duration
+
+
+# patch UnitTestRunResults.__ne__ to not include duration
+UnitTestRunResults.__ne__ = patch_ne_duration(UnitTestRunResults.__ne__)
+
+
 Numeric = Mapping[str, int]
 
 
@@ -252,15 +268,39 @@ class UnitTestRunDeltaResults:
     reference_type: str
     reference_commit: str
 
-    def to_dict(self) -> Dict[str, Any]:
-        return dataclasses.asdict(self)
+    @property
+    def is_delta(self) -> bool:
+        return True
 
     @property
-    def has_changes(self):
+    def has_changes(self) -> bool:
         return (any([field.get('delta')
                      for field in [self.files, self.suites,
                                    self.tests, self.tests_succ, self.tests_skip, self.tests_fail, self.tests_error,
                                    self.runs, self.runs_succ, self.runs_skip, self.runs_fail, self.runs_error]]))
+
+    @property
+    def has_failures(self):
+        return self.tests_fail.get('number') > 0 or self.runs_fail.get('number') > 0
+
+    @property
+    def has_errors(self):
+        return len(self.errors) > 0 or self.tests_error.get('number') > 0 or self.runs_error.get('number') > 0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return dataclasses.asdict(self)
+
+    def without_delta(self) -> UnitTestRunResults:
+        def v(value: Numeric) -> int:
+            return value.get('number')
+
+        def d(value: Numeric) -> int:
+            return value.get('duration')
+
+        return UnitTestRunResults(files=v(self.files), errors=self.errors, suites=v(self.suites), duration=d(self.duration),
+                                  tests=v(self.tests), tests_succ=v(self.tests_succ), tests_skip=v(self.tests_skip), tests_fail=v(self.tests_fail), tests_error=v(self.tests_error),
+                                  runs=v(self.runs), runs_succ=v(self.runs_succ), runs_skip=v(self.runs_skip), runs_fail=v(self.runs_fail), runs_error=v(self.runs_error),
+                                  commit=self.commit)
 
 
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]

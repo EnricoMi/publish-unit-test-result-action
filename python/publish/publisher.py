@@ -23,7 +23,8 @@ from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_late
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
-from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, get_stats_delta
+from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
+    UnitTestRunResultsOrDeltaResults, get_stats_delta
 
 
 @dataclass(frozen=True)
@@ -266,6 +267,10 @@ class Publisher:
         for line in summary.split('\n'):
             logger.debug(f'summary: {line}')
 
+        return Publisher.get_stats_from_summary_md(summary)
+
+    @staticmethod
+    def get_stats_from_summary_md(summary: str) -> Optional[UnitTestRunResults]:
         pos = summary.index(digest_header) if digest_header in summary else None
         if pos:
             digest = summary[pos + len(digest_header):]
@@ -454,8 +459,9 @@ class Publisher:
         latest_comment_body = latest_comment.body if latest_comment else None
 
         # are we required to create a comment on this PR?
-        if not self.require_comment(stats, stats_with_delta, test_changes, latest_comment_body):
-            logger.info(f'No comment required as comment_on is {self._settings.comment_condition}')
+        earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
+        if not self.require_comment(stats_with_delta, earlier_stats, test_changes):
+            logger.info(f'No comment required as comment_on condition {self._settings.comment_condition} is not met')
             return
 
         details_url = check_run.html_url if check_run else None
@@ -470,54 +476,25 @@ class Publisher:
             comment = pull_request.create_issue_comment(body)
             logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
 
-    @staticmethod
-    def comment_has_changes(comment_body: Optional[str]) -> bool:
-        if comment_body is None:
-            return False
-        end = comment_body.lower().find('results for commit')
-        if end < 0:
-            return False
-        comment_body = comment_body[:end]
-
-        # remove links
-        comment_body = re.sub(r'\([^)]*\)', '<link>', comment_body)
-        # replace ' ' with some non-whitespace string, it separates columns in the comment
-        comment_body = comment_body.replace(' ', '⋯')
-
-        m = re.search(r'[-+](\s*[0-9]+)+\s+(([^0-9\s])|\n)', comment_body)
-        return m is not None
-
-    @classmethod
-    def comment_has_failures(cls, comment_body: Optional[str]) -> bool:
-        return cls._comment_has(comment_body, r'\[:x:]')
-
-    @classmethod
-    def comment_has_errors(cls, comment_body: Optional[str]) -> bool:
-        return cls._comment_has(comment_body, r'(\[:fire:]|errors)')
-
-    @staticmethod
-    def _comment_has(comment_body: Optional[str], symbol: str) -> bool:
-        if comment_body is None:
-            return False
-
-        end = comment_body.lower().find('results for commit')
-        if end < 0:
-            return False
-        comment_body = comment_body[:end]
-
-        # we assume '00 ...' indicates multiple failures / errors (more than 99)
-        m = re.search(r'([0-9][0-9]|[1-9])\s' + symbol, comment_body)
-        return m is not None
-
     def require_comment(self,
-                        stats: UnitTestRunResults,
-                        stats_with_delta: UnitTestRunDeltaResults,
-                        test_changes: SomeTestChanges,
-                        comment_body: Optional[str]) -> bool:
-        return (self._settings.comment_condition == comment_condition_always or
-                self._settings.comment_condition == comment_condition_changes and (self.comment_has_changes(comment_body) or stats_with_delta is None or stats_with_delta.has_changes or test_changes.has_changes) or
-                self._settings.comment_condition == comment_condition_failures and (self.comment_has_failures(comment_body) or self.comment_has_errors(comment_body) or stats.has_failures or stats.has_errors) or
-                self._settings.comment_condition == comment_condition_errors and (self.comment_has_errors(comment_body) or stats.has_errors))
+                        stats: UnitTestRunResultsOrDeltaResults,
+                        earlier_stats: Optional[UnitTestRunResults],
+                        test_changes: SomeTestChanges) -> bool:
+        return (self._settings.comment_condition == comment_condition_always
+                or
+                self._settings.comment_condition == comment_condition_changes and (
+                        earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats) or
+                        not stats.is_delta or stats.has_changes or
+                        test_changes.has_changes)
+                or
+                self._settings.comment_condition == comment_condition_failures and (
+                        earlier_stats is not None and (earlier_stats.has_failures or earlier_stats.has_errors) or
+                        stats.has_failures or stats.has_errors)
+                or
+                self._settings.comment_condition == comment_condition_errors and (
+                        earlier_stats is not None and earlier_stats.has_errors or
+                        stats.has_errors)
+                )
 
     def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
