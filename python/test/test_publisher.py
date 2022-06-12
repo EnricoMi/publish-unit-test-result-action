@@ -17,11 +17,14 @@ from publish import comment_mode_create, comment_mode_update, comment_mode_off, 
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_list, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
-    duration_label_md, pull_request_build_mode_merge, punctuation_space
+    duration_label_md, pull_request_build_mode_merge, punctuation_space, \
+    get_long_summary_with_digest_md
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
     UnitTestCaseResults
+from test_unittestresults import create_unit_test_run_results
+
 
 errors = [ParseError('file', 'error', 1, 2)]
 
@@ -701,7 +704,7 @@ class TestPublisher(unittest.TestCase):
                           '```\n'
                           '</details>\n'
                           '\n'
-                          f'{expected_digest}', ), args)
+                          f'{expected_digest}\n', ), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_comment_compare_with_itself(self):
@@ -997,6 +1000,18 @@ class TestPublisher(unittest.TestCase):
         name = runs[0].name
         self.do_test_get_check_run_from_list(runs, expected)
 
+    def test_get_stats_from_summary_md(self):
+        results = create_unit_test_run_results()
+        summary = get_long_summary_with_digest_md(results, results, 'http://url')
+        actual = Publisher.get_stats_from_summary_md(summary)
+        self.assertEqual(results, actual)
+
+    def test_get_stats_from_summary_md_recycled(self):
+        summary = f'body\n\n{digest_header}H4sIAGpapmIC/1WMyw7CIBQFf6Vh7QK4FMGfMeQWEmJbDI9V479LI6DuzsxJ5iDOrzaR2wSXiaTi84ClRJN92CvSivXI5yX7vqeCWIX4iod/VsGGcMavf8LGGGILxrKfPaba7j3Ghvj0ROeWg86/NQzb5nMFIhCBgnbUzQAIVik+c6W1YU5KVPoqNF04teT1BvQuAoL9AAAA\n:recycle: This comment has been updated with latest results.'
+        actual = Publisher.get_stats_from_summary_md(summary)
+        self.assertIsNotNone(actual)
+        self.assertEqual(6, actual.tests)
+
     @staticmethod
     def mock_check_run(name: str, status: str, started_at: datetime, summary: str) -> mock.Mock:
         run = mock.MagicMock(status=status, started_at=started_at, output=mock.MagicMock(summary=summary))
@@ -1236,7 +1251,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n'.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': annotations
             }
         )
@@ -1302,7 +1317,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA=='.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n'.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': error_annotations + [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'},
@@ -1366,7 +1381,7 @@ class TestPublisher(unittest.TestCase):
                            '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WOSQqEMBBFryJ'
                            'Zu+g4tK2XkRAVCoc0lWQl3t3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq'
                            '2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zH'
-                           'dX73QAAAA==',
+                           'dX73QAAAA==\n',
                 'annotations': [
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
                     {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'},
@@ -1428,7 +1443,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
                     {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
                     # we expect the first 50 annotations in the create call
@@ -1461,7 +1476,7 @@ class TestPublisher(unittest.TestCase):
                            'H4sIAAAAAAAC/0WOSQqEMBBFryJZu+g4tK2XkRAVCoc0lWQl3t'
                            '3vULqr9z48alUDTb1XTaLTRPlI4YQM0EU2gdwCzIEYwjllAq2P'
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
-                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==',
+                           'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
                     {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
                     # for each edit we expect a batch of 50 annotations starting at start
@@ -1834,7 +1849,7 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
             '\n'
-            f'{expected_digest}'
+            f'{expected_digest}\n'
         )
 
     def test_publish_comment_not_required(self):
@@ -1875,7 +1890,7 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\n'
             '\n'
-            f'{expected_digest}'
+            f'{expected_digest}\n'
         )
 
     def test_publish_comment_without_compare(self):
@@ -1899,7 +1914,7 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\n'
             '\n'
-            f'{expected_digest}'
+            f'{expected_digest}\n'
         )
 
     def test_publish_comment_with_check_run_with_annotations(self):
@@ -1926,7 +1941,7 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
             '\n'
-            f'{expected_digest}'
+            f'{expected_digest}\n'
         )
 
     def test_publish_comment_with_check_run_without_annotations(self):
@@ -1955,7 +1970,7 @@ class TestPublisher(unittest.TestCase):
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
             '\n'
-            f'{expected_digest}'
+            f'{expected_digest}\n'
         )
 
     def test_get_base_commit_sha_none_event(self):

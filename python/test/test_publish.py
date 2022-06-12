@@ -1014,7 +1014,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
                                  'juzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0'
                                  'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
-                                 'K6buousrLZAAAA')
+                                 'K6buousrLZAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_multiple_runs(self):
         # makes gzipped digest deterministic
@@ -1038,7 +1038,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/03MwQqDMBAE0F+RnD24aiv6M0VShaVqZJOciv'
                                  '/e0brR28wbmK8ZeRq86TLKM+Mjh6OUKO8ofWC3oFaoGMI+1Zpf'
                                  'PloLeFzw4RXwTDD2PAGaBIOIE0gBkbjsf+0Z9Y6KBP87IoXzjk'
-                                 'qF+51188wBRdP2A3NU1srcAAAA')
+                                 'qF+51188wBRdP2A3NU1srcAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_test_errors(self):
         # makes gzipped digest deterministic
@@ -1062,7 +1062,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
                                  'x3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr'
                                  '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
-                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
+                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_parse_errors(self):
         # makes gzipped digest deterministic
@@ -1086,7 +1086,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/0XOwQ6CMBAE0F8hPXtgEVT8GdMUSDYCJdv2ZP'
                                  'x3psLW28zbZLIfM/E8BvOs6FKZkDj+SoMyJLGR/Yp6RcUh5lOr'
                                  '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
-                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA')
+                                 'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_delta(self):
         # makes gzipped digest deterministic
@@ -1115,7 +1115,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
                                  'juzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0'
                                  'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
-                                 'K6buousrLZAAAA')
+                                 'K6buousrLZAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_delta_and_parse_errors(self):
         # makes gzipped digest deterministic
@@ -1144,7 +1144,7 @@ class PublishTest(unittest.TestCase):
                                  'H4sIAAAAAAAC/02MywqAIBQFfyVct+kd/UyEJVzKjKuuon/vZF'
                                  'juzsyBOYWibbFiyIo8E9aTC1ACZs+TI7MDKyAO91x13KP1UkI0'
                                  'v1jpgGg/oSbaILpPLMyGYXoY9nvsPTPNvfzXAiexwGlLGq3JAe'
-                                 'K6buousrLZAAAA')
+                                 'K6buousrLZAAAA\n')
 
     def test_get_long_summary_with_digest_md_with_delta_results_only(self):
         with self.assertRaises(ValueError) as context:

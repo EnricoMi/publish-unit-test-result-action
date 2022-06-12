@@ -271,9 +271,12 @@ class Publisher:
 
     @staticmethod
     def get_stats_from_summary_md(summary: str) -> Optional[UnitTestRunResults]:
-        pos = summary.index(digest_header) if digest_header in summary else None
-        if pos:
-            digest = summary[pos + len(digest_header):]
+        start = summary.index(digest_header) if digest_header in summary else None
+        if start:
+            digest = summary[start + len(digest_header):]
+            end = digest.index('\n') if '\n' in digest else None
+            if end:
+                digest = digest[:end]
             logger.debug(f'digest: {digest}')
             stats = get_stats_from_digest(digest)
             logger.debug(f'stats: {stats}')
