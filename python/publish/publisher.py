@@ -486,21 +486,22 @@ class Publisher:
 
         if comment_condition_changes in self._settings.comment_conditions:
             if earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats):
-                logger.debug(f'Comment required as condition contains {comment_condition_changes} and stats different to earlier')
+                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and stats different to earlier')
                 logger.debug(f'earlier: {earlier_stats}')
-                logger.debug(f'current: {stats}')
                 if stats.is_delta:
-                    logger.debug(f'current without delta: {stats.without_delta()}')
+                    logger.debug(f'current: {stats.without_delta()}')
+                else:
+                    logger.debug(f'current: {stats}')
                 return True
             if not stats.is_delta:
-                logger.debug(f'Comment required as condition contains {comment_condition_changes} and no delta available')
+                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and no delta available')
                 return True
             if stats.has_changes:
-                logger.debug(f'Comment required as condition contains {comment_condition_changes} and changes exist')
+                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and changes exist')
                 logger.debug(f'current: {stats}')
                 return True
             if test_changes.has_changes:
-                logger.debug(f'Comment required as condition contains {comment_condition_changes} and tests changed')
+                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and tests changed')
                 logger.debug(f'tests: {test_changes}')
                 return True
 
