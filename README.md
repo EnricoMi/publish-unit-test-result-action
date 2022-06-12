@@ -198,7 +198,7 @@ The list of most notable options:
 |:-----|:-----:|:----------|
 |`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
-|`comment_on`|`always`|Create PR comments only in some cases: When number of tests, failures or runs "changes", when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".|
+|`comment_on`|`always`|Create PR comments only in some cases: When there are `"changes"` in the number of tests, failures or runs, when `"test failures"` exist (includes errors), or when (only) `"test errors"` exist. Defaults to `"always"`.|
 |`comment_mode`|`update last`|The action posts comments to a pull request that is associated with the commit. Set to `create new` to create a new comment on each commit, `update last` to create only one comment and update later on, `off` to not create pull request comments.|
 |`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|

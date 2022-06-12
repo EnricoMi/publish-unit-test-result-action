@@ -22,7 +22,7 @@ inputs:
     description: 'Title of PR comments, defaults to value of check_name input'
     required: false
   comment_on:
-    description: 'Create PR comments only in some cases: When number of tests, failures or runs "changes", when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
+    description: 'Create PR comments only in some cases: When there are "changes" in the number of tests, failures or runs, when "test failures" exist (includes errors), or when (only) "test errors" exist. Defaults to "always".'
     default: 'always'
     required: false
   fail_on:
