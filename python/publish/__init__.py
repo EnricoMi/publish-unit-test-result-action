@@ -685,7 +685,10 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
 
 
 def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
-                                    digest_stats: Optional[UnitTestRunResults] = None) -> str:
+                                    digest_stats: Optional[UnitTestRunResults] = None,
+                                    details_url: Optional[str] = None,
+                                    test_changes: Optional[SomeTestChanges] = None,
+                                    test_list_changes_limit: Optional[int] = None) -> str:
     """
     Provides the summary of stats with digest of digest_stats if given, otherwise
     digest of stats. In that case, stats must be UnitTestRunResults.
@@ -696,7 +699,7 @@ def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
     """
     if digest_stats is None and isinstance(stats, UnitTestRunDeltaResults):
         raise ValueError('stats must be UnitTestRunResults when no digest_stats is given')
-    summary = get_long_summary_md(stats)
+    summary = get_long_summary_md(stats, details_url, test_changes, test_list_changes_limit)
     digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
     return f'{summary}\n{digest_header}{digest}'
 

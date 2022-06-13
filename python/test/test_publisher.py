@@ -453,7 +453,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
         bcr = mock.MagicMock()
-        bs = mock.MagicMock()
+        bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
         settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
@@ -464,7 +464,7 @@ class TestPublisher(unittest.TestCase):
         publisher.get_stats_delta = mock.Mock(return_value=bs)
         publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
-        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
@@ -537,7 +537,12 @@ class TestPublisher(unittest.TestCase):
             ['class ‑ test \\U0001d482', 'class ‑ test \\U0001d483', 'class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485'],
             ['class ‑ skipped \\U0001d484', 'class ‑ skipped \\U0001d485']
         ))
-        Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+            expected_digest = f'{digest_header}{get_digest_from_stats(stats)}'
+
         mock_calls = publisher.mock_calls
 
         self.assertEqual(4, len(mock_calls))
@@ -609,7 +614,9 @@ class TestPublisher(unittest.TestCase):
                           '```\n'
                           'class ‑ skipped \\U0001d486\n'
                           '```\n'
-                          '</details>\n', ), args)
+                          '</details>\n'
+                          '\n'
+                          f'{expected_digest}', ), args)
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[1]
@@ -658,7 +665,7 @@ class TestPublisher(unittest.TestCase):
         publisher.get_check_run = mock.Mock(return_value=None)
         publisher.get_base_commit_sha = mock.Mock(return_value=None)
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
-        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
@@ -707,7 +714,7 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
         publisher.reuse_comment = mock.Mock(return_value=one_exists)
-        with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
@@ -1770,7 +1777,10 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         publisher = Publisher(settings, gh, gha)
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr)
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher.publish_comment(settings.comment_title, self.stats, pr)
+            expected_digest = f'{digest_header}{get_digest_from_stats(self.stats)}'
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -1779,6 +1789,8 @@ class TestPublisher(unittest.TestCase):
             f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
+            '\n'
+            f'{expected_digest}'
         )
 
     def test_publish_comment_without_base(self):
@@ -1791,7 +1803,11 @@ class TestPublisher(unittest.TestCase):
         compare = mock.MagicMock()
         compare.merge_base_commit.sha = None
         repo.compare = mock.Mock(return_value=compare)
-        publisher.publish_comment(settings.comment_title, self.stats, pr)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher.publish_comment(settings.comment_title, self.stats, pr)
+            expected_digest = f'{digest_header}{get_digest_from_stats(self.stats)}'
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -1800,6 +1816,8 @@ class TestPublisher(unittest.TestCase):
             f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
+            '\n'
+            f'{expected_digest}'
         )
 
     def test_publish_comment_without_compare(self):
@@ -1810,7 +1828,10 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         publisher = Publisher(settings, gh, gha)
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr)
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher.publish_comment(settings.comment_title, self.stats, pr)
+            expected_digest = f'{digest_header}{get_digest_from_stats(self.stats)}'
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -1819,6 +1840,8 @@ class TestPublisher(unittest.TestCase):
             f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
+            '\n'
+            f'{expected_digest}'
         )
 
     def test_publish_comment_with_check_run_with_annotations(self):
@@ -1830,7 +1853,10 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh, gha)
 
-        publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher.publish_comment(settings.comment_title, self.stats, pr, cr)
+            expected_digest = f'{digest_header}{get_digest_from_stats(self.stats)}'
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -1841,6 +1867,8 @@ class TestPublisher(unittest.TestCase):
             'For more details on these failures and errors, see [this check](http://check-run.url).\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
+            '\n'
+            f'{expected_digest}'
         )
 
     def test_publish_comment_with_check_run_without_annotations(self):
@@ -1855,7 +1883,11 @@ class TestPublisher(unittest.TestCase):
         stats = dict(self.stats.to_dict())
         stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)
         stats = UnitTestRunResults.from_dict(stats)
-        publisher.publish_comment(settings.comment_title, stats, pr, cr)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher.publish_comment(settings.comment_title, stats, pr, cr)
+            expected_digest = f'{digest_header}{get_digest_from_stats(stats)}'
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
@@ -1864,6 +1896,8 @@ class TestPublisher(unittest.TestCase):
             f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u20030 {failed_tests_label_md} \u2006-\u200a4\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
+            '\n'
+            f'{expected_digest}'
         )
 
     def test_get_base_commit_sha_none_event(self):
