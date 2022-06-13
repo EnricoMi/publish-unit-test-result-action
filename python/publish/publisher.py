@@ -444,7 +444,7 @@ class Publisher:
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
         details_url = check_run.html_url if check_run else None
-        summary = get_long_summary_md(stats_with_delta, details_url, test_changes, self._settings.test_changes_limit)
+        summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
         # reuse existing commend when comment_mode == comment_mode_update
