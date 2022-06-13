@@ -6,7 +6,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union, Tuple, Any
+from typing import List, Optional, Union, Mapping, Tuple, Any
 
 import github
 import humanize
@@ -16,8 +16,7 @@ from urllib3.util.retry import Retry
 import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_update, comment_modes, comment_condition_always, comment_conditions, \
-    punctuation_space
+    comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.progress import progress_logger
@@ -260,6 +259,24 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
             gha.warning(message)
 
 
+def available_values(values: List[str]) -> str:
+    values = [f'"{val}"' for val in values]
+    return f"{', '.join(values[:-1])} or {values[-1]}"
+
+
+def deprecate_val(val: Optional[str], var: str, replacement_vals: Mapping[str, str], gha: Optional[GithubAction]):
+    if val in replacement_vals:
+        message = f'Value "{val}" for option {var.lower()} is deprecated!'
+        replacement = replacement_vals[val]
+        if replacement:
+            message = f'{message} Instead, use value "{replacement}".'
+
+        if gha is None:
+            logger.debug(message)
+        else:
+            gha.warning(message)
+
+
 def is_float(text: str) -> bool:
     return re.match('^[+-]?(([0-9]*\\.[0-9]+)|([0-9]+(\\.[0-9]?)?))$', text) is not None
 
@@ -287,9 +304,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
     comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
     annotations = get_annotations_config(options, event)
-
-    comment_on = get_var('COMMENT_ON', options) or comment_condition_always
-    comment_on = {comment_condition.strip() for comment_condition in comment_on.split(',')}
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
@@ -322,8 +336,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if comment_on_pr else comment_mode_off),
-        comment_conditions=comment_on,
+        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_always if comment_on_pr else comment_mode_off),
         job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
@@ -340,8 +353,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
-    check_var(list(settings.comment_conditions), 'COMMENT_ON', 'Comment conditions', list(comment_conditions))
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes + list(comment_modes_deprecated.keys()))
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
@@ -351,7 +363,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
-    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
+    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
+                  f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
+    deprecate_val(settings.comment_mode, 'COMMENT_MODE', comment_modes_deprecated, gha)
 
     return settings
 

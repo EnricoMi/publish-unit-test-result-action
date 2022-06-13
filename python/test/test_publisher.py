@@ -11,8 +11,8 @@ import github.CheckRun
 import mock
 from github import Github, GithubException
 
-from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_condition_always, \
-    comment_condition_changes, comment_condition_failures, comment_condition_errors, hide_comments_mode_off, \
+from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_mode_always, \
+    comment_mode_changes, comment_mode_failures, comment_mode_errors, hide_comments_mode_off, \
     hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_list, \
@@ -68,8 +68,7 @@ class TestPublisher(unittest.TestCase):
         return pr
 
     @staticmethod
-    def create_settings(comment_mode=comment_mode_create,
-                        comment_conditions={comment_condition_always},
+    def create_settings(comment_mode=comment_mode_always,
                         job_summary=True,
                         compare_earlier=True,
                         hide_comment_mode=hide_comments_mode_off,
@@ -101,7 +100,6 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
-            comment_conditions=comment_conditions,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -309,11 +307,11 @@ class TestPublisher(unittest.TestCase):
             Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='class ‑ test \\U0001d484')
         ], annotations)
 
-    def do_test_require_comment(self, comment_conditions, test_expectation: Callable[["CommentConditionTest"], bool]):
+    def do_test_require_comment(self, comment_mode, test_expectation: Callable[["CommentConditionTest"], bool]):
         tests = [(test, test_expectation(test)) for test in self.comment_condition_tests]
 
         publisher = mock.MagicMock(Publisher)
-        publisher._settings = self.create_settings(comment_conditions=comment_conditions if isinstance(comment_conditions, set) else {comment_conditions})
+        publisher._settings = self.create_settings(comment_mode=comment_mode)
 
         for test, expected in tests:
             with self.subTest(test):
@@ -336,34 +334,28 @@ class TestPublisher(unittest.TestCase):
 
     def test_require_comment_always(self):
         self.do_test_require_comment(
-            comment_condition_always,
+            comment_mode_always,
             lambda _: True
         )
 
     def test_require_comment_changes(self):
         self.do_test_require_comment(
-            comment_condition_changes,
+            comment_mode_changes,
             lambda test: not test.earlier_is_none and test.earlier_is_different or
                          test.current_has_changes is None or test.current_has_changes
         )
 
     def test_require_comment_failures(self):
         self.do_test_require_comment(
-            comment_condition_failures,
-            lambda test: not test.earlier_is_none and test.earlier_has_failures or test.current_has_failures
+            comment_mode_failures,
+            lambda test: not test.earlier_is_none and (test.earlier_has_failures or test.earlier_has_errors) or
+                         (test.current_has_failures or test.current_has_errors)
         )
 
     def test_require_comment_errors(self):
         self.do_test_require_comment(
-            comment_condition_errors,
+            comment_mode_errors,
             lambda test: not test.earlier_is_none and test.earlier_has_errors or test.current_has_errors
-        )
-
-    def test_require_comment_changes_failures_and_errors(self):
-        self.do_test_require_comment(
-            {comment_condition_changes, comment_condition_failures, comment_condition_errors},
-            lambda test: not test.earlier_is_none and (test.earlier_is_different or test.earlier_has_failures or test.earlier_has_errors) or
-                         test.current_has_changes is None or test.current_has_changes or test.current_has_failures or test.current_has_errors
         )
 
     def test_publish_without_comment(self):

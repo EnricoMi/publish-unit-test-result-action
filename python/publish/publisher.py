@@ -15,7 +15,7 @@ from github.IssueComment import IssueComment
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
-    comment_condition_always, comment_condition_changes, comment_condition_failures, comment_condition_errors, \
+    comment_mode_always, comment_mode_changes, comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -47,7 +47,6 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
-    comment_conditions: Set[str]
     job_summary: bool
     compare_earlier: bool
     pull_request_build: str
@@ -454,17 +453,16 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        # we need to fetch the latest comment if comment_condition_always not in comment_conditions
-        # or self._settings.comment_mode == comment_mode_update
+        # we need to fetch the latest comment unless comment mode is off, always or deprecated create
         latest_comment = None
-        if comment_condition_always not in self._settings.comment_conditions or self._settings.comment_mode == comment_mode_update:
+        if self._settings.comment_mode not in [comment_mode_off, comment_mode_create, comment_mode_always]:
             latest_comment = self.get_latest_comment(pull_request)
         latest_comment_body = latest_comment.body if latest_comment else None
 
         # are we required to create a comment on this PR?
         earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
         if not self.require_comment(stats_with_delta, earlier_stats):
-            logger.info(f'No comment required as comment_on condition "{", ".join(self._settings.comment_conditions)}" is not met')
+            logger.info(f'No pull request comment required as comment mode is {self._settings.comment_mode} (comment_mode)')
             return
 
         details_url = check_run.html_url if check_run else None
@@ -485,44 +483,44 @@ class Publisher:
         # SomeTestChanges.has_changes cannot be used here as changes between earlier comment
         # and current results cannot be identified
 
-        if comment_condition_always in self._settings.comment_conditions:
-            logger.debug(f'Comment required as condition contains {comment_condition_always}')
+        if self._settings.comment_mode == comment_mode_always:
+            logger.debug(f'Comment required as comment mode is {self._settings.comment_mode}')
             return True
 
-        if comment_condition_changes in self._settings.comment_conditions:
+        if self._settings.comment_mode == comment_mode_changes:
             if earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats):
-                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
-                            f'and stats are different to earlier comment')
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and statistics are different to earlier comment')
                 logger.debug(f'earlier: {earlier_stats}')
                 logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
                 return True
             if not stats.is_delta:
-                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
                             f'but no delta statistics to target branch available')
                 return True
             if stats.has_changes:
-                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
                             f'and changes to target branch exist')
                 logger.debug(f'current: {stats}')
                 return True
 
-        if comment_condition_failures in self._settings.comment_conditions:
+        if self._settings.comment_mode == comment_mode_failures:
             if earlier_stats is not None and earlier_stats.has_failures:
-                logger.info(f'Comment required as condition contains {comment_condition_failures} '
-                            f'and failures exist in earlier comment')
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
+                            f'and failures existed in earlier comment')
                 return True
             if stats.has_failures:
-                logger.info(f'Comment required as condition contains {comment_condition_failures} '
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
                             f'and failures exist in current comment')
                 return True
 
-        if comment_condition_errors in self._settings.comment_conditions:
+        if self._settings.comment_mode in [comment_mode_failures, comment_mode_errors]:
             if earlier_stats is not None and earlier_stats.has_errors:
-                logger.info(f'Comment required as condition contains {comment_condition_errors} '
-                            f'and errors exist in earlier comment')
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
+                            f'and errors existed in earlier comment')
                 return True
             if stats.has_errors:
-                logger.info(f'Comment required as condition contains {comment_condition_errors} '
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
                             f'and errors exist in current comment')
                 return True
 

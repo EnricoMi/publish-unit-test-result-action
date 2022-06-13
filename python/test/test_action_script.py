@@ -5,13 +5,11 @@ import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List
-from itertools import combinations
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
-    comment_condition_always, comment_condition_changes, comment_condition_failures, comment_condition_errors, \
-    comment_conditions, hide_comments_modes, pull_request_build_modes, punctuation_space
+    fail_on_mode_nothing, comment_modes, comment_mode_off, comment_mode_always, comment_mode_update, \
+    hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -146,8 +144,7 @@ class Test(unittest.TestCase):
                      time_factor=1.0,
                      check_name='check name',
                      comment_title='title',
-                     comment_mode=comment_mode_create,
-                     comment_conditions={comment_condition_always},
+                     comment_mode=comment_mode_always,
                      job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
@@ -180,7 +177,6 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
-            comment_conditions=comment_conditions,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -308,44 +304,29 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
     def test_get_settings_comment_on_pr(self):
-        default_comment_mode = comment_mode_update
+        default_comment_mode = comment_mode_always
         bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
+        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "failures" or "errors".'
 
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_update), warning=[bool_warning, depr_warning])
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=[bool_warning, depr_warning])
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
     def test_get_settings_comment_mode(self):
-        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
-        for mode in [comment_mode_off, comment_mode_create, comment_mode_update]:
+        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "failures" or "errors".'
+        for mode in comment_modes:
             with self.subTest(mode=mode):
                 self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
                 self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true' if mode == comment_mode_off else 'false', expected=self.get_settings(comment_mode=mode), warning=warning)
 
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
         self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
-
-    def test_get_settings_comment_condition(self):
-        with self.subTest(condition=None):
-            self.do_test_get_settings(COMMENT_ON=None, expected=self.get_settings(comment_conditions={comment_condition_always}))
-
-        for cond in [cond
-                     for card in range(1, len(comment_conditions)+1)
-                     for cond in combinations(comment_conditions, card)]:
-            with self.subTest(condition=', '.join(cond)):
-                self.do_test_get_settings(COMMENT_ON=', '.join(cond), expected=self.get_settings(comment_conditions=set(cond)))
-
-        with self.subTest(condition='unknown'):
-            with self.assertRaises(RuntimeError) as re:
-                self.do_test_get_settings(COMMENT_ON='condition')
-            self.assertEqual(f"Some values in 'condition' are not supported for variable COMMENT_ON, allowed: always, changes, failures, errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'
@@ -480,7 +461,7 @@ class Test(unittest.TestCase):
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='files',
                 COMMENT_TITLE='title',  # defaults to check name
-                COMMENT_MODE='create new',
+                COMMENT_MODE='always',
                 JOB_SUMMARY='true',
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
