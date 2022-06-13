@@ -39,7 +39,6 @@ class CommentConditionTest:
     current_has_changes: Optional[bool]
     current_has_failures: bool
     current_has_errors: bool
-    tests_have_changes: bool
 
 
 class TestPublisher(unittest.TestCase):
@@ -322,21 +321,18 @@ class TestPublisher(unittest.TestCase):
                 current = mock.MagicMock(is_delta=test.current_has_changes is not None, has_changes=test.current_has_changes, has_failures=test.current_has_failures, has_errors=test.current_has_errors)
                 if current.is_delta:
                     current.without_delta = mock.Mock(return_value=current)
-                test_changes = mock.MagicMock(has_changes=test.tests_have_changes)
-                required = Publisher.require_comment(publisher, current, earlier, test_changes)
+                required = Publisher.require_comment(publisher, current, earlier)
                 self.assertEqual(required, expected)
 
     comment_condition_tests = [CommentConditionTest(earlier_is_none, earlier_is_different, earlier_has_failures, earlier_has_errors,
-                                                    current_has_changes, current_has_failures, current_has_errors,
-                                                    tests_have_changes)
+                                                    current_has_changes, current_has_failures, current_has_errors)
                                for earlier_is_none in [False, True]
                                for earlier_is_different in [False, True]
                                for earlier_has_failures in [False, True]
                                for earlier_has_errors in [False, True]
                                for current_has_changes in [None, False, True]
                                for current_has_failures in [False, True]
-                               for current_has_errors in [False, True]
-                               for tests_have_changes in [False, True]]
+                               for current_has_errors in [False, True]]
 
     def test_require_comment_always(self):
         self.do_test_require_comment(
@@ -348,8 +344,7 @@ class TestPublisher(unittest.TestCase):
         self.do_test_require_comment(
             comment_condition_changes,
             lambda test: not test.earlier_is_none and test.earlier_is_different or
-                         test.current_has_changes is None or test.current_has_changes or
-                         test.tests_have_changes
+                         test.current_has_changes is None or test.current_has_changes
         )
 
     def test_require_comment_failures(self):
@@ -368,8 +363,7 @@ class TestPublisher(unittest.TestCase):
         self.do_test_require_comment(
             {comment_condition_changes, comment_condition_failures, comment_condition_errors},
             lambda test: not test.earlier_is_none and (test.earlier_is_different or test.earlier_has_failures or test.earlier_has_errors) or
-                         test.current_has_changes is None or test.current_has_changes or test.current_has_failures or test.current_has_errors or
-                         test.tests_have_changes
+                         test.current_has_changes is None or test.current_has_changes or test.current_has_failures or test.current_has_errors
         )
 
     def test_publish_without_comment(self):

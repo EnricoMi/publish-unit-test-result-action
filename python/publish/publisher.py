@@ -463,7 +463,7 @@ class Publisher:
 
         # are we required to create a comment on this PR?
         earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
-        if not self.require_comment(stats_with_delta, earlier_stats, test_changes):
+        if not self.require_comment(stats_with_delta, earlier_stats):
             logger.info(f'No comment required as comment_on condition {", ".join(self._settings.comment_conditions)} is not met')
             return
 
@@ -481,8 +481,10 @@ class Publisher:
 
     def require_comment(self,
                         stats: UnitTestRunResultsOrDeltaResults,
-                        earlier_stats: Optional[UnitTestRunResults],
-                        test_changes: SomeTestChanges) -> bool:
+                        earlier_stats: Optional[UnitTestRunResults]) -> bool:
+        # SomeTestChanges.has_changes cannot be used here as changes between earlier comment
+        # and current results cannot be identified
+
         if comment_condition_always in self._settings.comment_conditions:
             logger.debug(f'Comment required as condition contains {comment_condition_always}')
             return True
@@ -502,10 +504,6 @@ class Publisher:
             if stats.has_changes:
                 logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and changes exist')
                 logger.debug(f'current: {stats}')
-                return True
-            if test_changes.has_changes:
-                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and tests changed')
-                logger.debug(f'tests: {test_changes}')
                 return True
 
         if comment_condition_failures in self._settings.comment_conditions:
