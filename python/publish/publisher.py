@@ -139,7 +139,7 @@ class Publisher:
                 stats: UnitTestRunResults,
                 cases: UnitTestCaseResults,
                 conclusion: str):
-        logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
+        logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
         check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
@@ -155,11 +155,11 @@ class Publisher:
                     elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                         self.hide_all_but_latest_comments(pull)
                 if self._settings.hide_comment_mode == hide_comments_mode_off:
-                    logger.info('hide_comments disabled, not hiding any comments')
+                    logger.info('Hiding comments disabled (hide_comments)')
             else:
-                logger.info(f'there is no pull request for commit {self._settings.commit}')
+                logger.info(f'There is no pull request for commit {self._settings.commit}')
         else:
-            logger.info('comment_on_pr disabled, not commenting on any pull requests')
+            logger.info('Commenting on pull requests disabled (comment_on_pr)')
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount calls the GitHub API just to get the total number
@@ -341,7 +341,7 @@ class Publisher:
                                                         status='completed',
                                                         conclusion=conclusion,
                                                         output=output)
-                logger.info(f'created check {check_run.html_url}')
+                logger.info(f'Created check {check_run.html_url}')
             else:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
@@ -375,7 +375,7 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url)
         markdown = f'## {title}\n{summary}'
         self._gha.add_to_job_summary(markdown)
-        logger.info(f'created job summary')
+        logger.info(f'Created job summary')
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
@@ -464,7 +464,7 @@ class Publisher:
         # are we required to create a comment on this PR?
         earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
         if not self.require_comment(stats_with_delta, earlier_stats):
-            logger.info(f'No comment required as comment_on condition {", ".join(self._settings.comment_conditions)} is not met')
+            logger.info(f'No comment required as comment_on condition "{", ".join(self._settings.comment_conditions)}" is not met')
             return
 
         details_url = check_run.html_url if check_run else None
@@ -474,10 +474,10 @@ class Publisher:
         # reuse existing comment when comment_mode == comment_mode_update, otherwise create new comment
         if self._settings.comment_mode == comment_mode_update and latest_comment is not None:
             self.reuse_comment(latest_comment, body)
-            logger.info(f'edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
+            logger.info(f'Edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
         else:
             comment = pull_request.create_issue_comment(body)
-            logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
+            logger.info(f'Created comment for pull request #{pull_request.number}: {comment.html_url}')
 
     def require_comment(self,
                         stats: UnitTestRunResultsOrDeltaResults,
@@ -491,35 +491,39 @@ class Publisher:
 
         if comment_condition_changes in self._settings.comment_conditions:
             if earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats):
-                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and stats different to earlier')
+                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
+                            f'and stats are different to earlier comment')
                 logger.debug(f'earlier: {earlier_stats}')
-                if stats.is_delta:
-                    logger.debug(f'current: {stats.without_delta()}')
-                else:
-                    logger.debug(f'current: {stats}')
+                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
                 return True
             if not stats.is_delta:
-                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and no delta available')
+                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
+                            f'but no delta statistics to target branch available')
                 return True
             if stats.has_changes:
-                logger.debug(f'Comment required as condition contains "{comment_condition_changes}" and changes exist')
+                logger.info(f'Comment required as condition contains "{comment_condition_changes}" '
+                            f'and changes to target branch exist')
                 logger.debug(f'current: {stats}')
                 return True
 
         if comment_condition_failures in self._settings.comment_conditions:
             if earlier_stats is not None and earlier_stats.has_failures:
-                logger.debug(f'Comment required as condition contains {comment_condition_failures} and earlier failures exist')
+                logger.info(f'Comment required as condition contains {comment_condition_failures} '
+                            f'and failures exist in earlier comment')
                 return True
             if stats.has_failures:
-                logger.debug(f'Comment required as condition contains {comment_condition_failures} and failures exist')
+                logger.info(f'Comment required as condition contains {comment_condition_failures} '
+                            f'and failures exist in current comment')
                 return True
 
         if comment_condition_errors in self._settings.comment_conditions:
             if earlier_stats is not None and earlier_stats.has_errors:
-                logger.debug(f'Comment required as condition contains {comment_condition_errors} and earlier errors exist')
+                logger.info(f'Comment required as condition contains {comment_condition_errors} '
+                            f'and errors exist in earlier comment')
                 return True
             if stats.has_errors:
-                logger.debug(f'Comment required as condition contains {comment_condition_errors} and errors exist')
+                logger.info(f'Comment required as condition contains {comment_condition_errors} '
+                            f'and errors exist in current comment')
                 return True
 
         return False
@@ -656,7 +660,7 @@ class Publisher:
 
         # hide all those comments
         for node_id, comment_commit_sha in comment_ids:
-            logger.info(f'hiding unit test result comment for commit {comment_commit_sha}')
+            logger.info(f'Hiding unit test result comment for commit {comment_commit_sha}')
             self.hide_comment(node_id)
 
     def hide_all_but_latest_comments(self, pull: PullRequest) -> None:
@@ -673,5 +677,5 @@ class Publisher:
 
         # hide all those comments
         for node_id in comment_ids:
-            logger.info(f'hiding unit test result comment {node_id}')
+            logger.info(f'Hiding unit test result comment {node_id}')
             self.hide_comment(node_id)
