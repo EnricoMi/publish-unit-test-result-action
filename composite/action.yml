@@ -21,8 +21,8 @@ inputs:
   comment_title:
     description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
     required: false
-  comment_on:
-    description: 'Create pull request comments only in some cases. This is a comma-separated list of any of the following values: "changes" - when there are changes in the number of tests, failures or runs (compared to target branch), "failures` - when test failures exist, "errors" - when test errors exist. Example: "changes, failures, errors". Defaults to `always`.'
+  comment_mode:
+    description: 'The action posts comments to pull requests that are associated with the commit. Set to: "always" - always comment, "changes" - comment only when changes to the target branch exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments. With "changes in failures" and "changes in errors", it only comments when changes in the number of failures and errors exist, respectively'
     default: 'always'
     required: false
   fail_on:
@@ -52,10 +52,6 @@ inputs:
     required: false
   comment_on_pr:
     description: 'Deprecated, please use comment_mode instead!'
-    required: false
-  comment_mode:
-    description: 'Control pull request comments: off - disable pull request comments, create new - create comments on PRs, each time a new one, update last - create comment on pull request, reuse an existing one'
-    default: 'update last'
     required: false
   job_summary:
     description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
@@ -153,7 +149,7 @@ runs:
         COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}
         COMMENT_TITLE: ${{ inputs.comment_title }}
-        COMMENT_ON: ${{ inputs.comment_on }}
+        COMMENT_MODE: ${{ inputs.comment_mode }}
         FAIL_ON: ${{ inputs.fail_on }}
         FILES: ${{ inputs.files }}
         TIME_UNIT: ${{ inputs.time_unit }}
@@ -162,7 +158,6 @@ runs:
         IGNORE_RUNS: ${{ inputs.ignore_runs }}
         HIDE_COMMENTS: ${{ inputs.hide_comments }}
         COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
-        COMMENT_MODE: ${{ inputs.comment_mode }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
         EVENT_FILE: ${{ inputs.event_file }}
