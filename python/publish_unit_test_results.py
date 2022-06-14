@@ -228,17 +228,18 @@ def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAc
 def check_var(var: Union[Optional[str], List[str]],
               name: str,
               label: str,
-              allowed_values: Optional[List[str]] = None) -> None:
+              allowed_values: Optional[List[str]] = None,
+              deprecated_values: Optional[List[str]] = None) -> None:
     if var is None:
         raise RuntimeError(f'{label} must be provided via action input or environment variable {name}')
 
     if allowed_values:
         if isinstance(var, str):
-            if var not in allowed_values:
+            if var not in allowed_values + (deprecated_values or []):
                 raise RuntimeError(f"Value '{var}' is not supported for variable {name}, "
                                    f"expected: {', '.join(allowed_values)}")
         if isinstance(var, list):
-            if any([v not in allowed_values for v in var]):
+            if any([v not in allowed_values + (deprecated_values or []) for v in var]):
                 raise RuntimeError(f"Some values in '{', '.join(var)}' "
                                    f"are not supported for variable {name}, "
                                    f"allowed: {', '.join(allowed_values)}")
@@ -353,7 +354,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes + list(comment_modes_deprecated.keys()))
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)

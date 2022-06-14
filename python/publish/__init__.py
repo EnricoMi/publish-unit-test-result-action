@@ -23,12 +23,16 @@ comment_mode_create = 'create new'   # deprecated
 comment_mode_update = 'update last'  # deprecated
 comment_mode_always = 'always'
 comment_mode_changes = 'changes'
+comment_mode_changes_failures = 'changes in failures'  # includes comment_mode_changes_errors
+comment_mode_changes_errors = 'changes in errors'
 comment_mode_failures = 'failures'  # includes comment_mode_errors
 comment_mode_errors = 'errors'
 comment_modes = [
     comment_mode_off,
     comment_mode_always,
     comment_mode_changes,
+    comment_mode_changes_failures,
+    comment_mode_changes_errors,
     comment_mode_failures,
     comment_mode_errors
 ]

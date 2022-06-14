@@ -1,7 +1,7 @@
 from collections import defaultdict
 import dataclasses
 from dataclasses import dataclass
-from typing import Optional, List, Mapping, Any, Union, Dict
+from typing import Optional, List, Mapping, Any, Union, Dict, Callable
 from xml.etree.ElementTree import ParseError as XmlParseError
 
 
@@ -180,6 +180,34 @@ class UnitTestRunResults:
     def has_errors(self):
         return len(self.errors) > 0 or self.tests_error > 0 or self.runs_error > 0
 
+    @staticmethod
+    def _change_fields(results: 'UnitTestRunResults') -> List[int]:
+        return [results.files, results.suites,
+                results.tests, results.tests_succ, results.tests_skip, results.tests_fail, results.tests_error,
+                results.runs, results.runs_succ, results.runs_skip, results.runs_fail, results.runs_error]
+
+    @staticmethod
+    def _failure_fields(results: 'UnitTestRunResults') -> List[int]:
+        return [results.tests_fail, results.runs_fail]
+
+    @staticmethod
+    def _error_fields(results: 'UnitTestRunResults') -> List[int]:
+        return [results.tests_error, results.runs_error]
+
+    def is_different(self,
+                     other: 'UnitTestRunResultsOrDeltaResults',
+                     fields_func: Callable[['UnitTestRunResults'], List[int]] = _change_fields.__func__):
+        if other.is_delta:
+            other = other.without_delta()
+
+        return any([left != right for left, right in zip(fields_func(self), fields_func(other))])
+
+    def is_different_in_failures(self, other: 'UnitTestRunResultsOrDeltaResults'):
+        return self.is_different(other, self._failure_fields)
+
+    def is_different_in_errors(self, other: 'UnitTestRunResultsOrDeltaResults'):
+        return self.is_different(other, self._error_fields)
+
     def with_errors(self, errors: List[ParseError]):
         return UnitTestRunResults(
             files=self.files,
@@ -229,19 +257,6 @@ class UnitTestRunResults:
         )
 
 
-def patch_ne(orig_ne):
-    def patched_ne(self: UnitTestRunResults, other) -> bool:
-        if isinstance(other, UnitTestRunResults):
-            other = dataclasses.replace(other, errors=self.errors, duration=self.duration, commit=self.commit)
-        return orig_ne(self, other)
-
-    return patched_ne
-
-
-# patch UnitTestRunResults.__ne__ to not include duration
-UnitTestRunResults.__ne__ = patch_ne(UnitTestRunResults.__ne__)
-
-
 Numeric = Mapping[str, int]
 
 
@@ -273,12 +288,23 @@ class UnitTestRunDeltaResults:
     def is_delta(self) -> bool:
         return True
 
+    @staticmethod
+    def _has_changes(fields: List[Numeric]) -> bool:
+        return any([field.get('delta') for field in fields])
+
     @property
     def has_changes(self) -> bool:
-        return (any([field.get('delta')
-                     for field in [self.files, self.suites,
-                                   self.tests, self.tests_succ, self.tests_skip, self.tests_fail, self.tests_error,
-                                   self.runs, self.runs_succ, self.runs_skip, self.runs_fail, self.runs_error]]))
+        return self._has_changes([self.files, self.suites,
+                                  self.tests, self.tests_succ, self.tests_skip, self.tests_fail, self.tests_error,
+                                  self.runs, self.runs_succ, self.runs_skip, self.runs_fail, self.runs_error])
+
+    @property
+    def has_failure_changes(self) -> bool:
+        return self._has_changes([self.tests_fail, self.runs_fail])
+
+    @property
+    def has_error_changes(self) -> bool:
+        return self._has_changes([self.tests_error, self.runs_error])
 
     @property
     def has_failures(self):

@@ -306,7 +306,7 @@ class Test(unittest.TestCase):
     def test_get_settings_comment_on_pr(self):
         default_comment_mode = comment_mode_always
         bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "failures" or "errors".'
+        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
 
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
@@ -316,7 +316,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
     def test_get_settings_comment_mode(self):
-        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "failures" or "errors".'
+        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
         for mode in comment_modes:
             with self.subTest(mode=mode):
                 self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
@@ -326,7 +326,7 @@ class Test(unittest.TestCase):
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
-        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, always, changes, changes in failures, changes in errors, failures, errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'

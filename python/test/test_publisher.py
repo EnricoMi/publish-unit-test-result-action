@@ -1,6 +1,8 @@
 import dataclasses
 import json
 import os
+import pathlib
+import sys
 import tempfile
 import unittest
 from collections.abc import Collection
@@ -12,7 +14,8 @@ import mock
 from github import Github, GithubException
 
 from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_mode_always, \
-    comment_mode_changes, comment_mode_failures, comment_mode_errors, hide_comments_mode_off, \
+    comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
+    comment_mode_failures, comment_mode_errors, hide_comments_mode_off, \
     hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_list, \
@@ -23,6 +26,9 @@ from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
     UnitTestCaseResults
+
+sys.path.append(str(pathlib.Path(__file__).resolve().parent))
+
 from test_unittestresults import create_unit_test_run_results
 
 
@@ -33,10 +39,14 @@ errors = [ParseError('file', 'error', 1, 2)]
 class CommentConditionTest:
     earlier_is_none: bool
     earlier_is_different: bool
+    earlier_is_different_in_failures: bool
+    earlier_is_different_in_errors: bool
     earlier_has_failures: bool
     earlier_has_errors: bool
     # current_has_changes being None indicates it is not a UnitTestRunDeltaResults but UnitTestRunResults
     current_has_changes: Optional[bool]
+    current_has_failure_changes: bool
+    current_has_error_changes: bool
     current_has_failures: bool
     current_has_errors: bool
 
@@ -315,22 +325,60 @@ class TestPublisher(unittest.TestCase):
 
         for test, expected in tests:
             with self.subTest(test):
-                earlier = mock.MagicMock(__ne__=mock.Mock(return_value=test.earlier_is_different), has_failures=test.earlier_has_failures, has_errors=test.earlier_has_errors) if not test.earlier_is_none else None
-                current = mock.MagicMock(is_delta=test.current_has_changes is not None, has_changes=test.current_has_changes, has_failures=test.current_has_failures, has_errors=test.current_has_errors)
+                earlier = mock.MagicMock(
+                    is_different=mock.Mock(return_value=test.earlier_is_different),
+                    is_different_in_failures=mock.Mock(return_value=test.earlier_is_different_in_failures),
+                    is_different_in_errors=mock.Mock(return_value=test.earlier_is_different_in_errors),
+                    has_failures=test.earlier_has_failures,
+                    has_errors=test.earlier_has_errors
+                ) if not test.earlier_is_none else None
+                current = mock.MagicMock(
+                    is_delta=test.current_has_changes is not None,
+                    has_changes=test.current_has_changes,
+                    has_failure_changes=test.current_has_failure_changes,
+                    has_error_changes=test.current_has_error_changes,
+                    has_failures=test.current_has_failures,
+                    has_errors=test.current_has_errors)
                 if current.is_delta:
                     current.without_delta = mock.Mock(return_value=current)
                 required = Publisher.require_comment(publisher, current, earlier)
                 self.assertEqual(required, expected)
 
-    comment_condition_tests = [CommentConditionTest(earlier_is_none, earlier_is_different, earlier_has_failures, earlier_has_errors,
-                                                    current_has_changes, current_has_failures, current_has_errors)
+    comment_condition_tests = [CommentConditionTest(earlier_is_none,
+                                                    earlier_is_different, earlier_is_different_in_failures, earlier_is_different_in_errors,
+                                                    earlier_has_failures, earlier_has_errors,
+                                                    current_has_changes, current_has_failure_changes, current_has_error_changes,
+                                                    current_has_failures, current_has_errors)
                                for earlier_is_none in [False, True]
                                for earlier_is_different in [False, True]
+                               for earlier_is_different_in_failures in ([False, True] if not earlier_is_different else [True])
+                               for earlier_is_different_in_errors in ([False, True] if not earlier_is_different else [True])
                                for earlier_has_failures in [False, True]
                                for earlier_has_errors in [False, True]
+
                                for current_has_changes in [None, False, True]
+                               for current_has_failure_changes in ([False, True] if not current_has_changes else [True])
+                               for current_has_error_changes in ([False, True] if not current_has_changes else [True])
                                for current_has_failures in [False, True]
                                for current_has_errors in [False, True]]
+
+    def test_require_comment_off(self):
+        self.do_test_require_comment(
+            comment_mode_off,
+            lambda _: False
+        )
+
+    def test_require_comment_create(self):
+        self.do_test_require_comment(
+            comment_mode_create,
+            lambda _: True
+        )
+
+    def test_require_comment_update(self):
+        self.do_test_require_comment(
+            comment_mode_update,
+            lambda _: True
+        )
 
     def test_require_comment_always(self):
         self.do_test_require_comment(
@@ -343,6 +391,20 @@ class TestPublisher(unittest.TestCase):
             comment_mode_changes,
             lambda test: not test.earlier_is_none and test.earlier_is_different or
                          test.current_has_changes is None or test.current_has_changes
+        )
+
+    def test_require_comment_changes_failures(self):
+        self.do_test_require_comment(
+            comment_mode_changes_failures,
+            lambda test: not test.earlier_is_none and (test.earlier_is_different_in_failures or test.earlier_is_different_in_errors) or
+                         test.current_has_changes is None or test.current_has_failure_changes or test.current_has_error_changes
+        )
+
+    def test_require_comment_changes_errors(self):
+        self.do_test_require_comment(
+            comment_mode_changes_errors,
+            lambda test: not test.earlier_is_none and test.earlier_is_different_in_errors or
+                         test.current_has_changes is None or test.current_has_error_changes
         )
 
     def test_require_comment_failures(self):

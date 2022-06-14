@@ -15,7 +15,8 @@ from github.IssueComment import IssueComment
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
-    comment_mode_always, comment_mode_changes, comment_mode_failures, comment_mode_errors, \
+    comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
+    comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -483,12 +484,12 @@ class Publisher:
         # SomeTestChanges.has_changes cannot be used here as changes between earlier comment
         # and current results cannot be identified
 
-        if self._settings.comment_mode == comment_mode_always:
+        if self._settings.comment_mode in [comment_mode_always, comment_mode_create, comment_mode_update]:
             logger.debug(f'Comment required as comment mode is {self._settings.comment_mode}')
             return True
 
         if self._settings.comment_mode == comment_mode_changes:
-            if earlier_stats is not None and earlier_stats != (stats.without_delta() if stats.is_delta else stats):
+            if earlier_stats is not None and earlier_stats.is_different(stats):
                 logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
                             f'and statistics are different to earlier comment')
                 logger.debug(f'earlier: {earlier_stats}')
@@ -501,6 +502,40 @@ class Publisher:
             if stats.has_changes:
                 logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
                             f'and changes to target branch exist')
+                logger.debug(f'current: {stats}')
+                return True
+
+        if self._settings.comment_mode == comment_mode_changes_failures:
+            if earlier_stats is not None and earlier_stats.is_different_in_failures(stats):
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and failure statistics are different to earlier comment')
+                logger.debug(f'earlier: {earlier_stats}')
+                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
+                return True
+            if not stats.is_delta:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'but no delta statistics to target branch available')
+                return True
+            if stats.has_failure_changes:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and changes in failures to target branch exist')
+                logger.debug(f'current: {stats}')
+                return True
+
+        if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors]:
+            if earlier_stats is not None and earlier_stats.is_different_in_errors(stats):
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and error statistics are different to earlier comment')
+                logger.debug(f'earlier: {earlier_stats}')
+                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
+                return True
+            if not stats.is_delta:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'but no delta statistics to target branch available')
+                return True
+            if stats.has_error_changes:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and changes in errors to target branch exist')
                 logger.debug(f'current: {stats}')
                 return True
 

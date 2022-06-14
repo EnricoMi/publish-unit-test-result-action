@@ -476,7 +476,7 @@ class TestUnitTestResults(unittest.TestCase):
             reference_type='type'
         ))
 
-    def test_test_run_results_ne(self):
+    def test_unit_test_run_results_is_different(self):
         stats = create_unit_test_run_results()
         create_other = create_unit_test_run_results
         for diff, other, expected in [('nothing', create_other(), False),
@@ -496,12 +496,53 @@ class TestUnitTestResults(unittest.TestCase):
                                       ('runs errors', create_other(runs_error=stats.runs_error+1), True),
                                       ('commit', create_other(commit='other'), False)]:
             with self.subTest(different_in=diff):
-                self.assertEqual(stats != other, expected, msg=diff)
+                self.assertEqual(expected, stats.is_different(other), msg=diff)
 
-        with self.subTest(different_in='type'):
-            self.assertEqual(True, stats != object())
+    def test_unit_test_run_results_is_different_in_failures(self):
+        stats = create_unit_test_run_results()
+        create_other = create_unit_test_run_results
+        for diff, other, expected in [('nothing', create_other(), False),
+                                      ('files', create_other(files=stats.files+1), False),
+                                      ('errors', create_other(errors=errors), False),
+                                      ('suites', create_other(suites=stats.suites+1), False),
+                                      ('duration', create_other(duration=stats.duration+1), False),
+                                      ('tests', create_other(tests=stats.tests+1), False),
+                                      ('test success', create_other(tests_succ=stats.tests_succ+1), False),
+                                      ('test skips', create_other(tests_skip=stats.tests_skip+1), False),
+                                      ('test failures', create_other(tests_fail=stats.tests_fail+1), True),
+                                      ('test errors', create_other(tests_error=stats.tests_error+1), False),
+                                      ('runs', create_other(runs=stats.runs+1), False),
+                                      ('runs success', create_other(runs_succ=stats.runs_succ+1), False),
+                                      ('runs skips', create_other(runs_skip=stats.runs_skip+1), False),
+                                      ('runs failures', create_other(runs_fail=stats.runs_fail+1), True),
+                                      ('runs errors', create_other(runs_error=stats.runs_error+1), False),
+                                      ('commit', create_other(commit='other'), False)]:
+            with self.subTest(different_in=diff):
+                self.assertEqual(expected, stats.is_different_in_failures(other), msg=diff)
 
-    def unit_test_run_results_has_failures(self):
+    def test_unit_test_run_results_is_different_in_errors(self):
+        stats = create_unit_test_run_results()
+        create_other = create_unit_test_run_results
+        for diff, other, expected in [('nothing', create_other(), False),
+                                      ('files', create_other(files=stats.files+1), False),
+                                      ('errors', create_other(errors=errors), False),
+                                      ('suites', create_other(suites=stats.suites+1), False),
+                                      ('duration', create_other(duration=stats.duration+1), False),
+                                      ('tests', create_other(tests=stats.tests+1), False),
+                                      ('test success', create_other(tests_succ=stats.tests_succ+1), False),
+                                      ('test skips', create_other(tests_skip=stats.tests_skip+1), False),
+                                      ('test failures', create_other(tests_fail=stats.tests_fail+1), False),
+                                      ('test errors', create_other(tests_error=stats.tests_error+1), True),
+                                      ('runs', create_other(runs=stats.runs+1), False),
+                                      ('runs success', create_other(runs_succ=stats.runs_succ+1), False),
+                                      ('runs skips', create_other(runs_skip=stats.runs_skip+1), False),
+                                      ('runs failures', create_other(runs_fail=stats.runs_fail+1), False),
+                                      ('runs errors', create_other(runs_error=stats.runs_error+1), True),
+                                      ('commit', create_other(commit='other'), False)]:
+            with self.subTest(different_in=diff):
+                self.assertEqual(expected, stats.is_different_in_errors(other), msg=diff)
+
+    def test_unit_test_run_results_has_failures(self):
         def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
             return create_unit_test_run_results(errors=errors, tests_fail=tests_fail, tests_error=tests_error, runs_fail=runs_fail, runs_error=runs_error)
 
@@ -514,7 +555,7 @@ class TestUnitTestResults(unittest.TestCase):
             with self.subTest(msg=label):
                 self.assertEqual(stats.has_failures, expected, msg=label)
 
-    def test_test_run_results_has_errors(self):
+    def test_unit_test_run_results_has_errors(self):
         def create_stats(errors=[], tests_fail=0, tests_error=0, runs_fail=0, runs_error=0) -> UnitTestRunResults:
             return create_unit_test_run_results(errors=errors, tests_fail=tests_fail, tests_error=tests_error, runs_fail=runs_fail, runs_error=runs_error)
 
