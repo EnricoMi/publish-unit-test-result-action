@@ -423,6 +423,7 @@ jobs:
           check_name: Test Results (Test Files)
           fail_on: nothing
           junit_files: "test-files/junit-xml/**/*.xml"
+          xunit_files: "test-files/xunit/**/*.xml"
           trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
           log_level: DEBUG
