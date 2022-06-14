@@ -11,7 +11,7 @@ from urllib3.exceptions import MaxRetryError
 
 from publish.github_action import GithubAction
 
-logger = logging.getLogger('publish-unit-test-results')
+logger = logging.getLogger('publish')
 
 
 class GitHubRetry(Retry):

@@ -1,6 +1,6 @@
 import os
 from collections import defaultdict
-from typing import Optional, Iterable, Union, Tuple, List, Dict
+from typing import Optional, Iterable, Union, Any, List, Dict, Callable, Tuple
 
 import junitparser
 from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
@@ -118,7 +118,10 @@ class DropTestCaseBuilder(etree.TreeBuilder):
             return super().close()
 
 
-def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0, drop_testcases: bool = False) -> ParsedUnitTestResults:
+def parse_junit_xml_files(files: Iterable[str],
+                          time_factor: float = 1.0,
+                          drop_testcases: bool = False,
+                          progress: Callable[[Tuple[str, Union[JUnitXml, BaseException]]], Tuple[str, Union[JUnitXml, BaseException]]] = lambda x: x) -> ParsedUnitTestResults:
     """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
     def parse(path: str) -> Union[JUnitXml, BaseException]:
         if not os.path.exists(path):
@@ -134,7 +137,7 @@ def parse_junit_xml_files(files: Iterable[str], time_factor: float = 1.0, drop_t
         except BaseException as e:
             return e
 
-    parsed_files = [(result_file, parse(result_file)) for result_file in files]
+    parsed_files = [progress((result_file, parse(result_file))) for result_file in files]
     junits = [(result_file, junit)
               for result_file, junit in parsed_files
               if not isinstance(junit, BaseException)]

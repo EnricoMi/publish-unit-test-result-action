@@ -6,22 +6,25 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple, Any
 
 import github
+import humanize
+import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, none_list, available_annotations, default_annotations, \
+from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
+from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
 from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
-logger = logging.getLogger('publish-unit-test-results')
+logger = logging.getLogger('publish')
 
 
 def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_errors) -> str:
@@ -56,6 +59,22 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
+def get_files_size(files: List[str]) -> str:
+    try:
+        size = sum([os.path.getsize(file) for file in files])
+        return humanize.naturalsize(size, binary=True)
+    except BaseException as e:
+        logger.warning(f'failed to obtain file size of {len(files)} files', exc_info=e)
+        return 'unknown size'
+
+
+def get_number_of_files(files: List[str]) -> str:
+    number_of_files = '{number:,} file{s}'.format(
+        number=len(files), s='s' if len(files) > 1 else ''
+    ).replace(',', punctuation_space)
+    return number_of_files
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -74,13 +93,27 @@ def main(settings: Settings, gha: GithubAction) -> None:
     if len(files) == 0:
         gha.warning(f'Could not find any files for {settings.junit_files_glob}')
     else:
-        logger.info(f'reading {settings.junit_files_glob}')
+        logger.info(f'Reading {settings.junit_files_glob} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading {list(files)}')
 
-    # get the test results
-    parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
-    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
-     for error in parsed.errors]
+    # log the available RAM to help spot OOM issues:
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
+    logger.info(f'Available memory to read files: {avail_mem}')
+
+    # log the progress
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    with progress_logger(items=len(files),
+                         interval_seconds=10,
+                         progress_template='Read {progress} files in {time}',
+                         finish_template='Finished reading {observations} files in {duration}',
+                         progress_item_type=Tuple[str, Any],
+                         logger=logger) as progress:
+        # get the test results
+        parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs, progress).with_commit(settings.commit)
+        [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+         for error in parsed.errors]
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
