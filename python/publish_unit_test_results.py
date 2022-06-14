@@ -9,10 +9,11 @@ from glob import glob
 from typing import List, Optional, Union
 
 import github
+import humanize
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, none_list, available_annotations, default_annotations, \
+from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_update, comment_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -56,6 +57,22 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
+def get_files_size(files: List[str]) -> str:
+    try:
+        size = sum([os.path.getsize(file) for file in files])
+        return humanize.naturalsize(size, binary=True)
+    except BaseException as e:
+        logger.warning(f'failed to obtain file size of {len(files)} files', exc_info=e)
+        return 'unknown size'
+
+
+def get_number_of_files(files: List[str]) -> str:
+    number_of_files = '{number:,} file{s}'.format(
+        number=len(files), s='s' if len(files) > 1 else ''
+    ).replace(',', punctuation_space)
+    return number_of_files
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -74,7 +91,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     if len(files) == 0:
         gha.warning(f'Could not find any files for {settings.files_glob}')
     else:
-        logger.info(f'reading {settings.files_glob}')
+        logger.info(f'Reading {settings.files_glob} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading {list(files)}')
 
     # get the unit test results
