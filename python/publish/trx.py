@@ -1,19 +1,19 @@
 import os
 import pathlib
-from typing import Iterable, Tuple, Union, Callable
+from typing import Iterable, Callable
 
 from lxml import etree
 
-from publish.junit import JUnitTree
+from publish.junit import JUnitTreeOrException, ParsedJUnitFile
 
 with (pathlib.Path(__file__).parent / 'xslt' / 'trx-to-junit.xslt').open('r', encoding='utf-8') as r:
     transform_trx_to_junit = etree.XSLT(etree.parse(r))
 
 
 def parse_trx_files(files: Iterable[str],
-                    progress: Callable[[Tuple[str, Union[JUnitTree, BaseException]]], Tuple[str, Union[JUnitTree, BaseException]]] = lambda x: x) -> Iterable[Tuple[str, Union[JUnitTree, BaseException]]]:
-    """Parses trx files and returns aggregated statistics as a ParsedUnitTestResults."""
-    def parse(path: str) -> Union[JUnitTree, BaseException]:
+                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    def parse(path: str) -> JUnitTreeOrException:
+        """Parses a trx file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:

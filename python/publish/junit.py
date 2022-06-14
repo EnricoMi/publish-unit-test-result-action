@@ -120,13 +120,15 @@ class DropTestCaseBuilder(etree.TreeBuilder):
 
 
 JUnitTree = etree.ElementTree
+JUnitTreeOrException = Union[JUnitTree, BaseException]
+ParsedJUnitFile = Tuple[str, JUnitTreeOrException]
 
 
 def parse_junit_xml_files(files: Iterable[str],
                           drop_testcases: bool = False,
-                          progress: Callable[[Tuple[str, Union[JUnitTree, BaseException]]], Tuple[str, Union[JUnitTree, BaseException]]] = lambda x: x) -> Iterable[Tuple[str, Union[JUnitTree, BaseException]]]:
-    """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
-    def parse(path: str) -> Union[JUnitXml, BaseException]:
+                          progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    def parse(path: str) -> JUnitTreeOrException:
+        """Parses a junit xml file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:
@@ -143,8 +145,7 @@ def parse_junit_xml_files(files: Iterable[str],
     return [progress((result_file, parse(result_file))) for result_file in files]
 
 
-def process_junit_xml_elems(trees: Iterable[Tuple[str, Union[JUnitTree, BaseException]]],
-                            time_factor: float = 1.0) -> ParsedUnitTestResults:
+def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0) -> ParsedUnitTestResults:
     # TODO: move upstream into JUnitTree
     def create_junitxml(filepath: str, tree: JUnitTree) -> Union[JUnitXml, JUnitXmlError]:
         root_elem = tree.getroot()
