@@ -10,6 +10,7 @@ from typing import List, Optional, Union
 
 import github
 import humanize
+import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
@@ -93,6 +94,12 @@ def main(settings: Settings, gha: GithubAction) -> None:
     else:
         logger.info(f'Reading {settings.files_glob} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading {list(files)}')
+
+    # log the available RAM to help spot OOM issues:
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
+    logger.info(f'Available memory to load files: {avail_mem}')
 
     # get the unit test results
     parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
