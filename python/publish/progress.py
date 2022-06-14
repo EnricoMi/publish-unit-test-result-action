@@ -1,7 +1,7 @@
 from datetime import datetime
 from logging import Logger
 from threading import Timer
-from typing import Generic, TypeVar, Optional, Callable
+from typing import Generic, TypeVar, Optional, Callable, Type, Any
 import contextlib
 
 import humanize
@@ -14,8 +14,9 @@ def progress_logger(items: int,
                     interval_seconds: int,
                     progress_template: str,
                     finish_template: Optional[str],
-                    logger: Logger) -> Callable[[T], T]:
-    progress = Progress(items)
+                    logger: Logger,
+                    progress_item_type: Type[T] = Any) -> Callable[[T], T]:
+    progress = Progress[progress_item_type](items)
     plogger = ProgressLogger(progress, interval_seconds, progress_template, logger).start()
     try:
         yield progress.observe

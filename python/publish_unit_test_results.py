@@ -6,7 +6,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple, Any
 
 import github
 import humanize
@@ -108,6 +108,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
                          interval_seconds=10,
                          progress_template='Read {progress} files in {time}',
                          finish_template='Finished reading {observations} files in {duration}',
+                         progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
         # get the unit test results
         parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs, progress).with_commit(settings.commit)
