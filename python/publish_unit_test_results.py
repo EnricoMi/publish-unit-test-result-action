@@ -24,7 +24,7 @@ from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
 from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
 
-logger = logging.getLogger('publish-unit-test-results')
+logger = logging.getLogger('publish')
 
 
 def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_errors) -> str:
