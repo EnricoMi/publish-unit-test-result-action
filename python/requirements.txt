@@ -1,6 +1,6 @@
 # dataclasses does not exist before Python3.7, needed as dependency
 dataclasses;python_version<"3.7"
-humanize==4.1.0
+humanize==3.14.0
 junitparser==2.5.0
 psutil==5.9.1
 PyGithub==1.55
