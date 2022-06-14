@@ -99,7 +99,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
     avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
-    logger.info(f'Available memory to load files: {avail_mem}')
+    logger.info(f'Available memory to read files: {avail_mem}')
 
     # get the unit test results
     parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
