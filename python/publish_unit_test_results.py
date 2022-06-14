@@ -19,6 +19,7 @@ from publish import hide_comments_modes, available_annotations, default_annotati
     comment_mode_off, comment_mode_update, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
+from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
 from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
@@ -101,10 +102,16 @@ def main(settings: Settings, gha: GithubAction) -> None:
     avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
     logger.info(f'Available memory to read files: {avail_mem}')
 
-    # get the unit test results
-    parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs).with_commit(settings.commit)
-    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
-     for error in parsed.errors]
+    # log the progress
+    with progress_logger(items=len(files),
+                         interval_seconds=10,
+                         progress_template='Read {progress} files in {time}',
+                         finish_template='Finished reading {observations} files in {duration}',
+                         logger=logger) as progress:
+        # get the unit test results
+        parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs, progress).with_commit(settings.commit)
+        [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+         for error in parsed.errors]
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
