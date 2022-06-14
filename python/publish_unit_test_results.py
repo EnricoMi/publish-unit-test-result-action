@@ -103,6 +103,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     logger.info(f'Available memory to read files: {avail_mem}')
 
     # log the progress
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
     with progress_logger(items=len(files),
                          interval_seconds=10,
                          progress_template='Read {progress} files in {time}',
