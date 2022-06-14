@@ -4,7 +4,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union
+from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from copy import deepcopy
 
 from github import Github, GithubException
@@ -488,10 +488,18 @@ class Publisher:
             logger.debug(f'Comment required as comment mode is {self._settings.comment_mode}')
             return True
 
-        if self._settings.comment_mode == comment_mode_changes:
-            if earlier_stats is not None and earlier_stats.is_different(stats):
+        # helper method to detect if changes require a comment
+        def do_changes_require_comment(earlier_stats_is_different_to: Optional[Callable[[UnitTestRunResultsOrDeltaResults], bool]],
+                                       stats_has_changes: bool,
+                                       flavour: str = '') -> bool:
+            in_flavour = ''
+            if flavour:
+                flavour = f'{flavour} '
+                in_flavour = f'in {flavour}'
+
+            if earlier_stats is not None and earlier_stats_is_different_to(stats):
                 logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and statistics are different to earlier comment')
+                            f'and {flavour}statistics are different to earlier comment')
                 logger.debug(f'earlier: {earlier_stats}')
                 logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
                 return True
@@ -499,65 +507,53 @@ class Publisher:
                 logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
                             f'but no delta statistics to target branch available')
                 return True
-            if stats.has_changes:
+            if stats_has_changes:
                 logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and changes to target branch exist')
+                            f'and changes {in_flavour} to target branch exist')
                 logger.debug(f'current: {stats}')
                 return True
+            return False
 
-        if self._settings.comment_mode == comment_mode_changes_failures:
-            if earlier_stats is not None and earlier_stats.is_different_in_failures(stats):
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and failure statistics are different to earlier comment')
-                logger.debug(f'earlier: {earlier_stats}')
-                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
-                return True
-            if not stats.is_delta:
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'but no delta statistics to target branch available')
-                return True
-            if stats.has_failure_changes:
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and changes in failures to target branch exist')
-                logger.debug(f'current: {stats}')
-                return True
+        if self._settings.comment_mode == comment_mode_changes and \
+                do_changes_require_comment(earlier_stats.is_different if earlier_stats else None,
+                                           stats.has_changes):
+            return True
 
-        if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors]:
-            if earlier_stats is not None and earlier_stats.is_different_in_errors(stats):
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and error statistics are different to earlier comment')
-                logger.debug(f'earlier: {earlier_stats}')
-                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
-                return True
-            if not stats.is_delta:
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'but no delta statistics to target branch available')
-                return True
-            if stats.has_error_changes:
-                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
-                            f'and changes in errors to target branch exist')
-                logger.debug(f'current: {stats}')
-                return True
+        if self._settings.comment_mode == comment_mode_changes_failures and \
+                do_changes_require_comment(earlier_stats.is_different_in_failures if earlier_stats else None,
+                                           stats.has_failure_changes,
+                                           'failures'):
+            return True
 
-        if self._settings.comment_mode == comment_mode_failures:
-            if earlier_stats is not None and earlier_stats.has_failures:
-                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
-                            f'and failures existed in earlier comment')
-                return True
-            if stats.has_failures:
-                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
-                            f'and failures exist in current comment')
-                return True
+        if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors] and \
+                do_changes_require_comment(earlier_stats.is_different_in_errors if earlier_stats else None,
+                                           stats.has_error_changes,
+                                           'errors'):
+            return True
 
-        if self._settings.comment_mode in [comment_mode_failures, comment_mode_errors]:
-            if earlier_stats is not None and earlier_stats.has_errors:
+        # helper method to detect if stats require a comment
+        def do_stats_require_comment(earlier_stats_require: Optional[bool], stats_require: bool, flavour: str) -> bool:
+            if earlier_stats is not None and earlier_stats_require:
                 logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
-                            f'and errors existed in earlier comment')
+                            f'and {flavour} existed in earlier comment')
                 return True
-            if stats.has_errors:
+            if stats_require:
                 logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
-                            f'and errors exist in current comment')
+                            f'and {flavour} exist in current comment')
                 return True
+            return False
+
+        if self._settings.comment_mode == comment_mode_failures and \
+                do_stats_require_comment(earlier_stats.has_failures if earlier_stats else None,
+                                         stats.has_failures,
+                                         'failures'):
+            return True
+
+        if self._settings.comment_mode in [comment_mode_failures, comment_mode_errors] and \
+                do_stats_require_comment(earlier_stats.has_errors if earlier_stats else None,
+                                         stats.has_errors,
+                                         'errors'):
+            return True
 
         return False
 
