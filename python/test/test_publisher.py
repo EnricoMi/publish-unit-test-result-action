@@ -461,7 +461,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
-        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[])
 
         self.assertEqual(3, len(mock_calls))
@@ -484,7 +484,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_with_comment_without_hiding(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(hide_comment_mode=hide_comments_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(4, len(mock_calls))
@@ -512,7 +512,7 @@ class TestPublisher(unittest.TestCase):
     def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_mode)
+        settings = self.create_settings(hide_comment_mode=hide_mode)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(5, len(mock_calls))
@@ -557,7 +557,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_without_compare(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(comment_mode=comment_mode_create, hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
+        settings = self.create_settings(hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(5, len(mock_calls))
@@ -594,7 +594,7 @@ class TestPublisher(unittest.TestCase):
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
-        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_check_run = mock.Mock(return_value=bcr)
@@ -603,11 +603,12 @@ class TestPublisher(unittest.TestCase):
         publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
         publisher.require_comment = mock.Mock(return_value=True)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
         with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
-        self.assertEqual(5, len(mock_calls))
+        self.assertEqual(6, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_base_commit_sha', method)
@@ -630,6 +631,9 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[4]
+        self.assertEqual('get_latest_comment', method)
+
+        (method, args, kwargs) = mock_calls[5]
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
@@ -656,13 +660,14 @@ class TestPublisher(unittest.TestCase):
             ((None, 'class', 'test 𝒇'), {'success': [None]}),     # added test 𝒇
         ])
 
-        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_check_run = mock.Mock(return_value=bcr)
         publisher.get_stats_from_check_run = mock.Mock(return_value=bs)
         publisher.get_stats_delta = mock.Mock(return_value=bs)
         publisher.get_base_commit_sha = mock.Mock(return_value="base commit")
+        publisher.get_latest_comment = mock.Mock(return_value=None)
         publisher.require_comment = mock.Mock(return_value=True)
         # the earlier test cases with restricted unicode as they come from the check runs API
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(
@@ -678,7 +683,7 @@ class TestPublisher(unittest.TestCase):
 
         mock_calls = publisher.mock_calls
 
-        self.assertEqual(5, len(mock_calls))
+        self.assertEqual(6, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_base_commit_sha', method)
@@ -701,6 +706,9 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[4]
+        self.assertEqual('get_latest_comment', method)
+
+        (method, args, kwargs) = mock_calls[5]
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
@@ -760,12 +768,13 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock()
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
-        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_check_run = mock.Mock(return_value=None)
         publisher.get_base_commit_sha = mock.Mock(return_value=stats.commit)
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=None)
         with mock.patch('publish.publisher.get_long_summary_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
@@ -785,18 +794,19 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock()
         stats = self.stats
         cases = UnitTestCaseResults(self.cases)
-        settings = self.create_settings(comment_mode=comment_mode_create, compare_earlier=True)
+        settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_check_run = mock.Mock(return_value=None)
         publisher.get_base_commit_sha = mock.Mock(return_value=None)
         publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=None)
         publisher.require_comment = mock.Mock(return_value=True)
         with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
             Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
         mock_calls = publisher.mock_calls
 
-        self.assertEqual(4, len(mock_calls))
+        self.assertEqual(5, len(mock_calls))
 
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('get_base_commit_sha', method)
@@ -814,6 +824,9 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
         (method, args, kwargs) = mock_calls[3]
+        self.assertEqual('get_latest_comment', method)
+
+        (method, args, kwargs) = mock_calls[4]
         self.assertEqual('require_comment', method)
 
         mock_calls = pr.mock_calls
@@ -825,59 +838,61 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
-        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
-        cr = mock.MagicMock()
-        lc = mock.MagicMock(body='latest comment') if one_exists else None
-        stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
-        settings = self.create_settings(comment_mode=comment_mode_update, compare_earlier=False)
-        publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
-        publisher.get_latest_comment = mock.Mock(return_value=lc)
-        publisher.reuse_comment = mock.Mock(return_value=one_exists)
-        publisher.require_comment = mock.Mock(return_value=True)
-        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
-            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
-        mock_calls = publisher.mock_calls
+        for mode in [comment_mode_update, comment_mode_always]:
+            with self.subTest(mode=mode):
+                pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
+                cr = mock.MagicMock()
+                lc = mock.MagicMock(body='latest comment') if one_exists else None
+                stats = self.stats
+                cases = UnitTestCaseResults(self.cases)
+                settings = self.create_settings(comment_mode=mode, compare_earlier=False)
+                publisher = mock.MagicMock(Publisher)
+                publisher._settings = settings
+                publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+                publisher.get_latest_comment = mock.Mock(return_value=lc)
+                publisher.reuse_comment = mock.Mock(return_value=one_exists)
+                publisher.require_comment = mock.Mock(return_value=True)
+                with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
+                    Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+                mock_calls = publisher.mock_calls
 
-        self.assertEqual(5 if one_exists else 3, len(mock_calls))
+                self.assertEqual(5 if one_exists else 3, len(mock_calls))
 
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('get_test_lists_from_check_run', method)
-        self.assertEqual((None, ), args)
-        self.assertEqual({}, kwargs)
+                (method, args, kwargs) = mock_calls[0]
+                self.assertEqual('get_test_lists_from_check_run', method)
+                self.assertEqual((None, ), args)
+                self.assertEqual({}, kwargs)
 
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('get_latest_comment', method)
-        self.assertEqual((pr, ), args)
-        self.assertEqual({}, kwargs)
+                (method, args, kwargs) = mock_calls[1]
+                self.assertEqual('get_latest_comment', method)
+                self.assertEqual((pr, ), args)
+                self.assertEqual({}, kwargs)
 
-        if one_exists:
-            (method, args, kwargs) = mock_calls[2]
-            self.assertEqual('get_stats_from_summary_md', method)
-            self.assertEqual(('latest comment', ), args)
-            self.assertEqual({}, kwargs)
+                if one_exists:
+                    (method, args, kwargs) = mock_calls[2]
+                    self.assertEqual('get_stats_from_summary_md', method)
+                    self.assertEqual(('latest comment', ), args)
+                    self.assertEqual({}, kwargs)
 
-            (method, args, kwargs) = mock_calls[3]
-            self.assertEqual('require_comment', method)
+                    (method, args, kwargs) = mock_calls[3]
+                    self.assertEqual('require_comment', method)
 
-            (method, args, kwargs) = mock_calls[4]
-            self.assertEqual('reuse_comment', method)
-            self.assertEqual((lc, '## title\nbody'), args)
-            self.assertEqual({}, kwargs)
-        else:
-            (method, args, kwargs) = mock_calls[2]
-            self.assertEqual('require_comment', method)
+                    (method, args, kwargs) = mock_calls[4]
+                    self.assertEqual('reuse_comment', method)
+                    self.assertEqual((lc, '## title\nbody'), args)
+                    self.assertEqual({}, kwargs)
+                else:
+                    (method, args, kwargs) = mock_calls[2]
+                    self.assertEqual('require_comment', method)
 
-        mock_calls = pr.mock_calls
-        self.assertEqual(0 if one_exists else 1, len(mock_calls))
+                mock_calls = pr.mock_calls
+                self.assertEqual(0 if one_exists else 1, len(mock_calls))
 
-        if not one_exists:
-            (method, args, kwargs) = mock_calls[0]
-            self.assertEqual('create_issue_comment', method)
-            self.assertEqual(('## title\nbody', ), args)
-            self.assertEqual({}, kwargs)
+                if not one_exists:
+                    (method, args, kwargs) = mock_calls[0]
+                    self.assertEqual('create_issue_comment', method)
+                    self.assertEqual(('## title\nbody', ), args)
+                    self.assertEqual({}, kwargs)
 
     def test_publish_comment_with_reuse_comment_none_existing(self):
         self.do_test_publish_comment_with_reuse_comment(one_exists=False)
@@ -1883,6 +1898,7 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         publisher = Publisher(settings, gh, gha)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -1901,7 +1917,7 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_comment_not_required(self):
-        # same as test_publish_comment but test_publish_comment returns False
+        # same as test_publish_comment but require_comment returns False
         with mock.patch('publish.publisher.Publisher.require_comment', return_value=False):
             settings = self.create_settings(event={'pull_request': {'base': {'sha': 'commit base'}}}, event_name='pull_request')
             base_commit = 'base-commit'
@@ -1909,6 +1925,7 @@ class TestPublisher(unittest.TestCase):
             gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
             pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
             publisher = Publisher(settings, gh, gha)
+            publisher.get_latest_comment = mock.Mock(return_value=None)
 
             publisher.publish_comment(settings.comment_title, self.stats, pr)
 
@@ -1920,6 +1937,7 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo)
         publisher = Publisher(settings, gh, gha)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
 
         compare = mock.MagicMock()
         compare.merge_base_commit.sha = None
@@ -1948,6 +1966,7 @@ class TestPublisher(unittest.TestCase):
         gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         publisher = Publisher(settings, gh, gha)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -1973,6 +1992,7 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh, gha)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -2000,6 +2020,7 @@ class TestPublisher(unittest.TestCase):
         pr = self.create_github_pr(settings.repo, base_commit_sha=base_commit)
         cr = mock.MagicMock(html_url='http://check-run.url')
         publisher = Publisher(settings, gh, gha)
+        publisher.get_latest_comment = mock.Mock(return_value=None)
 
         stats = dict(self.stats.to_dict())
         stats.update(tests_fail=0, tests_error=0, runs_fail=0, runs_error=0)

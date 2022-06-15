@@ -454,9 +454,9 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        # we need to fetch the latest comment unless comment mode is off, always or deprecated create
+        # we need to fetch the latest comment unless comment mode is off (this method would have been called) or deprecated create
         latest_comment = None
-        if self._settings.comment_mode not in [comment_mode_off, comment_mode_create, comment_mode_always]:
+        if self._settings.comment_mode not in [comment_mode_off, comment_mode_create]:
             latest_comment = self.get_latest_comment(pull_request)
         latest_comment_body = latest_comment.body if latest_comment else None
 
@@ -470,13 +470,13 @@ class Publisher:
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # reuse existing comment when comment_mode == comment_mode_update, otherwise create new comment
-        if self._settings.comment_mode == comment_mode_update and latest_comment is not None:
-            self.reuse_comment(latest_comment, body)
-            logger.info(f'Edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
-        else:
+        # only create new comment when comment_mode == comment_mode_create, or no comment exists
+        if self._settings.comment_mode == comment_mode_create or latest_comment is None:
             comment = pull_request.create_issue_comment(body)
             logger.info(f'Created comment for pull request #{pull_request.number}: {comment.html_url}')
+        else:
+            self.reuse_comment(latest_comment, body)
+            logger.info(f'Edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
 
     def require_comment(self,
                         stats: UnitTestRunResultsOrDeltaResults,
