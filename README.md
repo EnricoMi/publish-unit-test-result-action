@@ -175,7 +175,7 @@ The list of most notable options:
 |`files`|`*.xml`|File patterns to select the test result XML files, e.g. `"test-results/**/*.xml"`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
 |`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative title for the pull request comment.|
-|`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment only when changes to the target branch exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments<br/>With `changes in failures` and `changes in errors`, it only comments when changes in the number of failures and errors exist, respectively.|
+|`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
 |`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
 
 <details>
