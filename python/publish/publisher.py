@@ -4,16 +4,19 @@ import logging
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Any, Optional, Tuple, Mapping, Dict, Union
+from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from copy import deepcopy
 
 from github import Github, GithubException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
+from github.IssueComment import IssueComment
 
 from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
     comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
+    comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
+    comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
@@ -21,7 +24,8 @@ from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_late
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
-from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, get_stats_delta
+from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
+    UnitTestRunResultsOrDeltaResults, get_stats_delta
 
 
 @dataclass(frozen=True)
@@ -135,7 +139,7 @@ class Publisher:
                 stats: UnitTestRunResults,
                 cases: UnitTestCaseResults,
                 conclusion: str):
-        logger.info(f'publishing {conclusion} results for commit {self._settings.commit}')
+        logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
         check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
@@ -151,11 +155,11 @@ class Publisher:
                     elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
                         self.hide_all_but_latest_comments(pull)
                 if self._settings.hide_comment_mode == hide_comments_mode_off:
-                    logger.info('hide_comments disabled, not hiding any comments')
+                    logger.info('Hiding comments disabled (hide_comments)')
             else:
-                logger.info(f'there is no pull request for commit {self._settings.commit}')
+                logger.info(f'There is no pull request for commit {self._settings.commit}')
         else:
-            logger.info('comment_on_pr disabled, not commenting on any pull requests')
+            logger.info('Commenting on pull requests disabled (comment_on_pr)')
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount calls the GitHub API just to get the total number
@@ -263,9 +267,16 @@ class Publisher:
         for line in summary.split('\n'):
             logger.debug(f'summary: {line}')
 
-        pos = summary.index(digest_header) if digest_header in summary else None
-        if pos:
-            digest = summary[pos + len(digest_header):]
+        return Publisher.get_stats_from_summary_md(summary)
+
+    @staticmethod
+    def get_stats_from_summary_md(summary: str) -> Optional[UnitTestRunResults]:
+        start = summary.index(digest_header) if digest_header in summary else None
+        if start:
+            digest = summary[start + len(digest_header):]
+            end = digest.index('\n') if '\n' in digest else None
+            if end:
+                digest = digest[:end]
             logger.debug(f'digest: {digest}')
             stats = get_stats_from_digest(digest)
             logger.debug(f'stats: {stats}')
@@ -330,7 +341,7 @@ class Publisher:
                                                         status='completed',
                                                         conclusion=conclusion,
                                                         output=output)
-                logger.info(f'created check {check_run.html_url}')
+                logger.info(f'Created check {check_run.html_url}')
             else:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
@@ -364,7 +375,7 @@ class Publisher:
         summary = get_long_summary_md(stats_with_delta, details_url)
         markdown = f'## {title}\n{summary}'
         self._gha.add_to_job_summary(markdown)
-        logger.info(f'created job summary')
+        logger.info(f'Created job summary')
 
     @staticmethod
     def get_test_lists_from_check_run(check_run: Optional[CheckRun]) -> Tuple[Optional[List[str]], Optional[List[str]]]:
@@ -420,7 +431,7 @@ class Publisher:
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
                         check_run: Optional[CheckRun] = None,
-                        cases: Optional[UnitTestCaseResults] = None) -> PullRequest:
+                        cases: Optional[UnitTestCaseResults] = None):
         # compare them with earlier stats
         base_check_run = None
         if self._settings.compare_earlier:
@@ -443,19 +454,110 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
+        # we need to fetch the latest comment unless comment mode is off (this method would have been called) or deprecated create
+        latest_comment = None
+        if self._settings.comment_mode not in [comment_mode_off, comment_mode_create]:
+            latest_comment = self.get_latest_comment(pull_request)
+        latest_comment_body = latest_comment.body if latest_comment else None
+
+        # are we required to create a comment on this PR?
+        earlier_stats = self.get_stats_from_summary_md(latest_comment_body) if latest_comment_body else None
+        if not self.require_comment(stats_with_delta, earlier_stats):
+            logger.info(f'No pull request comment required as comment mode is {self._settings.comment_mode} (comment_mode)')
+            return
+
         details_url = check_run.html_url if check_run else None
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # reuse existing commend when comment_mode == comment_mode_update
-        # if none exists or comment_mode != comment_mode_update, create new comment
-        if self._settings.comment_mode != comment_mode_update or not self.reuse_comment(pull_request, body):
+        # only create new comment when comment_mode == comment_mode_create, or no comment exists
+        if self._settings.comment_mode == comment_mode_create or latest_comment is None:
             comment = pull_request.create_issue_comment(body)
-            logger.info(f'created comment for pull request #{pull_request.number}: {comment.html_url}')
+            logger.info(f'Created comment for pull request #{pull_request.number}: {comment.html_url}')
+        else:
+            self.reuse_comment(latest_comment, body)
+            logger.info(f'Edited comment for pull request #{pull_request.number}: {latest_comment.html_url}')
 
-        return pull_request
+    def require_comment(self,
+                        stats: UnitTestRunResultsOrDeltaResults,
+                        earlier_stats: Optional[UnitTestRunResults]) -> bool:
+        # SomeTestChanges.has_changes cannot be used here as changes between earlier comment
+        # and current results cannot be identified
 
-    def reuse_comment(self, pull: PullRequest, body: str) -> bool:
+        if self._settings.comment_mode in [comment_mode_always, comment_mode_create, comment_mode_update]:
+            logger.debug(f'Comment required as comment mode is {self._settings.comment_mode}')
+            return True
+
+        # helper method to detect if changes require a comment
+        def do_changes_require_comment(earlier_stats_is_different_to: Optional[Callable[[UnitTestRunResultsOrDeltaResults], bool]],
+                                       stats_has_changes: bool,
+                                       flavour: str = '') -> bool:
+            in_flavour = ''
+            if flavour:
+                flavour = f'{flavour} '
+                in_flavour = f'in {flavour}'
+
+            if earlier_stats is not None and earlier_stats_is_different_to(stats):
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and {flavour}statistics are different to earlier comment')
+                logger.debug(f'earlier: {earlier_stats}')
+                logger.debug(f'current: {stats.without_delta() if stats.is_delta else stats}')
+                return True
+            if not stats.is_delta:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'but no delta statistics to target branch available')
+                return True
+            if stats_has_changes:
+                logger.info(f'Comment required as comment mode is "{self._settings.comment_mode}" '
+                            f'and changes {in_flavour} to target branch exist')
+                logger.debug(f'current: {stats}')
+                return True
+            return False
+
+        if self._settings.comment_mode == comment_mode_changes and \
+                do_changes_require_comment(earlier_stats.is_different if earlier_stats else None,
+                                           stats.has_changes):
+            return True
+
+        if self._settings.comment_mode == comment_mode_changes_failures and \
+                do_changes_require_comment(earlier_stats.is_different_in_failures if earlier_stats else None,
+                                           stats.has_failure_changes,
+                                           'failures'):
+            return True
+
+        if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors] and \
+                do_changes_require_comment(earlier_stats.is_different_in_errors if earlier_stats else None,
+                                           stats.has_error_changes,
+                                           'errors'):
+            return True
+
+        # helper method to detect if stats require a comment
+        def do_stats_require_comment(earlier_stats_require: Optional[bool], stats_require: bool, flavour: str) -> bool:
+            if earlier_stats is not None and earlier_stats_require:
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
+                            f'and {flavour} existed in earlier comment')
+                return True
+            if stats_require:
+                logger.info(f'Comment required as comment mode is {self._settings.comment_mode} '
+                            f'and {flavour} exist in current comment')
+                return True
+            return False
+
+        if self._settings.comment_mode == comment_mode_failures and \
+                do_stats_require_comment(earlier_stats.has_failures if earlier_stats else None,
+                                         stats.has_failures,
+                                         'failures'):
+            return True
+
+        if self._settings.comment_mode in [comment_mode_failures, comment_mode_errors] and \
+                do_stats_require_comment(earlier_stats.has_errors if earlier_stats else None,
+                                         stats.has_errors,
+                                         'errors'):
+            return True
+
+        return False
+
+    def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
         comments = self.get_pull_request_comments(pull, order_by_updated=True)
 
@@ -464,22 +566,21 @@ class Publisher:
 
         # if there is no such comment, stop here
         if len(comments) == 0:
-            return False
+            return None
 
-        # edit last comment
+        # fetch latest action comment
         comment_id = comments[-1].get("databaseId")
+        return pull.get_issue_comment(comment_id)
+
+    def reuse_comment(self, comment: IssueComment, body: str):
         if ':recycle:' not in body:
             body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
         try:
-            comment = pull.get_issue_comment(comment_id)
             comment.edit(body)
-            logger.info(f'edited comment for pull request #{pull.number}: {comment.html_url}')
         except Exception as e:
-            self._gha.warning(f'Failed to edit existing comment #{comment_id}')
+            self._gha.warning(f'Failed to edit existing comment #{comment.id}')
             logger.debug('editing existing comment failed', exc_info=e)
-
-        return True
 
     def get_base_commit_sha(self, pull_request: PullRequest) -> Optional[str]:
         if self._settings.pull_request_build == pull_request_build_mode_merge:
@@ -588,7 +689,7 @@ class Publisher:
 
         # hide all those comments
         for node_id, comment_commit_sha in comment_ids:
-            logger.info(f'hiding unit test result comment for commit {comment_commit_sha}')
+            logger.info(f'Hiding unit test result comment for commit {comment_commit_sha}')
             self.hide_comment(node_id)
 
     def hide_all_but_latest_comments(self, pull: PullRequest) -> None:
@@ -605,5 +706,5 @@ class Publisher:
 
         # hide all those comments
         for node_id in comment_ids:
-            logger.info(f'hiding unit test result comment {node_id}')
+            logger.info(f'Hiding unit test result comment {node_id}')
             self.hide_comment(node_id)

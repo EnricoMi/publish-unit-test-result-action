@@ -6,7 +6,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union, Tuple, Any
+from typing import List, Optional, Union, Mapping, Tuple, Any
 
 import github
 import humanize
@@ -16,7 +16,7 @@ from urllib3.util.retry import Retry
 import publish.github_action
 from publish import hide_comments_modes, available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_update, comment_modes, punctuation_space
+    comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files
 from publish.progress import progress_logger
@@ -228,17 +228,18 @@ def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAc
 def check_var(var: Union[Optional[str], List[str]],
               name: str,
               label: str,
-              allowed_values: Optional[List[str]] = None) -> None:
+              allowed_values: Optional[List[str]] = None,
+              deprecated_values: Optional[List[str]] = None) -> None:
     if var is None:
         raise RuntimeError(f'{label} must be provided via action input or environment variable {name}')
 
     if allowed_values:
         if isinstance(var, str):
-            if var not in allowed_values:
+            if var not in allowed_values + (deprecated_values or []):
                 raise RuntimeError(f"Value '{var}' is not supported for variable {name}, "
                                    f"expected: {', '.join(allowed_values)}")
         if isinstance(var, list):
-            if any([v not in allowed_values for v in var]):
+            if any([v not in allowed_values + (deprecated_values or []) for v in var]):
                 raise RuntimeError(f"Some values in '{', '.join(var)}' "
                                    f"are not supported for variable {name}, "
                                    f"allowed: {', '.join(allowed_values)}")
@@ -252,6 +253,24 @@ def check_var_condition(condition: bool, message: str) -> None:
 def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str, gha: Optional[GithubAction]):
     if val is not None:
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
+
+        if gha is None:
+            logger.debug(message)
+        else:
+            gha.warning(message)
+
+
+def available_values(values: List[str]) -> str:
+    values = [f'"{val}"' for val in values]
+    return f"{', '.join(values[:-1])} or {values[-1]}"
+
+
+def deprecate_val(val: Optional[str], var: str, replacement_vals: Mapping[str, str], gha: Optional[GithubAction]):
+    if val in replacement_vals:
+        message = f'Value "{val}" for option {var.lower()} is deprecated!'
+        replacement = replacement_vals[val]
+        if replacement:
+            message = f'{message} Instead, use value "{replacement}".'
 
         if gha is None:
             logger.debug(message)
@@ -318,7 +337,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_update if comment_on_pr else comment_mode_off),
+        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_always if comment_on_pr else comment_mode_off),
         job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
@@ -335,7 +354,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Commit mode', comment_modes)
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
@@ -345,7 +364,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
-    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR', 'Instead, use option "comment_mode" with values "off", "create new", or "update last".', gha)
+    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
+                  f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
+    deprecate_val(settings.comment_mode, 'COMMENT_MODE', comment_modes_deprecated, gha)
 
     return settings
 

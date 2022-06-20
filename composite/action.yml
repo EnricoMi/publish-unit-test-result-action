@@ -19,7 +19,11 @@ inputs:
     default: 'Unit Test Results'
     required: false
   comment_title:
-    description: 'Title of PR comments, defaults to value of check_name input'
+    description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
+    required: false
+  comment_mode:
+    description: 'The action posts comments to pull requests that are associated with the commit. Set to: "always" - always comment, "changes" - comment only when changes to the target branch exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments. With "changes in failures" and "changes in errors", it only comments when changes in the number of failures and errors exist, respectively'
+    default: 'always'
     required: false
   fail_on:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
@@ -49,10 +53,6 @@ inputs:
   comment_on_pr:
     description: 'Deprecated, please use comment_mode instead!'
     required: false
-  comment_mode:
-    description: 'Control PR comments: off - disable PR comments, create new - create comments on PRs, each time a new one, update last - create comment on PR, reuse an existing one'
-    default: 'update last'
-    required: false
   job_summary:
     description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
     default: 'true'
@@ -72,14 +72,14 @@ inputs:
     description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
     required: false
   test_changes_limit:
-    description: 'Limits the number of removed or skipped tests reported on PR comments. This report can be disabled with a value of 0. The default is 10.'
+    description: 'Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of 0. The default is 10.'
     required: false
   check_run_annotations:
     description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
     default: 'all tests, skipped tests'
     required: false
   check_run_annotations_branch:
-    description: 'Adds check run annotations only on given branches. Comma separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
+    description: 'Adds check run annotations only on given branches. Comma-separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
@@ -149,6 +149,7 @@ runs:
         COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}
         COMMENT_TITLE: ${{ inputs.comment_title }}
+        COMMENT_MODE: ${{ inputs.comment_mode }}
         FAIL_ON: ${{ inputs.fail_on }}
         FILES: ${{ inputs.files }}
         TIME_UNIT: ${{ inputs.time_unit }}
@@ -157,7 +158,6 @@ runs:
         IGNORE_RUNS: ${{ inputs.ignore_runs }}
         HIDE_COMMENTS: ${{ inputs.hide_comments }}
         COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
-        COMMENT_MODE: ${{ inputs.comment_mode }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
         EVENT_FILE: ${{ inputs.event_file }}

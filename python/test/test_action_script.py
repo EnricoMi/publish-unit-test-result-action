@@ -5,11 +5,10 @@ import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List
-
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_mode_off, comment_mode_create, comment_mode_update, \
+    fail_on_mode_nothing, comment_modes, comment_modes_deprecated, comment_mode_off, comment_mode_always, \
     hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
@@ -145,7 +144,7 @@ class Test(unittest.TestCase):
                      time_factor=1.0,
                      check_name='check name',
                      comment_title='title',
-                     comment_mode=comment_mode_create,
+                     comment_mode=comment_mode_always,
                      job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
@@ -305,29 +304,39 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
     def test_get_settings_comment_on_pr(self):
-        default_comment_mode = comment_mode_update
+        default_comment_mode = comment_mode_always
         bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
+        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
 
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_update), warning=[bool_warning, depr_warning])
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=[bool_warning, depr_warning])
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
     def test_get_settings_comment_mode(self):
-        warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "create new", or "update last".'
-        for mode in [comment_mode_off, comment_mode_create, comment_mode_update]:
+        comment_on_pr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
+        for mode in comment_modes:
             with self.subTest(mode=mode):
                 self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true' if mode == comment_mode_off else 'false', expected=self.get_settings(comment_mode=mode), warning=warning)
+                # comment_on_pr is ignored when comment_mode is given
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
 
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_update))
+        for mode in comment_modes_deprecated:
+            deprecated_warning = f'Value "{mode}" for option comment_mode is deprecated! Instead, use value "always".'
+            with self.subTest(mode=mode):
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode), warning=deprecated_warning)
+                # comment_on_pr is ignored when comment_mode is given
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
+                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
+
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
-        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, create new, update last", str(re.exception))
+        self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, always, changes, changes in failures, changes in errors, failures, errors", str(re.exception))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'
@@ -462,7 +471,7 @@ class Test(unittest.TestCase):
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='files',
                 COMMENT_TITLE='title',  # defaults to check name
-                COMMENT_MODE='create new',  # true unless 'false'
+                COMMENT_MODE='always',
                 JOB_SUMMARY='true',
                 HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
