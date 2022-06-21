@@ -147,18 +147,14 @@ def parse_junit_xml_files(files: Iterable[str],
 
 
 def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0) -> ParsedUnitTestResults:
-    # TODO: move upstream into JUnitTree
     def create_junitxml(filepath: str, tree: JUnitTree) -> Union[JUnitXml, JUnitXmlError]:
-        root_elem = tree.getroot()
-        if root_elem.tag == "testsuites":
-            instance = JUnitXml()
-        elif root_elem.tag == "testsuite":
-            instance = TestSuite()
-        else:
-            return JUnitXmlError("Invalid format.")
-        instance._elem = root_elem
-        instance.filepath = filepath
-        return instance
+        try:
+            root_elem = tree.getroot()
+            instance = JUnitXml.fromroot(root_elem)
+            instance.filepath = filepath
+            return instance
+        except JUnitXmlError as e:
+            return e
 
     processed = [(result_file, create_junitxml(result_file, tree) if not isinstance(tree, BaseException) else tree)
                   for result_file, tree in trees]
