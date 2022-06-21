@@ -1,10 +1,12 @@
+import contextlib
 from datetime import datetime
 from logging import Logger
 from threading import Timer
 from typing import Generic, TypeVar, Optional, Callable, Type, Any
-import contextlib
 
 import humanize
+
+from publish import punctuation_space
 
 T = TypeVar('T')
 
@@ -34,7 +36,9 @@ class Progress(Generic[T]):
         return observation
 
     def get_progress(self) -> str:
-        return f'{self.observations} of {self.items}'
+        return '{observations:,} of {items:,}'.format(
+            observations=self.observations, items=self.items
+        ).replace(',', punctuation_space)
 
 
 class ProgressLogger:
