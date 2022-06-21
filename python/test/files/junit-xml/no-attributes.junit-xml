@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+    <testsuite>
+        <testcase/>
+        <testcase>
+            <skipped/>
+        </testcase>
+        <testcase>
+            <failure/>
+        </testcase>
+        <testcase>
+            <error/>
+        </testcase>
+    </testsuite>
+</testsuites>

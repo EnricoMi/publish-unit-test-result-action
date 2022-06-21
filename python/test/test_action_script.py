@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pathlib
 import sys
 import tempfile
 import unittest
@@ -13,8 +14,10 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
-    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, main
-from test import chdir
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
+from test_utils import chdir
+
+test_files_path = pathlib.Path(__file__).parent / 'files'
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
@@ -128,6 +131,13 @@ class Test(unittest.TestCase):
         self.assertEqual(get_var('NAME', dict(INPUT_NAME='precedence', NAME='value')), 'precedence')
         self.assertIsNone(get_var('NAME', dict(NAME='')))
 
+    @classmethod
+    def get_settings_no_default_files(cls,
+                                      junit_files_glob=None,
+                                      trx_files_glob=None) -> Settings:
+        return cls.get_settings(junit_files_glob=junit_files_glob,
+                                trx_files_glob=trx_files_glob)
+
     @staticmethod
     def get_settings(token='token',
                      api_url='http://github.api.url/',
@@ -141,6 +151,7 @@ class Test(unittest.TestCase):
                      fail_on_errors=True,
                      fail_on_failures=True,
                      junit_files_glob='junit-files',
+                     trx_files_glob='trx-files',
                      time_factor=1.0,
                      check_name='check name',
                      comment_title='title',
@@ -157,7 +168,7 @@ class Test(unittest.TestCase):
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
-                     json_thousands_separator=punctuation_space):
+                     json_thousands_separator=punctuation_space) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
@@ -173,6 +184,7 @@ class Test(unittest.TestCase):
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             junit_files_glob=junit_files_glob,
+            trx_files_glob=trx_files_glob,
             time_factor=time_factor,
             check_name=check_name,
             comment_title=comment_title,
@@ -234,16 +246,28 @@ class Test(unittest.TestCase):
                     self.do_test_get_settings(GITHUB_RETRIES=retries, expected=None)
                 self.assertIn(f'GITHUB_RETRIES must be a positive integer or 0: {retries}', re.exception.args)
 
+    def test_get_settings_any_files(self):
+        for junit in [None, 'junit-file']:
+            for trx in [None, 'trx-file']:
+                with self.subTest(junit=junit, trx=trx):
+                    any_flavour_set = any([flavour is not None for flavour in [junit, trx]])
+                    expected = self.get_settings(junit_files_glob=junit if any_flavour_set else '*.xml',
+                                                 trx_files_glob=trx)
+                    warnings = None if any_flavour_set else 'At least one of the *_FILES options has to be set! ' \
+                                                            'Falling back to deprecated default "*.xml"'
+
+                    self.do_test_get_settings(JUNIT_FILES=junit, TRX_FILES=trx, expected=expected, warning=warnings)
+
     def test_get_settings_junit_files(self):
-        self.do_test_get_settings(JUNIT_FILES='file', expected=self.get_settings(junit_files_glob='file'))
-        self.do_test_get_settings(JUNIT_FILES='file\nfile2', expected=self.get_settings(junit_files_glob='file\nfile2'))
-        self.do_test_get_settings(JUNIT_FILES=None, expected=self.get_settings(junit_files_glob='*.xml'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
 
         # this is the deprecated version of JUNIT_FILES
-        self.do_test_get_settings(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
-        self.do_test_get_settings(JUNIT_FILES=None, FILES='file', expected=self.get_settings(junit_files_glob='file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
-        self.do_test_get_settings(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings(junit_files_glob='file\nfile2'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
-        self.do_test_get_settings(JUNIT_FILES=None, FILES=None, expected=self.get_settings(junit_files_glob='*.xml'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
 
     def test_get_settings_time_unit(self):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
@@ -448,6 +472,19 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(GITHUB_REPOSITORY=None)
         self.assertEqual('GitHub repository must be provided via action input or environment variable GITHUB_REPOSITORY', str(re.exception))
 
+    def do_test_get_settings_no_default_files(self,
+                                              event: dict = {},
+                                              gha: Optional[GithubAction] = None,
+                                              warning: Optional[Union[str, List[str]]] = None,
+                                              expected: Settings = get_settings.__func__(),
+                                              **kwargs):
+        options = dict(**kwargs)
+        for flavour in ['JUNIT', 'TRX']:
+            if f'{flavour}_FILES' not in kwargs:
+                options[f'{flavour}_FILES'] = None
+
+        self.do_test_get_settings(event, gha, warning, expected, **options)
+
     def do_test_get_settings(self,
                              event: dict = {},
                              gha: Optional[GithubAction] = None,
@@ -476,6 +513,7 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 JUNIT_FILES='junit-files',
+                TRX_FILES='trx-files',
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='always',
                 JOB_SUMMARY='true',
@@ -756,6 +794,52 @@ class Test(unittest.TestCase):
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
 
+    def test_parse_files(self):
+        gha = mock.MagicMock()
+        settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                                     trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
+        actual = parse_files(settings, gha)
+
+        gha.warning.assert_not_called()
+        gha.error.assert_not_called()
+
+        self.assertEqual(35, actual.files)
+        self.assertEqual(4, len(actual.errors))
+        self.assertEqual(32, actual.suites)
+        self.assertEqual(1397, actual.suite_tests)
+        self.assertEqual(96, actual.suite_skipped)
+        self.assertEqual(48, actual.suite_failures)
+        self.assertEqual(7, actual.suite_errors)
+        self.assertEqual(2392, actual.suite_time)
+        self.assertEqual(1387, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+
+    def test_parse_files_no_matches(self):
+        gha = mock.MagicMock()
+        with tempfile.TemporaryDirectory() as path:
+            missing_junit = str(pathlib.Path(path) / 'junit-not-there')
+            missing_trx = str(pathlib.Path(path) / 'trx-not-there')
+            settings = self.get_settings(junit_files_glob=missing_junit,
+                                         trx_files_glob=missing_trx)
+        actual = parse_files(settings, gha)
+
+        gha.warning.assert_has_calls([
+            mock.call(f'Could not find any files for {missing_junit}'),
+            mock.call(f'Could not find any files for {missing_trx}')
+        ])
+        gha.error.assert_not_called()
+
+        self.assertEqual(0, actual.files)
+        self.assertEqual(0, len(actual.errors))
+        self.assertEqual(0, actual.suites)
+        self.assertEqual(0, actual.suite_tests)
+        self.assertEqual(0, actual.suite_skipped)
+        self.assertEqual(0, actual.suite_failures)
+        self.assertEqual(0, actual.suite_errors)
+        self.assertEqual(0, actual.suite_time)
+        self.assertEqual(0, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+
     def test_throttle_gh_request_raw(self):
         logging.root.level = logging.getLevelName('INFO')
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
@@ -840,8 +924,12 @@ class Test(unittest.TestCase):
                 m.side_effect = do_raise
                 main(settings, gha)
 
-            gha.warning.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
-                                                'It cannot do anything useful like creating check runs or pull request '
-                                                'comments. To run the action on fork repository pull requests, see '
-                                                'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
-                                                '/README.md#support-fork-repositories-and-dependabot-branches')
+            gha.warning.assert_has_calls([
+                mock.call('This action is running on a pull_request event for a fork repository. '
+                          'It cannot do anything useful like creating check runs or pull request '
+                          'comments. To run the action on fork repository pull requests, see '
+                          'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
+                          '/README.md#support-fork-repositories-and-dependabot-branches'),
+                mock.call('At least one of the *_FILES options has to be set! '
+                          'Falling back to deprecated default "*.xml"')
+            ], any_order=True)

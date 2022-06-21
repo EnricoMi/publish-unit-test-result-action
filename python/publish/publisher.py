@@ -43,7 +43,9 @@ class Settings:
     json_thousands_separator: str
     fail_on_errors: bool
     fail_on_failures: bool
-    junit_files_glob: str
+    # one of these *_files_glob must be set
+    junit_files_glob: Optional[str]
+    trx_files_glob: Optional[str]
     time_factor: float
     check_name: str
     comment_title: str

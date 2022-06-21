@@ -1,0 +1,90 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=6,
+  suite_skipped=1,
+  suite_failures=3,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='FailTest',
+      result='failure',
+      message='  Expected: True\r\n  But was:  False\r\n',
+      content='  Expected: True\r\n  But was:  False\r\n   at '
+        'SampleProject.NUnit.TestServiceTests.FailTest() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
+        '\\TestServiceTests.cs:line 61\r\n',
+      time=0.059742
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='SkipTest',
+      result='skipped',
+      message='Ignore test',
+      content='Ignore test',
+      time=0.000447
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='TestThrowingException',
+      result='failure',
+      message='System.Exception : Pretty good exception',
+      content='System.Exception : Pretty good exception   at '
+        'SampleProject.TestService.GetException() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestService'
+        '.cs:line 19\r\n   at '
+        'SampleProject.NUnit.TestServiceTests.TestThrowingException() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
+        '\\TestServiceTests.cs:line 50',
+      time=0.003151
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='TestTheory(False)',
+      result='failure',
+      message='  Expected: False\r\n  But was:  True\r\n',
+      content='  Expected: False\r\n  But was:  True\r\n   at '
+        'SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
+        '\\TestServiceTests.cs:line 25\r\n',
+      time=0.001997
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='TestTheory(True)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0113449
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit/NUnit-netcoreapp3.1-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.NUnit.TestServiceTests',
+      test_name='PassingTest',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0010839
+    )
+  ]
+)

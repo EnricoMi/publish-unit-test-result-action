@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="6" failures="3" errors="0" skipped="1">
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="TestTheory(expected: False)" time="0.02">
+      <failure message="Assert.Equal() Failure&#13;&#10;Expected: False&#13;&#10;Actual:   True">Assert.Equal() Failure&#13;
+Expected: False&#13;
+Actual:   True   at SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 29</failure>
+    </testcase>
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="FailTest" time="0.001">
+      <failure message="Assert.True() Failure&#13;&#10;Expected: True&#13;&#10;Actual:   False">Assert.True() Failure&#13;
+Expected: True&#13;
+Actual:   False   at SampleProject.xUnit.TestServiceTests.FailTest() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 65</failure>
+    </testcase>
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="SkipTest" time="0.001">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="TestThrowingException" time="0.001">
+      <failure message="System.Exception : Pretty good exception">System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#13;
+   at SampleProject.xUnit.TestServiceTests.TestThrowingException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.xUnit\TestServiceTests.cs:line 54</failure>
+    </testcase>
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="TestTheory(expected: True)" time="0.025"/>
+    <testcase classname="SampleProject.xUnit.TestServiceTests" name="PassingTest" time="0.001"/>
+  </testsuite>
+</testsuites>

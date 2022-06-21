@@ -1,0 +1,56 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=4,
+  suite_skipped=2,
+  suite_failures=1,
+  suite_errors=1,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='with-xml-entities.xml',
+      test_file=None,
+      line=None,
+      class_name=None,
+      test_name='Test with "quotes" in the test name',
+      result='skipped',
+      message='A message with "quotes"',
+      content='Content with "quotes"',
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='with-xml-entities.xml',
+      test_file=None,
+      line=None,
+      class_name=None,
+      test_name="Test with 'apostrophe' in the test name",
+      result='failure',
+      message="A message with 'apostrophes'",
+      content="Content with 'apostrophes'",
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='with-xml-entities.xml',
+      test_file=None,
+      line=None,
+      class_name=None,
+      test_name='Test with & in the test name',
+      result='error',
+      message='A message with &',
+      content='Content with &',
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='with-xml-entities.xml',
+      test_file=None,
+      line=None,
+      class_name=None,
+      test_name='Test with < and > in the test name',
+      result='skipped',
+      message='A message with < and >',
+      content='Content with < and >',
+      time=0.0
+    )
+  ]
+)

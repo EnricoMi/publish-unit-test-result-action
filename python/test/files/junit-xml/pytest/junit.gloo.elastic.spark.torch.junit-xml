@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="b149dd50aa71" name="pytest" skipped="0" tests="22" time="670.069" timestamp="2020-08-31T09:25:06.655141">
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="653" name="test_auto_scale_down_by_discovery" time="26.583"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="681" name="test_auto_scale_down_by_exception" time="20.709"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="710" name="test_auto_scale_no_spark_black_list" time="58.313"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse" time="39.759"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse_in_app" time="39.508"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_executor_reuse_same_task" time="39.404"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_node_reuse" time="40.360"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_auto_scale_spark_blacklist_no_node_reuse_in_app" time="39.424"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="626" name="test_auto_scale_up" time="27.592"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="613" name="test_fault_tolerance_all_hosts_lost" time="11.068"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="584" name="test_fault_tolerance_exception_all_ranks" time="14.720"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="558" name="test_fault_tolerance_exception_single_rank" time="23.053"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="598" name="test_fault_tolerance_exception_with_min_hosts_timeout" time="25.401"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="414" name="test_fault_tolerance_hosts_added_and_removed" time="48.786"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="503" name="test_fault_tolerance_no_spark_blacklist" time="22.948"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse" time="25.312"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse_in_app" time="25.432"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_executor_reuse_same_task" time="25.427"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_node_reuse" time="25.592"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="../usr/local/lib/python3.6/dist-packages/mock/mock.py" line="1363" name="test_fault_tolerance_spark_blacklist_no_node_reuse_in_app" time="25.494"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="472" name="test_fault_tolerance_unused_hosts_added_and_removed" time="45.176"/>
+    <testcase classname="test.integration.test_elastic_spark_torch.ElasticSparkTorchTests" file="test/integration/elastic_spark_common.py" line="394" name="test_happy_run" time="19.518"/>
+  </testsuite>
+</testsuites>

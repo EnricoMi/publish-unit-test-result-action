@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="6" failures="3" errors="0" skipped="1">
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="TestTheory(False)" time="0.002">
+      <failure message="  Expected: False&#13;&#10;  But was:  True&#13;&#10;">  Expected: False&#13;
+  But was:  True&#13;
+   at SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 25&#13;
+</failure>
+    </testcase>
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="SkipTest" time="0">
+      <skipped message="Ignore test">Ignore test</skipped>
+    </testcase>
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="TestTheory(True)" time="0.018"/>
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="TestThrowingException" time="0.005">
+      <failure message="System.Exception : Pretty good exception">System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject\TestService.cs:line 19&#13;
+   at SampleProject.NUnit.TestServiceTests.TestThrowingException() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 50</failure>
+    </testcase>
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="FailTest" time="0.111">
+      <failure message="  Expected: True&#13;&#10;  But was:  False&#13;&#10;">  Expected: True&#13;
+  But was:  False&#13;
+   at SampleProject.NUnit.TestServiceTests.FailTest() in C:\Dev\LiquidTestReports\test\SampleProject\SampleProject.Tests.NUnit\TestServiceTests.cs:line 61&#13;
+</failure>
+    </testcase>
+    <testcase classname="SampleProject.NUnit.TestServiceTests" name="PassingTest" time="0.002"/>
+  </testsuite>
+</testsuites>

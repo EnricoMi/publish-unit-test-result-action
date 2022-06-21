@@ -18,11 +18,11 @@ from publish import hide_comments_modes, available_annotations, default_annotati
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
 from publish.github_action import GithubAction
-from publish.junit import parse_junit_xml_files
+from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
-from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
+from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults, ParsedUnitTestResultsWithCommit
 
 logger = logging.getLogger('publish')
 
@@ -59,6 +59,21 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
+def expand_glob(pattern: Optional[str], gha: GithubAction) -> List[str]:
+    if not pattern:
+        return []
+
+    files = get_files(pattern)
+
+    if len(files) == 0:
+        gha.warning(f'Could not find any files for {pattern}')
+    else:
+        logger.info(f'Reading {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading {list(files)}')
+
+    return files
+
+
 def get_files_size(files: List[str]) -> str:
     try:
         size = sum([os.path.getsize(file) for file in files])
@@ -75,6 +90,31 @@ def get_number_of_files(files: List[str]) -> str:
     return number_of_files
 
 
+def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
+    # expand file globs
+    junit_files = expand_glob(settings.junit_files_glob, gha)
+    trx_files = expand_glob(settings.trx_files_glob, gha)
+
+    elems = []
+
+    # parse files, log the progress
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    with progress_logger(items=len(junit_files + trx_files),
+                         interval_seconds=10,
+                         progress_template='Read {progress} files in {time}',
+                         finish_template='Finished reading {observations} files in {duration}',
+                         progress_item_type=Tuple[str, Any],
+                         logger=logger) as progress:
+        if junit_files:
+            elems.extend(parse_junit_xml_files(junit_files, settings.ignore_runs, progress))
+        if trx_files:
+            from publish.trx import parse_trx_files
+            elems.extend(parse_trx_files(trx_files, progress))
+
+    # get the test results
+    return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -88,32 +128,16 @@ def main(settings: Settings, gha: GithubAction) -> None:
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
-    # resolve the files_glob to files
-    files = get_files(settings.junit_files_glob)
-    if len(files) == 0:
-        gha.warning(f'Could not find any files for {settings.junit_files_glob}')
-    else:
-        logger.info(f'Reading {settings.junit_files_glob} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {list(files)}')
-
     # log the available RAM to help spot OOM issues:
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
     avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
     logger.info(f'Available memory to read files: {avail_mem}')
 
-    # log the progress
-    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
-    with progress_logger(items=len(files),
-                         interval_seconds=10,
-                         progress_template='Read {progress} files in {time}',
-                         finish_template='Finished reading {observations} files in {duration}',
-                         progress_item_type=Tuple[str, Any],
-                         logger=logger) as progress:
-        # get the test results
-        parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs, progress).with_commit(settings.commit)
-        [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
-         for error in parsed.errors]
+    # get the unit test results
+    parsed = parse_files(settings, gha)
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+     for error in parsed.errors]
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
@@ -295,8 +319,16 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
+    # remove when deprecated FILES is removed
     if get_var('FILES', options):
         gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
+    # replace with error when deprecated FILES is removed
+    default_junit_files_glob = None
+    if not any([get_var(f'{flavour}_FILES', options)
+                for flavour in ['JUNIT', 'TRX']]):
+        default_junit_files_glob = '*.xml'
+        gha.warning(f'At least one of the *_FILES options has to be set! '
+                    f'Falling back to deprecated default "{default_junit_files_glob}"')
 
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
@@ -336,7 +368,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
-        junit_files_glob=get_var('JUNIT_FILES', options) or get_var('FILES', options) or '*.xml',
+        junit_files_glob=get_var('JUNIT_FILES', options) or get_var('FILES', options) or default_junit_files_glob,
+        trx_files_glob=get_var('TRX_FILES', options),
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,

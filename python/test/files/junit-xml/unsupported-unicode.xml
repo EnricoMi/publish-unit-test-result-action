@@ -19,7 +19,7 @@
             </failure>
         </testcase>
         <testcase file="test/test-6.py" line="6" name="test 6" time="1.23">
-            <error message=">Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">error
+            <error message="Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">error
             </error>
         </testcase>
         <testcase file="test/test-7.py" line="7" name="test 7" time="1.23">

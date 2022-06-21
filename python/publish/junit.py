@@ -1,9 +1,10 @@
+import math
 import os
 from collections import defaultdict
-from typing import Optional, Iterable, Union, Any, List, Dict, Callable, Tuple
+from typing import Optional, Iterable, Union, List, Dict, Callable, Tuple
 
 import junitparser
-from junitparser import Element, JUnitXml, TestCase, TestSuite, Skipped
+from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
 from junitparser.junitparser import etree
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
@@ -118,12 +119,16 @@ class DropTestCaseBuilder(etree.TreeBuilder):
             return super().close()
 
 
+JUnitTree = etree.ElementTree
+JUnitTreeOrException = Union[JUnitTree, BaseException]
+ParsedJUnitFile = Tuple[str, JUnitTreeOrException]
+
+
 def parse_junit_xml_files(files: Iterable[str],
-                          time_factor: float = 1.0,
                           drop_testcases: bool = False,
-                          progress: Callable[[Tuple[str, Union[JUnitXml, BaseException]]], Tuple[str, Union[JUnitXml, BaseException]]] = lambda x: x) -> ParsedUnitTestResults:
-    """Parses junit xml files and returns aggregated statistics as a ParsedUnitTestResults."""
-    def parse(path: str) -> Union[JUnitXml, BaseException]:
+                          progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    def parse(path: str) -> JUnitTreeOrException:
+        """Parses a junit xml file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:
@@ -132,27 +137,46 @@ def parse_junit_xml_files(files: Iterable[str],
         try:
             if drop_testcases:
                 builder = DropTestCaseBuilder()
-                return JUnitXml.fromfile(path, parse_func=builder.parse)
-            return JUnitXml.fromfile(path)
+                return etree.parse(path, parser=etree.XMLParser(target=builder, encoding='utf-8'))
+            return etree.parse(path)
         except BaseException as e:
             return e
 
-    parsed_files = [progress((result_file, parse(result_file))) for result_file in files]
+    return [progress((result_file, parse(result_file))) for result_file in files]
+
+
+def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0) -> ParsedUnitTestResults:
+    # TODO: move upstream into JUnitTree
+    def create_junitxml(filepath: str, tree: JUnitTree) -> Union[JUnitXml, JUnitXmlError]:
+        root_elem = tree.getroot()
+        if root_elem.tag == "testsuites":
+            instance = JUnitXml()
+        elif root_elem.tag == "testsuite":
+            instance = TestSuite()
+        else:
+            return JUnitXmlError("Invalid format.")
+        instance._elem = root_elem
+        instance.filepath = filepath
+        return instance
+
+    processed = [(result_file, create_junitxml(result_file, tree) if not isinstance(tree, BaseException) else tree)
+                  for result_file, tree in trees]
     junits = [(result_file, junit)
-              for result_file, junit in parsed_files
+              for result_file, junit in processed
               if not isinstance(junit, BaseException)]
     errors = [ParseError.from_exception(result_file, exception)
-              for result_file, exception in parsed_files
+              for result_file, exception in processed
               if isinstance(exception, BaseException)]
 
     suites = [(result_file, suite)
               for result_file, junit in junits
               for suite in (junit if junit._tag == "testsuites" else [junit])]
+
     suite_tests = sum([suite.tests for result_file, suite in suites])
     suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites])
     suite_failures = sum([suite.failures for result_file, suite in suites])
     suite_errors = sum([suite.errors for result_file, suite in suites])
-    suite_time = int(sum([suite.time for result_file, suite in suites]) * time_factor)
+    suite_time = int(sum([suite.time for result_file, suite in suites if not math.isnan(suite.time)]) * time_factor)
 
     def int_opt(string: Optional[str]) -> Optional[int]:
         try:
@@ -192,7 +216,7 @@ def parse_junit_xml_files(files: Iterable[str],
     ]
 
     return ParsedUnitTestResults(
-        files=len(parsed_files),
+        files=len(list(trees)),
         errors=errors,
         # test state counts from suites
         suites=len(suites),

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="4" failures="1" errors="0" skipped="0">
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_40" time="0.076891"/>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_60" time="0.0111534"/>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddTwoNumbers" time="0.0055623"/>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="FailToAddTwoNumbers" time="0.0459057">
+      <failure message="&#10;            Test method Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw exception:&#10;            Should.Core.Exceptions.NotEqualException: Assert.NotEqual() Failure&#10;          ">
+            Test method Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw exception:
+            Should.Core.Exceptions.NotEqualException: Assert.NotEqual() Failure
+          
+            at Pickles.TestHarness.MSTest.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Steps.cs:line 28
+            at lambda_method(Closure , IContextManager , Int32 )&lt;...&gt;
+            at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
+            at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan&amp; duration)
+            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)
+            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(StepArgs stepArgs)
+            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep()
+            at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()
+            at Pickles.TestHarness.MSTest.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Addition.feature.cs:line 0
+            at Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Addition.feature:line 18
+          </failure>
+    </testcase>
+  </testsuite>
+</testsuites>
