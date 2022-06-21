@@ -1,0 +1,48 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=3,
+  suite_skipped=1,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/jenkinsci/testcase1.xml',
+      test_file=None,
+      line=None,
+      class_name='MyProject.Tests.SampleFact',
+      test_name='FailedTest',
+      result='failure',
+      message='Assert.True() Failure',
+      content='Assert.True() Failure   at MyProject.Tests.SampleFact.FailedTest() '
+        'in '
+        'c:\\Jenkins\\jobs\\my-project\\workspace\\MyProject\\MyProject.Tests\\Sample'
+        'Fact.cs:line 16',
+      time=0.014
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/jenkinsci/testcase1.xml',
+      test_file=None,
+      line=None,
+      class_name='MyProject.Tests.SampleFact',
+      test_name='SuccessfulTest',
+      result='success',
+      message=None,
+      content=None,
+      time=0.01
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/jenkinsci/testcase1.xml',
+      test_file=None,
+      line=None,
+      class_name='MyProject.Tests.SampleFact',
+      test_name='SkippedTest',
+      result='skipped',
+      message='On Purpose',
+      content=None,
+      time=0.0
+    )
+  ]
+)

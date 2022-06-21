@@ -45,6 +45,7 @@ class Settings:
     fail_on_failures: bool
     # one of these *_files_glob must be set
     junit_files_glob: Optional[str]
+    xunit_files_glob: Optional[str]
     trx_files_glob: Optional[str]
     time_factor: float
     check_name: str

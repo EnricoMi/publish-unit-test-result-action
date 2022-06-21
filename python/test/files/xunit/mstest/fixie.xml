@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<assemblies>
+<assembly name="[assemblyLocation]" run-date="YYYY-MM-DD" run-time="HH:MM:SS" time="1.234" total="7" passed="3" failed="3" skipped="1" environment="00-bit .NETCoreApp,Version=vX.Y" test-framework="Fixie 1.2.3.4">
+  <collection time="1.234" name="[genericTestClass]" total="3" passed="2" failed="1" skipped="0">
+    <test name="[genericTestClass].ShouldBeString&lt;System.String&gt;(&quot;A&quot;)" type="[genericTestClass]" method="ShouldBeString" result="Pass" time="1.234" />
+    <test name="[genericTestClass].ShouldBeString&lt;System.String&gt;(&quot;B&quot;)" type="[genericTestClass]" method="ShouldBeString" result="Pass" time="1.234" />
+    <test name="[genericTestClass].ShouldBeString&lt;System.Int32&gt;(123)" type="[genericTestClass]" method="ShouldBeString" result="Fail" time="1.234">
+      <failure exception-type="Fixie.Tests.Assertions.AssertException">
+        <message><![CDATA[Expected: System.String
+Actual:   System.Int32]]></message>
+        <stack-trace><![CDATA[   at [genericTestClassForStackTrace].ShouldBeString[T](T genericArgument) in [fileLocation]:line #]]></stack-trace>
+      </failure>
+    </test>
+  </collection>
+  <collection time="1.234" name="[testClass]" total="4" passed="1" failed="2" skipped="1">
+    <test name="[testClass].Fail" type="[testClass]" method="Fail" result="Fail" time="1.234">
+      <failure exception-type="Fixie.Tests.FailureException">
+        <message><![CDATA['Fail' failed!]]></message>
+        <stack-trace><![CDATA[   at [testClassForStackTrace].Fail() in [fileLocation]:line #]]></stack-trace>
+      </failure>
+    </test>
+    <test name="[testClass].FailByAssertion" type="[testClass]" method="FailByAssertion" result="Fail" time="1.234">
+      <failure exception-type="Fixie.Tests.Assertions.AssertException">
+        <message><![CDATA[Expected: 2
+Actual:   1]]></message>
+        <stack-trace><![CDATA[   at [testClassForStackTrace].FailByAssertion() in [fileLocation]:line #]]></stack-trace>
+      </failure>
+    </test>
+    <test name="[testClass].Pass" type="[testClass]" method="Pass" result="Pass" time="1.234" />
+    <test name="[testClass].Skip" type="[testClass]" method="Skip" result="Skip" time="1.234">
+      <reason><![CDATA[⚠ Skipped with attribute.]]></reason>
+    </test>
+  </collection>
+</assembly>
+</assemblies>
