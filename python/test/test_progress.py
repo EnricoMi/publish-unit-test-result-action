@@ -25,6 +25,13 @@ class TestProgress(unittest.TestCase):
         self.assertEqual('4 of 10', progress.get_progress())
         self.assertEqual('4 of 10', progress.get_progress())
 
+    def test_get_progress_thousands(self):
+        progress = Progress(12345)
+        self.assertEqual('0 of 12 345', progress.get_progress())
+        for _ in range(12340):
+            self.assertEqual('item', progress.observe('item'))
+        self.assertEqual('12 340 of 12 345', progress.get_progress())
+
 
 class TestProgressLogger(unittest.TestCase):
     def test(self):
