@@ -2,15 +2,14 @@
 <!-- based on https://github.com/syl20bnr/nunit-plugin/blob/be8193421b60c45366e9f6c9d0ff91b3aa852244/src/main/resources/hudson/plugins/nunit/nunit-to-junit.xsl -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="xml" indent="yes" />
-	
+
 	<xsl:template match="/test-results">
 	<testsuites>
 		<xsl:for-each select="test-suite//results//test-case[1]">
-	
+
 			<xsl:for-each select="../..">
-				<xsl:variable name="firstTestName"
-					select="results//test-case[1]//@name" />
-                     
+				<xsl:variable name="firstTestName" select="results//test-case[1]//@name" />
+
                 <xsl:variable name="assembly">
                     <xsl:choose>
                         <xsl:when test="substring($firstTestName, string-length($firstTestName)) = ')'">
@@ -43,9 +42,8 @@
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
-						
-							<testcase classname="{$assembly}"
-								name="{$testcaseName}">
+
+							<testcase classname="{$assembly}" name="{$testcaseName}">
                                 <xsl:if test="@time!=''">
                                    <xsl:attribute name="time"><xsl:value-of select="@time" /></xsl:attribute>
                                 </xsl:if>
@@ -54,8 +52,7 @@
 									select="./failure" />
 
 								<xsl:if test="./failure">
-									<xsl:variable name="failstack"
-				    						select="count(./failure/stack-trace/*) + count(./failure/stack-trace/text())" />
+									<xsl:variable name="failstack" select="count(./failure/stack-trace/*) + count(./failure/stack-trace/text())" />
 									<failure>
 										<xsl:choose>
 											<xsl:when test="$failstack &gt; 0 or not($generalfailure)">
@@ -80,7 +77,7 @@ STACK TRACE:
                                     <xsl:attribute name="message"><xsl:value-of select="./reason/message"/></xsl:attribute>
                                     </skipped>
                                 </xsl:if>
-				 			</testcase>
+							</testcase>
 						</xsl:for-each>
 					</testsuite>
 				<!--  </redirect:write>-->
