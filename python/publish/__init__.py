@@ -19,13 +19,27 @@ digit_space = '  '
 punctuation_space = ' '
 
 comment_mode_off = 'off'
-comment_mode_create = 'create new'
-comment_mode_update = 'update last'
+comment_mode_create = 'create new'   # deprecated
+comment_mode_update = 'update last'  # deprecated
+comment_mode_always = 'always'
+comment_mode_changes = 'changes'
+comment_mode_changes_failures = 'changes in failures'  # includes comment_mode_changes_errors
+comment_mode_changes_errors = 'changes in errors'
+comment_mode_failures = 'failures'  # includes comment_mode_errors
+comment_mode_errors = 'errors'
 comment_modes = [
     comment_mode_off,
-    comment_mode_create,
-    comment_mode_update
+    comment_mode_always,
+    comment_mode_changes,
+    comment_mode_changes_failures,
+    comment_mode_changes_errors,
+    comment_mode_failures,
+    comment_mode_errors
 ]
+comment_modes_deprecated = {
+    comment_mode_create: comment_mode_always,
+    comment_mode_update: comment_mode_always
+}
 
 fail_on_mode_nothing = 'nothing'
 fail_on_mode_errors = 'errors'
@@ -79,6 +93,11 @@ class SomeTestChanges:
         self._all_tests_current = set(all_tests_current) if all_tests_current is not None else None
         self._skipped_tests_before = set(skipped_tests_before) if skipped_tests_before is not None else None
         self._skipped_tests_current = set(skipped_tests_current) if skipped_tests_current is not None else None
+
+    @property
+    def has_changes(self) -> bool:
+        return (self.adds() is not None and self.removes() is not None and len(self.adds().union(self.removes())) > 0 or
+                self.skips() is not None and self.un_skips() is not None and len(self.skips().union(self.un_skips())) > 0)
 
     def adds(self) -> Optional[Set[str]]:
         if self._all_tests_before is None or self._all_tests_current is None:
@@ -701,7 +720,7 @@ def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
         raise ValueError('stats must be UnitTestRunResults when no digest_stats is given')
     summary = get_long_summary_md(stats, details_url, test_changes, test_list_changes_limit)
     digest = get_digest_from_stats(stats if digest_stats is None else digest_stats)
-    return f'{summary}\n{digest_header}{digest}'
+    return f'{summary}\n{digest_header}{digest}\n'
 
 
 def get_case_messages(case_results: UnitTestCaseResults) -> CaseMessages:
