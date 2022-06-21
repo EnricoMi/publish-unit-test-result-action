@@ -1,0 +1,23 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=1,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnitUnicode.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.UnicodeClassTest.TestFailure',
+      result='failure',
+      message='  Expected failure\n  Expected: ü\n  But was:  â\n',
+      content='  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]\n',
+      time=0.092
+    )
+  ]
+)

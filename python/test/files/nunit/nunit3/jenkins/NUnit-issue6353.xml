@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="MyTests.dll" total="3" errors="0" failures="1" not-run="1" inconclusive="0" ignored="1" skipped="0" invalid="0" date="2010-04-19" time="13:38:35">
+  <environment nunit-version="2.5.3.9345" clr-version="2.0.50727.1433" os-version="Unix 2.6.31.21" platform="Unix" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite name="./MyTests.dll" executed="True" success="True" time="119.612" asserts="0">
+    <results>
+      <test-suite name="MyTests" executed="True" success="True" time="119.608" asserts="5">
+        <results>
+		  	<test-case name="SuccessfulTest" executed="True" time="1.0"/>
+	 	    <test-case name="IgnoredTest" executed="False" >
+			  <reason>
+				<message><![CDATA[Reason]]></message>
+			  </reason>
+			</test-case>
+	 	    <test-case name="FailedTest" executed="True" time="2.0">
+			  <failure>
+				<message><![CDATA[Reason]]></message>
+				<stack-trace><![CDATA[Here comes the stack trace]]></stack-trace>
+			  </failure>
+			</test-case>
+		</results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
+

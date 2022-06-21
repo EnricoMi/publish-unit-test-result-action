@@ -6,23 +6,23 @@ from lxml import etree
 
 from publish.junit import JUnitTreeOrException, ParsedJUnitFile
 
-with (pathlib.Path(__file__).parent / 'xslt' / 'xunit-to-junit.xslt').open('r', encoding='utf-8') as r:
-    transform_xunit_to_junit = etree.XSLT(etree.parse(r))
+with (pathlib.Path(__file__).parent / 'xslt' / 'nunit3-to-junit.xslt').open('r', encoding='utf-8') as r:
+    transform_nunit_to_junit = etree.XSLT(etree.parse(r))
 
 
-def parse_xunit_files(files: Iterable[str],
+def parse_nunit_files(files: Iterable[str],
                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
-    """Parses xunit files."""
+    """Parses nunit files."""
     def parse(path: str) -> JUnitTreeOrException:
-        """Parses an xunit file and returns either a JUnitTree or an Exception."""
+        """Parses an nunit file and returns either a JUnitTree or an Exception."""
         if not os.path.exists(path):
             return FileNotFoundError(f'File does not exist.')
         if os.stat(path).st_size == 0:
             return Exception(f'File is empty.')
 
         try:
-            xunit = etree.parse(path)
-            return transform_xunit_to_junit(xunit)
+            nunit = etree.parse(path)
+            return transform_nunit_to_junit(nunit)
         except BaseException as e:
             return e
 

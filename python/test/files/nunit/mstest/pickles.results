@@ -1,0 +1,57 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=2,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Pickles.TestHarness.AdditionFeature.AddTwoNumbers',
+      result='success',
+      message=None,
+      content=None,
+      time=0.004
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers',
+      result='failure',
+      message=None,
+      content='\n                        at '
+        'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
+        'result) in '
+        'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.NUnit\\Steps.cs:line 26\nat lambda_method(Closure , '
+        'IContextManager , Int32 )\nat '
+        'TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager'
+        ' contextManager, Object[] arguments, ITestTracer testTracer, '
+        'TimeSpan& duration)\nat '
+        'TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManag'
+        'er contextManager, ITestTracer testTracer, Object[] arguments, '
+        'TimeSpan& duration)\nat '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch'
+        '(BindingMatch match, Object[] arguments)\nat '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(Step'
+        'Args stepArgs)\nat '
+        'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep('
+        ')\nat TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()\nat '
+        'Pickles.TestHarness.AdditionFeature.ScenarioCleanup() in '
+        'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.NUnit\\Addition.feature.cs:line 0\nat '
+        'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in '
+        'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
+        's.NUnit\\Addition.feature:line 18\n\n                      ',
+      time=0.028
+    )
+  ]
+)

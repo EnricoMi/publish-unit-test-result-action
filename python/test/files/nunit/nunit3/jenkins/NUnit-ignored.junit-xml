@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="4" failures="0" skipped="2">
+  
+  
+  
+    
+      
+        
+          <testsuite time="0.001" name="OtherMainClassTest"><testcase name="UnitTests.OtherMainClassTest.TestIgnored" classname=""><skipped/>
+                
+              </testcase><testcase name="UnitTests.OtherMainClassTest.TestIgnoredWithText" classname=""><skipped message="Dont do this"/>
+                
+              </testcase><testcase name="UnitTests.OtherMainClassTest.TestPropertyValue" classname="" time="0.001"/></testsuite>
+        
+      
+    
+  
+</testsuites>

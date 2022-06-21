@@ -174,9 +174,9 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
               for suite in (junit if junit._tag == "testsuites" else [junit])]
 
     suite_tests = sum([suite.tests for result_file, suite in suites if suite.tests])
-    suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites if suite.skipped])
-    suite_failures = sum([suite.failures for result_file, suite in suites if suite.failures])
-    suite_errors = sum([suite.errors for result_file, suite in suites if suite.errors])
+    suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites if suite.skipped and not math.isnan(suite.skipped)])
+    suite_failures = sum([suite.failures for result_file, suite in suites if suite.failures and not math.isnan(suite.failures)])
+    suite_errors = sum([suite.errors for result_file, suite in suites if suite.errors and not math.isnan(suite.errors)])
     suite_time = int(sum([suite.time for result_file, suite in suites
                           if suite.time and not math.isnan(suite.time)]) * time_factor)
 

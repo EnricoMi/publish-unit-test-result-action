@@ -1,0 +1,12 @@
+<test-results name='IEUnit Tests' total='6' failures='0' not-run='0' date='6/12/2007' time='2:46 PM'>
+	<test-suite name='AdministrationPasswordTest' success='true' time='35.396'>
+		<results>
+			<test-case name='testChangePasswordFailEmptyForm' executed='true' success='true' time='5.065'></test-case>
+			<test-case name='testChangePasswordFailOldPasswordKO' executed='true' success='true' time='5.066'></test-case>
+			<test-case name='testChangePasswordFailNewPasswordTooShort' executed='true' success='true' time='5.049'></test-case>
+			<test-case name='testChangePasswordFailNewPasswordNotRepeated' executed='true' success='true' time='5.05'></test-case>
+			<test-case name='testChangePasswordFailNewPasswordKO' executed='true' success='true' time='5.066'></test-case>
+			<test-case name='testChangePassword' executed='true' success='true' time='10.1'></test-case>
+		</results>
+	</test-suite> 
+</test-results>
