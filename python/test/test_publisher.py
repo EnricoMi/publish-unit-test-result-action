@@ -1341,6 +1341,7 @@ class TestPublisher(unittest.TestCase):
             '"conclusion": "conclusion", '
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
             f'"annotations": {len(annotations)}, '
+            f'"check_url": "{check_run.html_url}", '
             '"formatted": {'
             '"stats": {"files": "1", ' + f'"errors": "{len(errors)}", ' + '"suites": "2", "duration": "3", "tests": "22", "tests_succ": "4", "tests_skip": "5", "tests_fail": "6", "tests_error": "7", "runs": "38", "runs_succ": "8", "runs_skip": "9", "runs_fail": "10", "runs_error": "11", "commit": "commit"}'
             '}'
@@ -1413,6 +1414,7 @@ class TestPublisher(unittest.TestCase):
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
             '"stats_with_delta": {"files": {"number": 1, "delta": 0}, ' + f'"errors": {len(errors)}, ' + '"suites": {"number": 2, "delta": 0}, "duration": {"duration": 3, "delta": 0}, "tests": {"number": 22, "delta": 1}, "tests_succ": {"number": 4, "delta": -8}, "tests_skip": {"number": 5, "delta": 1}, "tests_fail": {"number": 6, "delta": 4}, "tests_error": {"number": 7, "delta": 4}, "runs": {"number": 38, "delta": 1}, "runs_succ": {"number": 8, "delta": -17}, "runs_skip": {"number": 9, "delta": 2}, "runs_fail": {"number": 10, "delta": 6}, "runs_error": {"number": 11, "delta": 10}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}, '
             f'"annotations": {4 + len(errors)}, '
+            f'"check_url": "{check_run.html_url}", '
             '"formatted": {'
             '"stats": {"files": "1", ' + f'"errors": "{len(errors)}", ' + '"suites": "2", "duration": "3", "tests": "22", "tests_succ": "4", "tests_skip": "5", "tests_fail": "6", "tests_error": "7", "runs": "38", "runs_succ": "8", "runs_skip": "9", "runs_fail": "10", "runs_error": "11", "commit": "commit"}, '
             '"stats_with_delta": {"files": {"number": "1", "delta": "0"}, ' + f'"errors": "{len(errors)}", ' + '"suites": {"number": "2", "delta": "0"}, "duration": {"duration": "3", "delta": "0"}, "tests": {"number": "22", "delta": "1"}, "tests_succ": {"number": "4", "delta": "-8"}, "tests_skip": {"number": "5", "delta": "1"}, "tests_fail": {"number": "6", "delta": "4"}, "tests_error": {"number": "7", "delta": "4"}, "runs": {"number": "38", "delta": "1"}, "runs_succ": {"number": "8", "delta": "-17"}, "runs_skip": {"number": "9", "delta": "2"}, "runs_fail": {"number": "10", "delta": "6"}, "runs_error": {"number": "11", "delta": "10"}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}'
@@ -1594,7 +1596,8 @@ class TestPublisher(unittest.TestCase):
             message='message',
             title=f'Error processing result file',
             raw_details='file'
-        )]
+        )],
+        check_url='http://check-run.url'
     )
 
     def test_publish_data(self):
@@ -1697,7 +1700,8 @@ class TestPublisher(unittest.TestCase):
                                      'raw_details': 'file',
                                      'start_column': 3,
                                      'start_line': 1,
-                                     'title': 'Error processing result file'}]},
+                                     'title': 'Error processing result file'}],
+                    'check_url': 'http://check-run.url'},
                     self.publish_data.to_dict(separator))
 
                 self.assertEqual({
@@ -1768,7 +1772,8 @@ class TestPublisher(unittest.TestCase):
                                                        'tests_fail': {'delta': "-7", 'number': "7"},
                                                        'tests_skip': {'delta': "-6", 'number': "6"},
                                                        'tests_succ': {'delta': "-5", 'number': "5"}}},
-                    'annotations': 1},
+                    'annotations': 1,
+                    'check_url': 'http://check-run.url'},
                     self.publish_data.to_reduced_dict(separator))
 
     def test_publish_json(self):
@@ -1795,6 +1800,7 @@ class TestPublisher(unittest.TestCase):
                             '"stats": {"files": 12345, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3456, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8901, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 1345, "commit": "commit"}, '
                             '"stats_with_delta": {"files": {"number": 1234, "delta": -1234}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3456, "delta": -3456}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
                             '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}], '
+                            '"check_url": "http://check-run.url", '
                             '"formatted": {'
                             '"stats": {"files": "12' + separator + '345", "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": "2", "duration": "3' + separator + '456", "tests": "4", "tests_succ": "5", "tests_skip": "6", "tests_fail": "7", "tests_error": "8' + separator + '901", "runs": "9", "runs_succ": "10", "runs_skip": "11", "runs_fail": "12", "runs_error": "1' + separator + '345", "commit": "commit"}, '
                             '"stats_with_delta": {"files": {"number": "1' + separator + '234", "delta": "-1' + separator + '234"}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": "2", "delta": "-2"}, "duration": {"number": "3' + separator + '456", "delta": "-3' + separator + '456"}, "tests": {"number": "4", "delta": "-4"}, "tests_succ": {"number": "5", "delta": "-5"}, "tests_skip": {"number": "6", "delta": "-6"}, "tests_fail": {"number": "7", "delta": "-7"}, "tests_error": {"number": "8", "delta": "-8"}, "runs": {"number": "9", "delta": "-9"}, "runs_succ": {"number": "10", "delta": "-10"}, "runs_skip": {"number": "11", "delta": "-11"}, "runs_fail": {"number": "12", "delta": "-12"}, "runs_error": {"number": "1' + separator + '345", "delta": "-1' + separator + '345"}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}'
@@ -1823,6 +1829,7 @@ class TestPublisher(unittest.TestCase):
                                              "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit",
                                              "reference_type": "type", "reference_commit": "ref"},
                         "annotations": 1,
+                        "check_url": "http://check-run.url",
                         "formatted": {
                             "stats": {"files": "12" + separator + "345", "errors": "1", "suites": "2", "duration": "3" + separator + "456", "tests": "4", "tests_succ": "5",
                                       "tests_skip": "6", "tests_fail": "7", "tests_error": "8" + separator + "901", "runs": "9", "runs_succ": "10",

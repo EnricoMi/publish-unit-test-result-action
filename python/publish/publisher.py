@@ -73,6 +73,7 @@ class PublishData:
     stats: UnitTestRunResults
     stats_with_delta: Optional[UnitTestRunDeltaResults]
     annotations: List[Annotation]
+    check_url: str
 
     @classmethod
     def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
@@ -315,23 +316,12 @@ class Publisher:
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
 
-        # create full json
-        data = PublishData(
-            title=title,
-            summary=summary,
-            conclusion=conclusion,
-            stats=stats,
-            stats_with_delta=stats_with_delta if before_stats is not None else None,
-            annotations=all_annotations
-        )
-        self.publish_json(data)
-
         # we can send only 50 annotations at once, so we split them into chunks of 50
         check_run = None
         summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
-        all_annotations = [annotation.to_dict() for annotation in all_annotations]
-        all_annotations = [all_annotations[x:x+50] for x in range(0, len(all_annotations), 50)] or [[]]
-        for annotations in all_annotations:
+        split_annotations = [annotation.to_dict() for annotation in all_annotations]
+        split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
+        for annotations in split_annotations:
             output = dict(
                 title=title,
                 summary=summary_with_digest,
@@ -350,6 +340,19 @@ class Publisher:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
+
+        # create full json
+        data = PublishData(
+            title=title,
+            summary=summary,
+            conclusion=conclusion,
+            stats=stats,
+            stats_with_delta=stats_with_delta if before_stats is not None else None,
+            annotations=all_annotations,
+            check_url=check_run.html_url
+        )
+        self.publish_json(data)
+
         return check_run, before_check_run
 
     def publish_json(self, data: PublishData):

@@ -307,6 +307,7 @@ Here is an example JSON:
     "reference_type": "earlier",
     "reference_commit": "d8ce4b6c62ebfafe1890c55bf7ea30058ebf77f2"
   },
+  "check_url": "https://github.com/EnricoMi/publish-unit-test-result-action/runs/5397876970",
   "formatted": {
      "stats": {
         "duration": "2 352",
