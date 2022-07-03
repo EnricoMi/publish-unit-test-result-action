@@ -381,7 +381,6 @@ jobs:
         uses: ./composite
         with:
           check_name: Test Results (setup-python)
-          comment_mode: create new
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
 
@@ -466,7 +465,7 @@ jobs:
         with:
           check_name: Test Results (Test File)
           fail_on: nothing
-          files: "test-files/pytest/junit.gloo.standalone.xml"
+          junit_files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
           log_level: DEBUG
 
