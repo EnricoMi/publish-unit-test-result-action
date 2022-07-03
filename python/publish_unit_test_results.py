@@ -231,7 +231,7 @@ def get_var(name: str, options: dict) -> Optional[str]:
     return options.get(f'INPUT_{name}') or options.get(name) or None
 
 
-def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAction] = None) -> bool:
+def get_bool_var(name: str, options: dict, default: bool) -> bool:
     """
     Same as get_var(), but checks if the value is a valid boolean.
     Prints a warning and uses the default if the string value is not a boolean value.
@@ -247,15 +247,7 @@ def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAc
     elif val == 'false':
         return False
     else:
-        # TODO: breaking change for version 2: raise a RuntimeError
-        message = f'Option {name.lower()} has to be boolean, so either "true" or "false": {val}'
-
-        if gha is None:
-            logger.debug(message)
-        else:
-            gha.warning(message)
-
-        return default
+        raise RuntimeError(f'Option {name.lower()} has to be boolean, so either "true" or "false": {val}')
 
 
 def check_var(var: Union[Optional[str], List[str]],
@@ -378,13 +370,13 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
-        job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
-        compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
+        job_summary=get_bool_var('JOB_SUMMARY', options, default=True),
+        compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
-        report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False, gha=gha),
-        dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False, gha=gha),
-        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False, gha=gha),
+        report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False),
+        dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
+        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
