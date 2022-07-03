@@ -156,7 +156,7 @@ class Publisher:
             else:
                 logger.info(f'There is no pull request for commit {self._settings.commit}')
         else:
-            logger.info('Commenting on pull requests disabled (comment_on_pr)')
+            logger.info('Commenting on pull requests disabled')
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount calls the GitHub API just to get the total number

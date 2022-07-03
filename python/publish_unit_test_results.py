@@ -346,7 +346,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
                                                  f'{", ".join(time_factors.keys())}')
 
     check_name = get_var('CHECK_NAME', options) or 'Test Results'
-    comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
     annotations = get_annotations_config(options, event)
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
@@ -383,7 +382,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_always if comment_on_pr else comment_mode_off),
+        comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
         job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
@@ -407,9 +406,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
-
-    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
-                  f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
 
     return settings
 
