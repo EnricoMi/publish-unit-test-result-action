@@ -75,6 +75,25 @@ Existing comments with the old title will not be updated once moved to version 2
 **Workaround to get version 1 behaviour:**
 See workaround for `check_name`.
 
+### Modes `create new` and `update last` removed for option `comment_mode`
+The action always updates an earlier pull request comment, which is the exact behaviour of mode `update last`.
+The configuration options `create new` and `update last` are therefore removed.
+
+**Impact:**
+An existing pull request comment is always updated.
+
+**Workaround to get version 1 behaviour:**
+Not supported.
+
+### Option `hiding_comments` removed
+The action always updates an earlier pull request comment, so hiding comments is not required anymore.
+
+### Option `comment_on_pr` removed
+Option `comment_on_pr` has been removed.
+
+**Workaround to get version 1 behaviour:**
+Set `comment_mode` to `always` (the default) or `off`.
+
 </details>
 
 
