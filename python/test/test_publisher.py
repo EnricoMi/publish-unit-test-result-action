@@ -13,7 +13,7 @@ import github.CheckRun
 import mock
 from github import Github, GithubException
 
-from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_mode_always, \
+from publish import comment_mode_off, comment_mode_always, \
     comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
@@ -366,18 +366,6 @@ class TestPublisher(unittest.TestCase):
         self.do_test_require_comment(
             comment_mode_off,
             lambda _: False
-        )
-
-    def test_require_comment_create(self):
-        self.do_test_require_comment(
-            comment_mode_create,
-            lambda _: True
-        )
-
-    def test_require_comment_update(self):
-        self.do_test_require_comment(
-            comment_mode_update,
-            lambda _: True
         )
 
     def test_require_comment_always(self):
@@ -745,61 +733,59 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def do_test_publish_comment_with_reuse_comment(self, one_exists: bool):
-        for mode in [comment_mode_update, comment_mode_always]:
-            with self.subTest(mode=mode):
-                pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
-                cr = mock.MagicMock()
-                lc = mock.MagicMock(body='latest comment') if one_exists else None
-                stats = self.stats
-                cases = UnitTestCaseResults(self.cases)
-                settings = self.create_settings(comment_mode=mode, compare_earlier=False)
-                publisher = mock.MagicMock(Publisher)
-                publisher._settings = settings
-                publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
-                publisher.get_latest_comment = mock.Mock(return_value=lc)
-                publisher.reuse_comment = mock.Mock(return_value=one_exists)
-                publisher.require_comment = mock.Mock(return_value=True)
-                with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
-                    Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
-                mock_calls = publisher.mock_calls
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
+        cr = mock.MagicMock()
+        lc = mock.MagicMock(body='latest comment') if one_exists else None
+        stats = self.stats
+        cases = UnitTestCaseResults(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_always, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=lc)
+        publisher.reuse_comment = mock.Mock(return_value=one_exists)
+        publisher.require_comment = mock.Mock(return_value=True)
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, cr, cases)
+        mock_calls = publisher.mock_calls
 
-                self.assertEqual(5 if one_exists else 3, len(mock_calls))
+        self.assertEqual(5 if one_exists else 3, len(mock_calls))
 
-                (method, args, kwargs) = mock_calls[0]
-                self.assertEqual('get_test_lists_from_check_run', method)
-                self.assertEqual((None, ), args)
-                self.assertEqual({}, kwargs)
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_test_lists_from_check_run', method)
+        self.assertEqual((None, ), args)
+        self.assertEqual({}, kwargs)
 
-                (method, args, kwargs) = mock_calls[1]
-                self.assertEqual('get_latest_comment', method)
-                self.assertEqual((pr, ), args)
-                self.assertEqual({}, kwargs)
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('get_latest_comment', method)
+        self.assertEqual((pr, ), args)
+        self.assertEqual({}, kwargs)
 
-                if one_exists:
-                    (method, args, kwargs) = mock_calls[2]
-                    self.assertEqual('get_stats_from_summary_md', method)
-                    self.assertEqual(('latest comment', ), args)
-                    self.assertEqual({}, kwargs)
+        if one_exists:
+            (method, args, kwargs) = mock_calls[2]
+            self.assertEqual('get_stats_from_summary_md', method)
+            self.assertEqual(('latest comment', ), args)
+            self.assertEqual({}, kwargs)
 
-                    (method, args, kwargs) = mock_calls[3]
-                    self.assertEqual('require_comment', method)
+            (method, args, kwargs) = mock_calls[3]
+            self.assertEqual('require_comment', method)
 
-                    (method, args, kwargs) = mock_calls[4]
-                    self.assertEqual('reuse_comment', method)
-                    self.assertEqual((lc, '## title\nbody'), args)
-                    self.assertEqual({}, kwargs)
-                else:
-                    (method, args, kwargs) = mock_calls[2]
-                    self.assertEqual('require_comment', method)
+            (method, args, kwargs) = mock_calls[4]
+            self.assertEqual('reuse_comment', method)
+            self.assertEqual((lc, '## title\nbody'), args)
+            self.assertEqual({}, kwargs)
+        else:
+            (method, args, kwargs) = mock_calls[2]
+            self.assertEqual('require_comment', method)
 
-                mock_calls = pr.mock_calls
-                self.assertEqual(0 if one_exists else 1, len(mock_calls))
+        mock_calls = pr.mock_calls
+        self.assertEqual(0 if one_exists else 1, len(mock_calls))
 
-                if not one_exists:
-                    (method, args, kwargs) = mock_calls[0]
-                    self.assertEqual('create_issue_comment', method)
-                    self.assertEqual(('## title\nbody', ), args)
-                    self.assertEqual({}, kwargs)
+        if not one_exists:
+            (method, args, kwargs) = mock_calls[0]
+            self.assertEqual('create_issue_comment', method)
+            self.assertEqual(('## title\nbody', ), args)
+            self.assertEqual({}, kwargs)
 
     def test_publish_comment_with_reuse_comment_none_existing(self):
         self.do_test_publish_comment_with_reuse_comment(one_exists=False)

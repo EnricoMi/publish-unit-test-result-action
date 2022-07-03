@@ -16,7 +16,7 @@ from urllib3.util.retry import Retry
 import publish.github_action
 from publish import available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
+    comment_mode_off, comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.progress import progress_logger
@@ -399,7 +399,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
@@ -410,7 +410,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
 
     deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
                   f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
-    deprecate_val(settings.comment_mode, 'COMMENT_MODE', comment_modes_deprecated, gha)
 
     return settings
 
