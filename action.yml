@@ -55,10 +55,6 @@ inputs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
     default: 'false'
     required: false
-  hide_comments:
-    description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
-    default: 'all but latest'
-    required: false
   comment_on_pr:
     description: 'Deprecated, please use comment_mode instead!'
     required: false
