@@ -14,7 +14,7 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, available_annotations, default_annotations, \
+from publish import available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
 from publish.github_action import GithubAction
@@ -380,7 +380,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
-        hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False),
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
         ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
@@ -394,7 +393,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
-    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')

@@ -55,10 +55,6 @@ inputs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
     default: 'false'
     required: false
-  hide_comments:
-    description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
-    default: 'all but latest'
-    required: false
   comment_on_pr:
     description: 'Deprecated, please use comment_mode instead!'
     required: false
@@ -170,7 +166,6 @@ runs:
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
         IGNORE_RUNS: ${{ inputs.ignore_runs }}
-        HIDE_COMMENTS: ${{ inputs.hide_comments }}
         COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}

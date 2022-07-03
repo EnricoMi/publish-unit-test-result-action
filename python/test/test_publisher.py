@@ -15,8 +15,7 @@ from github import Github, GithubException
 
 from publish import comment_mode_create, comment_mode_update, comment_mode_off, comment_mode_always, \
     comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
-    comment_mode_failures, comment_mode_errors, hide_comments_mode_off, \
-    hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, Annotation, default_annotations, \
+    comment_mode_failures, comment_mode_errors, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_list, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
@@ -81,7 +80,6 @@ class TestPublisher(unittest.TestCase):
     def create_settings(comment_mode=comment_mode_always,
                         job_summary=True,
                         compare_earlier=True,
-                        hide_comment_mode=hide_comments_mode_off,
                         report_individual_runs=False,
                         dedup_classes_by_file_name=False,
                         check_run_annotation=default_annotations,
@@ -117,7 +115,6 @@ class TestPublisher(unittest.TestCase):
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
-            hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             ignore_runs=False,
@@ -424,7 +421,7 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_without_comment(self):
-        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(comment_mode=comment_mode_off)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(2, len(mock_calls))
@@ -439,7 +436,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual({}, kwargs)
 
     def test_publish_without_job_summary_and_comment(self):
-        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_off, job_summary=False)
+        settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(1, len(mock_calls))
@@ -448,23 +445,8 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
-    def test_publish_without_comment_with_hiding(self):
-        settings = self.create_settings(comment_mode=comment_mode_off, hide_comment_mode=hide_comments_mode_all_but_latest)
-        mock_calls = self.call_mocked_publish(settings, prs=[object()])
-
-        self.assertEqual(2, len(mock_calls))
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('publish_job_summary', method)
-        self.assertEqual((settings.comment_title, self.stats, None, None), args)
-        self.assertEqual({}, kwargs)
-
     def test_publish_with_comment_without_pr(self):
-        settings = self.create_settings(hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings()
         mock_calls = self.call_mocked_publish(settings, prs=[])
 
         self.assertEqual(3, len(mock_calls))
@@ -484,10 +466,10 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((settings.commit, ), args)
         self.assertEqual({}, kwargs)
 
-    def test_publish_with_comment_without_hiding(self):
+    def test_publish_without_compare(self):
         pr = object()
         cr = object()
-        settings = self.create_settings(hide_comment_mode=hide_comments_mode_off)
+        settings = self.create_settings(compare_earlier=False)
         mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
 
         self.assertEqual(4, len(mock_calls))
@@ -510,84 +492,6 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[3]
         self.assertEqual('publish_comment', method)
         self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-    def do_test_publish_with_comment_with_hide(self, hide_mode: str, hide_method: str):
-        pr = object()
-        cr = object()
-        settings = self.create_settings(hide_comment_mode=hide_mode)
-        mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
-
-        self.assertEqual(5, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('publish_job_summary', method)
-        self.assertEqual((settings.comment_title, self.stats, cr, None), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('get_pulls', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[3]
-        self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[4]
-        self.assertEqual(hide_method, method)
-        self.assertEqual((pr, ), args)
-        self.assertEqual({}, kwargs)
-
-    def test_publish_with_comment_hide_all_but_latest(self):
-        self.do_test_publish_with_comment_with_hide(
-            hide_comments_mode_all_but_latest,
-            'hide_all_but_latest_comments'
-        )
-
-    def test_publish_with_comment_hide_orphaned(self):
-        self.do_test_publish_with_comment_with_hide(
-            hide_comments_mode_orphaned,
-            'hide_orphaned_commit_comments'
-        )
-
-    def test_publish_without_compare(self):
-        pr = object()
-        cr = object()
-        settings = self.create_settings(hide_comment_mode=hide_comments_mode_all_but_latest, compare_earlier=False)
-        mock_calls = self.call_mocked_publish(settings, prs=[pr], cr=cr)
-
-        self.assertEqual(5, len(mock_calls))
-
-        (method, args, kwargs) = mock_calls[0]
-        self.assertEqual('publish_check', method)
-        self.assertEqual((self.stats, self.cases, 'success'), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[1]
-        self.assertEqual('publish_job_summary', method)
-        self.assertEqual((settings.comment_title, self.stats, cr, None), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[2]
-        self.assertEqual('get_pulls', method)
-        self.assertEqual((settings.commit, ), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[3]
-        self.assertEqual('publish_comment', method)
-        self.assertEqual((settings.comment_title, self.stats, pr, cr, self.cases), args)
-        self.assertEqual({}, kwargs)
-
-        (method, args, kwargs) = mock_calls[4]
-        self.assertEqual('hide_all_but_latest_comments', method)
-        self.assertEqual((pr, ), args)
         self.assertEqual({}, kwargs)
 
     def test_publish_comment_compare_earlier(self):
@@ -2265,124 +2169,3 @@ class TestPublisher(unittest.TestCase):
         actual = publisher.get_action_comments(self.comments, is_minimized=False)
 
         self.assertEqual(expected, actual)
-
-    def test_hide_comment(self):
-        settings = self.create_settings()
-        comment_node_id = 'node id'
-
-        gh, gha, req, repo, commit = self.create_mocks()
-        req.requestJsonAndCheck = mock.Mock(
-            return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
-        )
-        publisher = Publisher(settings, gh, gha)
-
-        response = publisher.hide_comment(comment_node_id)
-
-        self.assertEqual(True, response)
-        req.requestJsonAndCheck.assert_called_once_with(
-            'POST', 'https://the-github-graphql-url',
-            input={
-                'query': 'mutation MinimizeComment {'
-                '  minimizeComment(input: { subjectId: "node id", classifier: OUTDATED } ) {'
-                '    minimizedComment { isMinimized, minimizedReason }'
-                '  }'
-                '}'
-            }
-        )
-
-    hide_comments = [
-        {
-            'id': 'comment one',
-            'author': {'login': 'github-actions'},
-            'body': f'## Comment Title\n'
-                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
-                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
-                    f'\n'
-                    f'Results for commit dee59820.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment two',
-            'author': {'login': 'github-actions'},
-            'body': f'## Comment Title\n'
-                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
-                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
-                    f'\n'
-                    f'Results for commit 70b5dd18.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment three',
-            'author': {'login': 'github-actions'},
-            'body': f'## Comment Title\n'
-                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
-                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
-                    f'\n'
-                    f'Results for commit b469da3d.\n',
-            'isMinimized': False
-        },
-        # earlier version of comments with lower case result and comparison
-        {
-            'id': 'comment four',
-            'author': {'login': 'github-actions'},
-            'body': f'## Comment Title\n'
-                    f'\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003\u205f\u20041 suites\u2004 ±0\u2002\u2003\u20020s {duration_label_md} ±0s\n'
-                    f'43 {all_tests_label_md} +19\u2002\u200343 {passed_tests_label_md} +19\u2002\u20030 {skipped_tests_label_md} ±0\u2002\u20030 {failed_tests_label_md} ±0\u2002\n'
-                    f'\n'
-                    f'results for commit 52048b4\u2003± comparison against base commit 70b5dd18\n',
-            'isMinimized': False
-        }
-    ]
-
-    def test_hide_orphaned_commit_comments(self):
-        settings = self.create_settings()
-
-        pr = self.create_github_pr(settings.repo)
-        pr.get_commits = mock.Mock(return_value=[
-            mock.MagicMock(sha='dee598201650c2111b69886799514ab7eb669445'),
-            mock.MagicMock(sha='70b5dd187f73f17a3b4ac0191e22bb9eec9bbb25')
-        ])
-
-        publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher._req = mock.MagicMock()
-        publisher._req.requestJsonAndCheck = mock.Mock(
-            return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
-        )
-        publisher.get_pull_request_comments = mock.Mock(return_value=self.hide_comments)
-        publisher.get_action_comments = mock.Mock(
-            side_effect=lambda comments: Publisher.get_action_comments(publisher, comments)
-        )
-        Publisher.hide_orphaned_commit_comments(publisher, pr)
-
-        pr.get_commits.assert_called_once_with()
-        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
-        publisher.get_action_comments(self.hide_comments)
-        publisher.hide_comment.assert_called_once_with('comment three')
-
-    def test_hide_all_but_latest_comments(self):
-        settings = self.create_settings()
-
-        pr = self.create_github_pr(settings.repo)
-        pr.get_commits = mock.Mock(return_value=[
-            mock.MagicMock(sha='dee598201650c2111b69886799514ab7eb669445'),
-            mock.MagicMock(sha='70b5dd187f73f17a3b4ac0191e22bb9eec9bbb25')
-        ])
-
-        publisher = mock.MagicMock(Publisher)
-        publisher._settings = settings
-        publisher._req = mock.MagicMock()
-        publisher._req.requestJsonAndCheck = mock.Mock(
-            return_value=({}, {'data': {'minimizeComment': {'minimizedComment': {'isMinimized': True}}}})
-        )
-        publisher.get_pull_request_comments = mock.Mock(return_value=self.hide_comments)
-        publisher.get_action_comments = mock.Mock(
-            side_effect=lambda comments: Publisher.get_action_comments(publisher, comments)
-        )
-        Publisher.hide_all_but_latest_comments(publisher, pr)
-
-        publisher.get_pull_request_comments.assert_called_once_with(pr, order_by_updated=False)
-        publisher.get_action_comments(self.hide_comments)
-        publisher.hide_comment.assert_has_calls(
-            [mock.call('comment one'), mock.call('comment two')], any_order=False
-        )

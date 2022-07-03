@@ -13,8 +13,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 from github.IssueComment import IssueComment
 
-from publish import hide_comments_mode_orphaned, hide_comments_mode_all_but_latest, hide_comments_mode_off, \
-    comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
+from publish import comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
@@ -56,7 +55,6 @@ class Settings:
     compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
-    hide_comment_mode: str
     report_individual_runs: bool
     dedup_classes_by_file_name: bool
     ignore_runs: bool
@@ -155,12 +153,6 @@ class Publisher:
             if pulls:
                 for pull in pulls:
                     self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
-                    if self._settings.hide_comment_mode == hide_comments_mode_orphaned:
-                        self.hide_orphaned_commit_comments(pull)
-                    elif self._settings.hide_comment_mode == hide_comments_mode_all_but_latest:
-                        self.hide_all_but_latest_comments(pull)
-                if self._settings.hide_comment_mode == hide_comments_mode_off:
-                    logger.info('Hiding comments disabled (hide_comments)')
             else:
                 logger.info(f'There is no pull request for commit {self._settings.commit}')
         else:
@@ -643,75 +635,9 @@ class Publisher:
             .get('comments', {}) \
             .get('nodes')
 
-    def hide_comment(self, comment_node_id) -> bool:
-        input = dict(
-            query=r'mutation MinimizeComment {'
-                  r'  minimizeComment(input: { subjectId: "' + comment_node_id + r'", classifier: OUTDATED } ) {'
-                  r'    minimizedComment { isMinimized, minimizedReason }'
-                  r'  }'
-                  r'}'
-        )
-        headers, data = self._req.requestJsonAndCheck(
-            "POST", self._settings.graphql_url, input=input
-        )
-        return data \
-            .get('data', {}) \
-            .get('minimizeComment', {}) \
-            .get('minimizedComment', {}) \
-            .get('isMinimized', {})
-
     def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
         return list([comment for comment in comments
                      if comment.get('author', {}).get('login') == 'github-actions'
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
                      and comment.get('body', '').startswith(f'## {self._settings.comment_title}\n')
                      and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])
-
-    def hide_orphaned_commit_comments(self, pull: PullRequest) -> None:
-        # rewriting history of branch removes commits
-        # we do not want to show test results for those commits anymore
-
-        # get commits of this pull request
-        commit_shas = set([commit.sha for commit in pull.get_commits()])
-
-        # get comments of this pull request
-        comments = self.get_pull_request_comments(pull, order_by_updated=False)
-
-        # get all comments that come from this action and are not hidden
-        comments = self.get_action_comments(comments)
-
-        # get comment node ids and their commit sha (possibly abbreviated)
-        matches = [(comment.get('id'), re.search(r'^[Rr]esults for commit ([0-9a-f]{8,40})\.(?:\s.*)?$', comment.get('body'), re.MULTILINE))
-                   for comment in comments]
-        comment_commits = [(node_id, match.group(1))
-                           for node_id, match in matches
-                           if match is not None]
-
-        # get those comment node ids whose commit is not part of this pull request any more
-        comment_ids = [(node_id, comment_commit_sha)
-                       for (node_id, comment_commit_sha) in comment_commits
-                       if not any([sha
-                                   for sha in commit_shas
-                                   if sha.startswith(comment_commit_sha)])]
-
-        # hide all those comments
-        for node_id, comment_commit_sha in comment_ids:
-            logger.info(f'Hiding test result comment for commit {comment_commit_sha}')
-            self.hide_comment(node_id)
-
-    def hide_all_but_latest_comments(self, pull: PullRequest) -> None:
-        # we want to reduce the number of shown comments to a minimum
-
-        # get comments of this pull request
-        comments = self.get_pull_request_comments(pull, order_by_updated=False)
-
-        # get all comments that come from this action and are not hidden
-        comments = self.get_action_comments(comments)
-
-        # take all but the last comment
-        comment_ids = [comment.get('id') for comment in comments[:-1]]
-
-        # hide all those comments
-        for node_id in comment_ids:
-            logger.info(f'Hiding test result comment {node_id}')
-            self.hide_comment(node_id)
