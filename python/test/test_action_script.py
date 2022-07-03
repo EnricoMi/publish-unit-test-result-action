@@ -5,7 +5,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Type
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
@@ -371,7 +371,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=[bool_warning, depr_warning])
+        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=bool_warning, exception=RuntimeError)
         self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
     def test_get_settings_comment_mode(self):
@@ -403,7 +403,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='True', expected=self.get_settings(compare_earlier=True))
-        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning)
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
     def test_get_settings_job_summary(self):
@@ -412,7 +412,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JOB_SUMMARY='False', expected=self.get_settings(job_summary=False))
         self.do_test_get_settings(JOB_SUMMARY='true', expected=self.get_settings(job_summary=True))
         self.do_test_get_settings(JOB_SUMMARY='True', expected=self.get_settings(job_summary=True))
-        self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning)
+        self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
 
     def test_get_settings_hide_comment(self):
@@ -431,7 +431,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='False', expected=self.get_settings(report_individual_runs=False))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='true', expected=self.get_settings(report_individual_runs=True))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='True', expected=self.get_settings(report_individual_runs=True))
-        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning)
+        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
     def test_get_settings_dedup_classes_by_file_name(self):
@@ -440,7 +440,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='False', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='true', expected=self.get_settings(dedup_classes_by_file_name=True))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='True', expected=self.get_settings(dedup_classes_by_file_name=True))
-        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning)
+        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
     def test_get_settings_ignore_runs(self):
@@ -449,7 +449,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False))
         self.do_test_get_settings(IGNORE_RUNS='true', expected=self.get_settings(ignore_runs=True))
         self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True))
-        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning)
+        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
 
     def test_get_settings_check_run_annotations(self):
@@ -512,12 +512,13 @@ class Test(unittest.TestCase):
             if f'{flavour}_FILES' not in kwargs:
                 options[f'{flavour}_FILES'] = None
 
-        self.do_test_get_settings(event, gha, warning, expected, **options)
+        self.do_test_get_settings(event, gha, warning=warning, expected=expected, **options)
 
     def do_test_get_settings(self,
                              event: dict = {},
                              gha: Optional[GithubAction] = None,
                              warning: Optional[Union[str, List[str]]] = None,
+                             exception: Optional[Type[Exception]] = None,
                              expected: Settings = get_settings.__func__(),
                              **kwargs):
         event = event.copy()
@@ -567,6 +568,13 @@ class Test(unittest.TestCase):
             with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
+
+                if exception:
+                    with self.assertRaises(exception) as e:
+                        get_settings(options, gha)
+                    self.assertEqual((warning, ), e.exception.args)
+                    return None
+
                 actual = get_settings(options, gha)
                 m.assert_called_once_with(options, event)
                 if warning:
