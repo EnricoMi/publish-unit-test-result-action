@@ -259,41 +259,52 @@ class Test(unittest.TestCase):
                     for trx in [None, 'trx-file']:
                         with self.subTest(junit=junit, nunit=nunit, xunit=xunit, trx=trx):
                             any_flavour_set = any([flavour is not None for flavour in [junit, nunit, xunit, trx]])
-                            expected = self.get_settings(junit_files_glob=junit if any_flavour_set else '*.xml',
-                                                         nunit_files_glob=nunit,
-                                                         xunit_files_glob=xunit,
-                                                         trx_files_glob=trx)
-                            warnings = None if any_flavour_set else 'At least one of the *_FILES options has to be set! ' \
-                                                                    'Falling back to deprecated default "*.xml"'
 
-                            self.do_test_get_settings(JUNIT_FILES=junit, NUNIT_FILES=nunit, XUNIT_FILES=xunit, TRX_FILES=trx,
-                                                      expected=expected, warning=warnings)
+                            if any_flavour_set:
+                                expected = self.get_settings(junit_files_glob=junit,
+                                                             nunit_files_glob=nunit,
+                                                             xunit_files_glob=xunit,
+                                                             trx_files_glob=trx)
+                                self.do_test_get_settings(JUNIT_FILES=junit,
+                                                          NUNIT_FILES=nunit,
+                                                          XUNIT_FILES=xunit,
+                                                          TRX_FILES=trx,
+                                                          expected=expected)
+                            else:
+                                with self.assertRaises(RuntimeError) as re:
+                                    self.do_test_get_settings(JUNIT_FILES=junit,
+                                                              NUNIT_FILES=nunit,
+                                                              XUNIT_FILES=xunit,
+                                                              TRX_FILES=trx)
+                                self.assertEqual(('At least one of the *_FILES options has to be set!', ), re.exception.args)
 
     def test_get_settings_junit_files(self):
         self.do_test_get_settings_no_default_files(JUNIT_FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'))
         self.do_test_get_settings_no_default_files(JUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'))
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
-
-        # this is the deprecated version of JUNIT_FILES
-        self.do_test_get_settings_no_default_files(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings_no_default_files(JUNIT_FILES=None)
+        self.assertEqual(('At least one of the *_FILES options has to be set!', ), re.exception.args)
 
     def test_get_settings_nunit_files(self):
         self.do_test_get_settings_no_default_files(NUNIT_FILES='file', expected=self.get_settings_no_default_files(nunit_files_glob='file'))
         self.do_test_get_settings_no_default_files(NUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(nunit_files_glob='file\nfile2'))
-        self.do_test_get_settings_no_default_files(NUNIT_FILES=None, expected=self.get_settings_no_default_files(nunit_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings_no_default_files(NUNIT_FILES=None)
+        self.assertEqual(('At least one of the *_FILES options has to be set!', ), re.exception.args)
 
     def test_get_settings_xunit_files(self):
         self.do_test_get_settings_no_default_files(XUNIT_FILES='file', expected=self.get_settings_no_default_files(xunit_files_glob='file'))
         self.do_test_get_settings_no_default_files(XUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(xunit_files_glob='file\nfile2'))
-        self.do_test_get_settings_no_default_files(XUNIT_FILES=None, expected=self.get_settings_no_default_files(xunit_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings_no_default_files(XUNIT_FILES=None)
+        self.assertEqual(('At least one of the *_FILES options has to be set!', ), re.exception.args)
 
     def test_get_settings_trx_files(self):
         self.do_test_get_settings_no_default_files(TRX_FILES='file', expected=self.get_settings_no_default_files(trx_files_glob='file'))
         self.do_test_get_settings_no_default_files(TRX_FILES='file\nfile2', expected=self.get_settings_no_default_files(trx_files_glob='file\nfile2'))
-        self.do_test_get_settings_no_default_files(TRX_FILES=None, expected=self.get_settings_no_default_files(trx_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings_no_default_files(TRX_FILES=None)
+        self.assertEqual(('At least one of the *_FILES options has to be set!', ), re.exception.args)
 
     def test_get_settings_time_unit(self):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
@@ -910,6 +921,7 @@ class Test(unittest.TestCase):
                     GITHUB_EVENT_PATH=file.name,
                     GITHUB_EVENT_NAME='pull_request',
                     GITHUB_REPOSITORY='repo',
+                    JUNIT_FILES='*.xml',
                     EVENT_FILE=None
                 ), gha)
             finally:
@@ -929,7 +941,5 @@ class Test(unittest.TestCase):
                           'It cannot do anything useful like creating check runs or pull request '
                           'comments. To run the action on fork repository pull requests, see '
                           'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
-                          '/README.md#support-fork-repositories-and-dependabot-branches'),
-                mock.call('At least one of the *_FILES options has to be set! '
-                          'Falling back to deprecated default "*.xml"')
+                          '/README.md#support-fork-repositories-and-dependabot-branches')
             ], any_order=True)
