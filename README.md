@@ -419,7 +419,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -661,7 +661,7 @@ Self-hosted runners may require setting up a Python environment first:
 
 ```yaml
 - name: Setup Python
-  uses: actions/setup-python@v3
+  uses: actions/setup-python@v4
   with:
     python-version: 3.8
 ```
