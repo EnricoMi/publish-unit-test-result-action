@@ -360,28 +360,11 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME='name', expected=self.get_settings(comment_title='title', check_name='name'))
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
-    def test_get_settings_comment_on_pr(self):
-        default_comment_mode = comment_mode_always
-        bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=bool_warning, exception=RuntimeError)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
-
     def test_get_settings_comment_mode(self):
-        comment_on_pr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
         for mode in comment_modes:
             with self.subTest(mode=mode):
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
-                # comment_on_pr is ignored when comment_mode is given
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
+                self.do_test_get_settings(COMMENT_MODE=mode, expected=self.get_settings(comment_mode=mode))
+        self.do_test_get_settings(COMMENT_MODE=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')

@@ -55,9 +55,6 @@ inputs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
     default: 'false'
     required: false
-  comment_on_pr:
-    description: 'Deprecated, please use comment_mode instead!'
-    required: false
   job_summary:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run'
     default: 'true'
