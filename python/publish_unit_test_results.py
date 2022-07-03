@@ -14,9 +14,9 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, available_annotations, default_annotations, \
+from publish import available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
+    comment_mode_off, comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.progress import progress_logger
@@ -338,7 +338,6 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
                                                  f'{", ".join(time_factors.keys())}')
 
     check_name = get_var('CHECK_NAME', options) or 'Test Results'
-    comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True)
     annotations = get_annotations_config(options, event)
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
@@ -375,12 +374,11 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_always if comment_on_pr else comment_mode_off),
+        comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
         job_summary=get_bool_var('JOB_SUMMARY', options, default=True),
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
-        hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
         report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False),
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
         ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
@@ -392,19 +390,14 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
-    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
-
-    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
-                  f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
-    deprecate_val(settings.comment_mode, 'COMMENT_MODE', comment_modes_deprecated, gha)
 
     return settings
 

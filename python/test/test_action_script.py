@@ -9,8 +9,8 @@ from typing import Optional, Union, List, Type
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_modes_deprecated, comment_mode_off, comment_mode_always, \
-    hide_comments_modes, pull_request_build_modes, punctuation_space
+    fail_on_mode_nothing, comment_modes, comment_mode_off, comment_mode_always, \
+    pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
@@ -167,7 +167,6 @@ class Test(unittest.TestCase):
                      compare_earlier=True,
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
-                     hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
                      ignore_runs=False,
@@ -202,7 +201,6 @@ class Test(unittest.TestCase):
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
-            hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             ignore_runs=ignore_runs,
@@ -362,36 +360,11 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME='name', expected=self.get_settings(comment_title='title', check_name='name'))
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
-    def test_get_settings_comment_on_pr(self):
-        default_comment_mode = comment_mode_always
-        bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=bool_warning, exception=RuntimeError)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
-
     def test_get_settings_comment_mode(self):
-        comment_on_pr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
         for mode in comment_modes:
             with self.subTest(mode=mode):
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
-                # comment_on_pr is ignored when comment_mode is given
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-
-        for mode in comment_modes_deprecated:
-            deprecated_warning = f'Value "{mode}" for option comment_mode is deprecated! Instead, use value "always".'
-            with self.subTest(mode=mode):
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode), warning=deprecated_warning)
-                # comment_on_pr is ignored when comment_mode is given
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
+                self.do_test_get_settings(COMMENT_MODE=mode, expected=self.get_settings(comment_mode=mode))
+        self.do_test_get_settings(COMMENT_MODE=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
@@ -414,16 +387,6 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JOB_SUMMARY='True', expected=self.get_settings(job_summary=True))
         self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
-
-    def test_get_settings_hide_comment(self):
-        for mode in hide_comments_modes:
-            with self.subTest(mode=mode):
-                self.do_test_get_settings(HIDE_COMMENTS=mode, expected=self.get_settings(hide_comment_mode=mode))
-        self.do_test_get_settings(HIDE_COMMENTS=None, expected=self.get_settings(hide_comment_mode='all but latest'))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(HIDE_COMMENTS='hide')
-        self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
 
     def test_get_settings_report_individual_runs(self):
         warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'
@@ -549,7 +512,6 @@ class Test(unittest.TestCase):
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='always',
                 JOB_SUMMARY='true',
-                HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
                 # annotations config tested in test_get_annotations_config*

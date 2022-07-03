@@ -19,8 +19,6 @@ digit_space = '  '
 punctuation_space = ' '
 
 comment_mode_off = 'off'
-comment_mode_create = 'create new'   # deprecated
-comment_mode_update = 'update last'  # deprecated
 comment_mode_always = 'always'
 comment_mode_changes = 'changes'
 comment_mode_changes_failures = 'changes in failures'  # includes comment_mode_changes_errors
@@ -36,10 +34,6 @@ comment_modes = [
     comment_mode_failures,
     comment_mode_errors
 ]
-comment_modes_deprecated = {
-    comment_mode_create: comment_mode_always,
-    comment_mode_update: comment_mode_always
-}
 
 fail_on_mode_nothing = 'nothing'
 fail_on_mode_errors = 'errors'
@@ -48,15 +42,6 @@ fail_on_modes = [
     fail_on_mode_nothing,
     fail_on_mode_errors,
     fail_on_mode_failures
-]
-
-hide_comments_mode_off = 'off'
-hide_comments_mode_all_but_latest = 'all but latest'
-hide_comments_mode_orphaned = 'orphaned commits'
-hide_comments_modes = [
-    hide_comments_mode_off,
-    hide_comments_mode_all_but_latest,
-    hide_comments_mode_orphaned
 ]
 
 pull_request_build_mode_commit = 'commit'
