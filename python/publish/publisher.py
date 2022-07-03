@@ -13,7 +13,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 from github.IssueComment import IssueComment
 
-from publish import comment_mode_off, comment_mode_create, comment_mode_update, digest_prefix, restrict_unicode_list, \
+from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
@@ -453,10 +453,7 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        # we need to fetch the latest comment unless comment mode is off (this method would have been called) or deprecated create
-        latest_comment = None
-        if self._settings.comment_mode not in [comment_mode_off, comment_mode_create]:
-            latest_comment = self.get_latest_comment(pull_request)
+        latest_comment = self.get_latest_comment(pull_request)
         latest_comment_body = latest_comment.body if latest_comment else None
 
         # are we required to create a comment on this PR?
@@ -469,8 +466,8 @@ class Publisher:
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # only create new comment when comment_mode == comment_mode_create, or no comment exists
-        if self._settings.comment_mode == comment_mode_create or latest_comment is None:
+        # only create new comment none exists already
+        if latest_comment is None:
             comment = pull_request.create_issue_comment(body)
             logger.info(f'Created comment for pull request #{pull_request.number}: {comment.html_url}')
         else:
@@ -483,7 +480,7 @@ class Publisher:
         # SomeTestChanges.has_changes cannot be used here as changes between earlier comment
         # and current results cannot be identified
 
-        if self._settings.comment_mode in [comment_mode_always, comment_mode_create, comment_mode_update]:
+        if self._settings.comment_mode == comment_mode_always:
             logger.debug(f'Comment required as comment mode is {self._settings.comment_mode}')
             return True
 
