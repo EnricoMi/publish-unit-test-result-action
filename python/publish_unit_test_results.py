@@ -287,7 +287,7 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
 
         if gha is None:
-            logger.debug(message)
+            logger.warning(message)
         else:
             gha.warning(message)
 
@@ -305,7 +305,7 @@ def deprecate_val(val: Optional[str], var: str, replacement_vals: Mapping[str, s
             message = f'{message} Instead, use value "{replacement}".'
 
         if gha is None:
-            logger.debug(message)
+            logger.warning(message)
         else:
             gha.warning(message)
 

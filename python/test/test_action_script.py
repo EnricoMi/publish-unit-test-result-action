@@ -14,6 +14,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
+    check_var, check_var_condition, deprecate_var, deprecate_val, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test_utils import chdir
 
@@ -971,3 +972,57 @@ class Test(unittest.TestCase):
                 mock.call('At least one of the *_FILES options has to be set! '
                           'Falling back to deprecated default "*.xml"')
             ], any_order=True)
+
+    def test_check_var(self):
+        with self.assertRaises(RuntimeError) as e:
+            check_var(None, 'var', 'Option')
+        self.assertEqual(('Option must be provided via action input or environment variable var', ), e.exception.args)
+
+        check_var('value', 'var', 'Option', ['value', 'val'])
+        check_var('value', 'var', 'Option', ['value', 'val'], ['deprecated', 'dep'])
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var('deprecated', 'var', 'Option', ['value', 'val'])
+        self.assertEqual(("Value 'deprecated' is not supported for variable var, expected: value, val", ), e.exception.args)
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var(['value', 'deprecated', 'dep', 'val'], 'var', 'Option', ['value', 'val'])
+        self.assertEqual(("Some values in 'value, deprecated, dep, val' are not supported for variable var, "
+                          "allowed: value, val", ), e.exception.args)
+
+    def test_check_var_condition(self):
+        check_var_condition(True, 'message')
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var_condition(False, 'message')
+        self.assertEqual(("message", ), e.exception.args)
+
+    def test_deprecate_var(self):
+        gha = mock.MagicMock()
+        deprecate_var(None, 'deprecated_var', 'replacement', gha)
+        gha.assert_not_called()
+
+        deprecate_var('set', 'deprecated_var', 'replacement', gha)
+        gha.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
+
+        with mock.patch('publish_unit_test_results.logger') as l:
+            deprecate_var('set', 'deprecated_var', 'replacement', None)
+            l.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
+
+    def test_deprecate_val(self):
+        gha = mock.MagicMock()
+        deprecate_val(None, 'deprecated_var', {}, gha)
+        gha.assert_not_called()
+
+        deprecate_val('set', 'deprecated_var', {'deprecated': 'replace'}, gha)
+        gha.assert_not_called()
+
+        deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
+        gha.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')
+
+        with mock.patch('publish_unit_test_results.logger') as l:
+            deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
+            l.assert_not_called()
+
+            deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, None)
+            l.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')
