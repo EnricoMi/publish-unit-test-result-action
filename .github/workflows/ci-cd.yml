@@ -542,13 +542,15 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/EnricoMi/publish-unit-test-result-action
-          flavor: latest=false
+          flavor: |
+            latest=false
+            prefix=v
           tags: |
             type=sha
             type=ref,event=tag
-            type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}
-            type=semver,pattern={{raw}},value=${{ needs.config-deploy.outputs.image-version }}
+            type=semver,pattern={{major}},value=${{ needs.config-deploy.outputs.image-version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}
+            type=semver,pattern={{version}},value=${{ needs.config-deploy.outputs.image-version }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
