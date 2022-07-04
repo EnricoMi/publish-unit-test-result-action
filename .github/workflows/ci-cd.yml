@@ -22,47 +22,8 @@ jobs:
       max-parallel: 10
       matrix:
         os:
-          - macos-10.15
-          - macos-11
-          - macos-12
-          - macos-latest
-          - ubuntu-18.04
-          - ubuntu-20.04
-          - ubuntu-22.04
           - ubuntu-latest
-          - windows-2019
-          - windows-2022
-          - windows-latest
         python-version: ["3.8"]
-
-        include:
-          - os: macos-latest
-            python-version: "3.10"
-          - os: ubuntu-latest
-            python-version: "3.10"
-          - os: windows-latest
-            python-version: "3.10"
-
-          - os: macos-latest
-            python-version: "3.9"
-          - os: ubuntu-latest
-            python-version: "3.9"
-          - os: windows-latest
-            python-version: "3.9"
-
-          - os: macos-latest
-            python-version: "3.7"
-          - os: ubuntu-latest
-            python-version: "3.7"
-          - os: windows-latest
-            python-version: "3.7"
-
-          - os: macos-latest
-            python-version: "3.6"
-          - os: ubuntu-latest
-            python-version: "3.6"
-          - os: windows-latest
-            python-version: "3.6"
 
     steps:
       - name: Setup Ubuntu
@@ -330,28 +291,8 @@ jobs:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         # test *-latest and newer (because newer eventually become 'latest' and should be tested to work before that)
         include:
-          - os: macos-latest
-            os-label: macOS
-            python: "3.6"
-          - os: macos-latest
-            os-label: macOS
-            python: "installed"
-          - os: macos-12
-            os-label: macOS 12
-            python: "installed"
-
           - os: ubuntu-latest
             os-label: Linux
-            python: "3.6"
-          - os: ubuntu-latest
-            os-label: Linux
-            python: "installed"
-          - os: ubuntu-22.04
-            os-label: Linux 22.04
-            python: "installed"
-
-          - os: windows-latest
-            os-label: Windows
             python: "installed"
 
     steps:
