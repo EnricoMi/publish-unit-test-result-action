@@ -29,6 +29,9 @@ inputs:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     default: 'test failures'
     required: false
+  files:
+    description: 'Deprecated, use "junit_files" instead.'
+    required: false
   junit_files:
     description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
     required: false

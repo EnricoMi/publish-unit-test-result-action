@@ -206,6 +206,7 @@ jobs:
             --workdir $GITHUB_WORKSPACE \
             --rm \
             -e INPUT_CHECK_NAME \
+            -e INPUT_FILES \
             -e INPUT_JUNIT_FILES \
             -e INPUT_JSON_FILE \
             -e INPUT_LOG_LEVEL \
