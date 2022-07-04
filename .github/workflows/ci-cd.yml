@@ -636,7 +636,7 @@ jobs:
           push: |
             ${{
               github.event_name == 'push' && (
-                needs.config-deploy.outputs.image != 'Dockerfile' && needs.config-deploy.outputs.image-exists != 'true' && github.ref == 'refs/heads/master' ||
+                needs.config-deploy.outputs.image != 'Dockerfile' && startsWith(github.ref, 'refs/heads/master') && needs.config-deploy.outputs.image-exists != 'true' ||
                 needs.config-deploy.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
               )
             }}
