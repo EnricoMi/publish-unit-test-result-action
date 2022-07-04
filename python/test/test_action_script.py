@@ -277,8 +277,8 @@ class Test(unittest.TestCase):
 
         # this is the deprecated version of JUNIT_FILES
         self.do_test_get_settings_no_default_files(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
-        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning=['Option FILES is deprecated, please use JUNIT_FILES instead!', 'At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"'])
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
         self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
 
     def test_get_settings_nunit_files(self):

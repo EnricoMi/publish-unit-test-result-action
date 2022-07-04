@@ -320,12 +320,12 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
     # remove when deprecated FILES is removed
-    if get_var('FILES', options):
+    default_junit_files_glob = get_var('FILES', options)
+    if default_junit_files_glob:
         gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
     # replace with error when deprecated FILES is removed
-    default_junit_files_glob = None
-    if not any([get_var(f'{flavour}_FILES', options)
-                for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']]):
+    elif not any([get_var(f'{flavour}_FILES', options)
+                  for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']]):
         default_junit_files_glob = '*.xml'
         gha.warning(f'At least one of the *_FILES options has to be set! '
                     f'Falling back to deprecated default "{default_junit_files_glob}"')
@@ -367,7 +367,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
-        junit_files_glob=get_var('JUNIT_FILES', options) or get_var('FILES', options) or default_junit_files_glob,
+        junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,
         nunit_files_glob=get_var('NUNIT_FILES', options),
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
