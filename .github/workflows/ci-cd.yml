@@ -495,7 +495,6 @@ jobs:
 
   config-deploy:
     name: Configure Deployment
-    needs: test
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
@@ -532,7 +531,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-file, publish-test-files, config-deploy]
+    needs: config-deploy
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
