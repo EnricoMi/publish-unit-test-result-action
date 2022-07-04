@@ -9,6 +9,11 @@
 ![Ubuntu badge](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label)
 ![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
+&nbsp;&nbsp;&nbsp;
+![JUnit badge](https://badgen.net/badge/JUnit/XML/green)
+![NUnit badge](https://badgen.net/badge/NUnit/XML/green)
+![XUnit badge](https://badgen.net/badge/XUnit/XML/green)
+![TRX badge](https://badgen.net/badge/TRX/OK/green)
 
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
 
