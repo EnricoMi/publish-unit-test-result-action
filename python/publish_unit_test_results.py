@@ -402,17 +402,24 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     return settings
 
 
+def set_log_level(handler: logging.Logger, level: str, gha: GithubAction):
+    try:
+        handler.setLevel(level.upper())
+    except ValueError as e:
+        gha.warning(f'Failed to set log level {level}: {e}')
+
+
 if __name__ == "__main__":
+    gha = GithubAction()
     options = dict(os.environ)
 
     root_log_level = get_var('ROOT_LOG_LEVEL', options) or 'INFO'
-    logging.root.level = logging.getLevelName(root_log_level)
+    set_log_level(logging.root, root_log_level, gha)
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
 
     log_level = get_var('LOG_LEVEL', options) or 'INFO'
-    logger.level = logging.getLevelName(log_level)
-    publish.logger.level = logging.getLevelName(log_level)
+    set_log_level(logger, log_level, gha)
+    set_log_level(publish.logger, log_level, gha)
 
-    gha = GithubAction()
     settings = get_settings(options, gha)
     main(settings, gha)
