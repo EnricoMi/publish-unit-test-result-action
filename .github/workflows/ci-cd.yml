@@ -606,8 +606,9 @@ jobs:
           tags: |
             type=sha
             type=ref,event=tag
-            type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}.0
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}.0
+            type=semver,pattern=v{{major}},value=${{ needs.config-deploy.outputs.image-version }}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.config-deploy.outputs.image-version }}
+            type=semver,pattern={{raw}},value=${{ needs.config-deploy.outputs.image-version }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
