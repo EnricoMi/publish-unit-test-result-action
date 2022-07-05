@@ -115,7 +115,8 @@ class JUnitXmlParseTest:
     def prettify_exception(exception) -> str:
         exception = exception.__repr__()
         exception = re.sub(r'\(', ': ', exception, 1)
-        exception = re.sub(r',?\s*\)$', '', exception)
+        exception = re.sub(r'file:.*/', '', exception)
+        exception = re.sub(r',?\s*\)\)$', ')', exception)
         return exception
 
 
