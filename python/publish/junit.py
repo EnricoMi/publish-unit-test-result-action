@@ -10,7 +10,7 @@ from junitparser.junitparser import etree
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
 
 try:
-    import lxml
+    import lxml.etree
     lxml_available = True
 except ImportError:
     lxml_available = False
@@ -138,7 +138,8 @@ def parse_junit_xml_files(files: Iterable[str],
         try:
             if drop_testcases:
                 builder = DropTestCaseBuilder()
-                return etree.parse(path, parser=etree.XMLParser(target=builder, encoding='utf-8'))
+                parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=True)
+                return etree.parse(path, parser=parser)
             return etree.parse(path)
         except BaseException as e:
             return e
