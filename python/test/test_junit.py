@@ -74,7 +74,7 @@ class JUnitXmlParseTest:
                     path = pathlib.Path(filename)
                     if isinstance(actual, ParseError):
                         # make file relative so the path in the exception file does not depend on where we checkout the sources
-                        actual = dataclasses.replace(actual, file=str(pathlib.Path(actual.file).relative_to(test_path).as_posix()))
+                        actual = dataclasses.replace(actual, file=pathlib.Path(actual.file).relative_to(test_path).as_posix())
                         actual = self.prettify_exception(actual)
                         expectation_path = path.parent / (path.stem + '.exception')
                         self.assert_expectation(self.test, actual, expectation_path)
@@ -84,7 +84,7 @@ class JUnitXmlParseTest:
                         self.assert_expectation(self.test, actual_tree, xml_expectation_path)
 
                         results_expectation_path = path.parent / (path.stem + '.results')
-                        actual_results = process_junit_xml_elems([(self.shorten_filename(str(path.resolve().as_posix())), actual)])
+                        actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)])
                         self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
     def test_parse_and_process_files(self):
@@ -100,7 +100,7 @@ class JUnitXmlParseTest:
             path = pathlib.Path(filename).resolve()
             if isinstance(actual, ParseError):
                 # make file relative so the path in the exception file does not depend on where we checkout the sources
-                actual = dataclasses.replace(actual, file=str(pathlib.Path(actual.file).relative_to(test_path).as_posix()))
+                actual = dataclasses.replace(actual, file=pathlib.Path(actual.file).relative_to(test_path).as_posix())
                 with open(path.parent / (path.stem + '.exception'), 'w', encoding='utf-8') as w:
                     w.write(cls.prettify_exception(actual))
             else:
@@ -108,7 +108,7 @@ class JUnitXmlParseTest:
                     xml = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True)
                     w.write(xml.decode('utf-8'))
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
-                    results = process_junit_xml_elems([(cls.shorten_filename(str(path.resolve().as_posix())), actual)])
+                    results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)])
                     w.write(pp.pformat(results, indent=2))
 
     @staticmethod
@@ -132,7 +132,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def get_test_files() -> List[str]:
-        return glob(str(test_files_path / '**' / '*.xml'), recursive=True)
+        return [pathlib.Path(file).as_posix()
+                for file in glob(str(test_files_path / '**' / '*.xml'), recursive=True)]
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:
