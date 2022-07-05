@@ -28,8 +28,7 @@ class TestXunit(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def get_test_files() -> List[str]:
-        return [pathlib.Path(file).as_posix()
-                for file in glob(str(test_files_path / '**' / '*.xml'), recursive=True)]
+        return glob(str(test_files_path / '**' / '*.xml'), recursive=True)
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:
