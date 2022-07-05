@@ -1,10 +1,11 @@
+import dataclasses
 import pathlib
 import re
 import sys
 import unittest
 from distutils.version import LooseVersion
 from glob import glob
-from typing import Optional, Union, List
+from typing import Optional, List
 
 import junitparser
 import prettyprinter as pp
@@ -15,11 +16,12 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
-    get_message, Disabled, JUnitTree
+    get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
 from test_utils import temp_locale
 
-test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
+test_path = pathlib.Path(__file__).resolve().parent
+test_files_path = test_path / 'files' / 'junit-xml'
 pp.install_extras()
 
 
@@ -51,7 +53,7 @@ class JUnitXmlParseTest:
         raise NotImplementedError()
 
     @staticmethod
-    def parse_file(filename) -> Union[JUnitTree, BaseException]:
+    def parse_file(filename) -> JUnitTreeOrParseError:
         raise NotImplementedError()
 
     @staticmethod
@@ -70,9 +72,11 @@ class JUnitXmlParseTest:
                 with temp_locale(locale):
                     actual = self.parse_file(filename)
                     path = pathlib.Path(filename)
-                    if isinstance(actual, BaseException):
-                        expectation_path = path.parent / (path.stem + '.exception')
+                    if isinstance(actual, ParseError):
+                        # make file relative so the path in the exception file does not depend on where we checkout the sources
+                        actual = dataclasses.replace(actual, file=str(pathlib.Path(actual.file).relative_to(test_path).as_posix()))
                         actual = self.prettify_exception(actual)
+                        expectation_path = path.parent / (path.stem + '.exception')
                         self.assert_expectation(self.test, actual, expectation_path)
                     else:
                         xml_expectation_path = path.parent / (path.stem + '.junit-xml')
@@ -93,8 +97,10 @@ class JUnitXmlParseTest:
         for filename in cls.get_test_files():
             print(f'- updating {filename}')
             actual = cls.parse_file(filename)
-            path = pathlib.Path(filename)
-            if isinstance(actual, BaseException):
+            path = pathlib.Path(filename).resolve()
+            if isinstance(actual, ParseError):
+                # make file relative so the path in the exception file does not depend on where we checkout the sources
+                actual = dataclasses.replace(actual, file=str(pathlib.Path(actual.file).relative_to(test_path).as_posix()))
                 with open(path.parent / (path.stem + '.exception'), 'w', encoding='utf-8') as w:
                     w.write(cls.prettify_exception(actual))
             else:
@@ -129,7 +135,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         return glob(str(test_files_path / '**' / '*.xml'), recursive=True)
 
     @staticmethod
-    def parse_file(filename) -> Union[JUnitTree, BaseException]:
+    def parse_file(filename) -> JUnitTreeOrParseError:
         return list(parse_junit_xml_files([filename]))[0][1]
 
     def test_process_parse_junit_xml_files_with_no_files(self):

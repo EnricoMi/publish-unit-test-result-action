@@ -21,7 +21,7 @@ from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
 from test_utils import temp_locale, d, n
 
-test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'junit-xml'
 
 
 errors = [ParseError('file', 'error', 1, 2)]

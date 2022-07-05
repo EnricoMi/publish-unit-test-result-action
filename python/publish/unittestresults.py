@@ -1,5 +1,5 @@
-from collections import defaultdict
 import dataclasses
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Optional, List, Mapping, Any, Union, Dict, Callable
 from xml.etree.ElementTree import ParseError as XmlParseError
@@ -31,6 +31,7 @@ class ParseError:
     message: str
     line: Optional[int] = None
     column: Optional[int] = None
+    exception: Optional[BaseException] = None
 
     @staticmethod
     def from_exception(file: str, exception: BaseException):
@@ -44,8 +45,8 @@ class ParseError:
                 msg = f'File is not a valid XML file:\n{msg}'
             elif msg.startswith('Invalid format.'):
                 msg = f'File is not a valid JUnit file:\n{msg}'
-            return ParseError(file=file, message=msg, line=line, column=column)
-        return ParseError(file=file, message=str(exception))
+            return ParseError(file=file, message=msg, line=line, column=column, exception=exception)
+        return ParseError(file=file, message=str(exception), exception=exception)
 
 
 @dataclass(frozen=True)

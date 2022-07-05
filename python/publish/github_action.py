@@ -62,8 +62,11 @@ class GithubAction:
             params.update(col=column)
         self._command(self._file, 'warning', message, params)
 
-    def error(self, message: str, file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None):
-        logger.error(message)
+    def error(self,
+              message: str,
+              file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None,
+              exception: Optional[BaseException] = None):
+        logger.error(message, exc_info=exception)
 
         params = {}
         if file is not None:

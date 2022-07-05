@@ -64,19 +64,20 @@ class TestUnitTestResults(unittest.TestCase):
         error.code = 123
         error.position = (1, 2)
         actual = ParseError.from_exception('file', error)
-        expected = ParseError('file', 'xml parse error', 1, 2)
+        expected = ParseError('file', 'xml parse error', 1, 2, exception=error)
         self.assertEqual(expected, actual)
 
     def test_parse_error_from_file_not_found(self):
         error = FileNotFoundError(2, 'No such file or directory')
         error.filename = 'some file path'
         actual = ParseError.from_exception('file', error)
-        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'")
+        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'", exception=error)
         self.assertEqual(expected, actual)
 
     def test_parse_error_from_error(self):
-        actual = ParseError.from_exception('file', ValueError('error'))
-        expected = ParseError('file', 'error')
+        error = ValueError('error')
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', 'error', exception=error)
         self.assertEqual(expected, actual)
 
     def test_parsed_unit_test_results_with_commit(self):
