@@ -9,8 +9,8 @@ from publish.unittestresults import get_test_results, get_stats, get_stats_delta
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
 from test_utils import d, n
 
-errors = [ParseError('file', 'error')]
-errors_dict = [dataclasses.asdict(e) for e in errors]
+errors = [ParseError('file', 'error', exception=ValueError("Invalid value"))]
+errors_dict = [dataclasses.asdict(e.without_exception()) for e in errors]
 
 
 def create_unit_test_run_results(files=1,

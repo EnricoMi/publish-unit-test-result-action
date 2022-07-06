@@ -31,7 +31,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 from test_unittestresults import create_unit_test_run_results
 
 
-errors = [ParseError('file', 'error', 1, 2)]
+errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"))]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -1455,7 +1455,7 @@ class TestPublisher(unittest.TestCase):
         conclusion='conclusion',
         stats=UnitTestRunResults(
             files=12345,
-            errors=[ParseError('file', 'message', 1, 2)],
+            errors=[ParseError('file', 'message', 1, 2, exception=ValueError("Invalid value"))],
             suites=2,
             duration=3456,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8901,
@@ -1464,7 +1464,10 @@ class TestPublisher(unittest.TestCase):
         ),
         stats_with_delta=UnitTestRunDeltaResults(
             files={'number': 1234, 'delta': -1234},
-            errors=[ParseError('file', 'message', 1, 2), ParseError('file2', 'message2', 2, 4)],
+            errors=[
+                ParseError('file', 'message', 1, 2, exception=ValueError("Invalid value")),
+                ParseError('file2', 'message2', 2, 4)
+            ],
             suites={'number': 2, 'delta': -2},
             duration={'number': 3456, 'delta': -3456},
             tests={'number': 4, 'delta': -4}, tests_succ={'number': 5, 'delta': -5},

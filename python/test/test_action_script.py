@@ -99,7 +99,7 @@ class Test(unittest.TestCase):
                 with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
                     actual = get_conclusion(ParsedUnitTestResults(
                         files=2,
-                        errors=[ParseError(file='file', message='error')],
+                        errors=[ParseError(file='file', message='error', exception=ValueError("Invalid value"))],
                         suites=1,
                         suite_tests=4,
                         suite_skipped=1,
