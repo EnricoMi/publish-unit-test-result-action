@@ -84,12 +84,9 @@ def get_content(results: Union[Element, List[Element]]) -> str:
 
 
 class DropTestCaseBuilder(etree.TreeBuilder):
-    _stack = []
-
-    def parse(self, filepath):
-        self._stack.clear()
-        parser = etree.XMLParser(target=self)
-        return etree.parse(filepath, parser=parser)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._stack = []
 
     def start(self, tag: Union[str, bytes], attrs: Dict[Union[str, bytes], Union[str, bytes]]) -> Element:
         self._stack.append(tag)
