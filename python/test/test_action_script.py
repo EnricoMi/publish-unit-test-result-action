@@ -824,6 +824,7 @@ class Test(unittest.TestCase):
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
             print(string.getvalue())
+            print(re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', string.getvalue())))
             self.maxDiff = None
             self.assertEqual(
                 sorted([
@@ -839,7 +840,7 @@ class Test(unittest.TestCase):
                     "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
                     "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
                     "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
-                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'file:.*/', '', line)) for line in string.getvalue().split(os.linesep) if line])
+                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line)) for line in string.getvalue().split(os.linesep) if line])
             )
             # self.assertEqual([], m.method_calls)
 
