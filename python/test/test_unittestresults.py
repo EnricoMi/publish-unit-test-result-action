@@ -80,6 +80,12 @@ class TestUnitTestResults(unittest.TestCase):
         expected = ParseError('file', 'error', exception=error)
         self.assertEqual(expected, actual)
 
+    def test_parse_error_with_exception(self):
+        error = ValueError('error')
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', 'error', exception=None)
+        self.assertEqual(expected, actual.without_exception())
+
     def test_parsed_unit_test_results_with_commit(self):
         self.assertEqual(
             ParsedUnitTestResultsWithCommit(
@@ -112,6 +118,16 @@ class TestUnitTestResults(unittest.TestCase):
                 ]
             ).with_commit('commit sha')
         )
+
+    def test_unit_test_run_results_without_exception(self):
+        results = create_unit_test_run_results(errors=errors)
+        self.assertEqual(create_unit_test_run_results(errors=[error.without_exception() for error in errors]),
+                         results.without_exceptions())
+
+    def test_unit_test_run_delta_results_without_exception(self):
+        results = create_unit_test_run_delta_results(errors=errors)
+        self.assertEqual(create_unit_test_run_delta_results(errors=[error.without_exception() for error in errors]),
+                         results.without_exceptions())
 
     def test_unit_test_run_results_to_dict(self):
         actual = UnitTestRunResults(
