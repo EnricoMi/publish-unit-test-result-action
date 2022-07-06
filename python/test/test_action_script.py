@@ -823,9 +823,6 @@ class Test(unittest.TestCase):
             gha = GithubAction(file=string)
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
-            print(string.getvalue())
-            print(re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', string.getvalue())))
-            self.maxDiff = None
             self.assertEqual(
                 sorted([
                     "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
