@@ -96,8 +96,8 @@ class TestGithubAction(unittest.TestCase):
             gha.error('the message', file='the file', line=1, column=2)
 
         # log exception
-        with gh_action_command_test(self, '::error::RuntimeError: failure\n'
-                                          '::error file=the file,line=1,col=2::the message') as gha:
+        with gh_action_command_test(self, f'::error::RuntimeError: failure{os.linesep}'
+                                          f'::error file=the file,line=1,col=2::the message') as gha:
             try:
                 raise RuntimeError('failure')
             except RuntimeError as e:
@@ -107,7 +107,7 @@ class TestGithubAction(unittest.TestCase):
                 gha.error('the message', file='the file', line=1, column=2, exception=error)
 
             self.assertEqual(
-                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                [(call[0], re.sub(r'File ".*[/\\]', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
                  for call in m.method_calls],
                 [
                     ('error', 'RuntimeError: failure'),
@@ -119,15 +119,15 @@ class TestGithubAction(unittest.TestCase):
             )
 
         # log exceptions related via cause
-        with gh_action_command_test(self, '::error::RuntimeError: failed except  caused by  ValueError: invalid value\n'
-                                          '::error::ValueError: invalid value\n'
-                                          '::error file=the file,line=1,col=2::the message') as gha:
+        with gh_action_command_test(self, f'::error::RuntimeError: failed except  caused by  ValueError: invalid value{os.linesep}'
+                                          f'::error::ValueError: invalid value{os.linesep}'
+                                          f'::error file=the file,line=1,col=2::the message') as gha:
             error = self.get_error_with_cause()
             with mock.patch('publish.github_action.logger') as m:
                 gha.error('the message', file='the file', line=1, column=2, exception=error)
 
             self.assertEqual(
-                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                [(call[0], re.sub(r'File ".*[/\\]', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
                  for call in m.method_calls],
                 [
                     ('error', 'RuntimeError: failed except  caused by  ValueError: invalid value'),
@@ -141,15 +141,15 @@ class TestGithubAction(unittest.TestCase):
             )
 
         # log exceptions related via context
-        with gh_action_command_test(self, '::error::RuntimeError: failed except  while handling  ValueError: invalid value\n'
-                                          '::error::ValueError: invalid value\n'
-                                          '::error file=the file,line=1,col=2::the message') as gha:
+        with gh_action_command_test(self, f'::error::RuntimeError: failed except  while handling  ValueError: invalid value{os.linesep}'
+                                          f'::error::ValueError: invalid value{os.linesep}'
+                                          f'::error file=the file,line=1,col=2::the message') as gha:
             error = self.get_error_with_context()
             with mock.patch('publish.github_action.logger') as m:
                 gha.error('the message', file='the file', line=1, column=2, exception=error)
 
             self.assertEqual(
-                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                [(call[0], re.sub(r'File ".*[/\\]', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
                  for call in m.method_calls],
                 [
                     ('error', 'RuntimeError: failed except  while handling  ValueError: invalid value'),
@@ -207,7 +207,7 @@ class TestGithubAction(unittest.TestCase):
     def test__command_with_multi_line_value(self):
         with io.StringIO() as string:
             GithubAction._command(string, 'command', 'multi\nline\nvalue')
-            self.assertEqual('::command::multi\n', string.getvalue())
+            self.assertEqual('::command::multi' + os.linesep, string.getvalue())
 
     def test__append_to_file_errors(self):
         # env variable does not exist
