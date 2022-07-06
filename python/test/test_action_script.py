@@ -18,7 +18,7 @@ from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test_utils import chdir
 
-test_files_path = pathlib.Path(__file__).parent / 'files'
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files'
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
@@ -99,7 +99,7 @@ class Test(unittest.TestCase):
                 with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
                     actual = get_conclusion(ParsedUnitTestResults(
                         files=2,
-                        errors=[ParseError(file='file', message='error')],
+                        errors=[ParseError(file='file', message='error', exception=ValueError("Invalid value"))],
                         suites=1,
                         suite_tests=4,
                         suite_skipped=1,

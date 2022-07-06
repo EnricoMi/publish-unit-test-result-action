@@ -21,10 +21,10 @@ from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
 from test_utils import temp_locale, d, n
 
-test_files_path = pathlib.Path(__file__).parent / 'files' / 'junit-xml'
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'junit-xml'
 
 
-errors = [ParseError('file', 'error', 1, 2)]
+errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"))]
 
 
 class PublishTest(unittest.TestCase):
@@ -1803,9 +1803,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, annotations)
 
     def test_get_error_annotation(self):
-        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
+        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, ValueError('invalid value'))))
 
     def test_get_all_tests_list_annotation(self):
         results = UnitTestCaseResults([

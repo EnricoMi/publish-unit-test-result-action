@@ -1,1 +1,1 @@
-Exception: 'File is empty.'
+ParseError: file='files/junit-xml/empty.xml', message='File is empty.', line=None, column=None, exception=Exception('File is empty.')

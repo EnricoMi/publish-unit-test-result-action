@@ -144,7 +144,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # get the unit test results
     parsed = parse_files(settings, gha)
-    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column, exception=error.exception)
      for error in parsed.errors]
 
     # process the parsed results

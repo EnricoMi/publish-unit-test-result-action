@@ -3,7 +3,8 @@ publish.unittestresults.ParsedUnitTestResults(
   errors=[
     publish.unittestresults.ParseError(
       file='non-junit.xml',
-      message='Invalid format.'
+      message='Invalid format.',
+      exception=junitparser.junitparser.JUnitXmlError('Invalid format.')
     )
   ],
   suites=0,

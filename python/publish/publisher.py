@@ -98,8 +98,14 @@ class PublishData:
         return d
 
     def _as_dict(self) -> Dict[str, Any]:
+        self_without_exceptions = dataclasses.replace(
+            self,
+            stats=self.stats.without_exceptions(),
+            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None
+        )
         # the dict_factory removes None values
-        return dataclasses.asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
+        return dataclasses.asdict(self_without_exceptions,
+                                  dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
     def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         d = self._as_dict()

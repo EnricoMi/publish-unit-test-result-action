@@ -7,11 +7,11 @@ from typing import List, Union
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
-from publish.junit import JUnitTree
+from publish.junit import JUnitTreeOrParseError
 from publish.trx import parse_trx_files
 from test_junit import JUnitXmlParseTest
 
-test_files_path = pathlib.Path(__file__).parent / 'files' / 'trx'
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'trx'
 
 
 class TestTrx(unittest.TestCase, JUnitXmlParseTest):
@@ -30,7 +30,7 @@ class TestTrx(unittest.TestCase, JUnitXmlParseTest):
         return glob(str(test_files_path / '**' / '*.trx'), recursive=True)
 
     @staticmethod
-    def parse_file(filename) -> Union[JUnitTree, BaseException]:
+    def parse_file(filename) -> JUnitTreeOrParseError:
         return list(parse_trx_files([filename]))[0][1]
 
 

@@ -120,50 +120,61 @@ class DropTestCaseBuilder(etree.TreeBuilder):
 
 
 JUnitTree = etree.ElementTree
-JUnitTreeOrException = Union[JUnitTree, BaseException]
-ParsedJUnitFile = Tuple[str, JUnitTreeOrException]
+JUnitTreeOrParseError = Union[JUnitTree, ParseError]
+JUnitXmlOrParseError = Union[JUnitXml, ParseError]
+ParsedJUnitFile = Tuple[str, JUnitTreeOrParseError]
+
+
+def safe_parse_xml_file(path: str, parse: Callable[[str], JUnitTree]) -> JUnitTreeOrParseError:
+    """Parses an xml file and returns either a JUnitTree or a ParseError."""
+    if not os.path.exists(path):
+        return ParseError.from_exception(path, FileNotFoundError(f'File does not exist.'))
+    if os.stat(path).st_size == 0:
+        return ParseError.from_exception(path, Exception(f'File is empty.'))
+
+    try:
+        return parse(path)
+    except BaseException as e:
+        return ParseError.from_exception(path, e)
+
+
+def progress_safe_parse_xml_file(files: Iterable[str],
+                            parse: Callable[[str], JUnitTree],
+                            progress: Callable[[ParsedJUnitFile], ParsedJUnitFile]) -> Iterable[ParsedJUnitFile]:
+    return [progress((file, safe_parse_xml_file(file, parse))) for file in files]
 
 
 def parse_junit_xml_files(files: Iterable[str],
                           drop_testcases: bool = False,
                           progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses junit xml files."""
-    def parse(path: str) -> JUnitTreeOrException:
-        """Parses a junit xml file and returns either a JUnitTree or an Exception."""
-        if not os.path.exists(path):
-            return FileNotFoundError(f'File does not exist.')
-        if os.stat(path).st_size == 0:
-            return Exception(f'File is empty.')
+    def parse(path: str) -> JUnitTree:
+        if drop_testcases:
+            builder = DropTestCaseBuilder()
+            parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=True)
+            return etree.parse(path, parser=parser)
+        return etree.parse(path)
 
-        try:
-            if drop_testcases:
-                builder = DropTestCaseBuilder()
-                parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=True)
-                return etree.parse(path, parser=parser)
-            return etree.parse(path)
-        except BaseException as e:
-            return e
-
-    return [progress((result_file, parse(result_file))) for result_file in files]
+    return progress_safe_parse_xml_file(files, parse, progress)
 
 
 def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0) -> ParsedUnitTestResults:
-    def create_junitxml(filepath: str, tree: JUnitTree) -> Union[JUnitXml, JUnitXmlError]:
+    def create_junitxml(filepath: str, tree: JUnitTree) -> JUnitXmlOrParseError:
         try:
             instance = JUnitXml.fromroot(tree.getroot())
             instance.filepath = filepath
             return instance
         except JUnitXmlError as e:
-            return e
+            return ParseError.from_exception(filepath, e)
 
-    processed = [(result_file, create_junitxml(result_file, tree) if not isinstance(tree, BaseException) else tree)
+    processed = [(result_file, create_junitxml(result_file, tree) if not isinstance(tree, ParseError) else tree)
                   for result_file, tree in trees]
     junits = [(result_file, junit)
               for result_file, junit in processed
-              if not isinstance(junit, BaseException)]
-    errors = [ParseError.from_exception(result_file, exception)
-              for result_file, exception in processed
-              if isinstance(exception, BaseException)]
+              if not isinstance(junit, ParseError)]
+    errors = [error
+              for _, error in processed
+              if isinstance(error, ParseError)]
 
     suites = [(result_file, suite)
               for result_file, junit in junits
