@@ -16,13 +16,14 @@ from urllib3.util.retry import Retry
 import publish.github_action
 from publish import available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_always, comment_modes, punctuation_space
+    comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
-from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults, ParsedUnitTestResultsWithCommit
+from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
+    ParseError
 
 logger = logging.getLogger('publish')
 
@@ -123,6 +124,11 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
 
 
+def log_parse_errors(errors: List[ParseError], gha: GithubAction):
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column, exception=error.exception)
+     for error in errors]
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -144,8 +150,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # get the unit test results
     parsed = parse_files(settings, gha)
-    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column, exception=error.exception)
-     for error in parsed.errors]
+    log_parse_errors(parsed.errors, gha)
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)

@@ -65,7 +65,8 @@ class GithubAction:
 
     def _exception(self, te: traceback.TracebackException):
         def exception_str(te: traceback.TracebackException) -> str:
-            return ''.join(te.format_exception_only()).split('\n')[0]
+            # we take the last line, which ends with a newline, that we strip
+            return list(te.format_exception_only())[-1].split('\n')[0]
 
         self.error('{te}{caused}{context}'.format(
             te=exception_str(te),

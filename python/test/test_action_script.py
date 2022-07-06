@@ -1,3 +1,5 @@
+import io
+import re
 import json
 import logging
 import os
@@ -6,15 +8,16 @@ import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List, Type
+
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_off, comment_mode_always, \
+    fail_on_mode_nothing, comment_modes, comment_mode_always, \
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
-    check_var, check_var_condition, deprecate_var, deprecate_val, \
+    check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test_utils import chdir
 
@@ -803,8 +806,7 @@ class Test(unittest.TestCase):
                                      trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
         actual = parse_files(settings, gha)
 
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
+        self.assertEqual([], gha.method_calls)
 
         self.assertEqual(65, actual.files)
         self.assertEqual(6, len(actual.errors))
@@ -816,6 +818,28 @@ class Test(unittest.TestCase):
         self.assertEqual(3964, actual.suite_time)
         self.assertEqual(1858, len(actual.cases))
         self.assertEqual('commit', actual.commit)
+
+        with io.StringIO() as string:
+            gha = GithubAction(file=string)
+            with mock.patch('publish.github_action.logger') as m:
+                log_parse_errors(actual.errors, gha)
+            self.assertEqual(
+                sorted([
+                    "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
+                    "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
+                    "::error::Exception: File is empty.",
+                    "::error file=empty.xml::Error processing result file: File is empty.",
+                    "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
+                    "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
+                    "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
+                    "::error file=non-junit.xml::Error processing result file: Invalid format.",
+                    "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
+                    "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
+                    "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
+                    "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', line) for line in string.getvalue().split(os.linesep) if line])
+            )
+            # self.assertEqual([], m.method_calls)
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
