@@ -19,7 +19,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 10
       matrix:
         os:
           - macos-10.15
