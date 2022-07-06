@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import traceback
 from io import TextIOWrapper
 from typing import Mapping, Any, Optional
 
@@ -62,11 +63,39 @@ class GithubAction:
             params.update(col=column)
         self._command(self._file, 'warning', message, params)
 
+    def _exception(self, te: traceback.TracebackException):
+        def exception_str(te: traceback.TracebackException) -> str:
+            return ''.join(te.format_exception_only()).split('\n')[0]
+
+        self.error('{te}{caused}{context}'.format(
+            te=exception_str(te),
+            caused=f'  caused by  {exception_str(te.__cause__)}' if te.__cause__ else '',
+            context=f'  while handling  {exception_str(te.__context__)}' if te.__context__ else ''
+        ), exception=None)
+
+        for lines in te.format(chain=False):
+            for line in lines.split('\n'):
+                if line:
+                    logger.debug(line)
+
+        cause = te.__cause__
+        while cause:
+            self._exception(cause)
+            cause = cause.__cause__
+
+        context = te.__context__
+        while context:
+            self._exception(context)
+            context = context.__context__
+
     def error(self,
               message: str,
               file: Optional[str] = None, line: Optional[int] = None, column: Optional[int] = None,
               exception: Optional[BaseException] = None):
-        logger.error(message, exc_info=exception)
+        if exception:
+            self._exception(traceback.TracebackException.from_exception(exception))
+        else:
+            logger.error(message)
 
         params = {}
         if file is not None:
@@ -79,6 +108,9 @@ class GithubAction:
 
     @staticmethod
     def _command(file: TextIOWrapper, command: str, value: str = '', params: Optional[Mapping[str, Any]] = None):
+        # take first line of value if multiline
+        value = value.split('\n', 1)[0]
+
         if params is None:
             params = {}
         params = ','.join([f'{key}={str(value)}'

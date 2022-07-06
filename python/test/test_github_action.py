@@ -1,5 +1,7 @@
 import io
+import io
 import os
+import re
 import tempfile
 import unittest
 from contextlib import contextmanager
@@ -93,6 +95,93 @@ class TestGithubAction(unittest.TestCase):
         with gh_action_command_test(self, '::error file=the file,line=1,col=2::the message') as gha:
             gha.error('the message', file='the file', line=1, column=2)
 
+        # log exception
+        with gh_action_command_test(self, '::error::RuntimeError: failure\n'
+                                          '::error file=the file,line=1,col=2::the message') as gha:
+            try:
+                raise RuntimeError('failure')
+            except RuntimeError as e:
+                error = e
+
+            with mock.patch('publish.github_action.logger') as m:
+                gha.error('the message', file='the file', line=1, column=2, exception=error)
+
+            self.assertEqual(
+                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                 for call in m.method_calls],
+                [
+                    ('error', 'RuntimeError: failure'),
+                    ('debug', 'Traceback (most recent call last):'),
+                    ('debug', '  File "test_github_action.py", line X, in test_error'),
+                    ('debug', "    raise RuntimeError('failure')"),
+                    ('debug', 'RuntimeError: failure')
+                ]
+            )
+
+        # log exceptions related via cause
+        with gh_action_command_test(self, '::error::RuntimeError: failed except  caused by  ValueError: invalid value\n'
+                                          '::error::ValueError: invalid value\n'
+                                          '::error file=the file,line=1,col=2::the message') as gha:
+            error = self.get_error_with_cause()
+            with mock.patch('publish.github_action.logger') as m:
+                gha.error('the message', file='the file', line=1, column=2, exception=error)
+
+            self.assertEqual(
+                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                 for call in m.method_calls],
+                [
+                    ('error', 'RuntimeError: failed except  caused by  ValueError: invalid value'),
+                    ('debug', 'Traceback (most recent call last):'),
+                    ('debug', '  File "test_github_action.py", line X, in get_error_with_cause'),
+                    ('debug', "    raise RuntimeError('failed except') from ValueError('invalid value')"),
+                    ('debug', 'RuntimeError: failed except'),
+                    ('error', 'ValueError: invalid value'),
+                    ('debug', 'ValueError: invalid value')
+                ]
+            )
+
+        # log exceptions related via context
+        with gh_action_command_test(self, '::error::RuntimeError: failed except  while handling  ValueError: invalid value\n'
+                                          '::error::ValueError: invalid value\n'
+                                          '::error file=the file,line=1,col=2::the message') as gha:
+            error = self.get_error_with_context()
+            with mock.patch('publish.github_action.logger') as m:
+                gha.error('the message', file='the file', line=1, column=2, exception=error)
+
+            self.assertEqual(
+                [(call[0], re.sub(r'File ".*/', 'File "', re.sub(r'line \d+', 'line X', call.args[0])))
+                 for call in m.method_calls],
+                [
+                    ('error', 'RuntimeError: failed except  while handling  ValueError: invalid value'),
+                    ('debug', 'Traceback (most recent call last):'),
+                    ('debug', '  File "test_github_action.py", line X, in get_error_with_context'),
+                    ('debug', "    raise RuntimeError('failed except')"),
+                    ('debug', 'RuntimeError: failed except'),
+                    ('error', 'ValueError: invalid value'),
+                    ('debug', 'Traceback (most recent call last):'),
+                    ('debug', '  File "test_github_action.py", line X, in get_error_with_context'),
+                    ('debug', "    raise ValueError('invalid value')"),
+                    ('debug', 'ValueError: invalid value')
+                ]
+            )
+
+    @staticmethod
+    def get_error_with_cause() -> RuntimeError:
+        try:
+            raise RuntimeError('failed except') from ValueError('invalid value')
+        except RuntimeError as re:
+            return re
+
+    @staticmethod
+    def get_error_with_context() -> RuntimeError:
+        try:
+            raise ValueError('invalid value')
+        except ValueError:
+            try:
+                raise RuntimeError('failed except')
+            except RuntimeError as re:
+                return re
+
     def test_add_env(self):
         with gh_action_env_file_test(self, GithubAction.ENV_FILE_VAR_NAME, 'var=val\n') as gha:
             gha.add_to_env('var', 'val')
@@ -114,6 +203,11 @@ class TestGithubAction(unittest.TestCase):
                                      '# title\ncontent\n## subtitle\nmore content\n') as gha:
             gha.add_to_job_summary('# title\ncontent\n')
             gha.add_to_job_summary('## subtitle\nmore content\n')
+
+    def test__command_with_multi_line_value(self):
+        with io.StringIO() as string:
+            GithubAction._command(string, 'command', 'multi\nline\nvalue')
+            self.assertEqual('::command::multi\n', string.getvalue())
 
     def test__append_to_file_errors(self):
         # env variable does not exist
