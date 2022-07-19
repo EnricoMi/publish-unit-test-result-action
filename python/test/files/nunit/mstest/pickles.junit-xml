@@ -2,17 +2,29 @@
 <testsuites tests="4" failures="1" skipped="0" errors="0">
   
   
-  
+  <testsuite time="0.732" name="c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\bin\Debug\Pickles.TestHarness.NUnit.dll">
     
-      
+      <testsuite time="0.725" name="Pickles">
         
-          
+          <testsuite time="0.725" name="Pickles.TestHarness">
             
-              <testsuite time="0.724" name="Pickles.TestHarness.AdditionFeature"><testcase name="Pickles.TestHarness.AdditionFeature.AddTwoNumbers" classname="" status="Success" time="0.004">
+              <testsuite time="0.724" name="Pickles.TestHarness.AdditionFeature">
+                
+                  <testsuite time="0.157" name="Pickles.TestHarness.AddingSeveralNumbers">
                     
                       
                     
-                  </testcase><testcase name="Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers" classname="" status="Failure" time="0.028">
+                    
+                      <testcase name="Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers(&quot;60&quot;,&quot;70&quot;,&quot;130&quot;,System.String[])" classname="" status="Success" time="0.137"/>
+                      <testcase name="Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers(&quot;40&quot;,&quot;50&quot;,&quot;90&quot;,System.String[])" classname="" status="Success" time="0.009"/>
+                    
+                  </testsuite>
+                  <testcase name="Pickles.TestHarness.AdditionFeature.AddTwoNumbers" classname="" status="Success" time="0.004">
+                    
+                      
+                    
+                  </testcase>
+                  <testcase name="Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers" classname="" status="Failure" time="0.028">
                     
                       
                     
@@ -29,11 +41,13 @@ at Pickles.TestHarness.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-resul
 at Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Addition.feature:line 18
 
                       </failure>
-                  </testcase></testsuite>
+                  </testcase>
+                
+              </testsuite>
             
-          
+          </testsuite>
         
-      
+      </testsuite>
     
-  
+  </testsuite>
 </testsuites>

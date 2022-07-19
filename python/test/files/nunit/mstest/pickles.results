@@ -1,13 +1,37 @@
 publish.unittestresults.ParsedUnitTestResults(
   files=1,
   errors=[],
-  suites=1,
-  suite_tests=2,
+  suites=2,
+  suite_tests=4,
   suite_skipped=0,
   suite_failures=1,
   suite_errors=0,
   suite_time=0,
   cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers("60","70","'
+        '130",System.String[])',
+      result='success',
+      message=None,
+      content=None,
+      time=0.137
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/pickles.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers("40","50","'
+        '90",System.String[])',
+      result='success',
+      message=None,
+      content=None,
+      time=0.009
+    ),
     publish.unittestresults.UnitTestCase(
       result_file='mstest/pickles.xml',
       test_file=None,

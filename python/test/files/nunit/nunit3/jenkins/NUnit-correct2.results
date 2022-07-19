@@ -1,8 +1,8 @@
 publish.unittestresults.ParsedUnitTestResults(
   files=1,
   errors=[],
-  suites=92,
-  suite_tests=185,
+  suites=102,
+  suite_tests=218,
   suite_skipped=0,
   suite_failures=0,
   suite_errors=0,
@@ -1762,6 +1762,102 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,0,0)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.009
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,6,0)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,0,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,6,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,7,0)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
+        'should_return_mutation_description_determined_by_random_provider('
+        'System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.'
+        'IMutationDescription,System.Collections.Generic.List`1[imG.Approx.'
+        'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
+        'Proxies.IMutableProxy,7,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
         'should_return_null_if_no_mutation_exists',
       result='success',
       message=None,
@@ -1870,6 +1966,32 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
+        'should_throw_if_any_component_is_null(null,Castle.Proxies.'
+        'IMutableProxy)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
+        'should_throw_if_any_component_is_null(imG.Approx.Mutation.Process,'
+        'null)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
         'should_return_a_mutation',
       result='success',
       message=None,
@@ -1924,6 +2046,57 @@ publish.unittestresults.ParsedUnitTestResults(
       message=None,
       content=None,
       time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.'
+        'should_return_list_of_descriptions_for_type(imG.Approx.Tests.'
+        'Mutation.MutableAndDescription.Mutable1,imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable1],imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable2])',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.'
+        'should_return_list_of_descriptions_for_type(imG.Approx.Tests.'
+        'Mutation.MutableAndDescription.Mutable2,imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable2],imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable3])',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.'
+        'should_return_list_of_descriptions_for_type(imG.Approx.Tests.'
+        'Mutation.MutableAndDescription.Mutable3,imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable3],imG.Approx.Mutation.'
+        'MutationDescription`1[imG.Approx.Tests.Mutation.'
+        'MutableAndDescription.Mutable1])',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-correct2.xml',
@@ -2085,6 +2258,30 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
+        'should_always_keep_best_drawing_according_to_distance(False)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.005
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
+        'should_always_keep_best_drawing_according_to_distance(True)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_increase_evolutions_when_drawing_is_better',
       result='success',
       message=None,
@@ -2219,11 +2416,124 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='imG.Approx.Tests.Mutation.TargetTests+DistanceTo.'
+        'should_throw_if_dimensions_are_different(imG.Approx.Components.'
+        'Drawing)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+DistanceTo.'
+        'should_throw_if_dimensions_are_different(imG.Approx.Components.'
+        'Drawing)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+DistanceTo.'
+        'should_throw_if_dimensions_are_different(imG.Approx.Components.'
+        'Drawing)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+DistanceTo.'
         'should_not_throw_if_dimensions_are_identical',
       result='success',
       message=None,
       content=None,
       time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimensi'
+        'on(100)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimensi'
+        'on(50)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_set_ratio_to_correct_value_when_loading(10,0.2f)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_set_ratio_to_correct_value_when_loading(25,0.5f)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_set_ratio_to_correct_value_when_loading(99,1.0f)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
+        'should_set_ratio_to_correct_value_when_loading(50,1.0f)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-correct2.xml',
@@ -2278,11 +2588,143 @@ publish.unittestresults.ParsedUnitTestResults(
       line=None,
       class_name='',
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_max_value_between_original_and_min_value(1,1,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_max_value_between_original_and_min_value(1,0,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_max_value_between_original_and_min_value(1,10,10)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_min_value_between_original_and_max_value(1,10,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_min_value_between_original_and_max_value(1,1,1)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
+        'should_return_min_value_between_original_and_max_value(1,0,0)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_throw_if_min_is_above_max',
       result='success',
       message=None,
       content=None,
       time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(-'
+        '101,10,20,19)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(16,'
+        '10,25,16)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(10,'
+        '10,25,10)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(25,'
+        '10,25,10)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-correct2.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(101,'
+        '10,20,11)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.0
     ),
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-correct2.xml',

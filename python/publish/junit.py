@@ -192,7 +192,7 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
 
     def get_cases(suite: TestSuite) -> List[TestCase]:
         """
-        JUnit seems to allow for testsuite tags inside testsuite tags, potentially at any depth.
+        JUnit allows for testsuite tags inside testsuite tags at any depth.
         https://llg.cubic.org/docs/junit/
 
         This skips all inner testsuite tags and returns a list of all contained testcase tags.
@@ -202,6 +202,19 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
         return [case
                 for suite in suites
                 for case in get_cases(suite)] + cases
+
+    def get_suites(suite: TestSuite) -> List[TestSuite]:
+        """
+        JUnit allows for testsuite tags inside testsuite tags at any depth.
+        https://llg.cubic.org/docs/junit/
+
+        This enumerates all leaf testsuite tags and those with testcases tags.
+        """
+        suites = list(suite.iterchildren(TestSuite))
+        cases = list(suite.iterchildren(TestCase))
+        return [leaf_suite
+                for suite in suites
+                for leaf_suite in get_suites(suite)] + ([suite] if cases or not suites else [])
 
     cases = [
         UnitTestCase(
@@ -225,7 +238,9 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
         files=len(list(trees)),
         errors=errors,
         # test state counts from suites
-        suites=len(suites),
+        suites=len([leaf_suite
+                    for _, suite in suites
+                    for leaf_suite in get_suites(suite)]),
         suite_tests=suite_tests,
         suite_skipped=suite_skipped,
         suite_failures=suite_failures,

@@ -1,0 +1,286 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=8,
+  suite_tests=23,
+  suite_skipped=0,
+  suite_failures=10,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='BakeDrawings',
+      result='failure',
+      message='System.InvalidOperationException : Assert.Equals should not be used. '
+        'Use Assert.AreEqual instead.',
+      content='   at NUnit.Framework.Assert.Equals(Object a, Object b)\n   at '
+        'MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings()',
+      time=0.135485
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='SilentRun',
+      result='failure',
+      message='System.NullReferenceException : Object reference not set to an '
+        'instance of an object.',
+      content='   at '
+        'MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()',
+      time=0.052338
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DeleteMyProjectObjectEventFlagTests',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000201
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DiscardDrawingTests',
+      result='failure',
+      message="System.IO.DirectoryNotFoundException : Could not find a part of the "
+        "path "
+        "'C:\\Users\\USER\\actions-runner\\_work\\MyProject\\MyProject\\SC\\f4a8fa46-2"
+        "45d-4cd5-88c1-80fcfbda6369'.",
+      content='   at System.IO.__Error.WinIOError(Int32 errorCode, String '
+        'maybeFullPath)\n   at '
+        'System.IO.FileSystemEnumerableIterator`1.CommonInit()\n   at '
+        'System.IO.FileSystemEnumerableIterator`1..ctor(String path, String '
+        'originalUserPath, String searchPattern, SearchOption searchOption, '
+        'SearchResultHandler`1 resultHandler, Boolean checkHost)\n   at '
+        'System.IO.Directory.GetFiles(String path)\n   at '
+        'MyProject.Tests.Real.FlagTests.DiscardDrawingTests()',
+      time=0.004832
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='LoadDrawingsEventFlagTests',
+      result='failure',
+      message='  Expected: 3\n  But was:  0\n',
+      content='   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()\n',
+      time=0.057537
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='ModifyNewObjectUniqueIdEventFlagTests',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000104
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='MoveControlPointEventFlagTests',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000112
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='ResetProjectEventFlagTests',
+      result='failure',
+      message='System.NullReferenceException : Object reference not set to an '
+        'instance of an object.',
+      content='   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()',
+      time=0.025094
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='SetupLayersEventFlagTests',
+      result='failure',
+      message="om.Exceptions.DocumentException : Document should be initlised, but "
+        "isn't!",
+      content='   at MyProject.Runtime.Events.SetupLayers.Execute()\n   at '
+        'MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()',
+      time=0.00231
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='SetupPipeEventFlagTests',
+      result='failure',
+      message='System.NullReferenceException : Object reference not set to an '
+        'instance of an object.',
+      content='   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()',
+      time=0.233069
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UpdateDrawingsPanelEventFlagTests',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000363
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UpdatePropertiesPanelEventFlagTests',
+      result='success',
+      message=None,
+      content=None,
+      time=6.8e-05
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='EventRegisterTests',
+      result='success',
+      message=None,
+      content=None,
+      time=0.005957
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Test',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000102
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DisplayGraphicConstants',
+      result='success',
+      message=None,
+      content=None,
+      time=4.6e-05
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='DrawingConstants',
+      result='failure',
+      message='System.NullReferenceException : Object reference not set to an '
+        'instance of an object.',
+      content='   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()',
+      time=0.001262
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='FileConstants',
+      result='failure',
+      message='System.NullReferenceException : Object reference not set to an '
+        'instance of an object.',
+      content='   at MyProject.Tests.Real.RuntimeTests.FileConstants()',
+      time=0.001455
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='ObjectConstants',
+      result='success',
+      message=None,
+      content=None,
+      time=0.00029
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='PluginConstants',
+      result='failure',
+      message="System.MissingMethodException : Method not found: 'System.Object "
+        "MyProject.MyProjectPlugIn.get_Instance()'.",
+      content='   at MyProject.Tests.Real.RuntimeTests.PluginConstants()',
+      time=0.005593
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UIPanelConstants',
+      result='success',
+      message=None,
+      content=None,
+      time=0.007398
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UIPropertyConstants',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000517
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Test',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000254
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/clicketyclackety.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='LoadedDrawings',
+      result='success',
+      message=None,
+      content=None,
+      time=0.000986
+    )
+  ]
+)
