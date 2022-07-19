@@ -2032,8 +2032,8 @@ class PublishTest(unittest.TestCase):
                               f'\n'
                               f'Results for commit a commit.\n'))
 
-    def test_files_with_testcase_in_testcase(self):
-        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'testcase-in-testcase.xml')])).with_commit('example')
+    def test_files_with_testsuite_in_testsuite(self):
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'testsuite-in-testsuite.xml')])).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
