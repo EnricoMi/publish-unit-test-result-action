@@ -808,15 +808,15 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(65, actual.files)
+        self.assertEqual(66, actual.files)
         self.assertEqual(6, len(actual.errors))
-        self.assertEqual(323, actual.suites)
-        self.assertEqual(1874, actual.suite_tests)
+        self.assertEqual(357, actual.suites)
+        self.assertEqual(1928, actual.suite_tests)
         self.assertEqual(106, actual.suite_skipped)
-        self.assertEqual(217, actual.suite_failures)
+        self.assertEqual(225, actual.suite_failures)
         self.assertEqual(8, actual.suite_errors)
         self.assertEqual(3964, actual.suite_time)
-        self.assertEqual(1858, len(actual.cases))
+        self.assertEqual(1916, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:

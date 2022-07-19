@@ -2038,7 +2038,7 @@ class PublishTest(unittest.TestCase):
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
-                              f'1 suites  0 {skipped_tests_label_md}\n'
+                              f'4 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))

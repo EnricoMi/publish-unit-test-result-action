@@ -1,7 +1,7 @@
 publish.unittestresults.ParsedUnitTestResults(
   files=1,
   errors=[],
-  suites=144,
+  suites=155,
   suite_tests=150,
   suite_skipped=0,
   suite_failures=144,

@@ -34,52 +34,44 @@
   </xsl:template>
 
   <xsl:template match="test-suite">
-    <xsl:choose>
-      <xsl:when test="test-case or results/test-case">
-        <testsuite>
-          <xsl:if test="@testcasecount">
-            <xsl:attribute name="tests"><xsl:value-of select="@testcasecount"/></xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@failed">
-            <xsl:attribute name="failures"><xsl:value-of select="@failed"/></xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@errors">
-            <xsl:attribute name="errors"><xsl:value-of select="@errors"/></xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@skipped">
-            <xsl:attribute name="skipped"><xsl:value-of select="@skipped"/></xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@duration or @time">
-            <xsl:attribute name="time">
-              <xsl:choose>
-                <xsl:when test="@duration"><xsl:value-of select="@duration"/></xsl:when>
-                <xsl:when test="@time"><xsl:value-of select="@time"/></xsl:when>
-              </xsl:choose>
-            </xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@start-time">
-            <xsl:attribute name="timestamp"><xsl:value-of select="@start-time"/></xsl:attribute>
-          </xsl:if>
-          <xsl:attribute name="name">
-            <xsl:choose>
-              <xsl:when test="@fullname"><xsl:value-of select="@fullname"/></xsl:when>
-              <xsl:when test="@classname"><xsl:value-of select="@classname"/></xsl:when>
-              <xsl:otherwise>
-                <xsl:for-each select="ancestor::test-suite[@type='TestSuite' or @type='Namespace']/@name">
-                  <xsl:value-of select="concat(., '.')"/>
-                </xsl:for-each>
-                <xsl:value-of select="@name"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:attribute>
-          <xsl:apply-templates select="test-case | results/test-case"/>
-        </testsuite>
-        <xsl:apply-templates select="test-suite"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <testsuite>
+      <xsl:if test="@testcasecount">
+        <xsl:attribute name="tests"><xsl:value-of select="@testcasecount"/></xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@failed">
+        <xsl:attribute name="failures"><xsl:value-of select="@failed"/></xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@errors">
+        <xsl:attribute name="errors"><xsl:value-of select="@errors"/></xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@skipped">
+        <xsl:attribute name="skipped"><xsl:value-of select="@skipped"/></xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@duration or @time">
+        <xsl:attribute name="time">
+          <xsl:choose>
+            <xsl:when test="@duration"><xsl:value-of select="@duration"/></xsl:when>
+            <xsl:when test="@time"><xsl:value-of select="@time"/></xsl:when>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@start-time">
+        <xsl:attribute name="timestamp"><xsl:value-of select="@start-time"/></xsl:attribute>
+      </xsl:if>
+      <xsl:attribute name="name">
+        <xsl:choose>
+          <xsl:when test="@fullname"><xsl:value-of select="@fullname"/></xsl:when>
+          <xsl:when test="@classname"><xsl:value-of select="@classname"/></xsl:when>
+          <xsl:otherwise>
+            <xsl:for-each select="ancestor::test-suite[@type='TestSuite' or @type='Namespace']/@name">
+              <xsl:value-of select="concat(., '.')"/>
+            </xsl:for-each>
+            <xsl:value-of select="@name"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </testsuite>
   </xsl:template>
 
   <xsl:template match="test-case">

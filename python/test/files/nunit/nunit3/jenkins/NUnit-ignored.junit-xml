@@ -2,17 +2,23 @@
 <testsuites tests="4" failures="0" skipped="2">
   
   
-  
+  <testsuite time="0.169" name="UnitTests.dll">
     
-      
+      <testsuite time="0.002" name="UnitTests">
         
-          <testsuite time="0.001" name="OtherMainClassTest"><testcase name="UnitTests.OtherMainClassTest.TestIgnored" classname=""><skipped/>
+          <testsuite time="0.001" name="OtherMainClassTest">
+            
+              <testcase name="UnitTests.OtherMainClassTest.TestIgnored" classname=""><skipped/>
                 
-              </testcase><testcase name="UnitTests.OtherMainClassTest.TestIgnoredWithText" classname=""><skipped message="Dont do this"/>
+              </testcase>
+              <testcase name="UnitTests.OtherMainClassTest.TestIgnoredWithText" classname=""><skipped message="Dont do this"/>
                 
-              </testcase><testcase name="UnitTests.OtherMainClassTest.TestPropertyValue" classname="" time="0.001"/></testsuite>
+              </testcase>
+              <testcase name="UnitTests.OtherMainClassTest.TestPropertyValue" classname="" time="0.001"/>
+            
+          </testsuite>
         
-      
+      </testsuite>
     
-  
+  </testsuite>
 </testsuites>
