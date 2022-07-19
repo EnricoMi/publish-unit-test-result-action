@@ -103,6 +103,8 @@ The results are added to the job summary page of the workflow that runs this act
 
 In presence of failures or errors, the job summary links to the respective [check summary](#github-actions-check-summary-of-a-commit) with failure details.
 
+***Note:** Job summary requires [GitHub Actions runner v2.288.0](https://github.com/actions/runner/releases/tag/v2.288.0) or above.*
+
 ### GitHub Actions check summary of a commit
 
 Test results are published in the GitHub Actions check summary of the respective commit:
