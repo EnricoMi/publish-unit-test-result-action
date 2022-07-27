@@ -1,4 +1,4 @@
-name: 'Publish Unit Test Results'
+name: 'Publish Test Results'
 author: 'EnricoMi'
 description: 'A GitHub Action that publishes test results on GitHub'
 

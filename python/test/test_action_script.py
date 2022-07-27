@@ -16,7 +16,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
-from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
+from publish_test_results import get_conclusion, get_commit_sha, get_var, \
     check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test_utils import chdir
@@ -530,7 +530,7 @@ class Test(unittest.TestCase):
             #       its true behaviour is tested in get_annotations_config*
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
                 if options.get('CHECK_RUN_ANNOTATIONS') is not None else []
-            with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
+            with mock.patch('publish_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
 
@@ -793,7 +793,7 @@ class Test(unittest.TestCase):
                 self.assertEqual(['file2.txt'], sorted(files))
 
     def test_get_files_with_mock(self):
-        with mock.patch('publish_unit_test_results.glob') as m:
+        with mock.patch('publish_test_results.glob') as m:
             files = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
@@ -881,7 +881,7 @@ class Test(unittest.TestCase):
         throttled_method = throttle_gh_request_raw(2, 5, method)
 
         def test_request(verb: str, expected_sleep: Optional[float]):
-            with mock.patch('publish_unit_test_results.time.sleep') as sleep:
+            with mock.patch('publish_test_results.time.sleep') as sleep:
                 response = throttled_method('cnx', verb, 'url', 'headers', 'input')
 
                 self.assertEqual('response', response)
@@ -953,7 +953,7 @@ class Test(unittest.TestCase):
                 # if this is raised, the tested main method did not return where expected but continued
                 raise RuntimeError('This is not expected to be called')
 
-            with mock.patch('publish_unit_test_results.get_files') as m:
+            with mock.patch('publish_test_results.get_files') as m:
                 m.side_effect = do_raise
                 main(settings, gha)
 
@@ -999,7 +999,7 @@ class Test(unittest.TestCase):
         deprecate_var('set', 'deprecated_var', 'replacement', gha)
         gha.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
 
-        with mock.patch('publish_unit_test_results.logger') as l:
+        with mock.patch('publish_test_results.logger') as l:
             deprecate_var('set', 'deprecated_var', 'replacement', None)
             l.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
 
@@ -1014,7 +1014,7 @@ class Test(unittest.TestCase):
         deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
         gha.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')
 
-        with mock.patch('publish_unit_test_results.logger') as l:
+        with mock.patch('publish_test_results.logger') as l:
             deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
             l.assert_not_called()
 

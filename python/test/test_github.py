@@ -12,7 +12,7 @@ import mock
 import requests.exceptions
 from flask import Flask, Response
 
-from publish_unit_test_results import get_github
+from publish_test_results import get_github
 from publish.github_action import GithubAction
 
 
