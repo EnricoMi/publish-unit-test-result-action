@@ -1,4 +1,4 @@
-name: 'Publish Unit Test Results'
+name: 'Publish Test Results'
 author: 'EnricoMi'
 description: 'A GitHub Action that publishes test results on GitHub'
 
@@ -141,7 +141,7 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        python3 $GITHUB_ACTION_PATH/../python/publish_unit_test_results.py
+        python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}

@@ -12,7 +12,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     hide_comments_modes, pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
-from publish_unit_test_results import get_conclusion, get_commit_sha, get_var, \
+from publish_test_results import get_conclusion, get_commit_sha, get_var, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, main
 from test import chdir
 
@@ -489,7 +489,7 @@ class Test(unittest.TestCase):
             #       its true behaviour is tested in get_annotations_config*
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
                 if options.get('CHECK_RUN_ANNOTATIONS') is not None else []
-            with mock.patch('publish_unit_test_results.get_annotations_config', return_value=annotations_config) as m:
+            with mock.patch('publish_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
                 actual = get_settings(options, gha)
@@ -745,7 +745,7 @@ class Test(unittest.TestCase):
                 self.assertEqual(['file2.txt'], sorted(files))
 
     def test_get_files_with_mock(self):
-        with mock.patch('publish_unit_test_results.glob') as m:
+        with mock.patch('publish_test_results.glob') as m:
             files = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
@@ -758,7 +758,7 @@ class Test(unittest.TestCase):
         throttled_method = throttle_gh_request_raw(2, 5, method)
 
         def test_request(verb: str, expected_sleep: Optional[float]):
-            with mock.patch('publish_unit_test_results.time.sleep') as sleep:
+            with mock.patch('publish_test_results.time.sleep') as sleep:
                 response = throttled_method('cnx', verb, 'url', 'headers', 'input')
 
                 self.assertEqual('response', response)
@@ -830,7 +830,7 @@ class Test(unittest.TestCase):
                 # if this is raised, the tested main method did not return where expected but continued
                 raise RuntimeError('This is not expected to be called')
 
-            with mock.patch('publish_unit_test_results.get_files') as m:
+            with mock.patch('publish_test_results.get_files') as m:
                 m.side_effect = do_raise
                 main(settings, gha)
 
