@@ -36,13 +36,13 @@ jobs:
 
       - name: Publish Test Results
         id: test-results
-        uses: EnricoMi/publish-unit-test-result-action/composite@master-2.x
+        uses: EnricoMi/publish-unit-test-result-action/composite@master
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           check_name: Test Results (reference)
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
-          check_run_annotations_branch: "master, devel-1.0, devel-2.0"
+          check_run_annotations_branch: "master, master-1.x, devel-1.0, devel-2.0"
           files: "artifacts/**/*.xml"
           log_level: DEBUG
 
