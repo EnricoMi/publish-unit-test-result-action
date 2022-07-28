@@ -1,15 +1,16 @@
 import io
-import re
 import json
 import logging
 import os
 import pathlib
+import re
 import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List, Type
 
 import mock
+from packaging.version import Version
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_modes, comment_mode_always, \
@@ -809,35 +810,57 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(66, actual.files)
-        self.assertEqual(6, len(actual.errors))
-        self.assertEqual(357, actual.suites)
-        self.assertEqual(1928, actual.suite_tests)
-        self.assertEqual(106, actual.suite_skipped)
-        self.assertEqual(225, actual.suite_failures)
-        self.assertEqual(8, actual.suite_errors)
-        self.assertEqual(3964, actual.suite_time)
-        self.assertEqual(1916, len(actual.cases))
+        if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+            # on macOS and Python 3.10 we see one particular error
+            self.assertEqual(8, len(actual.errors))
+            self.assertEqual(355, actual.suites)
+            self.assertEqual(1924, actual.suite_tests)
+            self.assertEqual(106, actual.suite_skipped)
+            self.assertEqual(223, actual.suite_failures)
+            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(3964, actual.suite_time)
+            self.assertEqual(1912, len(actual.cases))
+        else:
+            self.assertEqual(6, len(actual.errors))
+            self.assertEqual(357, actual.suites)
+            self.assertEqual(1928, actual.suite_tests)
+            self.assertEqual(106, actual.suite_skipped)
+            self.assertEqual(225, actual.suite_failures)
+            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(3964, actual.suite_time)
+            self.assertEqual(1916, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
             gha = GithubAction(file=string)
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
+            self.maxDiff = None
+            expected = [
+                "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
+                "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
+                "::error::Exception: File is empty.",
+                "::error file=empty.xml::Error processing result file: File is empty.",
+                "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
+                "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
+                "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
+                "::error file=non-junit.xml::Error processing result file: Invalid format.",
+                "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
+                "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
+                "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
+                "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+            ]
+            if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+                expected.extend([
+                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
+                    '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
+                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
+                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)'
+                ])
             self.assertEqual(
-                sorted([
-                    "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
-                    "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
-                    "::error::Exception: File is empty.",
-                    "::error file=empty.xml::Error processing result file: File is empty.",
-                    "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
-                    "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
-                    "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
-                    "::error file=non-junit.xml::Error processing result file: Invalid format.",
-                    "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
-                    "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
-                    "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
-                    "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
-                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line)) for line in string.getvalue().split(os.linesep) if line])
+                sorted(expected),
+                sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line))
+                        for line in string.getvalue().split(os.linesep) if line])
             )
             # self.assertEqual([], m.method_calls)
 
