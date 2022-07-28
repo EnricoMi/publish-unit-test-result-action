@@ -1,15 +1,16 @@
 import io
-import re
 import json
 import logging
 import os
 import pathlib
+import re
 import sys
 import tempfile
 import unittest
 from typing import Optional, Union, List, Type
 
 import mock
+from packaging.version import Version
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_modes, comment_mode_always, \
@@ -809,7 +810,11 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(66, actual.files)
-        self.assertEqual(6, len(actual.errors))
+        if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+            # on macOS and Python 3.10 we see one particular error
+            self.assertEqual(8, len(actual.errors))
+        else:
+            self.assertEqual(6, len(actual.errors))
         self.assertEqual(357, actual.suites)
         self.assertEqual(1928, actual.suite_tests)
         self.assertEqual(106, actual.suite_skipped)

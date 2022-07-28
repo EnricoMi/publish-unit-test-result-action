@@ -4,7 +4,6 @@ import pathlib
 import re
 import sys
 import unittest
-from distutils.version import LooseVersion
 from glob import glob
 from typing import Optional, List
 
@@ -12,6 +11,7 @@ import junitparser
 import prettyprinter as pp
 from junitparser import JUnitXml, Element
 from lxml import etree
+from packaging.version import Version
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
@@ -162,7 +162,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         junit = JUnitXml.fromfile(str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'))
         self.assertAlmostEqual(162.933, junit.time, 3)
 
-    @unittest.skipIf(LooseVersion(junitparser.version) < LooseVersion('2.0.0'),
+    @unittest.skipIf(Version(junitparser.version) < Version('2.0.0'),
                      'multiple results per test case not supported by junitparser')
     def test_parse_junit_xml_file_with_multiple_results(self):
         junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')]))

@@ -84,6 +84,25 @@ jobs:
           pip install --force --no-cache-dir -r python/test/requirements.txt -c python/test/constraints.txt
           pip freeze | sort
 
+      - name: Update expectation files
+        id: changes
+        continue-on-error: true
+        run: |
+          python/test/files/update_expectations.sh
+          git status
+
+          if [[ ! git diff --exit-code ]] || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
+          then
+            zip changes.zip $(git diff --name-only) $(git ls-files -o  --exclude-standard)
+            exit 1
+          fi
+      - name: Upload changed expectation files
+        if: steps.changes.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Changed expectations
+          path: changed-expectations.zip
+
       - name: PyTest
         env:
           PYTHONPATH: ..
