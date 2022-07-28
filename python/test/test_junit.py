@@ -1,4 +1,5 @@
 import dataclasses
+import os
 import pathlib
 import re
 import sys
@@ -58,6 +59,8 @@ class JUnitXmlParseTest:
 
     @staticmethod
     def assert_expectation(test, actual, filename):
+        if not os.path.exists(filename):
+            test.fail(f'file does not exist: {filename}, expected content: {actual}')
         with open(filename, 'r', encoding='utf-8') as r:
             expected = r.read()
         test.assertEqual(expected, actual)
