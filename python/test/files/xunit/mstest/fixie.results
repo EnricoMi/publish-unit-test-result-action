@@ -1,0 +1,93 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=2,
+  suite_tests=7,
+  suite_skipped=1,
+  suite_failures=3,
+  suite_errors=0,
+  suite_time=8,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[genericTestClass]',
+      test_name='ShouldBeString',
+      result='success',
+      message=None,
+      content=None,
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[genericTestClass]',
+      test_name='ShouldBeString',
+      result='success',
+      message=None,
+      content=None,
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[genericTestClass]',
+      test_name='ShouldBeString',
+      result='failure',
+      message='Expected: System.String\nActual:   System.Int32',
+      content='Expected: System.String\nActual:   System.Int32   at '
+        '[genericTestClassForStackTrace].ShouldBeString[T](T genericArgument) '
+        'in [fileLocation]:line #',
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[testClass]',
+      test_name='Fail',
+      result='failure',
+      message="'Fail' failed!",
+      content="'Fail' failed!   at [testClassForStackTrace].Fail() in "
+        "[fileLocation]:line #",
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[testClass]',
+      test_name='FailByAssertion',
+      result='failure',
+      message='Expected: 2\nActual:   1',
+      content='Expected: 2\nActual:   1   at '
+        '[testClassForStackTrace].FailByAssertion() in [fileLocation]:line #',
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[testClass]',
+      test_name='Pass',
+      result='success',
+      message=None,
+      content=None,
+      time=1.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='mstest/fixie.xml',
+      test_file=None,
+      line=None,
+      class_name='[testClass]',
+      test_name='Skip',
+      result='skipped',
+      message='⚠ Skipped with attribute.',
+      content=None,
+      time=1.234
+    )
+  ]
+)

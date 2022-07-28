@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assemblies>
+  <assembly name="C:\Jenkins\jobs\my-project\workspace\MyProject\MyProject.Tests\bin\Release\MyProject.Tests.DLL" environment="64-bit .NET 4.0.30319.18444 [collection-per-class, parallel]" test-framework="xUnit.net 2.0.0.2785" run-date="2014-12-18" run-time="14:34:32" config-file="C:\Jenkins\jobs\my-project\workspace\MyProject\xunit\xunit.console.exe.Config" total="3" passed="1" failed="1" skipped="1" time="0.288" errors="0">
+    <errors />
+    <collection total="1" passed="1" failed="0" skipped="0" name="Test collection for MyProject.Tests.SampleFact" time="35.5236617">
+      <test name="SuccessfulTestWithTrait" type="MyProject.Tests.SampleFact" method="SuccessfulTestWithTrait" time="35.5236617" result="Pass">
+        <traits>
+          <trait name="FeatureTitle" value="SuccessfulTestWithTrait" />
+          <trait name="Description" value="SomeDescription" />
+        </traits>
+      </test>
+    </collection>
+  </assembly>
+</assemblies>

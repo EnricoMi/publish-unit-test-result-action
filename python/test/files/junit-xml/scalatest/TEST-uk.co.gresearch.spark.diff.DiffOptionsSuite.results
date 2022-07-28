@@ -1,0 +1,67 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=5,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=2,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='scalatest/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+      test_file=None,
+      line=None,
+      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+      test_name='diff options with empty diff column name',
+      result='success',
+      message=None,
+      content=None,
+      time=0.259
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='scalatest/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+      test_file=None,
+      line=None,
+      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+      test_name='diff options left and right prefixes',
+      result='success',
+      message=None,
+      content=None,
+      time=1.959
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='scalatest/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+      test_file=None,
+      line=None,
+      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+      test_name='diff options diff value',
+      result='success',
+      message=None,
+      content=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='scalatest/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+      test_file=None,
+      line=None,
+      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+      test_name='diff options with change column name same as diff column',
+      result='success',
+      message=None,
+      content=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='scalatest/TEST-uk.co.gresearch.spark.diff.DiffOptionsSuite.xml',
+      test_file=None,
+      line=None,
+      class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
+      test_name='fluent methods of diff options',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    )
+  ]
+)

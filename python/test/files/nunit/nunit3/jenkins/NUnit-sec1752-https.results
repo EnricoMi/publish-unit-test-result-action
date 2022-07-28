@@ -1,0 +1,34 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=2,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-sec1752-https.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.MainClassTest.TestPropertyValue',
+      result='failure',
+      message=None,
+      content=None,
+      time=0.146
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-sec1752-https.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='UnitTests.MainClassTest.TestMethodUpdateValue',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    )
+  ]
+)

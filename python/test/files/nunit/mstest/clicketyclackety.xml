@@ -1,0 +1,160 @@
+﻿<test-suite type="Assembly" id="1070" name="MyProject.Tests.Real.dll" fullname="C:\Users\USER\actions-runner\_work\MyProject\MyProject\tests\MyProject.tests.real\bin\x64\Release\net48\MyProject.Tests.Real.dll" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.567280" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+  <properties>
+    <property name="_PID" value="13388" />
+    <property name="_APPDOMAIN" value="DefaultDomain" />
+  </properties>
+  <failure>
+    <message><![CDATA[One or more child tests had errors]]></message>
+  </failure>
+  <test-suite type="TestSuite" id="1071" name="Integration" fullname="Integration" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.558335" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="TestSuite" id="1072" name="MyProject" fullname="MyProject" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.557669" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1073" name="desktop" fullname="MyProject" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.557418" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1074" name="Tests" fullname="MyProject.Tests" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.557367" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1075" name="Real" fullname="MyProject.Tests.Real" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.556978" total="23" passed="13" failed="10" warnings="0" inconclusive="0" skipped="0" asserts="7">
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1077" name="UserInput" fullname="MyProject.Tests.Real.UserInput" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.2643689Z" duration="0.199250" total="2" passed="0" failed="2" warnings="0" inconclusive="0" skipped="0" asserts="0">
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1066" name="BakeDrawingCommandTests" fullname="MyProject.Tests.Real.UserInput.BakeDrawingCommandTests" classname="MyProject.Tests.Real.UserInput.BakeDrawingCommandTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.2174931Z" duration="0.142842" total="1" passed="0" failed="1" warnings="0" inconclusive="0" skipped="0" asserts="0">
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1067" name="BakeDrawings" fullname="MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings" methodname="BakeDrawings" classname="MyProject.Tests.Real.UserInput.BakeDrawingCommandTests" runstate="Runnable" seed="768271603" result="Failed" label="Error" start-time="2022-07-13T23:20:35.0768662Z" end-time="2022-07-13T23:20:35.2018698Z" duration="0.135485" asserts="0">
+                  <failure>
+                    <message><![CDATA[System.InvalidOperationException : Assert.Equals should not be used. Use Assert.AreEqual instead.]]></message>
+                    <stack-trace><![CDATA[   at NUnit.Framework.Assert.Equals(Object a, Object b)
+   at MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings()]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1068" name="ProjectInitCommandTests" fullname="MyProject.Tests.Real.UserInput.ProjectInitCommandTests" classname="MyProject.Tests.Real.UserInput.ProjectInitCommandTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-07-13T23:20:35.2174931Z" end-time="2022-07-13T23:20:35.2643689Z" duration="0.052577" total="1" passed="0" failed="1" warnings="0" inconclusive="0" skipped="0" asserts="0">
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1069" name="SilentRun" fullname="MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun" methodname="SilentRun" classname="MyProject.Tests.Real.UserInput.ProjectInitCommandTests" runstate="Runnable" seed="362478167" result="Failed" label="Error" start-time="2022-07-13T23:20:35.2174931Z" end-time="2022-07-13T23:20:35.2643689Z" duration="0.052338" asserts="0">
+                  <failure>
+                    <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object.]]></message>
+                    <stack-trace><![CDATA[   at MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1039" name="FlagTests" fullname="MyProject.Tests.Real.FlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2022-07-13T23:20:35.2643689Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.326239" total="10" passed="5" failed="5" warnings="0" inconclusive="0" skipped="0" asserts="3">
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1042" name="DeleteMyProjectObjectEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.DeleteMyProjectObjectEventFlagTests" methodname="DeleteMyProjectObjectEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="1723860256" result="Passed" start-time="2022-07-13T23:20:35.2643689Z" end-time="2022-07-13T23:20:35.2643689Z" duration="0.000201" asserts="0" />
+              <test-case id="1045" name="DiscardDrawingTests" fullname="MyProject.Tests.Real.FlagTests.DiscardDrawingTests" methodname="DiscardDrawingTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="28135827" result="Failed" label="Error" start-time="2022-07-13T23:20:35.2643689Z" end-time="2022-07-13T23:20:35.2643689Z" duration="0.004832" asserts="0">
+                <failure>
+                  <message><![CDATA[System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\Users\USER\actions-runner\_work\MyProject\MyProject\SC\f4a8fa46-245d-4cd5-88c1-80fcfbda6369'.]]></message>
+                  <stack-trace><![CDATA[   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileSystemEnumerableIterator`1.CommonInit()
+   at System.IO.FileSystemEnumerableIterator`1..ctor(String path, String originalUserPath, String searchPattern, SearchOption searchOption, SearchResultHandler`1 resultHandler, Boolean checkHost)
+   at System.IO.Directory.GetFiles(String path)
+   at MyProject.Tests.Real.FlagTests.DiscardDrawingTests()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1046" name="LoadDrawingsEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests" methodname="LoadDrawingsEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="1198423541" result="Failed" start-time="2022-07-13T23:20:35.2643689Z" end-time="2022-07-13T23:20:35.3268710Z" duration="0.057537" asserts="1">
+                <failure>
+                  <message><![CDATA[  Expected: 3
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()
+]]></stack-trace>
+                </failure>
+                <assertions>
+                  <assertion result="Failed">
+                    <message><![CDATA[  Expected: 3
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()
+]]></stack-trace>
+                  </assertion>
+                </assertions>
+              </test-case>
+              <test-case id="1043" name="ModifyNewObjectUniqueIdEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.ModifyNewObjectUniqueIdEventFlagTests" methodname="ModifyNewObjectUniqueIdEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="2120155472" result="Passed" start-time="2022-07-13T23:20:35.3268710Z" end-time="2022-07-13T23:20:35.3268710Z" duration="0.000104" asserts="0" />
+              <test-case id="1041" name="MoveControlPointEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.MoveControlPointEventFlagTests" methodname="MoveControlPointEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="448428521" result="Passed" start-time="2022-07-13T23:20:35.3268710Z" end-time="2022-07-13T23:20:35.3268710Z" duration="0.000112" asserts="0" />
+              <test-case id="1049" name="ResetProjectEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests" methodname="ResetProjectEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="1742176743" result="Failed" label="Error" start-time="2022-07-13T23:20:35.3268710Z" end-time="2022-07-13T23:20:35.3581259Z" duration="0.025094" asserts="2">
+                <failure>
+                  <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object.]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1044" name="SetupLayersEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests" methodname="SetupLayersEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="495253783" result="Failed" label="Error" start-time="2022-07-13T23:20:35.3581259Z" end-time="2022-07-13T23:20:35.3581259Z" duration="0.002310" asserts="0">
+                <failure>
+                  <message><![CDATA[om.Exceptions.DocumentException : Document should be initlised, but isn't!]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Runtime.Events.SetupLayers.Execute()
+   at MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1040" name="SetupPipeEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests" methodname="SetupPipeEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="858214419" result="Failed" label="Error" start-time="2022-07-13T23:20:35.3581259Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.233069" asserts="0">
+                <failure>
+                  <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object.]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1047" name="UpdateDrawingsPanelEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.UpdateDrawingsPanelEventFlagTests" methodname="UpdateDrawingsPanelEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="938963821" result="Passed" start-time="2022-07-13T23:20:35.5924996Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.000363" asserts="0" />
+              <test-case id="1048" name="UpdatePropertiesPanelEventFlagTests" fullname="MyProject.Tests.Real.FlagTests.UpdatePropertiesPanelEventFlagTests" methodname="UpdatePropertiesPanelEventFlagTests" classname="MyProject.Tests.Real.FlagTests" runstate="Runnable" seed="1334303420" result="Passed" start-time="2022-07-13T23:20:35.5924996Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.000068" asserts="0" />
+            </test-suite>
+            <test-suite type="TestFixture" id="1050" name="NewDocumentTests" fullname="MyProject.Tests.Real.NewDocumentTests" classname="MyProject.Tests.Real.NewDocumentTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-07-13T23:20:35.5924996Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.007232" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+              <test-case id="1051" name="EventRegisterTests" fullname="MyProject.Tests.Real.NewDocumentTests.EventRegisterTests" methodname="EventRegisterTests" classname="MyProject.Tests.Real.NewDocumentTests" runstate="Runnable" seed="2089199401" result="Passed" start-time="2022-07-13T23:20:35.5924996Z" end-time="2022-07-13T23:20:35.5924996Z" duration="0.005957" asserts="1" />
+            </test-suite>
+            <test-suite type="TestFixture" id="1054" name="PipeTests" fullname="MyProject.Tests.Real.PipeTests" classname="MyProject.Tests.Real.PipeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-07-13T23:20:35.5924996Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.000429" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="0">
+              <test-case id="1055" name="Test" fullname="MyProject.Tests.Real.PipeTests.Test" methodname="Test" classname="MyProject.Tests.Real.PipeTests" runstate="Runnable" seed="1764359158" result="Passed" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.000102" asserts="0" />
+            </test-suite>
+            <test-suite type="TestFixture" id="1056" name="RuntimeTests" fullname="MyProject.Tests.Real.RuntimeTests" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.017983" total="7" passed="4" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="2">
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1063" name="DisplayGraphicConstants" fullname="MyProject.Tests.Real.RuntimeTests.DisplayGraphicConstants" methodname="DisplayGraphicConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="1708234256" result="Passed" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.000046" asserts="0" />
+              <test-case id="1057" name="DrawingConstants" fullname="MyProject.Tests.Real.RuntimeTests.DrawingConstants" methodname="DrawingConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="1766676672" result="Failed" label="Error" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.001262" asserts="0">
+                <failure>
+                  <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object.]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1058" name="FileConstants" fullname="MyProject.Tests.Real.RuntimeTests.FileConstants" methodname="FileConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="361263993" result="Failed" label="Error" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.001455" asserts="0">
+                <failure>
+                  <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object.]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.RuntimeTests.FileConstants()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1062" name="ObjectConstants" fullname="MyProject.Tests.Real.RuntimeTests.ObjectConstants" methodname="ObjectConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="249561814" result="Passed" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.000290" asserts="0" />
+              <test-case id="1059" name="PluginConstants" fullname="MyProject.Tests.Real.RuntimeTests.PluginConstants" methodname="PluginConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="230063344" result="Failed" label="Error" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6081231Z" duration="0.005593" asserts="0">
+                <failure>
+                  <message><![CDATA[System.MissingMethodException : Method not found: 'System.Object MyProject.MyProjectPlugIn.get_Instance()'.]]></message>
+                  <stack-trace><![CDATA[   at MyProject.Tests.Real.RuntimeTests.PluginConstants()]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1060" name="UIPanelConstants" fullname="MyProject.Tests.Real.RuntimeTests.UIPanelConstants" methodname="UIPanelConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="1221846191" result="Passed" start-time="2022-07-13T23:20:35.6081231Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.007398" asserts="1" />
+              <test-case id="1061" name="UIPropertyConstants" fullname="MyProject.Tests.Real.RuntimeTests.UIPropertyConstants" methodname="UIPropertyConstants" classname="MyProject.Tests.Real.RuntimeTests" runstate="Runnable" seed="1495752462" result="Passed" start-time="2022-07-13T23:20:35.6237469Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.000517" asserts="1" />
+            </test-suite>
+            <test-suite type="TestFixture" id="1052" name="SwitchingTests" fullname="MyProject.Tests.Real.SwitchingTests" classname="MyProject.Tests.Real.SwitchingTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-07-13T23:20:35.6237469Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.000898" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="0">
+              <test-case id="1053" name="Test" fullname="MyProject.Tests.Real.SwitchingTests.Test" methodname="Test" classname="MyProject.Tests.Real.SwitchingTests" runstate="Runnable" seed="1670121235" result="Passed" start-time="2022-07-13T23:20:35.6237469Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.000254" asserts="0" />
+            </test-suite>
+            <test-suite type="TestSuite" id="1076" name="Tests" fullname="MyProject.Tests.Real.Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-07-13T23:20:35.0612744Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.556762" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+              <test-suite type="TestFixture" id="1064" name="RuntimeConstants" fullname="MyProject.Tests.Real.Tests.RuntimeConstants" classname="MyProject.Tests.Real.Tests.RuntimeConstants" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-07-13T23:20:35.6237469Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.001551" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+                <test-case id="1065" name="LoadedDrawings" fullname="MyProject.Tests.Real.Tests.RuntimeConstants.LoadedDrawings" methodname="LoadedDrawings" classname="MyProject.Tests.Real.Tests.RuntimeConstants" runstate="Runnable" seed="1368714672" result="Passed" start-time="2022-07-13T23:20:35.6237469Z" end-time="2022-07-13T23:20:35.6237469Z" duration="0.000986" asserts="1" />
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-suite>

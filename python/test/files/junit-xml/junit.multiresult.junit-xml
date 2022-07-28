@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+    <testsuite name="test suite">
+        <testcase classname="test class" name="test that errors" time="0.123">
+            <skipped/>
+            <failure message="test failure">Assertion failed</failure>
+            <error message="test teardown failure">stdout</error>
+        </testcase>
+        <testcase classname="test class" name="test that fails" time="0.234">
+            <skipped/>
+            <failure message="test failure">Assertion failed</failure>
+        </testcase>
+        <testcase classname="test class" name="test that is skipped" time="0.345">
+            <skipped/>
+        </testcase>
+        <testcase classname="test class" name="test that succeeds" time="0.456">
+        </testcase>
+    </testsuite>
+</testsuites>

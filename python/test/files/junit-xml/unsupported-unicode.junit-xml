@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+    <testsuite errors="2" failures="2" skipped="2" name="pytest" tests="7" time="8.61">
+        <testcase file="test/test-1.py" line="1" name="test 1 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓" time="1.23"/>
+        <testcase file="test/test-2.py" line="2" name="test 2" time="1.23">
+            <skipped message="Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">skipped
+            </skipped>
+        </testcase>
+        <testcase file="test/test-3.py" line="3" name="test 3" time="1.23">
+            <skipped message="message">Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓
+            </skipped>
+        </testcase>
+        <testcase file="test/test-4.py" line="4" name="test 4" time="1.23">
+            <failure message="Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">failed
+            </failure>
+        </testcase>
+        <testcase file="test/test-5.py" line="5" name="test 5" time="1.23">
+            <failure message="message">Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓
+            </failure>
+        </testcase>
+        <testcase file="test/test-6.py" line="6" name="test 6" time="1.23">
+            <error message="Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓">error
+            </error>
+        </testcase>
+        <testcase file="test/test-7.py" line="7" name="test 7" time="1.23">
+            <error message="message">Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓
+            </error>
+        </testcase>
+    </testsuite>
+</testsuites>

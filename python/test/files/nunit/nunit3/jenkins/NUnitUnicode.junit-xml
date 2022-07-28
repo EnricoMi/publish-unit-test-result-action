@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="4" failures="1" skipped="0">
+  
+  
+  <testsuite time="0.404" name="/home/erik/coding/test/nunittests/Tests.dll">
+    
+      <testsuite time="0.393" name="UnitTests">
+        
+          <testsuite time="0.289" name="UnitTests.UnicodeClassTest">
+            
+              <testcase name="UnitTests.UnicodeClassTest.TestFailure" classname="" time="0.092">
+                <failure message="  Expected failure&#10;  Expected: &#xFC;&#10;  But was:  &#xE2;&#10;">  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]
+</failure>
+              </testcase>
+            
+          </testsuite>
+        
+      </testsuite>
+    
+  </testsuite>
+</testsuites>

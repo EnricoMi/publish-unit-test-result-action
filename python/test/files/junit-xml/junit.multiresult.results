@@ -1,0 +1,56 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=4,
+  suite_skipped=3,
+  suite_failures=2,
+  suite_errors=1,
+  suite_time=1,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='junit.multiresult.xml',
+      test_file=None,
+      line=None,
+      class_name='test class',
+      test_name='test that errors',
+      result='error',
+      message='test teardown failure',
+      content='stdout',
+      time=0.123
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='junit.multiresult.xml',
+      test_file=None,
+      line=None,
+      class_name='test class',
+      test_name='test that fails',
+      result='failure',
+      message='test failure',
+      content='Assertion failed',
+      time=0.234
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='junit.multiresult.xml',
+      test_file=None,
+      line=None,
+      class_name='test class',
+      test_name='test that is skipped',
+      result='skipped',
+      message=None,
+      content=None,
+      time=0.345
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='junit.multiresult.xml',
+      test_file=None,
+      line=None,
+      class_name='test class',
+      test_name='test that succeeds',
+      result='success',
+      message=None,
+      content=None,
+      time=0.456
+    )
+  ]
+)

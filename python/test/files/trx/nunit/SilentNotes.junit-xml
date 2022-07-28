@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="79" failures="0" errors="0" skipped="12">
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2CloudStorageClientTest" name="FetchTokenReturnsNullForDeniedAccess" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedJsonDoesNotContainPlaintextData" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest" name="ReallyDoOpenAuthorizationPageInBrowser" time="0.0000083">
+      <skipped message="Opens the authorization page in the system browse, to get a real access-token">Opens the authorization page in the system browse, to get a real access-token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="FileLifecycleWorks" time="0.161"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsStringToSecureString" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="ValidateAcceptsValidCredentials" time="0.003"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="BuildAuthorizationRequestUrlThrowsWithMissingRedirectUrlForTokenFlow" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="ParseRealWorldDropboxSuccessResponse" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="BuildAuthorizationRequestUrlUsesAllParameters" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedDatacontractDoesNotContainNullProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="CorrectlyConvertsSecureStringToString" time="0.007"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedJsonDoesNotContainNullProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedDatacontractCanBeReadBack" time="0.016"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest" name="ReallyDoRefreshToken" time="0.000001">
+      <skipped message="Refreshes a real token">Refreshes a real token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest" name="ParseStratoWebdavResponseCorrectly" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedXmlDoesNotContainNullProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="ThrowsWithInvalidUrl" time="0.0000014">
+      <skipped message="Too many consecutive fails seems to block an FTP server.">Too many consecutive fails seems to block an FTP server.</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="NeedsRefreshReturnsFalseIfNotExpired" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest" name="ThrowsWithInvalidUsername" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="ThrowsWithHttpInsteadOfFtp" time="0.004"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedXmlDoesNotContainPlaintextData" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest" name="ThrowsWithInvalidPath" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="BuildAuthorizationRequestUrlLeavesOutOptionalParameters" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="SanitizeCredentials_ChangesInvalidPrefix" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsUnicodeBytesToSecureString" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="NeedsRefreshReturnsTrueIfNoExpirationDate" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="ParseRealWorldDropboxRejectResponse" time="0.009"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedJsonCanBeReadBack" time="0.007"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GmxCloudStorageClientTest" name="ChoosesCorrectUrlForGmxNetEmail" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest" name="ThrowsAccessDeniedExceptionWithInvalidToken" time="0.006"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedDatacontractDoesNotContainPlaintextData" time="0.002"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2CloudStorageClientTest" name="RefreshTokenCanInterpretGoogleResponse" time="0.003"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest" name="ParseGmxWebdavResponseCorrectly" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsUtf8BytesToSecureString" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="CorrectlyConvertsStringToSecureString" time="0.006"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="AreEqualWorksWithSameContent" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsSecureStringToString" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest" name="ParsesNullErrorCodeCorrectly" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GmxCloudStorageClientTest" name="ChoosesCorrectUrlForGmxComEmail" time="0.006"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest" name="FileLifecycleWorks" time="0.014"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="SetExpiryDateBySecondsWorksWithNull" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="ValidateRejectsInvalidCredentials" time="0.006"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="EncryptBeforeSerializationProtectsAllNecessaryProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="DecryptAfterDesrializationRespectsNullProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest" name="ReallyDoFetchToken" time="0.0004561">
+      <skipped message="Gets a real access-token">Gets a real access-token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest" name="ReallyDoOpenAuthorizationPageInBrowser" time="0.000001">
+      <skipped message="Opens the authorization page in the system browse, to get a real authorization-code">Opens the authorization page in the system browse, to get a real authorization-code</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="DecryptAfterDesrializationCanReadAllPropertiesBack" time="0.002"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="SecureSslConnectionWorks" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="NeedsRefreshReturnsFalseForTokenFlow" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2CloudStorageClientTest" name="FetchTokenCanInterpretGoogleResponse" time="0.007"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="NeedsRefreshReturnsTrueIfExpired" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="ParseRealWorldGoogleSuccessResponse" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest" name="FileLifecycleWorks" time="0.04"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="SetExpiryDateBySecondsWorks" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="SetExpiryDateBySecondsWorksWithVeryShortPeriod" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest" name="ReallyDoFetchToken" time="0.0000031">
+      <skipped message="Gets a real access-token">Gets a real access-token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest" name="FileLifecycleWorks" time="0.015"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest" name="ParsesAllErrorCodesCorrectly" time="0.003"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest" name="ReallyDoFetchToken" time="0.0000033">
+      <skipped message="Gets a real access-token">Gets a real access-token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest" name="ReallyDoRefreshToken" time="0.0000594">
+      <skipped message="Refreshes a real token">Refreshes a real token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest" name="FileLifecycleWorks" time="0.095"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="ParseRealWorldGoogleRejectResponse" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest" name="ReallyDoOpenAuthorizationPageInBrowser" time="0.0000012">
+      <skipped message="Opens the authorization page in the system browse, to get a real authorization-code">Opens the authorization page in the system browse, to get a real authorization-code</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsSecureStringToUnicodeBytes" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="ThrowsWithInvalidUsername" time="0.000001">
+      <skipped message="Too many consecutive fails seems to block an FTP server.">Too many consecutive fails seems to block an FTP server.</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="BuildAuthorizationRequestUrlEscapesParameters" time="0.002"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2CloudStorageClientTest" name="FetchTokenThrowsWithWrongState" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2CloudStorageClientTest" name="BuildOAuth2AuthorizationRequestUrlWorks" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="AreEqualsWorksCorrectly" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="EncryptBeforeSerializationRespectsNullProperties" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest" name="ThrowsWithInvalidPassword" time="0.0000131">
+      <skipped message="Too many consecutive fails seems to block an FTP server.">Too many consecutive fails seems to block an FTP server.</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageCredentialsTest" name="AreEqualWorksWithDifferentPassword" time="0.007"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="AreEqualWorksWithNullDate" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest" name="SerializedXmlCanBeReadBack" time="0.016"/>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest" name="BuildAuthorizationRequestUrlUsesCodeVerifier" time="0.001"/>
+    <testcase classname="VanillaCloudStorageClientTest.SecureStringExtensionsTest" name="CorrectlyConvertsSecureStringToUtf8Bytes" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest" name="ReallyDoRefreshToken" time="0.0000012">
+      <skipped message="Refreshes a real token">Refreshes a real token</skipped>
+    </testcase>
+    <testcase classname="VanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest" name="ParsesUnknownErrorCodeCorrectly" time="0.0000001"/>
+    <testcase classname="VanillaCloudStorageClientTest.CloudStorageTokenTest" name="AreEqualWorksWithSameContent" time="0.0000001"/>
+  </testsuite>
+</testsuites>

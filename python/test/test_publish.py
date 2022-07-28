@@ -1,5 +1,3 @@
-import contextlib
-import locale
 import pathlib
 import unittest
 from collections import defaultdict
@@ -18,43 +16,15 @@ from publish import Annotation, UnitTestCaseResults, UnitTestRunResults, UnitTes
     get_test_changes_md, get_test_changes_list_md,  get_test_changes_summary_md, \
     get_case_annotations, get_case_annotation, get_all_tests_list_annotation, \
     get_skipped_tests_list_annotation, get_case_messages, chunk_test_list
-from publish.junit import parse_junit_xml_files
+from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
-from test import d, n
+from test_utils import temp_locale, d, n
 
-test_files_path = pathlib.Path(__file__).parent / 'files'
-
-
-@contextlib.contextmanager
-def temp_locale(encoding: str) -> Any:
-    old_locale = locale.getlocale()
-    encodings = [
-        f'{encoding}.utf8', f'{encoding}.utf-8',
-        f'{encoding}.UTF8', f'{encoding}.UTF-8',
-        encoding
-    ]
-
-    locale_set = False
-    for encoding in encodings:
-        try:
-            locale.setlocale(locale.LC_ALL, encoding)
-            locale_set = True
-            break
-        except:
-            pass
-
-    if not locale_set:
-        raise ValueError(f'Could not set any of these locale: {", ".join(encodings)}')
-
-    try:
-        res = yield
-    finally:
-        locale.setlocale(locale.LC_ALL, old_locale)
-    return res
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'junit-xml'
 
 
-errors = [ParseError('file', 'error', 1, 2)]
+errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"))]
 
 
 class PublishTest(unittest.TestCase):
@@ -1833,9 +1803,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(expected, annotations)
 
     def test_get_error_annotation(self):
-        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None)))
-        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34)))
+        self.assertEqual(Annotation(path='file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', None, None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, None)))
+        self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, ValueError('invalid value'))))
 
     def test_get_all_tests_list_annotation(self):
         results = UnitTestCaseResults([
@@ -2007,16 +1978,17 @@ class PublishTest(unittest.TestCase):
                          chunks)
 
     def test_files(self):
-        parsed = parse_junit_xml_files([str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
-                                        str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
-                                        str(test_files_path / 'junit.gloo.elastic.xml'),
-                                        str(test_files_path / 'junit.gloo.standalone.xml'),
-                                        str(test_files_path / 'junit.gloo.static.xml'),
-                                        str(test_files_path / 'junit.mpi.integration.xml'),
-                                        str(test_files_path / 'junit.mpi.standalone.xml'),
-                                        str(test_files_path / 'junit.mpi.static.xml'),
-                                        str(test_files_path / 'junit.spark.integration.1.xml'),
-                                        str(test_files_path / 'junit.spark.integration.2.xml')]).with_commit('example')
+        parsed = process_junit_xml_elems(
+            parse_junit_xml_files([str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.tf.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.torch.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.elastic.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.standalone.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.gloo.static.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.integration.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')])).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2027,7 +1999,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit example.\n'))
 
     def test_file_without_cases(self):
-        parsed = parse_junit_xml_files([str(test_files_path / 'no-cases.xml')]).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases.xml')])).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2038,7 +2010,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_file_without_cases_but_with_tests(self):
-        parsed = parse_junit_xml_files([str(test_files_path / 'no-cases-but-tests.xml')]).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases-but-tests.xml')])).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2049,7 +2021,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_non_parsable_file(self):
-        parsed = parse_junit_xml_files(['files/empty.xml']).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files(['files/empty.xml'])).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2060,29 +2032,33 @@ class PublishTest(unittest.TestCase):
                               f'\n'
                               f'Results for commit a commit.\n'))
 
-    def test_files_with_testcase_in_testcase(self):
-        parsed = parse_junit_xml_files([str(test_files_path / 'testcase-in-testcase.xml')]).with_commit('example')
+    def test_files_with_testsuite_in_testsuite(self):
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'testsuite-in-testsuite.xml')])).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
-                              f'1 suites  0 {skipped_tests_label_md}\n'
+                              f'4 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
 
     def test_files_without_annotations(self):
-        parsed = parse_junit_xml_files([str(test_files_path / 'junit.gloo.elastic.spark.tf.xml'),
-                                        str(test_files_path / 'junit.gloo.elastic.spark.torch.xml'),
-                                        str(test_files_path / 'junit.gloo.elastic.xml'),
-                                        str(test_files_path / 'junit.gloo.standalone.xml'),
-                                        str(test_files_path / 'junit.gloo.static.xml'),
-                                        str(test_files_path / 'junit.mpi.integration.xml'),
-                                        str(test_files_path / 'junit.mpi.standalone.xml'),
-                                        str(test_files_path / 'junit.mpi.static.xml'),
-                                        str(test_files_path / 'junit.spark.integration.1.xml'),
-                                        str(test_files_path / 'junit.spark.integration.2.xml')],
-                                       drop_testcases=True).with_commit('example')
+        parsed = process_junit_xml_elems(
+            parse_junit_xml_files(
+                [str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.tf.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.elastic.spark.torch.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.elastic.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.standalone.xml'),
+                 str(test_files_path / 'pytest' / 'junit.gloo.static.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.integration.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
+                 str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
+                 str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
+                 str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')],
+                drop_testcases=True
+            )
+        ).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)

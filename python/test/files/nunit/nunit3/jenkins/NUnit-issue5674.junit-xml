@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="9" failures="3" skipped="0" errors="0">
+  
+  
+  <testsuite time="0.067" name="C:\Users\Samw\Documents\Visual Studio 2008\Projects\GetBrowsersTest\GetBrowsersTest\bin\Debug\GetBrowsersTest.dll">
+    
+      <testsuite time="0.058" name="GetBrowsersTest">
+        
+          <testsuite time="0.057" name="BrowserNamesTest1">
+            
+              <testsuite time="0.035" name="AnotherTest">
+                
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.AnotherTest(&quot;IE&quot;)" classname="" time="0.023"/>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.AnotherTest(&quot;FireFox&quot;)" classname="" time="0.001"/>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.AnotherTest(&quot;Safari&quot;)" classname="" time="0.001"/>
+                
+              </testsuite>
+              <testsuite time="0.007" name="FailTest">
+                
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.FailTest(&quot;IE&quot;)" classname="" time="0.005">
+                    <failure message="">at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\Users\Samw\Documents\Visual Studio 2008\Projects\GetBrowsersTest\GetBrowsersTest\BrowserNamesTest1.cs:line 27
+</failure>
+                  </testcase>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.FailTest(&quot;FireFox&quot;)" classname="" time="0.001">
+                    <failure message="">at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\Users\Samw\Documents\Visual Studio 2008\Projects\GetBrowsersTest\GetBrowsersTest\BrowserNamesTest1.cs:line 27
+</failure>
+                  </testcase>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.FailTest(&quot;Safari&quot;)" classname="" time="0.000">
+                    <failure message="">at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\Users\Samw\Documents\Visual Studio 2008\Projects\GetBrowsersTest\GetBrowsersTest\BrowserNamesTest1.cs:line 27
+</failure>
+                  </testcase>
+                
+              </testsuite>
+              <testsuite time="0.001" name="ShowBrowsers">
+                
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.ShowBrowsers(&quot;IE&quot;)" classname="" time="0.001"/>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.ShowBrowsers(&quot;FireFox&quot;)" classname="" time="0.000"/>
+                  <testcase name="GetBrowsersTest.BrowserNamesTest1.ShowBrowsers(&quot;Safari&quot;)" classname="" time="0.000"/>
+                
+              </testsuite>
+            
+          </testsuite>
+        
+      </testsuite>
+    
+  </testsuite>
+</testsuites>

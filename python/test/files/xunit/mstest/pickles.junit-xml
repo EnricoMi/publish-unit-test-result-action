@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\bin\Debug\Pickles.TestHarness.xUnit.dll" tests="4" failures="1" time="0.185" skipped="0" timestamp="2012-01-14T10:21:10">
+    <testsuite name="Pickles.TestHarness.xUnit.AdditionFeature" tests="4" failures="1" time="0.185" skipped="0">
+      <testcase name="AddTwoNumbers" time="0.153" classname="Pickles.TestHarness.xUnit.AdditionFeature"/>
+      <testcase name="AddingSeveralNumbers" time="0.006" classname="Pickles.TestHarness.xUnit.AdditionFeature"/>
+      <testcase name="AddingSeveralNumbers" time="0.003" classname="Pickles.TestHarness.xUnit.AdditionFeature"/>
+      <testcase name="FailToAddTwoNumbers" time="0.023" classname="Pickles.TestHarness.xUnit.AdditionFeature">
+        <failure type="System.InvalidOperationException" message="&#10;          System.InvalidOperationException : This is a fake failure message&#10;        ">
+          System.InvalidOperationException : This is a fake failure message
+        
+          at Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Steps.cs:line 26
+          at lambda_method(Closure , IContextManager , Int32 )
+          at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
+          at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan&amp; duration)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(StepArgs stepArgs)
+          at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep()
+          at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()
+          at Pickles.TestHarness.xUnit.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature.cs:line 0
+          at Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.xUnit\Addition.feature:line 18
+        </failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

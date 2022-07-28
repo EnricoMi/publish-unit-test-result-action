@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="Test.exe" tests="1" failures="1" errors="0" time="" skipped="0" timestamp="2018-38-06T02:38:04">
+    <testsuite name="collection1" tests="1" failures="1" time="36.7820544" skipped="0">
+      <testcase name="" time="36.7820544" classname="">
+        <failure message="OK: TestProcess.Execution.ExitCode == 0&#13;&#10;FAIL: Output differs from reference.&#13;&#10;  Left:  data\ref&#13;&#10;  Right: results\out&#13;&#10;  &#13;&#10;                    ">OK: TestProcess.Execution.ExitCode == 0&#13;
+FAIL: Output differs from reference.&#13;
+  Left:  data\ref&#13;
+  Right: results\out&#13;
+  &#13;
+                    </failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

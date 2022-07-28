@@ -1,0 +1,45 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=3,
+  suite_skipped=1,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=3,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue6353.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='SuccessfulTest',
+      result='success',
+      message=None,
+      content=None,
+      time=1.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue6353.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='IgnoredTest',
+      result='skipped',
+      message='Reason',
+      content=None,
+      time=None
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='nunit3/jenkins/NUnit-issue6353.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='FailedTest',
+      result='failure',
+      message='Reason',
+      content='Here comes the stack trace',
+      time=2.0
+    )
+  ]
+)

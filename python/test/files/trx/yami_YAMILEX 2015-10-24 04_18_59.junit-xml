@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="25" failures="2" errors="0" skipped="21">
+    <testcase classname="Prueba_Sistema.UnitTest1" name="TestMethod1" time="0.0099709"/>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CompareTest" time="0">
+      <skipped message="UTA007: la firma del m&#xE9;todo CompareTest definido en la clase Prueba_Sistema.SIARAlgorithmTest no es correcta. El m&#xE9;todo de prueba marcado con el atributo [TestMethod] debe ser no est&#xE1;tico, p&#xFA;blico, no debe devolver ning&#xFA;n valor ni tomar ning&#xFA;n par&#xE1;metro. Por ejemplo: public void Test.Class1.Test().">UTA007: la firma del método CompareTest definido en la clase Prueba_Sistema.SIARAlgorithmTest no es correcta. El método de prueba marcado con el atributo [TestMethod] debe ser no estático, público, no debe devolver ningún valor ni tomar ningún parámetro. Por ejemplo: public void Test.Class1.Test().</skipped>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ClearListTest" time="0.4619928"/>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EST_INTER_TEMPTest" time="19.039413">
+      <failure message="El m&#xE9;todo de prueba Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest produjo la excepci&#xF3;n: &#10;System.ArgumentOutOfRangeException: El &#xED;ndice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tama&#xF1;o de la colecci&#xF3;n.&#10;Nombre del par&#xE1;metro: index">El método de prueba Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest produjo la excepción: 
+System.ArgumentOutOfRangeException: El índice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tamaño de la colección.
+Nombre del parámetro: index    en System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   en System.Collections.Generic.List`1.set_Item(Int32 index, T value)
+   en TMC.Components.TemperatureControl.SIARAlgorithm.EST_INTER_TEMP(Double TAMP, Int32 TEXTERN) en E:\TMC\TMC\Components\TemperatureControl\SIARAlgorithms.cs:línea 363
+   en Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest() en E:\TMC\Prueba_Sistema\SIARAlgorithmTest.cs:línea 199
+</failure>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EST_LAMB_TEMPTest" time="2.5091335">
+      <failure message="El m&#xE9;todo de prueba Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest produjo la excepci&#xF3;n: &#10;System.ArgumentOutOfRangeException: El &#xED;ndice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tama&#xF1;o de la colecci&#xF3;n.&#10;Nombre del par&#xE1;metro: index">El método de prueba Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest produjo la excepción: 
+System.ArgumentOutOfRangeException: El índice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tamaño de la colección.
+Nombre del parámetro: index    en System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   en System.Collections.Generic.List`1.get_Item(Int32 index)
+   en TMC.Components.TemperatureControl.SIARAlgorithm.EST_LAMB_TEMP(Double TINTPP, Double TAMP, Int32 TEXTERN, Int32 CRPBuscar) en E:\TMC\TMC\Components\TemperatureControl\SIARAlgorithms.cs:línea 474
+   en Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest() en E:\TMC\Prueba_Sistema\SIARAlgorithmTest.cs:línea 217
+</failure>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EST_SEG_TEMPTest" time="4.6492659">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetAlphaExternoTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetComposicionTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetDise&#xF1;oTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="GetSpesorTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="LamdaTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SiSParcialTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="CostoTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="EspesorTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="FlujoCaloricoTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="MaterialesTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PerdidaTotalTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="PesoTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="ProjectObjectTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SpesorTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TDataSetTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="TempExternaTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="VolumenTest" time="0">
+      <skipped message=""/>
+    </testcase>
+    <testcase classname="Prueba_Sistema.SIARAlgorithmTest" name="SIARAlgorithmConstructorTest" time="0">
+      <skipped message=""/>
+    </testcase>
+  </testsuite>
+</testsuites>

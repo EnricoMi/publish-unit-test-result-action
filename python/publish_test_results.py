@@ -14,15 +14,16 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import hide_comments_modes, available_annotations, default_annotations, \
+from publish import available_annotations, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_off, comment_mode_always, comment_modes, comment_modes_deprecated, punctuation_space
+    comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
-from publish.junit import parse_junit_xml_files
+from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
-from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults
+from publish.unittestresults import get_test_results, get_stats, ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
+    ParseError
 
 logger = logging.getLogger('publish')
 
@@ -59,6 +60,21 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
+def expand_glob(pattern: Optional[str], gha: GithubAction) -> List[str]:
+    if not pattern:
+        return []
+
+    files = get_files(pattern)
+
+    if len(files) == 0:
+        gha.warning(f'Could not find any files for {pattern}')
+    else:
+        logger.info(f'Reading {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading {list(files)}')
+
+    return files
+
+
 def get_files_size(files: List[str]) -> str:
     try:
         size = sum([os.path.getsize(file) for file in files])
@@ -75,6 +91,44 @@ def get_number_of_files(files: List[str]) -> str:
     return number_of_files
 
 
+def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
+    # expand file globs
+    junit_files = expand_glob(settings.junit_files_glob, gha)
+    nunit_files = expand_glob(settings.nunit_files_glob, gha)
+    xunit_files = expand_glob(settings.xunit_files_glob, gha)
+    trx_files = expand_glob(settings.trx_files_glob, gha)
+
+    elems = []
+
+    # parse files, log the progress
+    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    with progress_logger(items=len(junit_files + nunit_files + xunit_files + trx_files),
+                         interval_seconds=10,
+                         progress_template='Read {progress} files in {time}',
+                         finish_template='Finished reading {observations} files in {duration}',
+                         progress_item_type=Tuple[str, Any],
+                         logger=logger) as progress:
+        if junit_files:
+            elems.extend(parse_junit_xml_files(junit_files, settings.ignore_runs, progress))
+        if xunit_files:
+            from publish.xunit import parse_xunit_files
+            elems.extend(parse_xunit_files(xunit_files, progress))
+        if nunit_files:
+            from publish.nunit import parse_nunit_files
+            elems.extend(parse_nunit_files(nunit_files, progress))
+        if trx_files:
+            from publish.trx import parse_trx_files
+            elems.extend(parse_trx_files(trx_files, progress))
+
+    # get the test results
+    return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
+
+
+def log_parse_errors(errors: List[ParseError], gha: GithubAction):
+    [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column, exception=error.exception)
+     for error in errors]
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -88,32 +142,15 @@ def main(settings: Settings, gha: GithubAction) -> None:
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
-    # resolve the files_glob to files
-    files = get_files(settings.files_glob)
-    if len(files) == 0:
-        gha.warning(f'Could not find any files for {settings.files_glob}')
-    else:
-        logger.info(f'Reading {settings.files_glob} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {list(files)}')
-
     # log the available RAM to help spot OOM issues:
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
     avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
     logger.info(f'Available memory to read files: {avail_mem}')
 
-    # log the progress
-    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
-    with progress_logger(items=len(files),
-                         interval_seconds=10,
-                         progress_template='Read {progress} files in {time}',
-                         finish_template='Finished reading {observations} files in {duration}',
-                         progress_item_type=Tuple[str, Any],
-                         logger=logger) as progress:
-        # get the unit test results
-        parsed = parse_junit_xml_files(files, settings.time_factor, settings.ignore_runs, progress).with_commit(settings.commit)
-        [gha.error(message=f'Error processing result file: {error.message}', file=error.file, line=error.line, column=error.column)
-         for error in parsed.errors]
+    # get the unit test results
+    parsed = parse_files(settings, gha)
+    log_parse_errors(parsed.errors, gha)
 
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
@@ -198,7 +235,7 @@ def get_var(name: str, options: dict) -> Optional[str]:
     return options.get(f'INPUT_{name}') or options.get(name) or None
 
 
-def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAction] = None) -> bool:
+def get_bool_var(name: str, options: dict, default: bool) -> bool:
     """
     Same as get_var(), but checks if the value is a valid boolean.
     Prints a warning and uses the default if the string value is not a boolean value.
@@ -214,15 +251,7 @@ def get_bool_var(name: str, options: dict, default: bool, gha: Optional[GithubAc
     elif val == 'false':
         return False
     else:
-        # TODO: breaking change for version 2: raise a RuntimeError
-        message = f'Option {name.lower()} has to be boolean, so either "true" or "false": {val}'
-
-        if gha is None:
-            logger.debug(message)
-        else:
-            gha.warning(message)
-
-        return default
+        raise RuntimeError(f'Option {name.lower()} has to be boolean, so either "true" or "false": {val}')
 
 
 def check_var(var: Union[Optional[str], List[str]],
@@ -255,7 +284,7 @@ def deprecate_var(val: Optional[str], deprecated_var: str, replacement_var: str,
         message = f'Option {deprecated_var.lower()} is deprecated! {replacement_var}'
 
         if gha is None:
-            logger.debug(message)
+            logger.warning(message)
         else:
             gha.warning(message)
 
@@ -273,7 +302,7 @@ def deprecate_val(val: Optional[str], var: str, replacement_vals: Mapping[str, s
             message = f'{message} Instead, use value "{replacement}".'
 
         if gha is None:
-            logger.debug(message)
+            logger.warning(message)
         else:
             gha.warning(message)
 
@@ -295,6 +324,17 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
+    # remove when deprecated FILES is removed
+    default_junit_files_glob = get_var('FILES', options)
+    if default_junit_files_glob:
+        gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
+    # replace with error when deprecated FILES is removed
+    elif not any([get_var(f'{flavour}_FILES', options)
+                  for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']]):
+        default_junit_files_glob = '*.xml'
+        gha.warning(f'At least one of the *_FILES options has to be set! '
+                    f'Falling back to deprecated default "{default_junit_files_glob}"')
+
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
     time_factor = time_factors.get(time_unit.lower())
@@ -302,8 +342,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
                                                  f'It is optional, but when given must be one of these values: '
                                                  f'{", ".join(time_factors.keys())}')
 
-    check_name = get_var('CHECK_NAME', options) or 'Unit Test Results'
-    comment_on_pr = get_bool_var('COMMENT_ON_PR', options, default=True, gha=gha)
+    check_name = get_var('CHECK_NAME', options) or 'Test Results'
     annotations = get_annotations_config(options, event)
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
@@ -333,19 +372,21 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
-        files_glob=get_var('FILES', options) or '*.xml',
+        junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,
+        nunit_files_glob=get_var('NUNIT_FILES', options),
+        xunit_files_glob=get_var('XUNIT_FILES', options),
+        trx_files_glob=get_var('TRX_FILES', options),
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or (comment_mode_always if comment_on_pr else comment_mode_off),
-        job_summary=get_bool_var('JOB_SUMMARY', options, default=True, gha=gha),
-        compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True, gha=gha),
+        comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
+        job_summary=get_bool_var('JOB_SUMMARY', options, default=True),
+        compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
-        hide_comment_mode=get_var('HIDE_COMMENTS', options) or 'all but latest',
-        report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False, gha=gha),
-        dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False, gha=gha),
-        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False, gha=gha),
+        report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False),
+        dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
+        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
@@ -354,9 +395,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
-    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes, list(comment_modes_deprecated.keys()))
+    check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
-    check_var(settings.hide_comment_mode, 'HIDE_COMMENTS', 'Hide comments mode', hide_comments_modes)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
@@ -364,24 +404,27 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var_condition(settings.seconds_between_github_reads > 0, f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(settings.seconds_between_github_writes > 0, f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')
 
-    deprecate_var(get_var('COMMENT_ON_PR', options) or None, 'COMMENT_ON_PR',
-                  f'Instead, use option "comment_mode" with values {available_values(comment_modes)}.', gha)
-    deprecate_val(settings.comment_mode, 'COMMENT_MODE', comment_modes_deprecated, gha)
-
     return settings
 
 
+def set_log_level(handler: logging.Logger, level: str, gha: GithubAction):
+    try:
+        handler.setLevel(level.upper())
+    except ValueError as e:
+        gha.warning(f'Failed to set log level {level}: {e}')
+
+
 if __name__ == "__main__":
+    gha = GithubAction()
     options = dict(os.environ)
 
     root_log_level = get_var('ROOT_LOG_LEVEL', options) or 'INFO'
-    logging.root.level = logging.getLevelName(root_log_level)
+    set_log_level(logging.root, root_log_level, gha)
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
 
     log_level = get_var('LOG_LEVEL', options) or 'INFO'
-    logger.level = logging.getLevelName(log_level)
-    publish.logger.level = logging.getLevelName(log_level)
+    set_log_level(logger, log_level, gha)
+    set_log_level(publish.logger, log_level, gha)
 
-    gha = GithubAction()
     settings = get_settings(options, gha)
     main(settings, gha)

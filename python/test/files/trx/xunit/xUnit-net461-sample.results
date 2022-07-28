@@ -1,0 +1,90 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=6,
+  suite_skipped=1,
+  suite_failures=3,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='TestTheory(expected: False)',
+      result='failure',
+      message='Assert.Equal() Failure\r\nExpected: False\r\nActual:   True',
+      content='Assert.Equal() Failure\r\nExpected: False\r\nActual:   True   at '
+        'SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
+        '\\TestServiceTests.cs:line 29',
+      time=0.02
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='FailTest',
+      result='failure',
+      message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
+      content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+        'SampleProject.xUnit.TestServiceTests.FailTest() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
+        '\\TestServiceTests.cs:line 65',
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='SkipTest',
+      result='skipped',
+      message=None,
+      content=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='TestThrowingException',
+      result='failure',
+      message='System.Exception : Pretty good exception',
+      content='System.Exception : Pretty good exception   at '
+        'SampleProject.TestService.GetException() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestService'
+        '.cs:line 19\r\n   at '
+        'SampleProject.xUnit.TestServiceTests.TestThrowingException() in '
+        'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
+        '\\TestServiceTests.cs:line 54',
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='TestTheory(expected: True)',
+      result='success',
+      message=None,
+      content=None,
+      time=0.025
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='xunit/xUnit-net461-sample.trx',
+      test_file=None,
+      line=None,
+      class_name='SampleProject.xUnit.TestServiceTests',
+      test_name='PassingTest',
+      result='success',
+      message=None,
+      content=None,
+      time=0.001
+    )
+  ]
+)

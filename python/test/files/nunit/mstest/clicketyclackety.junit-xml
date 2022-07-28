@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite tests="23" failures="10" skipped="0" time="0.567280" timestamp="2022-07-13T23:20:35.0612744Z" name="C:\Users\USER\actions-runner\_work\MyProject\MyProject\tests\MyProject.tests.real\bin\x64\Release\net48\MyProject.Tests.Real.dll">
+  
+  
+  <testsuite tests="23" failures="10" skipped="0" time="0.558335" timestamp="2022-07-13T23:20:35.0612744Z" name="Integration">
+    
+    <testsuite tests="23" failures="10" skipped="0" time="0.557669" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject">
+      
+      <testsuite tests="23" failures="10" skipped="0" time="0.557418" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject">
+        
+        <testsuite tests="23" failures="10" skipped="0" time="0.557367" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject.Tests">
+          
+          <testsuite tests="23" failures="10" skipped="0" time="0.556978" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject.Tests.Real">
+            
+            <testsuite tests="2" failures="2" skipped="0" time="0.199250" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject.Tests.Real.UserInput">
+              
+              <testsuite tests="1" failures="1" skipped="0" time="0.142842" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject.Tests.Real.UserInput.BakeDrawingCommandTests">
+                
+                <testcase name="BakeDrawings" classname="" status="Failed" time="0.135485">
+                  <failure message="System.InvalidOperationException : Assert.Equals should not be used. Use Assert.AreEqual instead.">   at NUnit.Framework.Assert.Equals(Object a, Object b)
+   at MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings()</failure>
+                </testcase>
+              </testsuite>
+              <testsuite tests="1" failures="1" skipped="0" time="0.052577" timestamp="2022-07-13T23:20:35.2174931Z" name="MyProject.Tests.Real.UserInput.ProjectInitCommandTests">
+                
+                <testcase name="SilentRun" classname="" status="Failed" time="0.052338">
+                  <failure message="System.NullReferenceException : Object reference not set to an instance of an object.">   at MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()</failure>
+                </testcase>
+              </testsuite>
+            </testsuite>
+            <testsuite tests="10" failures="5" skipped="0" time="0.326239" timestamp="2022-07-13T23:20:35.2643689Z" name="MyProject.Tests.Real.FlagTests">
+              
+              <testcase name="DeleteMyProjectObjectEventFlagTests" classname="" status="Passed" time="0.000201"/>
+              <testcase name="DiscardDrawingTests" classname="" status="Failed" time="0.004832">
+                <failure message="System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\Users\USER\actions-runner\_work\MyProject\MyProject\SC\f4a8fa46-245d-4cd5-88c1-80fcfbda6369'.">   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileSystemEnumerableIterator`1.CommonInit()
+   at System.IO.FileSystemEnumerableIterator`1..ctor(String path, String originalUserPath, String searchPattern, SearchOption searchOption, SearchResultHandler`1 resultHandler, Boolean checkHost)
+   at System.IO.Directory.GetFiles(String path)
+   at MyProject.Tests.Real.FlagTests.DiscardDrawingTests()</failure>
+              </testcase>
+              <testcase name="LoadDrawingsEventFlagTests" classname="" status="Failed" time="0.057537">
+                <failure message="  Expected: 3&#10;  But was:  0&#10;">   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()
+</failure>
+                
+              </testcase>
+              <testcase name="ModifyNewObjectUniqueIdEventFlagTests" classname="" status="Passed" time="0.000104"/>
+              <testcase name="MoveControlPointEventFlagTests" classname="" status="Passed" time="0.000112"/>
+              <testcase name="ResetProjectEventFlagTests" classname="" status="Failed" time="0.025094">
+                <failure message="System.NullReferenceException : Object reference not set to an instance of an object.">   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()</failure>
+              </testcase>
+              <testcase name="SetupLayersEventFlagTests" classname="" status="Failed" time="0.002310">
+                <failure message="om.Exceptions.DocumentException : Document should be initlised, but isn't!">   at MyProject.Runtime.Events.SetupLayers.Execute()
+   at MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()</failure>
+              </testcase>
+              <testcase name="SetupPipeEventFlagTests" classname="" status="Failed" time="0.233069">
+                <failure message="System.NullReferenceException : Object reference not set to an instance of an object.">   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()</failure>
+              </testcase>
+              <testcase name="UpdateDrawingsPanelEventFlagTests" classname="" status="Passed" time="0.000363"/>
+              <testcase name="UpdatePropertiesPanelEventFlagTests" classname="" status="Passed" time="0.000068"/>
+            </testsuite>
+            <testsuite tests="1" failures="0" skipped="0" time="0.007232" timestamp="2022-07-13T23:20:35.5924996Z" name="MyProject.Tests.Real.NewDocumentTests">
+              <testcase name="EventRegisterTests" classname="" status="Passed" time="0.005957"/>
+            </testsuite>
+            <testsuite tests="1" failures="0" skipped="0" time="0.000429" timestamp="2022-07-13T23:20:35.5924996Z" name="MyProject.Tests.Real.PipeTests">
+              <testcase name="Test" classname="" status="Passed" time="0.000102"/>
+            </testsuite>
+            <testsuite tests="7" failures="3" skipped="0" time="0.017983" timestamp="2022-07-13T23:20:35.6081231Z" name="MyProject.Tests.Real.RuntimeTests">
+              
+              <testcase name="DisplayGraphicConstants" classname="" status="Passed" time="0.000046"/>
+              <testcase name="DrawingConstants" classname="" status="Failed" time="0.001262">
+                <failure message="System.NullReferenceException : Object reference not set to an instance of an object.">   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()</failure>
+              </testcase>
+              <testcase name="FileConstants" classname="" status="Failed" time="0.001455">
+                <failure message="System.NullReferenceException : Object reference not set to an instance of an object.">   at MyProject.Tests.Real.RuntimeTests.FileConstants()</failure>
+              </testcase>
+              <testcase name="ObjectConstants" classname="" status="Passed" time="0.000290"/>
+              <testcase name="PluginConstants" classname="" status="Failed" time="0.005593">
+                <failure message="System.MissingMethodException : Method not found: 'System.Object MyProject.MyProjectPlugIn.get_Instance()'.">   at MyProject.Tests.Real.RuntimeTests.PluginConstants()</failure>
+              </testcase>
+              <testcase name="UIPanelConstants" classname="" status="Passed" time="0.007398"/>
+              <testcase name="UIPropertyConstants" classname="" status="Passed" time="0.000517"/>
+            </testsuite>
+            <testsuite tests="1" failures="0" skipped="0" time="0.000898" timestamp="2022-07-13T23:20:35.6237469Z" name="MyProject.Tests.Real.SwitchingTests">
+              <testcase name="Test" classname="" status="Passed" time="0.000254"/>
+            </testsuite>
+            <testsuite tests="1" failures="0" skipped="0" time="0.556762" timestamp="2022-07-13T23:20:35.0612744Z" name="MyProject.Tests.Real.Tests">
+              <testsuite tests="1" failures="0" skipped="0" time="0.001551" timestamp="2022-07-13T23:20:35.6237469Z" name="MyProject.Tests.Real.Tests.RuntimeConstants">
+                <testcase name="LoadedDrawings" classname="" status="Passed" time="0.000986"/>
+              </testsuite>
+            </testsuite>
+          </testsuite>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuite>

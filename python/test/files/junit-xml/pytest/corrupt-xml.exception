@@ -1,0 +1,1 @@
+ParseError: file='files/junit-xml/pytest/corrupt-xml.xml', message='Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)', line=None, column=None, exception=XMLSyntaxError('Premature end of data in tag skipped line 9, line 11, column 22')

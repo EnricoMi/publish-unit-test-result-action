@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="2" failures="0" skipped="0" time="8.113627">
+  
+  <testsuite tests="2" failures="0" skipped="0" time="7.195350" timestamp="2017-04-29 20:49:42Z" name="C:\Users\admingnwador\Desktop\Automation\Automation\bin\Debug\Automation.dll">
+    
+    
+    
+    <testsuite tests="2" failures="0" skipped="0" time="7.167615" timestamp="2017-04-29 20:49:42Z" name="Automation">
+      <testsuite tests="2" failures="0" skipped="0" time="7.162903" timestamp="2017-04-29 20:49:42Z" name="Automation.Features">
+        <testsuite tests="1" failures="0" skipped="0" time="0.741677" timestamp="2017-04-29 20:49:42Z" name="Automation.Features.CMFeature">
+          
+          <testcase name="AddTwoNumbers" classname="" status="Inconclusive" time="0.186579"><skipped message="No matching step definition found for one or more steps.&#10;using System;&#10;using TechTalk.SpecFlow;&#10;&#10;namespace MyNamespace&#10;{&#10;    [Binding]&#10;    public class StepDefinitions&#10;    {&#10;        [Given(@&quot;I have entered (.*) into the calculator&quot;)]&#10;public void GivenIHaveEnteredIntoTheCalculator(int p0)&#10;{&#10;    ScenarioContext.Current.Pending();&#10;}&#10;&#10;        [When(@&quot;I press add&quot;)]&#10;public void WhenIPressAdd()&#10;{&#10;    ScenarioContext.Current.Pending();&#10;}&#10;&#10;        [Then(@&quot;the result should be (.*) on the screen&quot;)]&#10;public void ThenTheResultShouldBeOnTheScreen(int p0)&#10;{&#10;    ScenarioContext.Current.Pending();&#10;}&#10;    }&#10;}&#10;"/>
+            
+            
+            <system-out>Given I have entered 50 into the calculator
+No matching step definition found for the step. Use the following code to create one:
+        [Given(@"I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredIntoTheCalculator(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+And I have entered 70 into the calculator
+No matching step definition found for the step. Use the following code to create one:
+        [Given(@"I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredIntoTheCalculator(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+When I press add
+No matching step definition found for the step. Use the following code to create one:
+        [When(@"I press add")]
+public void WhenIPressAdd()
+{
+    ScenarioContext.Current.Pending();
+}
+
+Then the result should be 120 on the screen
+No matching step definition found for the step. Use the following code to create one:
+        [Then(@"the result should be (.*) on the screen")]
+public void ThenTheResultShouldBeOnTheScreen(int p0)
+{
+    ScenarioContext.Current.Pending();
+}
+
+</system-out>
+          </testcase>
+        </testsuite>
+        <testsuite tests="1" failures="0" skipped="0" time="6.409498" timestamp="2017-04-29 20:49:43Z" name="Automation.Features.SubFeature">
+          
+          <testsuite tests="1" failures="0" skipped="0" time="6.405431" timestamp="2017-04-29 20:49:43Z" name="Automation.Features.SubFeature.SubSmokeTest">
+            
+            <testcase name="SubSmokeTest(&quot;Geo&quot;,&quot;Geonw&quot;,&quot;dev1234567&quot;,System.String[])" classname="" status="Passed" time="6.402030">
+              <system-out>Given I have an active Sub user Geo with username Geonw and password dev1234567
+done: LoginSteps.GivenIHaveAnActiveSubUserWithUsernameAndPassword("Geo", "Geonw", "dev1234567") (0.0s)
+And he is on Sub login page
+done: LoginSteps.GivenHeIsOnSubLoginPage() (0.6s)
+When he logs in using his credentials
+done: LoginSteps.WhenHeLogsInUsingHisCredentials() (1.8s)
+Then he should land on the Accounts homepage
+done: LoginSteps.ThenHeShouldLandOnTheAccountsHomePage() (0.3s)
+</system-out>
+            </testcase>
+          </testsuite>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

@@ -16,7 +16,7 @@ inputs:
     required: false
   check_name:
     description: 'Name of the created check run'
-    default: 'Unit Test Results'
+    default: 'Test Results'
     required: false
   comment_title:
     description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
@@ -30,10 +30,22 @@ inputs:
     default: 'test failures'
     required: false
   files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns.'
-    required: true
+    description: 'Deprecated, use "junit_files" instead.'
+    required: false
+  junit_files:
+    description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
+  nunit_files:
+    description: 'File patterns of NUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
+  xunit_files:
+    description: 'File patterns of XUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
+  trx_files:
+    description: 'File patterns of TRX test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
+    required: false
   time_unit:
-    description: 'Time values in the XML files have this unit. Supports "seconds" and "milliseconds".'
+    description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
     required: false
   report_individual_runs:
@@ -43,22 +55,15 @@ inputs:
     description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise'
     required: false
   ignore_runs:
-    description: 'Does not process test run information by ignoring <testcase> elements in the XML files, which is useful for very large XML files. This disables any check run annotations'
+    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
     default: 'false'
     required: false
-  hide_comments:
-    description: 'Configures which earlier comments of the action to hide: off - no comments, orphaned commits - comments for commits that are removed from the branch, all but latest - all comments but the latest'
-    default: 'all but latest'
-    required: false
-  comment_on_pr:
-    description: 'Deprecated, please use comment_mode instead!'
-    required: false
   job_summary:
-    description: 'Set to `true`, the results are published as part of the job summary page of the workflow run'
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run'
     default: 'true'
     required: false
   compare_to_earlier_commit:
-    description: 'Test results are compared to results of earlier commits to highlight changes: false - disable comparison, true - compare across commits'
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits'
     default: 'true'
     required: false
   pull_request_build:
@@ -151,13 +156,16 @@ runs:
         COMMENT_TITLE: ${{ inputs.comment_title }}
         COMMENT_MODE: ${{ inputs.comment_mode }}
         FAIL_ON: ${{ inputs.fail_on }}
+        # deprecated
         FILES: ${{ inputs.files }}
+        JUNIT_FILES: ${{ inputs.junit_files }}
+        NUNIT_FILES: ${{ inputs.nunit_files }}
+        XUNIT_FILES: ${{ inputs.xunit_files }}
+        TRX_FILES: ${{ inputs.trx_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
         IGNORE_RUNS: ${{ inputs.ignore_runs }}
-        HIDE_COMMENTS: ${{ inputs.hide_comments }}
-        COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
         PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
         EVENT_FILE: ${{ inputs.event_file }}
@@ -170,7 +178,9 @@ runs:
         JSON_FILE: ${{ inputs.json_file }}
         JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
+        # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+        # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
 

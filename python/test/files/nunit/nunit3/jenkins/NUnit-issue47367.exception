@@ -1,0 +1,1 @@
+ParseError: file='files/nunit/nunit3/jenkins/NUnit-issue47367.xml', message='attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)', line=None, column=None, exception=XMLSyntaxError('attributes construct error, line 5, column 109')

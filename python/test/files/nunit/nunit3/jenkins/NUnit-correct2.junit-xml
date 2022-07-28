@@ -1,0 +1,767 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="218" failures="0" skipped="0" errors="0">
+    
+    
+    <testsuite time="1.392" name="C:\dev\ImageApprox\imG.Approx.Tests\bin\Debug\imG.Approx.Tests.dll">
+        
+            <testsuite time="1.388" name="imG">
+                
+                    <testsuite time="1.388" name="imG.Approx">
+                        
+                            <testsuite time="1.388" name="imG.Approx.Tests">
+                                
+                                    <testsuite time="0.922" name="imG.Approx.Tests.Components">
+                                        
+                                            <testsuite time="0.149" name="imG.Approx.Tests.Components.BuildingBlocks">
+                                                
+                                                    <testsuite time="0.027" name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.should_return_different_object" classname="" status="Success" time="0.012"/>
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.should_return_same_value" classname="" status="Success" time="0.007"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+MutableComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+MutableComponents.should_return_empty" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.014" name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge">
+                                                        
+                                                            <testsuite time="0.013" name="imG.Approx.Tests.Components.BuildingBlocks.should_change_value_in_range">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-2,8)" classname="" status="Success" time="0.006"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-100,1)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,-10,1)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(1000,1000,321)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.should_change_value_in_range(100,2,12)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+RandomizeValues">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AmountTests+RandomizeValues.should_randomize_value_in_range" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.should_return_different_object" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.should_return_same_value" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+MutableComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+MutableComponents.should_return_empty" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.BuildingBlocks.should_wrap_by_a_value_between_1_and_max_value_in_both_directions">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,40,False,330)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,355,True,5)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,6,False,4)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Nudge.should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,40,True,50)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+RandomizeValue">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.AngleTests+RandomizeValue.should_select_a_value_between_0_and_360" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.should_clone_component" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.should_copy_values" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Constructor">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Constructor.should_initialize_data" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+ImplicitConversionToDrawingColor">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+ImplicitConversionToDrawingColor.should_convert_to_drawing_color" classname="" status="Success" time="0.002"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+MutableComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+MutableComponents.should_not_contain_anything" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeAlpha">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeAlpha.should_randomize_alpha_in_range" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeBlue">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeBlue.should_randomize_alpha_in_range" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeGreen">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeGreen.should_randomize_alpha_in_range" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeRed">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeRed.should_randomize_alpha_in_range" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeValues">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeValues.should_randomize_colors_in_the_range" classname="" status="Success" time="0.004"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.004" name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.should_return_different_object" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.should_return_same_value" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+MutableComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+MutableComponents.should_return_empty" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.BuildingBlocks.should_change_value_in_range">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-100,1)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,10,16)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,2,12)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-2,8)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.should_change_value_in_range(100,-10,1)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+RandomizeValues">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+RandomizeValues.should_randomize_value_in_range" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.should_return_different_object" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.should_return_same_value" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+MutableComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+MutableComponents.should_return_empty" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge">
+                                                        
+                                                            <testsuite time="0.004" name="imG.Approx.Tests.Components.BuildingBlocks.should_change_value_in_range">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1,True,11,11)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,100,False,0,0)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1,False,9,9)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.should_change_value_in_range(10,10,1000,True,321,654)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.008" name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+RandomizeValues">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.BuildingBlocks.PositionTests+RandomizeValues.should_return_value_inside_target_limits" classname="" status="Success" time="0.007"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.012" name="imG.Approx.Tests.Components.DrawingTest+Clone">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Clone.should_clone_all_shapes" classname="" status="Success" time="0.007"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Clone.should_clone_inner_components" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Clone.should_copy_properties" classname="" status="Success" time="0.000"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Clone.should_create_clone_of_target" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.000" name="imG.Approx.Tests.Components.DrawingTest+Constructor">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Constructor.should_keep_data" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.015" name="imG.Approx.Tests.Components.DrawingTest+Draw">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Draw.should_draw_all_shapes" classname="" status="Success" time="0.009"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Draw.should_fill_image_with_background_color" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+Draw.should_return_correct_size_image" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.004" name="imG.Approx.Tests.Components.DrawingTest+MutableComponents">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+MutableComponents.should_contain_all_shapes" classname="" status="Success" time="0.002"/>
+                                                    <testcase name="imG.Approx.Tests.Components.DrawingTest+MutableComponents.should_contain_color" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.727" name="imG.Approx.Tests.Components.Shapes">
+                                                
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone">
+                                                        
+                                                            <testsuite time="0.006" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Area,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.AreaTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+Draw.should_draw" classname="" status="Success" time="0.004"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.AreaTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Angle)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.AreaTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Area,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.008" name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone">
+                                                        
+                                                            <testsuite time="0.008" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Bezier,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.Shapes.BezierTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+Draw.should_draw" classname="" status="Success" time="0.004"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.BezierTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.008" name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.008" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.PenSize)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BezierTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Bezier,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.BlobTests+Clone">
+                                                        
+                                                            <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Blob,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Blob,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.007" name="imG.Approx.Tests.Components.Shapes.BlobTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+Draw.should_draw" classname="" status="Success" time="0.006"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.BlobTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.004" name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.004" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.BlobTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Blob,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Circle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.CircleTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+Draw.should_draw" classname="" status="Success" time="0.002"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.CircleTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.004" name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Amount)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.CircleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Circle,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.544" name="imG.Approx.Tests.Components.Shapes.Factories">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory">
+                                                                
+                                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+GetShape">
+                                                                        
+                                                                            <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+GetShape.should_return_shape" classname="" status="Success" time="0.001"/>
+                                                                        
+                                                                    </testsuite>
+                                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+Name">
+                                                                        
+                                                                            <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.ShapeFactoryTests+Name.should_return_name_by_default" classname="" status="Success" time="0.000"/>
+                                                                        
+                                                                    </testsuite>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.008" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+ActiveFactories">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+ActiveFactories.should_return_only_active_factories" classname="" status="Success" time="0.007"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.011" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Disable">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Disable.should_enable_factories_named" classname="" status="Success" time="0.011"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+DisableAll">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+DisableAll.should_disable_all_factories" classname="" status="Success" time="0.001"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Enable">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Enable.should_enable_factories_named" classname="" status="Success" time="0.003"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+EnableAll">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+EnableAll.should_enable_all_factories" classname="" status="Success" time="0.001"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Register">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+Register.should_add_factory" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                            <testsuite time="0.504" name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+RegisterAllFactories">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.Factories.ShapeFactoryCatalogTests+RegisterAllFactories.should_register_all_factories" classname="" status="Success" time="0.504"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.LineTests+Clone">
+                                                        
+                                                            <testsuite time="0.004" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Line,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.LineTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+Draw.should_draw" classname="" status="Success" time="0.002"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.LineTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.PenSize)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.LineTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Line,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.PolygonTests+Clone">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Polygon,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Polygon,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.PolygonTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+Draw.should_draw" classname="" status="Success" time="0.002"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.PolygonTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.PolygonTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Polygon,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone">
+                                                        
+                                                            <testsuite time="0.004" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Rectangle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.RectangleTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+Draw.should_draw" classname="" status="Success" time="0.002"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.RectangleTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Amount)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Amount)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.RectangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone">
+                                                        
+                                                            <testsuite time="0.005" name="imG.Approx.Tests.Components.Shapes.should_return_different_object">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+Clone.should_return_different_object(System.Func`2[imG.Approx.Components.Shapes.Triangle,System.Object])" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.001" name="imG.Approx.Tests.Components.Shapes.TriangleTests+Draw">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+Draw.should_draw" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.002" name="imG.Approx.Tests.Components.Shapes.TriangleTests+InitializeComponents">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+InitializeComponents.should_randomize_elements" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents">
+                                                        
+                                                            <testsuite time="0.003" name="imG.Approx.Tests.Components.Shapes.should_return_components">
+                                                                
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Color)" classname="" status="Success" time="0.001"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                    <testcase name="imG.Approx.Tests.Components.Shapes.TriangleTests+MutableComponents.should_return_components(imG.Approx.Components.Shapes.Triangle,imG.Approx.Components.BuildingBlocks.Position)" classname="" status="Success" time="0.000"/>
+                                                                
+                                                            </testsuite>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                        
+                                    </testsuite>
+                                    <testsuite time="0.399" name="imG.Approx.Tests.Mutation">
+                                        
+                                            <testsuite time="0.018" name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation">
+                                                
+                                                    <testsuite time="0.016" name="imG.Approx.Tests.Mutation.should_return_mutation_description_determined_by_random_provider">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,0,0)" classname="" status="Success" time="0.009"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,6,0)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,0,1)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,6,1)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,7,0)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_mutation_description_determined_by_random_provider(System.Collections.Generic.Dictionary`2[imG.Approx.Mutation.IMutationDescription,System.Collections.Generic.List`1[imG.Approx.Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.Proxies.IMutableProxy,7,1)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.should_return_null_if_no_mutation_exists" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.010" name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_active_and_applicable_and_selectable_mutations" classname="" status="Success" time="0.004"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_empty_if_mutable_is_unknown" classname="" status="Success" time="0.000"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.should_return_mutations_recursively" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.008" name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_have_occasions_to_mutate" classname="" status="Success" time="0.000"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_mutate_without_doing_anything_to_the_target" classname="" status="Success" time="0.000"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_always_target_IMutableType" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_be_always_able_to_mutate" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.should_be_always_active" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.012" name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_a_mutation" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_matching_selected_mutation" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_return_the_default_mutation_if_no_mutation_exists" classname="" status="Success" time="0.000"/>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Mutation.should_throw_if_any_component_is_null">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_throw_if_any_component_is_null(null,Castle.Proxies.IMutableProxy)" classname="" status="Success" time="0.003"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.should_throw_if_any_component_is_null(imG.Approx.Mutation.Process,null)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.005" name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+DeclareMutation">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+DeclareMutation.should_add_description_to_catalog" classname="" status="Success" time="0.003"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+DeclareMutation.should_throw_when_the_same_description_is_declared_twice" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.005" name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_empty_list_for_unknown_mutable_type" classname="" status="Success" time="0.000"/>
+                                                    <testsuite time="0.003" name="imG.Approx.Tests.Mutation.should_return_list_of_descriptions_for_type">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2])" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable2],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3])" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.should_return_list_of_descriptions_for_type(imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3,imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable3],imG.Approx.Mutation.MutationDescription`1[imG.Approx.Tests.Mutation.MutableAndDescription.Mutable1])" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.205" name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+RegisterAllMutations">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+RegisterAllMutations.should_register_all_mutations_declared_by_registrars" classname="" status="Success" time="0.204"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.005" name="imG.Approx.Tests.Mutation.MutationDescriptionTests+CanMutate">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+CanMutate.lambda_is_called_when_checking" classname="" status="Success" time="0.004"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.005" name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor">
+                                                
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Mutation.should_refuse_odds_that_are_not_positive">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(-1000)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(0)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.should_refuse_odds_that_are_not_positive(-1)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.001" name="imG.Approx.Tests.Mutation.MutationDescriptionTests+GetMutationTargetType">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+GetMutationTargetType.should_return_type_of_generic" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.001" name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Mutate">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.MutationDescriptionTests+Mutate.lambda_is_called_when_mutating" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.008" name="imG.Approx.Tests.Mutation.ProcessTests+Constructor">
+                                                
+                                                    <testsuite time="0.008" name="imG.Approx.Tests.Mutation.should_throw_if_any_argument_is_null">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(null,Castle.Proxies.IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,Castle.Proxies.IShapeFactoryCatalogProxy)" classname="" status="Success" time="0.002"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,null,Castle.Proxies.ITargetProxy,Castle.Proxies.IShapeFactoryCatalogProxy)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,Castle.Proxies.IMutationDescriptionCatalogProxy,null,Castle.Proxies.IShapeFactoryCatalogProxy)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Constructor.should_throw_if_any_argument_is_null(Castle.Proxies.IRandomizationProviderProxy,Castle.Proxies.IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,null)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.018" name="imG.Approx.Tests.Mutation.ProcessTests+Mutate">
+                                                
+                                                    <testsuite time="0.007" name="imG.Approx.Tests.Mutation.should_always_keep_best_drawing_according_to_distance">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_always_keep_best_drawing_according_to_distance(False)" classname="" status="Success" time="0.005"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_always_keep_best_drawing_according_to_distance(True)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_increase_evolutions_when_drawing_is_better" classname="" status="Success" time="0.002"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_increase_generation_number" classname="" status="Success" time="0.000"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_trigger_event_when_drawing_is_better" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+Mutate.should_trigger_event_when_drawing_is_worse" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.004" name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_compute_the_distance_only_the_first_time" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_create_drawing_based_on_target" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.should_create_the_drawing_only_the_first_time" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.002" name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Constructor">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Constructor.should_keep_the_seed" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.003" name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Next">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.RandomizationProviderTests+Next.should_return_integer" classname="" status="Success" time="0.002"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.012" name="imG.Approx.Tests.Mutation.TargetTests+Constructor">
+                                                
+                                                    <testsuite time="0.012" name="imG.Approx.Tests.Mutation.should_keep_initialized_data">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+Constructor.should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.Target,System.Object],25)" classname="" status="Success" time="0.009"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+Constructor.should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.Target,System.Object],&quot;data\\red.png&quot;)" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.011" name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_not_throw_if_dimensions_are_identical" classname="" status="Success" time="0.002"/>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Mutation.should_throw_if_dimensions_are_different">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" classname="" status="Success" time="0.002"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+DistanceTo.should_throw_if_dimensions_are_different(imG.Approx.Components.Drawing)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.026" name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_load_dimensions_from_image" classname="" status="Success" time="0.001"/>
+                                                    <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_load_image_data" classname="" status="Success" time="0.001"/>
+                                                    <testsuite time="0.006" name="imG.Approx.Tests.Mutation.should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension(100)" classname="" status="Success" time="0.003"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimension(50)" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_resize_if_image_dimensions_are_over_maxDimension" classname="" status="Success" time="0.001"/>
+                                                    <testsuite time="0.010" name="imG.Approx.Tests.Mutation.should_set_ratio_to_correct_value_when_loading">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(10,0.2f)" classname="" status="Success" time="0.002"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(25,0.5f)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(99,1.0f)" classname="" status="Success" time="0.001"/>
+                                                            <testcase name="imG.Approx.Tests.Mutation.TargetTests+LoadImageData.should_set_ratio_to_correct_value_when_loading(50,1.0f)" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.001" name="imG.Approx.Tests.Mutation.TargetTests+Name">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Mutation.TargetTests+Name.should_return_filename" classname="" status="Success" time="0.000"/>
+                                                
+                                            </testsuite>
+                                        
+                                    </testsuite>
+                                    <testsuite time="0.029" name="imG.Approx.Tests.Tools">
+                                        
+                                            <testsuite time="0.021" name="imG.Approx.Tests.Tools.TestValues+Clamp">
+                                                
+                                                    <testsuite time="0.004" name="imG.Approx.Tests.Tools.should_return_max_value_between_original_and_min_value">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,1,1)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,0,1)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_max_value_between_original_and_min_value(1,10,10)" classname="" status="Success" time="0.001"/>
+                                                        
+                                                    </testsuite>
+                                                    <testsuite time="0.004" name="imG.Approx.Tests.Tools.should_return_min_value_between_original_and_max_value">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,10,1)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,1,1)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_return_min_value_between_original_and_max_value(1,0,0)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                    <testcase name="imG.Approx.Tests.Tools.TestValues+Clamp.should_throw_if_min_is_above_max" classname="" status="Success" time="0.001"/>
+                                                
+                                            </testsuite>
+                                            <testsuite time="0.006" name="imG.Approx.Tests.Tools.TestValues+Wrap">
+                                                
+                                                    <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_throw_if_min_is_above_max" classname="" status="Success" time="0.001"/>
+                                                    <testsuite time="0.005" name="imG.Approx.Tests.Tools.should_wrap_back_to_range">
+                                                        
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(-101,10,20,19)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(16,10,25,16)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(10,10,25,10)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(25,10,25,10)" classname="" status="Success" time="0.000"/>
+                                                            <testcase name="imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(101,10,20,11)" classname="" status="Success" time="0.000"/>
+                                                        
+                                                    </testsuite>
+                                                
+                                            </testsuite>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                        
+                    </testsuite>
+                
+            </testsuite>
+        
+    </testsuite>
+</testsuites>

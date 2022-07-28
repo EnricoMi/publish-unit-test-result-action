@@ -1,20 +1,27 @@
+import io
+import re
 import json
 import logging
 import os
+import pathlib
 import sys
 import tempfile
 import unittest
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Type
+
 import mock
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_modes_deprecated, comment_mode_off, comment_mode_always, \
-    hide_comments_modes, pull_request_build_modes, punctuation_space
+    fail_on_mode_nothing, comment_modes, comment_mode_always, \
+    pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
 from publish_test_results import get_conclusion, get_commit_sha, get_var, \
-    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, main
-from test import chdir
+    check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
+from test_utils import chdir
+
+test_files_path = pathlib.Path(__file__).resolve().parent / 'files'
 
 event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
@@ -95,7 +102,7 @@ class Test(unittest.TestCase):
                 with self.subTest(fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures):
                     actual = get_conclusion(ParsedUnitTestResults(
                         files=2,
-                        errors=[ParseError(file='file', message='error', line=None, column=None)],
+                        errors=[ParseError(file='file', message='error', exception=ValueError("Invalid value"))],
                         suites=1,
                         suite_tests=4,
                         suite_skipped=1,
@@ -128,6 +135,17 @@ class Test(unittest.TestCase):
         self.assertEqual(get_var('NAME', dict(INPUT_NAME='precedence', NAME='value')), 'precedence')
         self.assertIsNone(get_var('NAME', dict(NAME='')))
 
+    @classmethod
+    def get_settings_no_default_files(cls,
+                                      junit_files_glob=None,
+                                      nunit_files_glob=None,
+                                      xunit_files_glob=None,
+                                      trx_files_glob=None) -> Settings:
+        return cls.get_settings(junit_files_glob=junit_files_glob,
+                                nunit_files_glob=nunit_files_glob,
+                                xunit_files_glob=xunit_files_glob,
+                                trx_files_glob=trx_files_glob)
+
     @staticmethod
     def get_settings(token='token',
                      api_url='http://github.api.url/',
@@ -140,7 +158,10 @@ class Test(unittest.TestCase):
                      commit='commit',
                      fail_on_errors=True,
                      fail_on_failures=True,
-                     files_glob='files',
+                     junit_files_glob='junit-files',
+                     nunit_files_glob='nunit-files',
+                     xunit_files_glob='xunit-files',
+                     trx_files_glob='trx-files',
                      time_factor=1.0,
                      check_name='check name',
                      comment_title='title',
@@ -149,7 +170,6 @@ class Test(unittest.TestCase):
                      compare_earlier=True,
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
-                     hide_comment_mode='off',
                      report_individual_runs=True,
                      dedup_classes_by_file_name=True,
                      ignore_runs=False,
@@ -157,7 +177,7 @@ class Test(unittest.TestCase):
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
-                     json_thousands_separator=punctuation_space):
+                     json_thousands_separator=punctuation_space) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
@@ -172,7 +192,10 @@ class Test(unittest.TestCase):
             json_thousands_separator=json_thousands_separator,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
-            files_glob=files_glob,
+            junit_files_glob=junit_files_glob,
+            nunit_files_glob=nunit_files_glob,
+            xunit_files_glob=xunit_files_glob,
+            trx_files_glob=trx_files_glob,
             time_factor=time_factor,
             check_name=check_name,
             comment_title=comment_title,
@@ -181,7 +204,6 @@ class Test(unittest.TestCase):
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
-            hide_comment_mode=hide_comment_mode,
             report_individual_runs=report_individual_runs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             ignore_runs=ignore_runs,
@@ -234,10 +256,48 @@ class Test(unittest.TestCase):
                     self.do_test_get_settings(GITHUB_RETRIES=retries, expected=None)
                 self.assertIn(f'GITHUB_RETRIES must be a positive integer or 0: {retries}', re.exception.args)
 
-    def test_get_settings_files(self):
-        self.do_test_get_settings(FILES='file', expected=self.get_settings(files_glob='file'))
-        self.do_test_get_settings(FILES='file\nfile2', expected=self.get_settings(files_glob='file\nfile2'))
-        self.do_test_get_settings(FILES=None, expected=self.get_settings(files_glob='*.xml'))
+    def test_get_settings_any_files(self):
+        for junit in [None, 'junit-file']:
+            for nunit in [None, 'nunit-file']:
+                for xunit in [None, 'xunit-file']:
+                    for trx in [None, 'trx-file']:
+                        with self.subTest(junit=junit, nunit=nunit, xunit=xunit, trx=trx):
+                            any_flavour_set = any([flavour is not None for flavour in [junit, nunit, xunit, trx]])
+                            expected = self.get_settings(junit_files_glob=junit if any_flavour_set else '*.xml',
+                                                         nunit_files_glob=nunit,
+                                                         xunit_files_glob=xunit,
+                                                         trx_files_glob=trx)
+                            warnings = None if any_flavour_set else 'At least one of the *_FILES options has to be set! ' \
+                                                                    'Falling back to deprecated default "*.xml"'
+
+                            self.do_test_get_settings(JUNIT_FILES=junit, NUNIT_FILES=nunit, XUNIT_FILES=xunit, TRX_FILES=trx,
+                                                      expected=expected, warning=warnings)
+
+    def test_get_settings_junit_files(self):
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+        # this is the deprecated version of JUNIT_FILES
+        self.do_test_get_settings_no_default_files(JUNIT_FILES='junit-file', FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='junit-file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file', expected=self.get_settings_no_default_files(junit_files_glob='file'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES='file\nfile2', expected=self.get_settings_no_default_files(junit_files_glob='file\nfile2'), warning='Option FILES is deprecated, please use JUNIT_FILES instead!')
+        self.do_test_get_settings_no_default_files(JUNIT_FILES=None, FILES=None, expected=self.get_settings_no_default_files(junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+    def test_get_settings_nunit_files(self):
+        self.do_test_get_settings_no_default_files(NUNIT_FILES='file', expected=self.get_settings_no_default_files(nunit_files_glob='file'))
+        self.do_test_get_settings_no_default_files(NUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(nunit_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(NUNIT_FILES=None, expected=self.get_settings_no_default_files(nunit_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+    def test_get_settings_xunit_files(self):
+        self.do_test_get_settings_no_default_files(XUNIT_FILES='file', expected=self.get_settings_no_default_files(xunit_files_glob='file'))
+        self.do_test_get_settings_no_default_files(XUNIT_FILES='file\nfile2', expected=self.get_settings_no_default_files(xunit_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(XUNIT_FILES=None, expected=self.get_settings_no_default_files(xunit_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
+
+    def test_get_settings_trx_files(self):
+        self.do_test_get_settings_no_default_files(TRX_FILES='file', expected=self.get_settings_no_default_files(trx_files_glob='file'))
+        self.do_test_get_settings_no_default_files(TRX_FILES='file\nfile2', expected=self.get_settings_no_default_files(trx_files_glob='file\nfile2'))
+        self.do_test_get_settings_no_default_files(TRX_FILES=None, expected=self.get_settings_no_default_files(trx_files_glob=None, junit_files_glob='*.xml'), warning='At least one of the *_FILES options has to be set! Falling back to deprecated default "*.xml"')
 
     def test_get_settings_time_unit(self):
         self.do_test_get_settings(TIME_UNIT=None, expected=self.get_settings(time_factor=1.0))
@@ -295,44 +355,19 @@ class Test(unittest.TestCase):
 
     def test_get_settings_check_name(self):
         self.do_test_get_settings(CHECK_NAME='name', expected=self.get_settings(check_name='name'))
-        self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Unit Test Results'))
+        self.do_test_get_settings(CHECK_NAME=None, expected=self.get_settings(check_name='Test Results'))
 
     def test_get_settings_comment_title(self):
-        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME=None, expected=self.get_settings(comment_title='Unit Test Results', check_name='Unit Test Results'))
-        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME=None, expected=self.get_settings(comment_title='title', check_name='Unit Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME=None, expected=self.get_settings(comment_title='Test Results', check_name='Test Results'))
+        self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME=None, expected=self.get_settings(comment_title='title', check_name='Test Results'))
         self.do_test_get_settings(COMMENT_TITLE='title', CHECK_NAME='name', expected=self.get_settings(comment_title='title', check_name='name'))
         self.do_test_get_settings(COMMENT_TITLE=None, CHECK_NAME='name', expected=self.get_settings(comment_title='name', check_name='name'))
 
-    def test_get_settings_comment_on_pr(self):
-        default_comment_mode = comment_mode_always
-        bool_warning = 'Option comment_on_pr has to be boolean, so either "true" or "false": foo'
-        depr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='False', expected=self.get_settings(comment_mode=comment_mode_off), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='True', expected=self.get_settings(comment_mode=default_comment_mode), warning=depr_warning)
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR='foo', expected=self.get_settings(comment_mode=comment_mode_always), warning=[bool_warning, depr_warning])
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
-
     def test_get_settings_comment_mode(self):
-        comment_on_pr_warning = 'Option comment_on_pr is deprecated! Instead, use option "comment_mode" with values "off", "always", "changes", "changes in failures", "changes in errors", "failures" or "errors".'
         for mode in comment_modes:
             with self.subTest(mode=mode):
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode))
-                # comment_on_pr is ignored when comment_mode is given
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=comment_on_pr_warning)
-
-        for mode in comment_modes_deprecated:
-            deprecated_warning = f'Value "{mode}" for option comment_mode is deprecated! Instead, use value "always".'
-            with self.subTest(mode=mode):
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=mode), warning=deprecated_warning)
-                # comment_on_pr is ignored when comment_mode is given
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='true', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
-                self.do_test_get_settings(COMMENT_MODE=mode, COMMENT_ON_PR='false', expected=self.get_settings(comment_mode=mode), warning=[comment_on_pr_warning, deprecated_warning])
-
-        self.do_test_get_settings(COMMENT_MODE=None, COMMENT_ON_PR=None, expected=self.get_settings(comment_mode=comment_mode_always))
+                self.do_test_get_settings(COMMENT_MODE=mode, expected=self.get_settings(comment_mode=mode))
+        self.do_test_get_settings(COMMENT_MODE=None, expected=self.get_settings(comment_mode=comment_mode_always))
 
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
@@ -344,7 +379,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='False', expected=self.get_settings(compare_earlier=False))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='true', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='True', expected=self.get_settings(compare_earlier=True))
-        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning)
+        self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
     def test_get_settings_job_summary(self):
@@ -353,18 +388,8 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JOB_SUMMARY='False', expected=self.get_settings(job_summary=False))
         self.do_test_get_settings(JOB_SUMMARY='true', expected=self.get_settings(job_summary=True))
         self.do_test_get_settings(JOB_SUMMARY='True', expected=self.get_settings(job_summary=True))
-        self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning)
+        self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
-
-    def test_get_settings_hide_comment(self):
-        for mode in hide_comments_modes:
-            with self.subTest(mode=mode):
-                self.do_test_get_settings(HIDE_COMMENTS=mode, expected=self.get_settings(hide_comment_mode=mode))
-        self.do_test_get_settings(HIDE_COMMENTS=None, expected=self.get_settings(hide_comment_mode='all but latest'))
-
-        with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(HIDE_COMMENTS='hide')
-        self.assertEqual("Value 'hide' is not supported for variable HIDE_COMMENTS, expected: off, all but latest, orphaned commits", str(re.exception))
 
     def test_get_settings_report_individual_runs(self):
         warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'
@@ -372,7 +397,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='False', expected=self.get_settings(report_individual_runs=False))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='true', expected=self.get_settings(report_individual_runs=True))
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='True', expected=self.get_settings(report_individual_runs=True))
-        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning)
+        self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
     def test_get_settings_dedup_classes_by_file_name(self):
@@ -381,7 +406,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='False', expected=self.get_settings(dedup_classes_by_file_name=False))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='true', expected=self.get_settings(dedup_classes_by_file_name=True))
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='True', expected=self.get_settings(dedup_classes_by_file_name=True))
-        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning)
+        self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
     def test_get_settings_ignore_runs(self):
@@ -390,7 +415,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False))
         self.do_test_get_settings(IGNORE_RUNS='true', expected=self.get_settings(ignore_runs=True))
         self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True))
-        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning)
+        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
 
     def test_get_settings_check_run_annotations(self):
@@ -442,10 +467,24 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(GITHUB_REPOSITORY=None)
         self.assertEqual('GitHub repository must be provided via action input or environment variable GITHUB_REPOSITORY', str(re.exception))
 
+    def do_test_get_settings_no_default_files(self,
+                                              event: dict = {},
+                                              gha: Optional[GithubAction] = None,
+                                              warning: Optional[Union[str, List[str]]] = None,
+                                              expected: Settings = get_settings.__func__(),
+                                              **kwargs):
+        options = dict(**kwargs)
+        for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']:
+            if f'{flavour}_FILES' not in kwargs:
+                options[f'{flavour}_FILES'] = None
+
+        self.do_test_get_settings(event, gha, warning=warning, expected=expected, **options)
+
     def do_test_get_settings(self,
                              event: dict = {},
                              gha: Optional[GithubAction] = None,
                              warning: Optional[Union[str, List[str]]] = None,
+                             exception: Optional[Type[Exception]] = None,
                              expected: Settings = get_settings.__func__(),
                              **kwargs):
         event = event.copy()
@@ -465,15 +504,17 @@ class Test(unittest.TestCase):
                 GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
                 GITHUB_RETRIES='2',
                 TEST_CHANGES_LIMIT='10',  # not an int
-                CHECK_NAME='check name',  # defaults to 'Unit Test Results'
+                CHECK_NAME='check name',  # defaults to 'Test Results'
                 GITHUB_TOKEN='token',
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
-                FILES='files',
+                JUNIT_FILES='junit-files',
+                NUNIT_FILES='nunit-files',
+                XUNIT_FILES='xunit-files',
+                TRX_FILES='trx-files',
                 COMMENT_TITLE='title',  # defaults to check name
                 COMMENT_MODE='always',
                 JOB_SUMMARY='true',
-                HIDE_COMMENTS='off',  # defaults to 'all but latest'
                 REPORT_INDIVIDUAL_RUNS='true',  # false unless 'true'
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
                 # annotations config tested in test_get_annotations_config*
@@ -492,6 +533,13 @@ class Test(unittest.TestCase):
             with mock.patch('publish_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
+
+                if exception:
+                    with self.assertRaises(exception) as e:
+                        get_settings(options, gha)
+                    self.assertEqual((warning, ), e.exception.args)
+                    return None
+
                 actual = get_settings(options, gha)
                 m.assert_called_once_with(options, event)
                 if warning:
@@ -750,6 +798,81 @@ class Test(unittest.TestCase):
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
 
+    def test_parse_files(self):
+        gha = mock.MagicMock()
+        settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                                     nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
+                                     xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
+                                     trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
+        actual = parse_files(settings, gha)
+
+        self.assertEqual([], gha.method_calls)
+
+        self.assertEqual(66, actual.files)
+        self.assertEqual(6, len(actual.errors))
+        self.assertEqual(357, actual.suites)
+        self.assertEqual(1928, actual.suite_tests)
+        self.assertEqual(106, actual.suite_skipped)
+        self.assertEqual(225, actual.suite_failures)
+        self.assertEqual(8, actual.suite_errors)
+        self.assertEqual(3964, actual.suite_time)
+        self.assertEqual(1916, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+
+        with io.StringIO() as string:
+            gha = GithubAction(file=string)
+            with mock.patch('publish.github_action.logger') as m:
+                log_parse_errors(actual.errors, gha)
+            self.assertEqual(
+                sorted([
+                    "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
+                    "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
+                    "::error::Exception: File is empty.",
+                    "::error file=empty.xml::Error processing result file: File is empty.",
+                    "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
+                    "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
+                    "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
+                    "::error file=non-junit.xml::Error processing result file: Invalid format.",
+                    "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
+                    "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
+                    "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
+                    "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line)) for line in string.getvalue().split(os.linesep) if line])
+            )
+            # self.assertEqual([], m.method_calls)
+
+    def test_parse_files_no_matches(self):
+        gha = mock.MagicMock()
+        with tempfile.TemporaryDirectory() as path:
+            missing_junit = str(pathlib.Path(path) / 'junit-not-there')
+            missing_nunit = str(pathlib.Path(path) / 'nunit-not-there')
+            missing_xunit = str(pathlib.Path(path) / 'xunit-not-there')
+            missing_trx = str(pathlib.Path(path) / 'trx-not-there')
+            settings = self.get_settings(junit_files_glob=missing_junit,
+                                         nunit_files_glob=missing_nunit,
+                                         xunit_files_glob=missing_xunit,
+                                         trx_files_glob=missing_trx)
+        actual = parse_files(settings, gha)
+
+        gha.warning.assert_has_calls([
+            mock.call(f'Could not find any files for {missing_junit}'),
+            mock.call(f'Could not find any files for {missing_nunit}'),
+            mock.call(f'Could not find any files for {missing_xunit}'),
+            mock.call(f'Could not find any files for {missing_trx}')
+        ])
+        gha.error.assert_not_called()
+
+        self.assertEqual(0, actual.files)
+        self.assertEqual(0, len(actual.errors))
+        self.assertEqual(0, actual.suites)
+        self.assertEqual(0, actual.suite_tests)
+        self.assertEqual(0, actual.suite_skipped)
+        self.assertEqual(0, actual.suite_failures)
+        self.assertEqual(0, actual.suite_errors)
+        self.assertEqual(0, actual.suite_time)
+        self.assertEqual(0, len(actual.cases))
+        self.assertEqual('commit', actual.commit)
+
     def test_throttle_gh_request_raw(self):
         logging.root.level = logging.getLevelName('INFO')
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)5s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
@@ -834,8 +957,66 @@ class Test(unittest.TestCase):
                 m.side_effect = do_raise
                 main(settings, gha)
 
-            gha.warning.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
-                                                'It cannot do anything useful like creating check runs or pull request '
-                                                'comments. To run the action on fork repository pull requests, see '
-                                                'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
-                                                '/README.md#support-fork-repositories-and-dependabot-branches')
+            gha.warning.assert_has_calls([
+                mock.call('This action is running on a pull_request event for a fork repository. '
+                          'It cannot do anything useful like creating check runs or pull request '
+                          'comments. To run the action on fork repository pull requests, see '
+                          'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
+                          '/README.md#support-fork-repositories-and-dependabot-branches'),
+                mock.call('At least one of the *_FILES options has to be set! '
+                          'Falling back to deprecated default "*.xml"')
+            ], any_order=True)
+
+    def test_check_var(self):
+        with self.assertRaises(RuntimeError) as e:
+            check_var(None, 'var', 'Option')
+        self.assertEqual(('Option must be provided via action input or environment variable var', ), e.exception.args)
+
+        check_var('value', 'var', 'Option', ['value', 'val'])
+        check_var('value', 'var', 'Option', ['value', 'val'], ['deprecated', 'dep'])
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var('deprecated', 'var', 'Option', ['value', 'val'])
+        self.assertEqual(("Value 'deprecated' is not supported for variable var, expected: value, val", ), e.exception.args)
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var(['value', 'deprecated', 'dep', 'val'], 'var', 'Option', ['value', 'val'])
+        self.assertEqual(("Some values in 'value, deprecated, dep, val' are not supported for variable var, "
+                          "allowed: value, val", ), e.exception.args)
+
+    def test_check_var_condition(self):
+        check_var_condition(True, 'message')
+
+        with self.assertRaises(RuntimeError) as e:
+            check_var_condition(False, 'message')
+        self.assertEqual(("message", ), e.exception.args)
+
+    def test_deprecate_var(self):
+        gha = mock.MagicMock()
+        deprecate_var(None, 'deprecated_var', 'replacement', gha)
+        gha.assert_not_called()
+
+        deprecate_var('set', 'deprecated_var', 'replacement', gha)
+        gha.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
+
+        with mock.patch('publish_test_results.logger') as l:
+            deprecate_var('set', 'deprecated_var', 'replacement', None)
+            l.warning.assert_called_once_with('Option deprecated_var is deprecated! replacement')
+
+    def test_deprecate_val(self):
+        gha = mock.MagicMock()
+        deprecate_val(None, 'deprecated_var', {}, gha)
+        gha.assert_not_called()
+
+        deprecate_val('set', 'deprecated_var', {'deprecated': 'replace'}, gha)
+        gha.assert_not_called()
+
+        deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
+        gha.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')
+
+        with mock.patch('publish_test_results.logger') as l:
+            deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, gha)
+            l.assert_not_called()
+
+            deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, None)
+            l.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')

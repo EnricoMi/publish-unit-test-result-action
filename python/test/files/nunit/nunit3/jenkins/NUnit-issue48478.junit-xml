@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="3" failures="0" skipped="0" time="17.849036">
+  
+  
+  <testsuite tests="3" failures="0" skipped="0" time="17.849036" timestamp="2017-12-15 18:14:36Z" name="C:/Project/Assemblies/testrunner.exe">
+    
+    
+    
+    <testsuite tests="3" failures="0" skipped="0" time="17.834111" timestamp="2017-12-15 18:14:36Z" name="NS">
+      <testsuite tests="3" failures="0" skipped="0" time="17.833326" timestamp="2017-12-15 18:14:36Z" name="NS.APP">
+        <testsuite tests="3" failures="0" skipped="0" time="17.833314" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat">
+          <testsuite tests="3" failures="0" skipped="0" time="17.833307" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat.TestIntegration">
+            <testsuite tests="2" failures="0" skipped="0" time="11.630328" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat.TestIntegration.TestGetData">
+              <testcase name="TestAllRawData" classname="" status="Passed" time="11.129426">
+                <system-out>Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+Checking 241 log ids
+</system-out>
+              </testcase>
+              <testcase name="TestFirst10RawData" classname="" status="Passed" time="0.482340">
+                <system-out>Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+Checking 10 log ids
+</system-out>
+              </testcase>
+            </testsuite>
+            <testsuite tests="1" failures="0" skipped="0" time="6.196414" timestamp="2017-12-15 18:14:48Z" name="NS.APP.Wombat.TestIntegration.TestGetCurveInfo">
+              <testcase name="TestAllInfo" classname="" status="Passed" time="6.195858">
+                <system-out>Connecting to Wombat Database
+    Project Filename : C:\Data\example.dat
+    Licence Server   : LICSERVER
+    Author           : AUTHOR
+    Subset      :  
+</system-out>
+              </testcase>
+            </testsuite>
+          </testsuite>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

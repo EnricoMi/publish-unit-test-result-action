@@ -1,0 +1,17 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[
+    publish.unittestresults.ParseError(
+      file='non-junit.xml',
+      message='Invalid format.',
+      exception=junitparser.junitparser.JUnitXmlError('Invalid format.')
+    )
+  ],
+  suites=0,
+  suite_tests=0,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=0,
+  cases=[]
+)

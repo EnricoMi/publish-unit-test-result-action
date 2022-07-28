@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies>
+	<assembly name="Test.exe" environment="OS: Microsoft Windows NT 6.2.9200.0" run-date="2018-38-06" run-time="02:38:04" test-framework="Test Framework 0.1" total="1" passed="0" failed="1" skipped="0" errors="0">
+		<collection name="collection1" time="36.7820544" total="1" passed="0" failed="1" skipped="0">
+			<test name="collection1\test.xml" type="" method="" time="36.7820544" result="Fail">
+				<failure>
+					<message>OK: TestProcess.Execution.ExitCode == 0&#xD;
+FAIL: Output differs from reference.&#xD;
+  Left:  data\ref&#xD;
+  Right: results\out&#xD;
+  &#xD;
+                    </message>
+				</failure>
+			</test>
+		</collection>
+	</assembly>
+</assemblies>

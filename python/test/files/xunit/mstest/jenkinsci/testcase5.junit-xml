@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="C:\jenkins\workspace\Pipeline-Test-Client\UnitTest.DLL" tests="5" failures="0" errors="0" time="92.728" skipped="0" timestamp="2018-06-15T18:07:56">
+    <testsuite name="Test collection for UnitTest.UnitTest" tests="5" failures="0" time="92.327" skipped="0">
+      <testcase name="UninstallApplicationIfInstalled" time="48.3914131" classname="UnitTest.UnitTest"/>
+      <testcase name="InstallApplication" time="33.1446488" classname="UnitTest.UnitTest"/>
+      <testcase name="CheckIfAllFilesAreThere" time="3.0399824" classname="UnitTest.UnitTest"/>
+      <testcase name="CheckIfFilesWereSinged" time="4.7233194" classname="UnitTest.UnitTest"/>
+      <testcase name="CheckIfAppIsRunning" time="3.0279026" classname="UnitTest.UnitTest"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

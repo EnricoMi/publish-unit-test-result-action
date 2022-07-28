@@ -2,9 +2,9 @@ import pathlib
 import unittest
 
 import yaml
-import os
 
-project_root = pathlib.Path(__file__).parent.parent.parent
+project_root = pathlib.Path(__file__).resolve().parent.parent.parent
+
 
 class TestActionYml(unittest.TestCase):
 

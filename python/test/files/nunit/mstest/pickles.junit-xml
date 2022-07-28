@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="4" failures="1" skipped="0" errors="0">
+  
+  
+  <testsuite time="0.732" name="c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\bin\Debug\Pickles.TestHarness.NUnit.dll">
+    
+      <testsuite time="0.725" name="Pickles">
+        
+          <testsuite time="0.725" name="Pickles.TestHarness">
+            
+              <testsuite time="0.724" name="Pickles.TestHarness.AdditionFeature">
+                
+                  <testsuite time="0.157" name="Pickles.TestHarness.AddingSeveralNumbers">
+                    
+                      
+                    
+                    
+                      <testcase name="Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers(&quot;60&quot;,&quot;70&quot;,&quot;130&quot;,System.String[])" classname="" status="Success" time="0.137"/>
+                      <testcase name="Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers(&quot;40&quot;,&quot;50&quot;,&quot;90&quot;,System.String[])" classname="" status="Success" time="0.009"/>
+                    
+                  </testsuite>
+                  <testcase name="Pickles.TestHarness.AdditionFeature.AddTwoNumbers" classname="" status="Success" time="0.004">
+                    
+                      
+                    
+                  </testcase>
+                  <testcase name="Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers" classname="" status="Failure" time="0.028">
+                    
+                      
+                    
+                    <failure message="">
+                        at Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 result) in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Steps.cs:line 26
+at lambda_method(Closure , IContextManager , Int32 )
+at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan&amp; duration)
+at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan&amp; duration)
+at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)
+at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(StepArgs stepArgs)
+at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep()
+at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()
+at Pickles.TestHarness.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Addition.feature.cs:line 0
+at Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.NUnit\Addition.feature:line 18
+
+                      </failure>
+                  </testcase>
+                
+              </testsuite>
+            
+          </testsuite>
+        
+      </testsuite>
+    
+  </testsuite>
+</testsuites>

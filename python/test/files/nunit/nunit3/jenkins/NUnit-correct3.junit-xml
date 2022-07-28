@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="22" failures="0" skipped="0" errors="0">
+    
+    
+    <testsuite time="294.050" name="C:\Users\Ruslan\Src\Codeplex\be\BlogEngine\BlogEngine.Tests\bin\Debug\BlogEngine.Tests.dll">
+        
+            <testsuite time="294.050" name="BlogEngine">
+                
+                    <testsuite time="294.050" name="BlogEngine.Tests">
+                        
+                            <testsuite time="3.828" name="BlogEngine.Tests.Account">
+                                
+                                    <testsuite time="3.828" name="BlogEngine.Tests.Account.Login">
+                                        
+                                            <testcase name="BlogEngine.Tests.Account.Login.InvalidLoginShouldFail" classname="" status="Success" time="1.219"/>
+                                            <testcase name="BlogEngine.Tests.Account.Login.ValidLoginShouldPass" classname="" status="Success" time="1.047"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="19.142" name="BlogEngine.Tests.Comments">
+                                
+                                    <testsuite time="19.142" name="BlogEngine.Tests.Comments.Comment">
+                                        
+                                            <testcase name="BlogEngine.Tests.Comments.Comment.CanAddUpdateAndDeleteComment" classname="" status="Success" time="16.392"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="62.160" name="BlogEngine.Tests.FileSystem">
+                                
+                                    <testsuite time="62.160" name="BlogEngine.Tests.FileSystem.Crud">
+                                        
+                                            <testcase name="BlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppCodeDirectory" classname="" status="Success" time="60.395">
+                                                
+                                                    
+                                                    
+                                                
+                                            </testcase>
+                                            <testcase name="BlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppDataDirectory" classname="" status="Success" time="0.016">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="9.704" name="BlogEngine.Tests.Navigation">
+                                
+                                    <testsuite time="4.360" name="BlogEngine.Tests.Navigation.CustomPages">
+                                        
+                                            <testcase name="BlogEngine.Tests.Navigation.CustomPages.CanNavigateToCustomAspxPage" classname="" status="Success" time="0.578">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                            <testcase name="BlogEngine.Tests.Navigation.CustomPages.CanNavigateToDefaultAspxPageInSubDiretory" classname="" status="Success" time="1.375">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                        
+                                    </testsuite>
+                                    <testsuite time="2.578" name="BlogEngine.Tests.Navigation.SubBlog">
+                                        
+                                            <testcase name="BlogEngine.Tests.Navigation.SubBlog.MyTest" classname="" status="Success" time="0.000">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                        
+                                    </testsuite>
+                                    <testsuite time="2.719" name="BlogEngine.Tests.Navigation.SubBlogAggregation">
+                                        
+                                            <testcase name="BlogEngine.Tests.Navigation.SubBlogAggregation.MyTest" classname="" status="Success" time="0.000">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="53.739" name="BlogEngine.Tests.Packaging">
+                                
+                                    <testsuite time="53.739" name="BlogEngine.Tests.Packaging.Installer">
+                                        
+                                            <testcase name="BlogEngine.Tests.Packaging.Installer.CanInstallAndUninstallTheme" classname="" status="Success" time="51.051">
+                                                
+                                                    
+                                                    
+                                                
+                                            </testcase>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="36.033" name="BlogEngine.Tests.Posts">
+                                
+                                    <testsuite time="36.033" name="BlogEngine.Tests.Posts.Post">
+                                        
+                                            <testcase name="BlogEngine.Tests.Posts.Post.CanCreateAndDeletePost" classname="" status="Success" time="33.346"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="31.158" name="BlogEngine.Tests.QuickNotes">
+                                
+                                    <testsuite time="7.641" name="BlogEngine.Tests.QuickNotes.Crud">
+                                        
+                                            <testcase name="BlogEngine.Tests.QuickNotes.Crud.ShouldBeAbleToCreateUpdateAndDeleteNote" classname="" status="Success" time="6.203"/>
+                                        
+                                    </testsuite>
+                                    <testsuite time="11.219" name="BlogEngine.Tests.QuickNotes.Navigation">
+                                        
+                                            <testcase name="BlogEngine.Tests.QuickNotes.Navigation.AdminShouldSeeQuickNotesPanel" classname="" status="Success" time="1.719"/>
+                                            <testcase name="BlogEngine.Tests.QuickNotes.Navigation.AnonymousUserShouldNotSeeQuickNotesPanel" classname="" status="Success" time="1.063"/>
+                                            <testcase name="BlogEngine.Tests.QuickNotes.Navigation.ShouldBeAbleBrowseThroughTabs" classname="" status="Success" time="5.032"/>
+                                        
+                                    </testsuite>
+                                    <testsuite time="12.266" name="BlogEngine.Tests.QuickNotes.Posting">
+                                        
+                                            <testcase name="BlogEngine.Tests.QuickNotes.Posting.PublishQuickNoteAsPost" classname="" status="Success" time="10.219"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="54.315" name="BlogEngine.Tests.Quixote">
+                                
+                                    <testsuite time="54.315" name="BlogEngine.Tests.Quixote.Runner">
+                                        
+                                            <testcase name="BlogEngine.Tests.Quixote.Runner.RunAvatarTests" classname="" status="Success" time="1.813">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                            <testcase name="BlogEngine.Tests.Quixote.Runner.RunPackagingTests" classname="" status="Success" time="16.204">
+                                                
+                                                    
+                                                    
+                                                
+                                            </testcase>
+                                            <testcase name="BlogEngine.Tests.Quixote.Runner.RunPagerTests" classname="" status="Success" time="23.095">
+                                                
+                                                    
+                                                
+                                            </testcase>
+                                            <testcase name="BlogEngine.Tests.Quixote.Runner.RunUrlRewriteNoExtensionsTests" classname="" status="Success" time="3.188"/>
+                                            <testcase name="BlogEngine.Tests.Quixote.Runner.RunUrlRewriteTests" classname="" status="Success" time="8.000"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                            <testsuite time="23.721" name="BlogEngine.Tests.Users">
+                                
+                                    <testsuite time="23.721" name="BlogEngine.Tests.Users.AuthorProfile">
+                                        
+                                            <testcase name="BlogEngine.Tests.Users.AuthorProfile.CanAddUpdateAndDeleteUserProfile" classname="" status="Success" time="22.049"/>
+                                        
+                                    </testsuite>
+                                
+                            </testsuite>
+                        
+                    </testsuite>
+                
+            </testsuite>
+        
+    </testsuite>
+</testsuites>

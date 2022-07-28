@@ -7,10 +7,10 @@ from publish.unittestresults import get_test_results, get_stats, get_stats_delta
     ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
     UnitTestCase, UnitTestResults, UnitTestCaseResults, \
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
-from test import d, n
+from test_utils import d, n
 
-errors = [ParseError('file', 'error', None, None)]
-errors_dict = [dataclasses.asdict(e) for e in errors]
+errors = [ParseError('file', 'error', exception=ValueError("Invalid value"))]
+errors_dict = [dataclasses.asdict(e.without_exception()) for e in errors]
 
 
 def create_unit_test_run_results(files=1,
@@ -64,20 +64,27 @@ class TestUnitTestResults(unittest.TestCase):
         error.code = 123
         error.position = (1, 2)
         actual = ParseError.from_exception('file', error)
-        expected = ParseError('file', 'xml parse error', 1, 2)
+        expected = ParseError('file', 'xml parse error', 1, 2, exception=error)
         self.assertEqual(expected, actual)
 
     def test_parse_error_from_file_not_found(self):
         error = FileNotFoundError(2, 'No such file or directory')
         error.filename = 'some file path'
         actual = ParseError.from_exception('file', error)
-        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'", None, None)
+        expected = ParseError('file', "[Errno 2] No such file or directory: 'some file path'", exception=error)
         self.assertEqual(expected, actual)
 
     def test_parse_error_from_error(self):
-        actual = ParseError.from_exception('file', ValueError('error'))
-        expected = ParseError('file', 'error', None, None)
+        error = ValueError('error')
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', 'error', exception=error)
         self.assertEqual(expected, actual)
+
+    def test_parse_error_with_exception(self):
+        error = ValueError('error')
+        actual = ParseError.from_exception('file', error)
+        expected = ParseError('file', 'error', exception=None)
+        self.assertEqual(expected, actual.without_exception())
 
     def test_parsed_unit_test_results_with_commit(self):
         self.assertEqual(
@@ -111,6 +118,16 @@ class TestUnitTestResults(unittest.TestCase):
                 ]
             ).with_commit('commit sha')
         )
+
+    def test_unit_test_run_results_without_exception(self):
+        results = create_unit_test_run_results(errors=errors)
+        self.assertEqual(create_unit_test_run_results(errors=[error.without_exception() for error in errors]),
+                         results.without_exceptions())
+
+    def test_unit_test_run_delta_results_without_exception(self):
+        results = create_unit_test_run_delta_results(errors=errors)
+        self.assertEqual(create_unit_test_run_delta_results(errors=[error.without_exception() for error in errors]),
+                         results.without_exceptions())
 
     def test_unit_test_run_results_to_dict(self):
         actual = UnitTestRunResults(
@@ -436,7 +453,7 @@ class TestUnitTestResults(unittest.TestCase):
             commit='commit'
         ), UnitTestRunResults(
             files=3,
-            errors=[ParseError('other file', 'other error', None, None)],
+            errors=[ParseError('other file', 'other error')],
             suites=5,
             duration=7,
 

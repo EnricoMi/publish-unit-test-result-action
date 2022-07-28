@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Users\Ruslan\Src\Codeplex\be\BlogEngine\BlogEngine.Tests\bin\Debug\BlogEngine.Tests.dll" total="22" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-04-18" time="22:29:49">
+    <environment nunit-version="2.5.10.11092" clr-version="2.0.50727.6400" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Users\Ruslan\Src\Codeplex\be\lib\nunit\runner" machine-name="RTUR-RUS" user="Ruslan" user-domain="RTUR-RUS" />
+    <culture-info current-culture="en-US" current-uiculture="en-US" />
+    <test-suite type="Assembly" name="C:\Users\Ruslan\Src\Codeplex\be\BlogEngine\BlogEngine.Tests\bin\Debug\BlogEngine.Tests.dll" executed="True" result="Success" success="True" time="294.050" asserts="0">
+        <results>
+            <test-suite type="Namespace" name="BlogEngine" executed="True" result="Success" success="True" time="294.050" asserts="0">
+                <results>
+                    <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="294.050" asserts="0">
+                        <results>
+                            <test-suite type="Namespace" name="Account" executed="True" result="Success" success="True" time="3.828" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Login" executed="True" result="Success" success="True" time="3.828" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Account.Login.InvalidLoginShouldFail" executed="True" result="Success" success="True" time="1.219" asserts="1" />
+                                            <test-case name="BlogEngine.Tests.Account.Login.ValidLoginShouldPass" executed="True" result="Success" success="True" time="1.047" asserts="1" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Comments" executed="True" result="Success" success="True" time="19.142" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Comment" executed="True" result="Success" success="True" time="19.142" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Comments.Comment.CanAddUpdateAndDeleteComment" executed="True" result="Success" success="True" time="16.392" asserts="4" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="FileSystem" executed="True" result="Success" success="True" time="62.160" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Crud" executed="True" result="Success" success="True" time="62.160" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppCodeDirectory" executed="True" result="Success" success="True" time="60.395" asserts="2">
+                                                <categories>
+                                                    <category name="slow" />
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                            <test-case name="BlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppDataDirectory" executed="True" result="Success" success="True" time="0.016" asserts="2">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Navigation" executed="True" result="Success" success="True" time="9.704" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="CustomPages" executed="True" result="Success" success="True" time="4.360" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Navigation.CustomPages.CanNavigateToCustomAspxPage" executed="True" result="Success" success="True" time="0.578" asserts="1">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                            <test-case name="BlogEngine.Tests.Navigation.CustomPages.CanNavigateToDefaultAspxPageInSubDiretory" executed="True" result="Success" success="True" time="1.375" asserts="2">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="TestFixture" name="SubBlog" executed="True" result="Success" success="True" time="2.578" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Navigation.SubBlog.MyTest" executed="True" result="Success" success="True" time="0.000" asserts="1">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="TestFixture" name="SubBlogAggregation" executed="True" result="Success" success="True" time="2.719" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Navigation.SubBlogAggregation.MyTest" executed="True" result="Success" success="True" time="0.000" asserts="1">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Packaging" executed="True" result="Success" success="True" time="53.739" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Installer" executed="True" result="Success" success="True" time="53.739" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Packaging.Installer.CanInstallAndUninstallTheme" executed="True" result="Success" success="True" time="51.051" asserts="2">
+                                                <categories>
+                                                    <category name="online" />
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Posts" executed="True" result="Success" success="True" time="36.033" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Post" executed="True" result="Success" success="True" time="36.033" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Posts.Post.CanCreateAndDeletePost" executed="True" result="Success" success="True" time="33.346" asserts="5" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="QuickNotes" executed="True" result="Success" success="True" time="31.158" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Crud" executed="True" result="Success" success="True" time="7.641" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.QuickNotes.Crud.ShouldBeAbleToCreateUpdateAndDeleteNote" executed="True" result="Success" success="True" time="6.203" asserts="4" />
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="TestFixture" name="Navigation" executed="True" result="Success" success="True" time="11.219" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.QuickNotes.Navigation.AdminShouldSeeQuickNotesPanel" executed="True" result="Success" success="True" time="1.719" asserts="1" />
+                                            <test-case name="BlogEngine.Tests.QuickNotes.Navigation.AnonymousUserShouldNotSeeQuickNotesPanel" executed="True" result="Success" success="True" time="1.063" asserts="1" />
+                                            <test-case name="BlogEngine.Tests.QuickNotes.Navigation.ShouldBeAbleBrowseThroughTabs" executed="True" result="Success" success="True" time="5.032" asserts="4" />
+                                        </results>
+                                    </test-suite>
+                                    <test-suite type="TestFixture" name="Posting" executed="True" result="Success" success="True" time="12.266" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.QuickNotes.Posting.PublishQuickNoteAsPost" executed="True" result="Success" success="True" time="10.219" asserts="3" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Quixote" executed="True" result="Success" success="True" time="54.315" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="Runner" executed="True" result="Success" success="True" time="54.315" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Quixote.Runner.RunAvatarTests" executed="True" result="Success" success="True" time="1.813" asserts="2">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                            <test-case name="BlogEngine.Tests.Quixote.Runner.RunPackagingTests" executed="True" result="Success" success="True" time="16.204" asserts="2">
+                                                <categories>
+                                                    <category name="online" />
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                            <test-case name="BlogEngine.Tests.Quixote.Runner.RunPagerTests" executed="True" result="Success" success="True" time="23.095" asserts="2">
+                                                <categories>
+                                                    <category name="primary" />
+                                                </categories>
+                                            </test-case>
+                                            <test-case name="BlogEngine.Tests.Quixote.Runner.RunUrlRewriteNoExtensionsTests" executed="True" result="Success" success="True" time="3.188" asserts="2" />
+                                            <test-case name="BlogEngine.Tests.Quixote.Runner.RunUrlRewriteTests" executed="True" result="Success" success="True" time="8.000" asserts="2" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                            <test-suite type="Namespace" name="Users" executed="True" result="Success" success="True" time="23.721" asserts="0">
+                                <results>
+                                    <test-suite type="TestFixture" name="AuthorProfile" executed="True" result="Success" success="True" time="23.721" asserts="0">
+                                        <results>
+                                            <test-case name="BlogEngine.Tests.Users.AuthorProfile.CanAddUpdateAndDeleteUserProfile" executed="True" result="Success" success="True" time="22.049" asserts="26" />
+                                        </results>
+                                    </test-suite>
+                                </results>
+                            </test-suite>
+                        </results>
+                    </test-suite>
+                </results>
+            </test-suite>
+        </results>
+    </test-suite>
+</test-results>

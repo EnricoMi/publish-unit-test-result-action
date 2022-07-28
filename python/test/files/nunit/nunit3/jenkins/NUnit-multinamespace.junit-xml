@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="4" failures="1" skipped="0">
+  
+  
+  <testsuite time="0.404" name="/home/erik/coding/test/nunittests/Tests.dll">
+    
+      <testsuite time="0.393" name="UnitTests">
+        
+          <testsuite time="0.289" name="UnitTests.MainClassTest">
+            
+              <testcase name="UnitTests.MainClassTest.TestPropertyValue" classname="" time="0.146"/>
+              <testcase name="UnitTests.MainClassTest.TestMethodUpdateValue" classname="" time="0.001"/>
+              <testcase name="UnitTests.MainClassTest.TestFailure" classname="" time="0.092"/>
+            
+          </testsuite>
+        
+      </testsuite>
+      <testsuite time="0.001" name="AnotherNS">
+        
+          <testsuite time="0.001" name="AnotherNS.OtherMainClassTest">
+            
+              <testcase name="AnotherNS.OtherMainClassTest.TestPropertyValueAgain" classname="" time="0.001"/>
+            
+          </testsuite>
+        
+      </testsuite>
+    
+  </testsuite>
+</testsuites>

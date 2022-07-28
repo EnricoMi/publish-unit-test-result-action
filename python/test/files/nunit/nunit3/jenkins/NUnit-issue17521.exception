@@ -1,0 +1,1 @@
+ParseError: file='files/nunit/nunit3/jenkins/NUnit-issue17521.xml', message='Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)', line=None, column=None, exception=XMLSyntaxError('Char 0x0 out of allowed range, line 33, column 16')

@@ -9,20 +9,28 @@
 ![Ubuntu badge](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label)
 ![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
 ![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
+&nbsp;&nbsp;&nbsp;
+![JUnit badge](https://badgen.net/badge/JUnit/XML/green)
+![NUnit badge](https://badgen.net/badge/NUnit/XML/green)
+![XUnit badge](https://badgen.net/badge/XUnit/XML/green)
+![TRX badge](https://badgen.net/badge/TRX/OK/green)
 
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
 
 This [GitHub Action](https://github.com/actions) analyses test result files and
-publishes the results on GitHub. It supports the JUnit XML file format and runs on Linux, macOS and Windows.
+publishes the results on GitHub. It supports the TRX file format and JUnit, NUnit and XUnit XML formats, and runs on Linux, macOS and Windows.
 
 You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/junit/**/*.xml"
+    nunit_files: "test-results/nunit/**/*.xml"
+    xunit_files: "test-results/xunit/**/*.xml"
+    trx_files: "test-results/**/*.trx"
 ```
 
 Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
@@ -30,10 +38,13 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+  uses: EnricoMi/publish-unit-test-result-action/composite@v2
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/junit/**/*.xml"
+    nunit_files: "test-results/nunit/**/*.xml"
+    xunit_files: "test-results/xunit/**/*.xml"
+    trx_files: "test-results/**/*.trx"
 ```
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
@@ -45,6 +56,51 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 ***Note:** This action does not fail if tests failed. The action that executed the tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
+
+## What is new in version 2
+
+<details>
+<summary>These changes have to be considered when moving from version 1 to version 2:</summary>
+
+### Default value for `check_name` changed
+Unless `check_name` is set in your config, the check name used to publish test results changes from `"Unit Test Results"` to `"Test Results"`.
+
+**Impact:**
+The check with the old name will not be updated once moved to version 2.
+
+**Workaround to get version 1 behaviour:**
+Add `check_name: "Unit Test Results"` to your config.
+
+### Default value for `comment_title` changed
+Unless `comment_title` or `check_name` are set in your config, the title used to comment on open pull requests changes from `"Unit Test Results"` to `"Test Results"`.
+
+**Impact:**
+Existing comments with the old title will not be updated once moved to version 2, but a new comment is created.
+
+**Workaround to get version 1 behaviour:**
+See workaround for `check_name`.
+
+### Modes `create new` and `update last` removed for option `comment_mode`
+The action always updates an earlier pull request comment, which is the exact behaviour of mode `update last`.
+The configuration options `create new` and `update last` are therefore removed.
+
+**Impact:**
+An existing pull request comment is always updated.
+
+**Workaround to get version 1 behaviour:**
+Not supported.
+
+### Option `hiding_comments` removed
+The action always updates an earlier pull request comment, so hiding comments is not required anymore.
+
+### Option `comment_on_pr` removed
+Option `comment_on_pr` has been removed.
+
+**Workaround to get version 1 behaviour:**
+Set `comment_mode` to `always` (the default) or `off`.
+
+</details>
+
 
 ## Publishing test results
 
@@ -156,16 +212,18 @@ With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Configuration
 
-Files can be selected via the `files` option, which is optional and defaults to `*.xml` in the current working directory.
-[It supports wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
+Files can be selected via the `junit_files`, `xunit_files`, and `trx_files` options.
+They support [glob wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
 The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
+
+At least one of `junit_files`, `xunit_files`, and `trx_files` options have to be set.
 
 You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
 There have to be at least one pattern starting without a `!`:
 
 ```yaml
 with:
-  files: |
+  junit_files: |
     *.xml
     !config.xml
 ```
@@ -174,11 +232,11 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|`*.xml`|File patterns to select the test result XML files, e.g. `"test-results/**/*.xml"`. Use multiline string for multiple patterns. Supports `*`, `**`, `?`, `[]`. Excludes files when starting with `!`. |
-|`check_name`|`"Unit Test Results"`|An alternative name for the check result.|
-|`comment_title`|same as `check_name`|An alternative title for the pull request comment.|
+|`junit_files`<br/>`nunit_files`<br/>`xunit_files`<br/>`trx_files`|At least one of these `*_files` must be set.|File patterns of JUnit XML, NUnit XML, XUnit XML, and TRX test result files, respectively. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`check_name`|`"Test Results"`|An alternative name for the check result.|
+|`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
-|`ignore_runs`|`false`|Does not process test run information by ignoring `<testcase>` elements in the XML files, which is useful for very large XML files. This disables any check run annotations.|
+|`ignore_runs`|`false`|Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.|
 
 <details>
 <summary>Options related to Git and GitHub</summary>
@@ -202,7 +260,6 @@ The list of most notable options:
 |:-----|:-----:|:----------|
 |`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
-|`hide_comments`|`"all but latest"`|Configures which earlier comments in a pull request are hidden by the action:<br/>`"orphaned commits"` - comments for removed commits<br/>`"all but latest"` - all comments but the latest<br/>`"off"` - no hiding|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
@@ -232,11 +289,11 @@ The `json` output of the action can be accessed through the expression `steps.<i
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 
 - name: Conclusion
   run: echo "Conclusion is ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}"
@@ -369,7 +426,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -407,9 +464,9 @@ jobs:
           path: artifacts
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: "artifacts/**/*.xml"
+          junit_files: "artifacts/**/*.xml"
 ```
 </details>
 
@@ -528,12 +585,12 @@ jobs:
            done
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
-          files: "artifacts/**/*.xml"
+          junit_files: "artifacts/**/*.xml"
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
@@ -552,11 +609,11 @@ Here is an example how to use the [JSON](#json-result) output of this action to 
 steps:
 - …
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action@v1
+  uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
   if: always()
   with:
-    files: "test-results/**/*.xml"
+    junit_files: "test-results/**/*.xml"
 
 - name: Set badge color
   shell: bash
@@ -611,7 +668,7 @@ Self-hosted runners may require setting up a Python environment first:
 
 ```yaml
 - name: Setup Python
-  uses: actions/setup-python@v3
+  uses: actions/setup-python@v4
   with:
     python-version: 3.8
 ```
@@ -628,7 +685,7 @@ If this conflicts with actions that later run Python in the same workflow (which
 it is recommended to run this action as the last step in your workflow, or to run it in an isolated workflow.
 Running it in an isolated workflow is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
 
-To run the composite action in an isolated workflow, your CI workflow should upload all test result XML files:
+To run the composite action in an isolated workflow, your CI workflow should upload all test result files:
 
 ```yaml
 build-and-test:
@@ -662,9 +719,9 @@ publish-test-results:
         path: artifacts
 
     - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
       with:
-        files: "artifacts/**/*.xml"
+        junit_files: "artifacts/**/*.xml"
 ```
 </details>
 
@@ -709,7 +766,7 @@ using the `actions/cache` action, and conditionally install the `wheel`package a
   run: python3 -m pip install wheel
 
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v1
+  uses: EnricoMi/publish-unit-test-result-action/composite@v2
 …
 ```
 

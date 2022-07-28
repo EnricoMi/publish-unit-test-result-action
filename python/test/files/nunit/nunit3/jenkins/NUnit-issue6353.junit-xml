@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="3" failures="1" skipped="2" errors="0">
+  
+  
+  <testsuite time="119.612" name="./MyTests.dll">
+    
+      <testsuite time="119.608" name="MyTests">
+        
+		  	<testcase name="SuccessfulTest" classname="" time="1.0"/>
+	 	    <testcase name="IgnoredTest" classname=""><skipped message="Reason"/>
+			  
+			</testcase>
+	 	    <testcase name="FailedTest" classname="" time="2.0">
+			  <failure message="Reason">Here comes the stack trace</failure>
+			</testcase>
+		
+      </testsuite>
+    
+  </testsuite>
+</testsuites>

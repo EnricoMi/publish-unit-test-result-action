@@ -3,7 +3,8 @@ import unittest
 
 import yaml
 
-project_root = pathlib.Path(__file__).parent.parent.parent
+project_root = pathlib.Path(__file__).resolve().parent.parent.parent
+
 
 class TestActionYml(unittest.TestCase):
 
@@ -27,4 +28,4 @@ class TestActionYml(unittest.TestCase):
                 for var in [part.strip()]
                 if var.startswith('INPUT_')]
 
-        self.assertEqual(sorted(action.get('inputs', {}).keys()), sorted(vars))
+        self.assertEqual(sorted(list(action.get('inputs', {}).keys()) + ['log_level']), sorted(vars))

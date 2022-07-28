@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-run id="2" testcasecount="6" result="Failed" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="4" engine-version="3.8.0.0" clr-version="4.0.30319.42000" start-time="2018-03-14 20:10:19Z" end-time="2018-03-14 20:10:20Z" duration="0.921709">
+  <command-line><![CDATA["C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe"  HelloWorld\UnitTests\bin\Release\UnitTests.dll --result TestResult.xml]]></command-line>
+  <test-suite type="Assembly" id="0-1008" name="UnitTests.dll" fullname="C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\bin\Release\UnitTests.dll" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.120358" total="6" passed="3" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="4">
+    <environment framework-version="3.10.1.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.1.7601.65536" platform="Win32NT" cwd="C:\Program Files (x86)\Jenkins\workspace\Build-VS-project" machine-name="EXOMO-VM" user="SYSTEM" user-domain="WORKGROUP" culture="de-DE" uiculture="de-DE" os-architecture="x64" />
+    <settings>
+      <setting name="DisposeRunners" value="True" />
+      <setting name="WorkDirectory" value="C:\Program Files (x86)\Jenkins\workspace\Build-VS-project" />
+      <setting name="ImageRuntimeVersion" value="4.0.30319" />
+      <setting name="ImageTargetFrameworkName" value=".NETFramework,Version=v4.6.1" />
+      <setting name="ImageRequiresX86" value="False" />
+      <setting name="ImageRequiresDefaultAppDomainAssemblyResolver" value="False" />
+      <setting name="NumberOfTestWorkers" value="4" />
+    </settings>
+    <properties>
+      <property name="_PID" value="5528" />
+      <property name="_APPDOMAIN" value="domain-" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="TestSuite" id="0-1009" name="UnitTests" fullname="UnitTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.096111" total="6" passed="3" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="4">
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="0-1000" name="HelloWorldTests" fullname="UnitTests.HelloWorldTests" classname="UnitTests.HelloWorldTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.092003" total="6" passed="3" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="4">
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="0-1001" name="DoATest" fullname="UnitTests.HelloWorldTests.DoATest" methodname="DoATest" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="1260606965" result="Passed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.036310" asserts="0">
+          <reason>
+            <message><![CDATA[Success]]></message>
+          </reason>
+        </test-case>
+        <test-case id="0-1002" name="FailThisTest" fullname="UnitTests.HelloWorldTests.FailThisTest" methodname="FailThisTest" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="524902146" result="Failed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.018525" asserts="0">
+          <failure>
+            <message><![CDATA[Oh no the test failed!]]></message>
+            <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.FailThisTest() in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 18.
+]]></stack-trace>
+          </failure>
+          <assertions>
+            <assertion result="Failed">
+              <message><![CDATA[Oh no the test failed!]]></message>
+              <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.FailThisTest() in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 18.
+]]></stack-trace>
+            </assertion>
+          </assertions>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="0-1007" name="TestWithParameters" fullname="UnitTests.HelloWorldTests.TestWithParameters" classname="UnitTests.HelloWorldTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.025238" total="4" passed="2" failed="2" warnings="0" inconclusive="0" skipped="0" asserts="4">
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-case id="0-1003" name="TestWithParameters(&quot;Foo&quot;)" fullname="UnitTests.HelloWorldTests.TestWithParameters(&quot;Foo&quot;)" methodname="TestWithParameters" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="2025423823" result="Passed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.018378" asserts="1" />
+          <test-case id="0-1004" name="TestWithParameters(&quot;Bar&quot;)" fullname="UnitTests.HelloWorldTests.TestWithParameters(&quot;Bar&quot;)" methodname="TestWithParameters" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="914294921" result="Passed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.000179" asserts="1" />
+          <test-case id="0-1005" name="TestWithParameters(&quot;Ä&quot;)" fullname="UnitTests.HelloWorldTests.TestWithParameters(&quot;Ä&quot;)" methodname="TestWithParameters" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="661308335" result="Failed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.002910" asserts="1">
+            <failure>
+              <message><![CDATA[  Expected: greater than 2
+  But was:  1
+]]></message>
+              <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+]]></stack-trace>
+            </failure>
+            <assertions>
+              <assertion result="Failed">
+                <message><![CDATA[  Expected: greater than 2
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+]]></stack-trace>
+              </assertion>
+            </assertions>
+          </test-case>
+          <test-case id="0-1006" name="TestWithParameters(&quot;Ö&quot;)" fullname="UnitTests.HelloWorldTests.TestWithParameters(&quot;Ö&quot;)" methodname="TestWithParameters" classname="UnitTests.HelloWorldTests" runstate="Runnable" seed="563371584" result="Failed" start-time="2018-03-14 20:10:20Z" end-time="2018-03-14 20:10:20Z" duration="0.001015" asserts="1">
+            <failure>
+              <message><![CDATA[  Expected: greater than 2
+  But was:  1
+]]></message>
+              <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+]]></stack-trace>
+            </failure>
+            <assertions>
+              <assertion result="Failed">
+                <message><![CDATA[  Expected: greater than 2
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+]]></stack-trace>
+              </assertion>
+            </assertions>
+          </test-case>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

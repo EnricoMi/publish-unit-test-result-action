@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="6" failures="3" skipped="0" time="0.921709">
+  
+  <testsuite tests="6" failures="3" skipped="0" time="0.120358" timestamp="2018-03-14 20:10:20Z" name="C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\bin\Release\UnitTests.dll">
+    
+    
+    
+    
+    <testsuite tests="6" failures="3" skipped="0" time="0.096111" timestamp="2018-03-14 20:10:20Z" name="UnitTests">
+      
+      <testsuite tests="6" failures="3" skipped="0" time="0.092003" timestamp="2018-03-14 20:10:20Z" name="UnitTests.HelloWorldTests">
+        
+        <testcase name="DoATest" classname="" status="Passed" time="0.036310">
+          
+        </testcase>
+        <testcase name="FailThisTest" classname="" status="Failed" time="0.018525">
+          <failure message="Oh no the test failed!">   bei UnitTests.HelloWorldTests.FailThisTest() in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 18.
+</failure>
+          
+        </testcase>
+        <testsuite tests="4" failures="2" skipped="0" time="0.025238" timestamp="2018-03-14 20:10:20Z" name="UnitTests.HelloWorldTests.TestWithParameters">
+          
+          <testcase name="TestWithParameters(&quot;Foo&quot;)" classname="" status="Passed" time="0.018378"/>
+          <testcase name="TestWithParameters(&quot;Bar&quot;)" classname="" status="Passed" time="0.000179"/>
+          <testcase name="TestWithParameters(&quot;&#xC4;&quot;)" classname="" status="Failed" time="0.002910">
+            <failure message="  Expected: greater than 2&#10;  But was:  1&#10;">   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+</failure>
+            
+          </testcase>
+          <testcase name="TestWithParameters(&quot;&#xD6;&quot;)" classname="" status="Failed" time="0.001015">
+            <failure message="  Expected: greater than 2&#10;  But was:  1&#10;">   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\Program Files (x86)\Jenkins\workspace\Build-VS-project\HelloWorld\UnitTests\HelloWorldTests.cs:Zeile 27.
+</failure>
+            
+          </testcase>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
