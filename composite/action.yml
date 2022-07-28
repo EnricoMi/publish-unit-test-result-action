@@ -1,6 +1,6 @@
 name: 'Publish Test Results'
 author: 'EnricoMi'
-description: 'A GitHub Action that publishes test results on GitHub'
+description: 'A GitHub Action that publishes JUnit, NUnit, XUnit, and TRX test results on GitHub'
 
 inputs:
   github_token:
