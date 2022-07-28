@@ -836,21 +836,31 @@ class Test(unittest.TestCase):
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
             self.maxDiff = None
+            expected = [
+                "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
+                "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
+                "::error::Exception: File is empty.",
+                "::error file=empty.xml::Error processing result file: File is empty.",
+                "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
+                "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
+                "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
+                "::error file=non-junit.xml::Error processing result file: Invalid format.",
+                "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
+                "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
+                "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
+                "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+            ]
+            if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+                expected.extend([
+                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
+                    '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
+                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
+                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)'
+                ])
             self.assertEqual(
-                sorted([
-                    "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
-                    "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
-                    "::error::Exception: File is empty.",
-                    "::error file=empty.xml::Error processing result file: File is empty.",
-                    "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
-                    "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
-                    "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
-                    "::error file=non-junit.xml::Error processing result file: Invalid format.",
-                    "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
-                    "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
-                    "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
-                    "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
-                ]), sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line)) for line in string.getvalue().split(os.linesep) if line])
+                sorted(expected),
+                sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line))
+                        for line in string.getvalue().split(os.linesep) if line])
             )
             # self.assertEqual([], m.method_calls)
 
