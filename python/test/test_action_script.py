@@ -813,15 +813,22 @@ class Test(unittest.TestCase):
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error
             self.assertEqual(8, len(actual.errors))
+            self.assertEqual(355, actual.suites)
+            self.assertEqual(1924, actual.suite_tests)
+            self.assertEqual(106, actual.suite_skipped)
+            self.assertEqual(223, actual.suite_failures)
+            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(3964, actual.suite_time)
+            self.assertEqual(1912, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
-        self.assertEqual(357, actual.suites)
-        self.assertEqual(1928, actual.suite_tests)
-        self.assertEqual(106, actual.suite_skipped)
-        self.assertEqual(225, actual.suite_failures)
-        self.assertEqual(8, actual.suite_errors)
-        self.assertEqual(3964, actual.suite_time)
-        self.assertEqual(1916, len(actual.cases))
+            self.assertEqual(357, actual.suites)
+            self.assertEqual(1928, actual.suite_tests)
+            self.assertEqual(106, actual.suite_skipped)
+            self.assertEqual(225, actual.suite_failures)
+            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(3964, actual.suite_time)
+            self.assertEqual(1916, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
