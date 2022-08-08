@@ -298,7 +298,7 @@ class Publisher:
         # get stats from earlier commits
         before_stats = None
         before_check_run = None
-        if self._settings.compare_earlier:
+        if self._settings.compare_earlier and False:
             before_commit_sha = self._settings.event.get('before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_check_run = self.get_check_run(before_commit_sha)
@@ -319,6 +319,7 @@ class Publisher:
         summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
         split_annotations = [annotation.to_dict() for annotation in all_annotations]
         split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
+        split_annotations = []
         for annotations in split_annotations:
             output = dict(
                 title=title,
@@ -347,7 +348,7 @@ class Publisher:
             stats=stats,
             stats_with_delta=stats_with_delta if before_stats is not None else None,
             annotations=all_annotations,
-            check_url=check_run.html_url
+            check_url=check_run.html_url if check_run else None
         )
         self.publish_json(data)
 
