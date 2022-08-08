@@ -167,6 +167,7 @@ jobs:
         id: test-results
         uses: ./
         with:
+          github_token: ${{ secrets.PAT }}
           check_name: Test Results (Dockerfile)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
@@ -300,7 +301,7 @@ jobs:
             -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
             enricomi/publish-unit-test-result-action:latest
         env:
-          INPUT_GITHUB_TOKEN: ${{ github.token }}
+          INPUT_GITHUB_TOKEN: ${{ secrets.PAT }}
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
@@ -426,6 +427,7 @@ jobs:
         id: test-results
         uses: ./composite
         with:
+          github_token: ${{ secrets.PAT }}
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
@@ -476,6 +478,7 @@ jobs:
         id: test-results
         uses: ./composite
         with:
+          github_token: ${{ secrets.PAT }}
           check_name: Test Results (setup-python)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
@@ -515,6 +518,7 @@ jobs:
         id: test-results
         uses: ./
         with:
+          github_token: ${{ secrets.PAT }}
           check_name: Test Results (Test Files)
           fail_on: nothing
           junit_files: "test-files/junit-xml/**/*.xml"
@@ -559,6 +563,7 @@ jobs:
         id: test-results
         uses: ./
         with:
+          github_token: ${{ secrets.PAT }}
           check_name: Test Results (Test File)
           fail_on: nothing
           junit_files: "test-files/pytest/junit.gloo.standalone.xml"
