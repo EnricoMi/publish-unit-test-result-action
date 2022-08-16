@@ -120,7 +120,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
             elems.extend(parse_nunit_files(nunit_files, progress))
         if trx_files:
             from publish.trx import parse_trx_files
-            elems.extend(parse_trx_files(trx_files, progress))
+            elems.extend(parse_trx_files(trx_files, logger, progress))
 
     logger.info(elems)
 
