@@ -1,4 +1,3 @@
-import logging
 import pathlib
 from typing import Iterable, Callable
 
@@ -14,12 +13,12 @@ def parse_trx_files(files: Iterable[str],
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses trx files."""
     def parse(path: str) -> JUnitTree:
-        logger = logging.getLogger('publish')
-        logger.setLevel('DEBUG')
+        print(f"parsing {path}")
         trx = etree.parse(path)
-        logger.debug(trx.tostring(encoding='utf8', method='xml'))
+        print(trx.tostring(encoding='utf8', method='xml'))
         junit = transform_trx_to_junit(trx)
-        logger.debug(junit.tostring(encoding='utf8', method='xml'))
+        print(junit.tostring(encoding='utf8', method='xml'))
         return junit
 
+    print(f"parsing {list(files)}")
     return progress_safe_parse_xml_file(files, parse, progress)
