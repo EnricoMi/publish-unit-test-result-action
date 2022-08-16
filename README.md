@@ -212,11 +212,11 @@ With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Configuration
 
-Files can be selected via the `junit_files`, `xunit_files`, and `trx_files` options.
+Files can be selected via the `junit_files`, `nunit_files`, `xunit_files`, and `trx_files` options.
 They support [glob wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
 The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
 
-At least one of `junit_files`, `xunit_files`, and `trx_files` options have to be set.
+At least one of `junit_files`, `nunit_files`, `xunit_files`, and `trx_files` options have to be set.
 
 You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
 There have to be at least one pattern starting without a `!`:
