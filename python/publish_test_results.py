@@ -100,6 +100,8 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
 
     elems = []
 
+    logger.info('parsing files')
+
     # parse files, log the progress
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
     with progress_logger(items=len(junit_files + nunit_files + xunit_files + trx_files),
@@ -119,6 +121,8 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
         if trx_files:
             from publish.trx import parse_trx_files
             elems.extend(parse_trx_files(trx_files, progress))
+
+    logger.info(elems)
 
     # get the test results
     return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
