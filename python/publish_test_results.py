@@ -150,6 +150,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # get the unit test results
     parsed = parse_files(settings, gha)
+    logger.debug(parsed)
     log_parse_errors(parsed.errors, gha)
 
     # process the parsed results
