@@ -60,17 +60,17 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
-def expand_glob(pattern: Optional[str], gha: GithubAction) -> List[str]:
+def expand_glob(pattern: Optional[str], file_format: str, gha: GithubAction) -> List[str]:
     if not pattern:
         return []
 
     files = get_files(pattern)
 
     if len(files) == 0:
-        gha.warning(f'Could not find any files for {pattern}')
+        gha.warning(f'Could not find any {file_format} files for {pattern}')
     else:
-        logger.info(f'Reading {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {list(files)}')
+        logger.info(f'Reading {file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading {file_format} files {list(files)}')
 
     return files
 
@@ -93,14 +93,12 @@ def get_number_of_files(files: List[str]) -> str:
 
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
-    junit_files = expand_glob(settings.junit_files_glob, gha)
-    nunit_files = expand_glob(settings.nunit_files_glob, gha)
-    xunit_files = expand_glob(settings.xunit_files_glob, gha)
-    trx_files = expand_glob(settings.trx_files_glob, gha)
+    junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
+    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
+    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
+    trx_files = expand_glob(settings.trx_files_glob, 'TRX', gha)
 
     elems = []
-
-    logger.info('parsing files')
 
     # parse files, log the progress
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
@@ -110,27 +108,17 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
                          finish_template='Finished reading {observations} files in {duration}',
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
-        logger.info(f'progress started: {trx_files}')
         if junit_files:
-            logger.info('there are junit files')
             elems.extend(parse_junit_xml_files(junit_files, settings.ignore_runs, progress))
         if xunit_files:
-            logger.info('there are xunit files')
             from publish.xunit import parse_xunit_files
             elems.extend(parse_xunit_files(xunit_files, progress))
         if nunit_files:
-            logger.info('there are nunit files')
             from publish.nunit import parse_nunit_files
             elems.extend(parse_nunit_files(nunit_files, progress))
         if trx_files:
-            logger.info('there are trx files')
             from publish.trx import parse_trx_files
-            logger.info('parsing trx')
-            elems.extend(parse_trx_files(trx_files, logger, progress))
-            logger.info('parsed trx')
-        logger.info(f'exiting progress')
-
-    logger.info(elems)
+            elems.extend(parse_trx_files(trx_files, progress))
 
     # get the test results
     return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
@@ -162,7 +150,6 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # get the unit test results
     parsed = parse_files(settings, gha)
-    logger.debug(parsed)
     log_parse_errors(parsed.errors, gha)
 
     # process the parsed results
