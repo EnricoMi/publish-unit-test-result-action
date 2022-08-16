@@ -136,8 +136,8 @@ def safe_parse_xml_file(path: str, parse: Callable[[str], JUnitTree]) -> JUnitTr
 
 
 def progress_safe_parse_xml_file(files: Iterable[str],
-                            parse: Callable[[str], JUnitTree],
-                            progress: Callable[[ParsedJUnitFile], ParsedJUnitFile]) -> Iterable[ParsedJUnitFile]:
+                                 parse: Callable[[str], JUnitTree],
+                                 progress: Callable[[ParsedJUnitFile], ParsedJUnitFile]) -> Iterable[ParsedJUnitFile]:
     return [progress((file, safe_parse_xml_file(file, parse))) for file in files]
 
 

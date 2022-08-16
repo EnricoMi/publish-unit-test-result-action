@@ -110,6 +110,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
                          finish_template='Finished reading {observations} files in {duration}',
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
+        logger.info('progress started')
         if junit_files:
             elems.extend(parse_junit_xml_files(junit_files, settings.ignore_runs, progress))
         if xunit_files:
@@ -119,8 +120,11 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
             from publish.nunit import parse_nunit_files
             elems.extend(parse_nunit_files(nunit_files, progress))
         if trx_files:
+            logger.info('trx files exist')
             from publish.trx import parse_trx_files
+            logger.info('parsing trx')
             elems.extend(parse_trx_files(trx_files, logger, progress))
+            logger.info('parsed trx')
 
     logger.info(elems)
 

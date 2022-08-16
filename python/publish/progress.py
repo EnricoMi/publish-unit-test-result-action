@@ -18,11 +18,15 @@ def progress_logger(items: int,
                     finish_template: Optional[str],
                     logger: Logger,
                     progress_item_type: Type[T] = Any) -> Callable[[T], T]:
+    logger.info('setup progress')
     progress = Progress[progress_item_type](items)
     plogger = ProgressLogger(progress, interval_seconds, progress_template, logger).start()
     try:
         yield progress.observe
+    except Exception as e:
+        logger.error(e, exc_info=True)
     finally:
+        logger.info('finishing progress')
         plogger.finish(finish_template)
 
 
