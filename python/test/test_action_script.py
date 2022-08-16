@@ -808,11 +808,12 @@ class Test(unittest.TestCase):
         with mock.patch('publish_test_results.logger') as l:
             actual = parse_files(settings, gha)
 
-            self.assertEqual(4, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (26 files, ') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (23 files, ') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.debug.call_args_list]))
+            self.assertEqual(5, len(l.info.call_args_list))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (26 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (23 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 66 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
