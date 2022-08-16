@@ -60,17 +60,17 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
-def expand_glob(pattern: Optional[str], gha: GithubAction) -> List[str]:
+def expand_glob(pattern: Optional[str], file_format: str, gha: GithubAction) -> List[str]:
     if not pattern:
         return []
 
     files = get_files(pattern)
 
     if len(files) == 0:
-        gha.warning(f'Could not find any files for {pattern}')
+        gha.warning(f'Could not find any {file_format} files for {pattern}')
     else:
-        logger.info(f'Reading {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {list(files)}')
+        logger.info(f'Reading {file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading {file_format} files {list(files)}')
 
     return files
 
@@ -93,10 +93,10 @@ def get_number_of_files(files: List[str]) -> str:
 
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
-    junit_files = expand_glob(settings.junit_files_glob, gha)
-    nunit_files = expand_glob(settings.nunit_files_glob, gha)
-    xunit_files = expand_glob(settings.xunit_files_glob, gha)
-    trx_files = expand_glob(settings.trx_files_glob, gha)
+    junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
+    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
+    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
+    trx_files = expand_glob(settings.trx_files_glob, 'TRX', gha)
 
     elems = []
 
