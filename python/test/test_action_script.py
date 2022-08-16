@@ -807,12 +807,13 @@ class Test(unittest.TestCase):
                                      trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
         with mock.patch('publish_test_results.logger') as l:
             actual = parse_files(settings, gha)
-            l.info.assert_has_calls([
-                mock.call(f'Reading JUnit files {settings.junit_files_glob} (26 files, 104.0 KiB)'),
-                mock.call(f'Reading NUnit files {settings.nunit_files_glob} (23 files, 746.6 KiB)'),
-                mock.call(f'Reading XUnit files {settings.xunit_files_glob} (8 files, 15.3 KiB)'),
-                mock.call(f'Reading TRX files {settings.trx_files_glob} (9 files, 1.3 MiB)')
-            ])
+
+            self.assertEqual(4, len(l.info.call_args_list))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (26 files, ') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (23 files, ') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.debug.call_args_list]))
+
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading NUnit files [') for call in l.debug.call_args_list]))
