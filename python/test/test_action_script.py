@@ -805,7 +805,19 @@ class Test(unittest.TestCase):
                                      nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
                                      xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
                                      trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
-        actual = parse_files(settings, gha)
+        with mock.patch('publish_test_results.logger') as l:
+            actual = parse_files(settings, gha)
+            l.info.assert_has_calls([
+                mock.call(f'Reading JUnit files {settings.junit_files_glob} (26 files, 104.0 KiB)'),
+                mock.call(f'Reading NUnit files {settings.nunit_files_glob} (23 files, 746.6 KiB)'),
+                mock.call(f'Reading XUnit files {settings.xunit_files_glob} (8 files, 15.3 KiB)'),
+                mock.call(f'Reading TRX files {settings.trx_files_glob} (9 files, 1.3 MiB)')
+            ])
+            self.assertEqual(4, len(l.debug.call_args_list))
+            self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading NUnit files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading XUnit files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading TRX files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
 
@@ -878,10 +890,10 @@ class Test(unittest.TestCase):
         actual = parse_files(settings, gha)
 
         gha.warning.assert_has_calls([
-            mock.call(f'Could not find any files for {missing_junit}'),
-            mock.call(f'Could not find any files for {missing_nunit}'),
-            mock.call(f'Could not find any files for {missing_xunit}'),
-            mock.call(f'Could not find any files for {missing_trx}')
+            mock.call(f'Could not find any JUnit files for {missing_junit}'),
+            mock.call(f'Could not find any NUnit files for {missing_nunit}'),
+            mock.call(f'Could not find any XUnit files for {missing_xunit}'),
+            mock.call(f'Could not find any TRX files for {missing_trx}')
         ])
         gha.error.assert_not_called()
 
