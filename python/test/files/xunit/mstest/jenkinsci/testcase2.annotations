@@ -1,0 +1,43 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': 'All 1 tests pass in 0s',
+      'summary':
+        '1 files\u2004\u20031 suites\u2004\u2003\u20020s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'tests\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20030 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n3 runs\u2006\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
+        '0KoLTR2XoYQhLiRj1mWynh3UZBgN29m8k5uwOrIFzYNjMcE1GBNKAmCzzhmzAN905tFTE'
+        'r9ix2O/i2MBPsrNGLA2mDyj2+usdcVLrbGVda4d6ngHFCGmljcJL9uwvXP6N0AAAA=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There is 1 test, see "Raw output" for the name of the test.',
+          'title': '1 test found',
+          'raw_details': 'MyProject.Tests.SampleFact ‑ SuccessfulTestWithTrait'
+        }
+      ]
+    }
+  }
+]

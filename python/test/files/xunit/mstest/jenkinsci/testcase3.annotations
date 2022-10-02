@@ -1,0 +1,67 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 1 skipped, 1 pass in 4m 48s',
+      'summary':
+        '3 tests\u2002\u2003\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '4m 48s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
+        '0KoLfw0xMsYgho3opgFKuPdXRAUuzezmzn5DHqyvGdNxbj14F4YPUoHZidshSBBJxeOXd'
+        '6D9Uql7yRWOH5ilqB/YkI0SKYmg37PvTDL3MNfLXIRi1y2lNk2cARpMbtIft14m53n3wA'
+        'AAA==\n',
+      'annotations': [
+        {
+          'path': 'MyProject.Tests.SampleFact',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/jenkinsci/testcase3.xml',
+          'title': 'FailedTest (MyProject.Tests.SampleFact) failed',
+          'raw_details':
+            'Assert.True() Failure   at MyProject.Tests.SampleFact.FailedTest() '
+            'in '
+            'c:\\Jenkins\\jobs\\my-project\\workspace\\MyProject\\MyProject.Tests\\Samp'
+            'leFact.cs:line 16'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'MyProject.Tests.SampleFact ‑ SkippedTest'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 3 tests, see "Raw output" for the full list of tests.',
+          'title': '3 tests found',
+          'raw_details':
+            'MyProject.Tests.SampleFact ‑ FailedTest\n'
+            'MyProject.Tests.SampleFact ‑ SkippedTest\n'
+            'MyProject.Tests.SampleFact ‑ SuccessfulTest'
+        }
+      ]
+    }
+  }
+]

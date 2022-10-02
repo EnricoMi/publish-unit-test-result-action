@@ -1,0 +1,76 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 errors, 1 fail, 2 skipped in 0s',
+      'summary':
+        '4 tests\u2002\u2003\u20030 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20032 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u2003\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MQQ5AMBBFr'
+        '9J0bYFYuYw0RUyUyky7Enc3qmV2/72fvFPP4CbSvWoqpSlC+GCMaAL4nbFm5CM8V1f2QN'
+        'FaeQ60wsGi/cRswOXaKyZEj9lg3EvvmTL38l9LLGKJZcv6bYPAkJeixejrBpBXIV3dAAA'
+        'A\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'with-xml-entities.xml',
+          'title': "Test with 'apostrophe' in the test name failed",
+          'raw_details': "Content with 'apostrophes'"
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'failure',
+          'message': 'with-xml-entities.xml',
+          'title': 'Test with & in the test name with error',
+          'raw_details': 'Content with &'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There are 2 skipped tests, see "Raw output" for the full list of '
+            'skipped tests.',
+          'title': '2 skipped tests found',
+          'raw_details':
+            'Test with "quotes" in the test name\nTest with < and > in the test '
+            'name'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 4 tests, see "Raw output" for the full list of tests.',
+          'title': '4 tests found',
+          'raw_details':
+            'Test with "quotes" in the test name\nTest with & in the test name\n'
+            'Test with \'apostrophe\' in the test name\nTest with < and > in '
+            'the test name'
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,49 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 1 pass in 0s',
+      'summary':
+        '2 tests\u2002\u2003\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
+        '0KoLdTSyxCCEDfyMQtUxrsLCIrdm93JnFSBlp4uZBoI9RHCC2tEHsDZhGPC9Aj5NbfNfB'
+        'SiuvWww9HbTHHQP0MiOqwKRtt6efa5h79a4S5WuG8JZwyEBHURv3F63ZlK7bXdAAAA\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnit-sec1752-file.xml',
+          'title': 'UnitTests.MainClassTest.TestPropertyValue failed'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 2 tests, see "Raw output" for the full list of tests.',
+          'title': '2 tests found',
+          'raw_details':
+            'UnitTests.MainClassTest.TestMethodUpdateValue\n'
+            'UnitTests.MainClassTest.TestPropertyValue'
+        }
+      ]
+    }
+  }
+]

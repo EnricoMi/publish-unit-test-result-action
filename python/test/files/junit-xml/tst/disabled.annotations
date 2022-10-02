@@ -1,0 +1,240 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 errors, 19 fail, 5 skipped, 6 pass in 0s',
+      'summary':
+        '\u205f\u20041 files\u2004\u2003\u205f\u20042 suites\u2004\u2003\u2002'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n31 '
+        'tests\u2003\u205f\u20046 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20035 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u200319 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n31 runs\u2006\u2003'
+        '11 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u200319 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NQQqAIBBFr'
+        'yKuW2RRUJcJsaIhyxh1Fd29sdLczXsf3px8Bj1Z3jNRMG49uAcqgtGjdGB2wpKQBhemWk'
+        'QYrFeKTPuLFQ4STRKzBB3aXTITosHvHfo9FcMdg+IXb7CMnPcekeeU2TZwBN/F7CL5dQP'
+        'prhoZ4gAAAA==\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'factorial_of_value_from_fixture failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'positive_arguments_must_produce_expected_result failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'failure',
+          'message': 'tst/disabled.xml',
+          'title': 'test_which_throws_unknown_exception with error'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'positive_arguments_must_produce_expected_result[2] failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'factorial_of_value_from_fixture[0] failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'test_which_fails_check_eq_with_custom_message failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_ge_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_ge failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_gt_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_lt_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_gt failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_le_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_eq failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_eq_print failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_le failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_ne failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_lt failed'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'tst/disabled.xml',
+          'title': 'check_ne_print failed'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There are 5 skipped tests, see "Raw output" for the full list of '
+            'skipped tests.',
+          'title': '5 skipped tests found',
+          'raw_details':
+            'disabled_param_test[0]\ndisabled_param_test[1]\n'
+            'disabled_param_test[2]\ndisabled_param_test[3]\ndisabled_test'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 31 tests, see "Raw output" for the full list of tests.',
+          'title': '31 tests found',
+          'raw_details':
+            'check\ncheck_eq\ncheck_eq_print\ncheck_ge\ncheck_ge_print\n'
+            'check_gt\ncheck_gt_print\ncheck_le\ncheck_le_print\ncheck_lt\n'
+            'check_lt_print\ncheck_ne\ncheck_ne_print\ncheck_print\n'
+            'disabled_param_test[0]\ndisabled_param_test[1]\n'
+            'disabled_param_test[2]\ndisabled_param_test[3]\ndisabled_test\n'
+            'factorial_of_value_from_fixture\n'
+            'factorial_of_value_from_fixture[0]\n'
+            'factorial_of_value_from_fixture[1]\n'
+            'factorial_of_value_from_fixture[2]\n'
+            'factorial_of_value_from_fixture[3]\n'
+            'positive_arguments_must_produce_expected_result\n'
+            'positive_arguments_must_produce_expected_result[0]\n'
+            'positive_arguments_must_produce_expected_result[1]\n'
+            'positive_arguments_must_produce_expected_result[2]\n'
+            'positive_arguments_must_produce_expected_result[3]\n'
+            'test_which_fails_check_eq_with_custom_message\n'
+            'test_which_throws_unknown_exception'
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '3 fail, 1 skipped, 2 pass in 0s',
+      'summary':
+        '6 tests\u2002\u2003\u20032 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20033 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBAFr'
+        '0KoLfwkFl7GEJS4UcEsUBnv7spH6N7MZufmCo7V8ol1DePWg/th8SgcGE3YEtLBfacx79'
+        'l6KUn0RexwpecolICDxPCLFdFgCqLXuffNOhe51AJXscB1S5rzBEeQFrOb4M8LVJ41VN0'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': 'SampleProject.xUnit.TestServiceTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/xUnit-net461-sample.trx',
+          'title':
+            'TestTheory(expected: False) (SampleProject.xUnit.TestServiceTests) '
+            'failed',
+          'raw_details':
+            'Assert.Equal() Failure\r\nExpected: False\r\nActual:   True   at '
+            'SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) '
+            'in '
+            'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
+            'it\\TestServiceTests.cs:line 29'
+        },
+        {
+          'path': 'SampleProject.xUnit.TestServiceTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/xUnit-net461-sample.trx',
+          'title': 'FailTest (SampleProject.xUnit.TestServiceTests) failed',
+          'raw_details':
+            'Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+            'SampleProject.xUnit.TestServiceTests.FailTest() in '
+            'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
+            'it\\TestServiceTests.cs:line 65'
+        },
+        {
+          'path': 'SampleProject.xUnit.TestServiceTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/xUnit-net461-sample.trx',
+          'title': 'TestThrowingException (SampleProject.xUnit.TestServiceTests) failed',
+          'raw_details':
+            'System.Exception : Pretty good exception   at '
+            'SampleProject.TestService.GetException() in '
+            'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestServi'
+            'ce.cs:line 19\r\n   at '
+            'SampleProject.xUnit.TestServiceTests.TestThrowingException() in '
+            'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
+            'it\\TestServiceTests.cs:line 54'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'SampleProject.xUnit.TestServiceTests ‑ SkipTest'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 6 tests, see "Raw output" for the full list of tests.',
+          'title': '6 tests found',
+          'raw_details':
+            'SampleProject.xUnit.TestServiceTests ‑ FailTest\n'
+            'SampleProject.xUnit.TestServiceTests ‑ PassingTest\n'
+            'SampleProject.xUnit.TestServiceTests ‑ SkipTest\n'
+            'SampleProject.xUnit.TestServiceTests ‑ TestTheory(expected: False)\n'
+            'SampleProject.xUnit.TestServiceTests ‑ TestTheory(expected: True)\n'
+            'SampleProject.xUnit.TestServiceTests ‑ TestThrowingException'
+        }
+      ]
+    }
+  }
+]

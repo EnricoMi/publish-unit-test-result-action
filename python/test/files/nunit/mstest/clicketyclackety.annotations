@@ -1,0 +1,159 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '10 fail, 12 pass in 0s',
+      'summary':
+        '\u205f\u20041 files\u2004\u2003\u205f\u20048 suites\u2004\u2003\u2002'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n22 '
+        'tests\u200312 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u200310 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n23 runs\u2006\u200313 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u200310 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MSw6AIAxEr'
+        '0JYu/CzMV7GENTYCGJKWRnvbiEo7Ppmpu+WG5jVy0l0jZA+ACUYGZaAisCdjC0jFxSrvv'
+        '9g9kHr+FklB1z1ft4UmDgpyYroMG8wnEk55Ps3lqAIE9e+FNQ67awFYsiX8LuSzwvzas/'
+        'j4wAAAA==\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'BakeDrawings failed',
+          'raw_details':
+            '   at NUnit.Framework.Assert.Equals(Object a, Object b)\n   at '
+            'MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings'
+            '()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'SilentRun failed',
+          'raw_details':
+            '   at '
+            'MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'DiscardDrawingTests failed',
+          'raw_details':
+            '   at System.IO.__Error.WinIOError(Int32 errorCode, String '
+            'maybeFullPath)\n   at '
+            'System.IO.FileSystemEnumerableIterator`1.CommonInit()\n   at '
+            'System.IO.FileSystemEnumerableIterator`1..ctor(String path, String '
+            'originalUserPath, String searchPattern, SearchOption searchOption, '
+            'SearchResultHandler`1 resultHandler, Boolean checkHost)\n   at '
+            'System.IO.Directory.GetFiles(String path)\n   at '
+            'MyProject.Tests.Real.FlagTests.DiscardDrawingTests()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'LoadDrawingsEventFlagTests failed',
+          'raw_details': '   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()\n'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'ResetProjectEventFlagTests failed',
+          'raw_details': '   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'SetupLayersEventFlagTests failed',
+          'raw_details':
+            '   at MyProject.Runtime.Events.SetupLayers.Execute()\n   at '
+            'MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'SetupPipeEventFlagTests failed',
+          'raw_details': '   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'DrawingConstants failed',
+          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'FileConstants failed',
+          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.FileConstants()'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/clicketyclackety.xml',
+          'title': 'PluginConstants failed',
+          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.PluginConstants()'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 22 tests, see "Raw output" for the full list of tests.',
+          'title': '22 tests found',
+          'raw_details':
+            'BakeDrawings\nDeleteMyProjectObjectEventFlagTests\n'
+            'DiscardDrawingTests\nDisplayGraphicConstants\nDrawingConstants\n'
+            'EventRegisterTests\nFileConstants\nLoadDrawingsEventFlagTests\n'
+            'LoadedDrawings\nModifyNewObjectUniqueIdEventFlagTests\n'
+            'MoveControlPointEventFlagTests\nObjectConstants\nPluginConstants\n'
+            'ResetProjectEventFlagTests\nSetupLayersEventFlagTests\n'
+            'SetupPipeEventFlagTests\nSilentRun\nTest\nUIPanelConstants\n'
+            'UIPropertyConstants\nUpdateDrawingsPanelEventFlagTests\n'
+            'UpdatePropertiesPanelEventFlagTests'
+        }
+      ]
+    }
+  }
+]

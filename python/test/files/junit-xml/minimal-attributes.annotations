@@ -1,0 +1,70 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 errors, 1 fail, 1 skipped, 1 pass in 0s',
+      'summary':
+        '4 tests\u2002\u2003\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u2003\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
+        '0KoLTSx8jKGIMSNfMwClfHuAoJC92Z2MxeVoISjC5kGQl0A/8EWkHmwJuIYMR58Os11ry'
+        '5wXn6LOODshGSgOiEQLRaDwdRemm3u5b+WuYllblvcag0+QlnE7YzeD8XajRvdAAAA\n',
+      'annotations': [
+        {
+          'path': 'ClassName',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'minimal-attributes.xml',
+          'title': 'failed_test (ClassName) failed'
+        },
+        {
+          'path': 'ClassName',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'failure',
+          'message': 'minimal-attributes.xml',
+          'title': 'error_test (ClassName) with error'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'ClassName ‑ skipped_test'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 4 tests, see "Raw output" for the full list of tests.',
+          'title': '4 tests found',
+          'raw_details':
+            'ClassName ‑ error_test\nClassName ‑ failed_test\nClassName ‑ '
+            'skipped_test\nClassName ‑ test_name'
+        }
+      ]
+    }
+  }
+]

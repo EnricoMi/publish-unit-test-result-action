@@ -1,0 +1,84 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 2 pass in 0s',
+      'summary':
+        '1 files\u2004\u20031 suites\u2004\u2003\u20020s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n3 '
+        'tests\u20032 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n4 runs\u2006\u20033 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBBEr'
+        '0KoLVSsvIwhqHEjH7NAZby7qwLSzZuZvJOvoBfPR9Y1jPsIocAcUQZwlrAlpCE8k8h58l'
+        'EpKvq/2OGo39MqQSfbVyyIDtMFo318Q4pZJwr/tpcr2cu1SzljIBCkxPwm+XUDYSIL8t0'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': 'Pickles.TestHarness.xUnit.AdditionFeature',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/pickles.xml',
+          'title':
+            'FailToAddTwoNumbers (Pickles.TestHarness.xUnit.AdditionFeature) '
+            'failed',
+          'raw_details':
+            '\n          System.InvalidOperationException : This is a fake '
+            'failure message\n        \n          at '
+            'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
+            'result) in '
+            'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.xUnit\\Steps.cs:line 26\n          at lambda_method(Closure , '
+            'IContextManager , Int32 )\n          at '
+            'TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManag'
+            'er contextManager, Object[] arguments, ITestTracer testTracer, '
+            'TimeSpan& duration)\n          at '
+            'TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextMan'
+            'ager contextManager, ITestTracer testTracer, Object[] arguments, '
+            'TimeSpan& duration)\n          at '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMat'
+            'ch(BindingMatch match, Object[] arguments)\n          at '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(St'
+            'epArgs stepArgs)\n          at '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastSte'
+            'p()\n          at '
+            'TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()\n          at '
+            'Pickles.TestHarness.xUnit.AdditionFeature.ScenarioCleanup() in '
+            'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.xUnit\\Addition.feature.cs:line 0\n          at '
+            'Pickles.TestHarness.xUnit.AdditionFeature.FailToAddTwoNumbers() in '
+            'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.xUnit\\Addition.feature:line 18\n        '
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 3 tests, see "Raw output" for the full list of tests.',
+          'title': '3 tests found',
+          'raw_details':
+            'Pickles.TestHarness.xUnit.AdditionFeature ‑ AddTwoNumbers\n'
+            'Pickles.TestHarness.xUnit.AdditionFeature ‑ AddingSeveralNumbers\n'
+            'Pickles.TestHarness.xUnit.AdditionFeature ‑ FailToAddTwoNumbers'
+        }
+      ]
+    }
+  }
+]
