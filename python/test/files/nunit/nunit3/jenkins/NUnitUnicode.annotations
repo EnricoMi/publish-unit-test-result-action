@@ -1,0 +1,48 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail in 0s',
+      'summary':
+        '1 tests\u2002\u2003\u20030 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMSw6AIAxEr'
+        '0JYu9CtlzEEITbyMS2sjHcXERR28zrTd3INRhGf2TQwThHCB2tEEcC7hGPCVIRa5bxQlL'
+        'ItF9rh6A5agOleFKLHMsHoqu+Jre7l35a5kWVuXdJbCyFBSYw2wa8bniF3vN0AAAA=\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnitUnicode.xml',
+          'title': 'UnitTests.UnicodeClassTest.TestFailure failed',
+          'raw_details': '  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]\n'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There is 1 test, see "Raw output" for the name of the test.',
+          'title': '1 test found',
+          'raw_details': 'UnitTests.UnicodeClassTest.TestFailure'
+        }
+      ]
+    }
+  }
+]

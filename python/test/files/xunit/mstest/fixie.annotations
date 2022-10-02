@@ -1,0 +1,93 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '3 fail, 1 skipped, 1 pass in 8s',
+      'summary':
+        '1 files\u2004\u20032 suites\u2004\u2003\u20028s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n5 '
+        'tests\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20033 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n7 runs\u2006\u20033 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20033 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
+        'yKuW1QSRZcJsaKh0hh1Fd29Scxs998b5p18hm2yvGdVwbj14ALUBKNH6cBowo6QDu45Ne'
+        '8erFcqPkaxwvETs4SNhEhiQjRIpiSDXj+9Ns43JxJ/tcBZLHDeUmbfwRHExewi+XUDvcl'
+        'Zbt0AAAA=\n',
+      'annotations': [
+        {
+          'path': '[genericTestClass]',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/fixie.xml',
+          'title': '1 out of 3 runs failed: ShouldBeString ([genericTestClass])',
+          'raw_details':
+            'Expected: System.String\nActual:   System.Int32   at '
+            '[genericTestClassForStackTrace].ShouldBeString[T](T '
+            'genericArgument) in [fileLocation]:line #'
+        },
+        {
+          'path': '[testClass]',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/fixie.xml',
+          'title': 'Fail ([testClass]) failed',
+          'raw_details':
+            "'Fail' failed!   at [testClassForStackTrace].Fail() in "
+            "[fileLocation]:line #"
+        },
+        {
+          'path': '[testClass]',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/fixie.xml',
+          'title': 'FailByAssertion ([testClass]) failed',
+          'raw_details':
+            'Expected: 2\nActual:   1   at '
+            '[testClassForStackTrace].FailByAssertion() in [fileLocation]:line '
+            '#'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': '[testClass] ‑ Skip'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 5 tests, see "Raw output" for the full list of tests.',
+          'title': '5 tests found',
+          'raw_details':
+            '[genericTestClass] ‑ ShouldBeString\n[testClass] ‑ Fail\n'
+            '[testClass] ‑ FailByAssertion\n[testClass] ‑ Pass\n[testClass] ‑ '
+            'Skip'
+        }
+      ]
+    }
+  }
+]

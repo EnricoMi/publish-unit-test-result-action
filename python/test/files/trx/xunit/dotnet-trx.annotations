@@ -1,0 +1,139 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '5 fail, 1 skipped, 5 pass in 0s',
+      'summary':
+        '11 tests\u2002\u2003\u20035 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u20035 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
+        '0KoLaSw8TKGIMaNfMwClfHuroCK3byZ3XfwBYwOfGSiYzwkiC/MCWUE7wh7QhpinsQDU0'
+        'hKUTN8xQZ7/S7FIsH8LjSix2rE5F7hnVtf4U+XubFlbmXKWwuRoCYWVsnPC2b3Tg/fAAA'
+        'A\n',
+      'annotations': [
+        {
+          'path': 'DotnetTests.XUnitTests.CalculatorTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/dotnet-trx.trx',
+          'title':
+            'Should be even number(i: 3) '
+            '(DotnetTests.XUnitTests.CalculatorTests) failed',
+          'raw_details':
+            'Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+            'DotnetTests.XUnitTests.CalculatorTests.Theory_With_Custom_Name(Int3'
+            '2 i) in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.XUnitTests\\CalculatorTests.cs:line 67'
+        },
+        {
+          'path': 'DotnetTests.XUnitTests.CalculatorTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/dotnet-trx.trx',
+          'title':
+            'Exception_In_TargetTest (DotnetTests.XUnitTests.CalculatorTests) '
+            'failed',
+          'raw_details':
+            'System.DivideByZeroException : Attempted to divide by zero.   at '
+            'DotnetTests.Unit.Calculator.Div(Int32 a, Int32 b) in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.Unit\\Calculator.cs:line 9\r\n   at '
+            'DotnetTests.XUnitTests.CalculatorTests.Exception_In_TargetTest() '
+            'in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.XUnitTests\\CalculatorTests.cs:line 33'
+        },
+        {
+          'path': 'DotnetTests.XUnitTests.CalculatorTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/dotnet-trx.trx',
+          'title': 'Exception_In_Test (DotnetTests.XUnitTests.CalculatorTests) failed',
+          'raw_details':
+            'System.Exception : Test   at '
+            'DotnetTests.XUnitTests.CalculatorTests.Exception_In_Test() in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.XUnitTests\\CalculatorTests.cs:line 39'
+        },
+        {
+          'path': 'DotnetTests.XUnitTests.CalculatorTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/dotnet-trx.trx',
+          'title': 'Failing_Test (DotnetTests.XUnitTests.CalculatorTests) failed',
+          'raw_details':
+            'Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2   at '
+            'DotnetTests.XUnitTests.CalculatorTests.Failing_Test() in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.XUnitTests\\CalculatorTests.cs:line 27'
+        },
+        {
+          'path': 'DotnetTests.XUnitTests.CalculatorTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'xunit/dotnet-trx.trx',
+          'title':
+            'Is_Even_Number(i: 3) (DotnetTests.XUnitTests.CalculatorTests) '
+            'failed',
+          'raw_details':
+            'Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
+            'DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(Int32 i) in '
+            'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\Dotnet'
+            'Tests.XUnitTests\\CalculatorTests.cs:line 59'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'DotnetTests.XUnitTests.CalculatorTests ‑ Skipped_Test'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 11 tests, see "Raw output" for the full list of tests.',
+          'title': '11 tests found',
+          'raw_details':
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Custom Name\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Exception_In_TargetTest\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Exception_In_Test\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Failing_Test\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Is_Even_Number(i: 2)\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Is_Even_Number(i: 3)\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Passing_Test\n'
+            'DotnetTests.XUnitTests.CalculatorTests ‑ Should be even number(i: '
+            '2)\nDotnetTests.XUnitTests.CalculatorTests ‑ Should be even '
+            'number(i: 3)\nDotnetTests.XUnitTests.CalculatorTests ‑ '
+            'Skipped_Test\nDotnetTests.XUnitTests.CalculatorTests ‑ '
+            'Timeout_Test'
+        }
+      ]
+    }
+  }
+]

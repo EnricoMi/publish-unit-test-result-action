@@ -3,9 +3,11 @@ import os
 import pathlib
 import re
 import sys
+import tempfile
 import unittest
 from glob import glob
 from typing import Optional, List
+import mock
 
 import junitparser
 import prettyprinter as pp
@@ -19,6 +21,8 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
+from publish_test_results import get_settings, get_test_results, get_stats, get_conclusion
+from publish.publisher import Settings, Publisher
 from test_utils import temp_locale
 
 test_path = pathlib.Path(__file__).resolve().parent
@@ -90,6 +94,10 @@ class JUnitXmlParseTest:
                         actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)])
                         self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
+                        annotations_expectation_path = path.parent / (path.stem + '.annotations')
+                        actual_annotations = self.get_check_runs(actual_results)
+                        self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2), annotations_expectation_path)
+
     def test_parse_and_process_files(self):
         for file in self.get_test_files():
             self.do_test_parse_and_process_files(file)
@@ -113,6 +121,63 @@ class JUnitXmlParseTest:
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
                     results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)])
                     w.write(pp.pformat(results, indent=2))
+                with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
+                    check_runs = cls.get_check_runs(results)
+                    w.write(pp.pformat(check_runs, indent=2))
+
+    @classmethod
+    def get_check_runs(cls, parsed):
+        check_runs = []
+
+        def edit(output: dict):
+            check_runs.append(dict(output=output))
+
+        def create_check_run(name: str,
+                             head_sha: str,
+                             status: str,
+                             conclusion: str,
+                             output: dict):
+            check_runs.append(
+                dict(name=name, head_sha=head_sha, status=status, conclusion=conclusion, output=output)
+            )
+            return mock.MagicMock(html_url='html', edit=mock.Mock(side_effect=edit))
+
+        commit = 'commit sha'
+        parsed = parsed.with_commit(commit)
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        conclusion = get_conclusion(parsed, fail_on_failures=True, fail_on_errors=True)
+
+        repo = mock.MagicMock(create_check_run=create_check_run)
+        gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
+        gha = mock.MagicMock()
+
+        with tempfile.NamedTemporaryFile('w') as file:
+            file.write('{}')
+            file.flush()
+            if sys.platform == 'win32':
+                file.close()
+
+            options = dict(
+                COMPARE_TO_EARLIER_COMMIT='false',
+                GITHUB_EVENT_PATH=file.name,
+                GITHUB_EVENT_NAME='push',
+                GITHUB_TOKEN='token',
+                GITHUB_REPOSITORY='repo',
+                GITHUB_SHA=commit
+            )
+
+            try:
+                settings = get_settings(options, gha)
+            finally:
+                if sys.platform == 'win32':
+                    os.unlink(file.name)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+        return check_runs
 
     @staticmethod
     def prettify_exception(exception) -> str:

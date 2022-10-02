@@ -1,0 +1,82 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '3 fail, 3 pass in 0s',
+      'summary':
+        '6 tests\u2002\u2003\u20033 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n2 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20033 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
+        '0KoLfwkFl7GEIS4kY9ZoDLe3RU1YDdvZvIOrsGowCfWNYyHBDFDT7AkFBG8I2wJaYj3NH'
+        '55DklKKoZSbLDX71kLML+HQvT4XjC5z3fHWvdwsWWuZJlrl/TWQiR4Ewur4OcFmZnWM90'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'title': 'TestWithParameters("Ä") failed',
+          'raw_details':
+            '   bei UnitTests.HelloWorldTests.TestWithParameters(String param) '
+            'in C:\\Program Files '
+            '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
+            'WorldTests.cs:Zeile 27.\n'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'title': 'TestWithParameters("Ö") failed',
+          'raw_details':
+            '   bei UnitTests.HelloWorldTests.TestWithParameters(String param) '
+            'in C:\\Program Files '
+            '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
+            'WorldTests.cs:Zeile 27.\n'
+        },
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'title': 'FailThisTest failed',
+          'raw_details':
+            '   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program '
+            'Files '
+            '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
+            'WorldTests.cs:Zeile 18.\n'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 6 tests, see "Raw output" for the full list of tests.',
+          'title': '6 tests found',
+          'raw_details':
+            'DoATest\nFailThisTest\nTestWithParameters("Bar")\n'
+            'TestWithParameters("Foo")\nTestWithParameters("Ä")\n'
+            'TestWithParameters("Ö")'
+        }
+      ]
+    }
+  }
+]
