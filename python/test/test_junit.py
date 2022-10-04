@@ -245,8 +245,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 line=None,
                                 test_name='diff options with empty diff column name',
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.259 * time_factor
                             ),
                             UnitTestCase(
@@ -256,8 +258,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=1.959 * time_factor
                             ),
                             UnitTestCase(
@@ -267,8 +271,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.002 * time_factor
                             ),
                             UnitTestCase(
@@ -278,8 +284,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.002 * time_factor
                             ),
                             UnitTestCase(
@@ -289,8 +297,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.001 * time_factor
                             )
                         ]

@@ -810,10 +810,10 @@ class Test(unittest.TestCase):
 
             self.assertEqual(5, len(l.info.call_args_list))
             self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (26 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (23 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 66 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 67 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
@@ -823,7 +823,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(66, actual.files)
+        self.assertEqual(67, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error
             self.assertEqual(8, len(actual.errors))
@@ -836,13 +836,13 @@ class Test(unittest.TestCase):
             self.assertEqual(1912, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
-            self.assertEqual(357, actual.suites)
-            self.assertEqual(1928, actual.suite_tests)
+            self.assertEqual(358, actual.suites)
+            self.assertEqual(1929, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
-            self.assertEqual(225, actual.suite_failures)
+            self.assertEqual(226, actual.suite_failures)
             self.assertEqual(8, actual.suite_errors)
-            self.assertEqual(3964, actual.suite_time)
-            self.assertEqual(1916, len(actual.cases))
+            self.assertEqual(3966, actual.suite_time)
+            self.assertEqual(1917, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
