@@ -38,7 +38,9 @@
           'message': 'mstest/clicketyclackety.xml',
           'title': 'BakeDrawings failed',
           'raw_details':
-            '   at NUnit.Framework.Assert.Equals(Object a, Object b)\n   at '
+            'System.InvalidOperationException : Assert.Equals should not be '
+            'used. Use Assert.AreEqual instead.\n   at '
+            'NUnit.Framework.Assert.Equals(Object a, Object b)\n   at '
             'MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings'
             '()'
         },
@@ -50,7 +52,8 @@
           'message': 'mstest/clicketyclackety.xml',
           'title': 'SilentRun failed',
           'raw_details':
-            '   at '
+            'System.NullReferenceException : Object reference not set to an '
+            'instance of an object.\n   at '
             'MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()'
         },
         {
@@ -61,14 +64,18 @@
           'message': 'mstest/clicketyclackety.xml',
           'title': 'DiscardDrawingTests failed',
           'raw_details':
-            '   at System.IO.__Error.WinIOError(Int32 errorCode, String '
-            'maybeFullPath)\n   at '
-            'System.IO.FileSystemEnumerableIterator`1.CommonInit()\n   at '
-            'System.IO.FileSystemEnumerableIterator`1..ctor(String path, String '
-            'originalUserPath, String searchPattern, SearchOption searchOption, '
-            'SearchResultHandler`1 resultHandler, Boolean checkHost)\n   at '
-            'System.IO.Directory.GetFiles(String path)\n   at '
-            'MyProject.Tests.Real.FlagTests.DiscardDrawingTests()'
+            "System.IO.DirectoryNotFoundException : Could not find a part of "
+            "the path "
+            "'C:\\Users\\USER\\actions-runner\\_work\\MyProject\\MyProject\\SC\\f4a8fa46"
+            "-245d-4cd5-88c1-80fcfbda6369'.\n   at "
+            "System.IO.__Error.WinIOError(Int32 errorCode, String "
+            "maybeFullPath)\n   at "
+            "System.IO.FileSystemEnumerableIterator`1.CommonInit()\n   at "
+            "System.IO.FileSystemEnumerableIterator`1..ctor(String path, String "
+            "originalUserPath, String searchPattern, SearchOption searchOption, "
+            "SearchResultHandler`1 resultHandler, Boolean checkHost)\n   at "
+            "System.IO.Directory.GetFiles(String path)\n   at "
+            "MyProject.Tests.Real.FlagTests.DiscardDrawingTests()"
         },
         {
           'path': '/',
@@ -77,7 +84,9 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'LoadDrawingsEventFlagTests failed',
-          'raw_details': '   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()\n'
+          'raw_details':
+            '  Expected: 3\n  But was:  0\n   at '
+            'MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()'
         },
         {
           'path': '/',
@@ -86,7 +95,10 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'ResetProjectEventFlagTests failed',
-          'raw_details': '   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()'
+          'raw_details':
+            'System.NullReferenceException : Object reference not set to an '
+            'instance of an object.\n   at '
+            'MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()'
         },
         {
           'path': '/',
@@ -96,8 +108,9 @@
           'message': 'mstest/clicketyclackety.xml',
           'title': 'SetupLayersEventFlagTests failed',
           'raw_details':
-            '   at MyProject.Runtime.Events.SetupLayers.Execute()\n   at '
-            'MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()'
+            "om.Exceptions.DocumentException : Document should be initlised, "
+            "but isn't!\n   at MyProject.Runtime.Events.SetupLayers.Execute()\n  "
+            " at MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()"
         },
         {
           'path': '/',
@@ -106,7 +119,10 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'SetupPipeEventFlagTests failed',
-          'raw_details': '   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()'
+          'raw_details':
+            'System.NullReferenceException : Object reference not set to an '
+            'instance of an object.\n   at '
+            'MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()'
         },
         {
           'path': '/',
@@ -115,7 +131,10 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'DrawingConstants failed',
-          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()'
+          'raw_details':
+            'System.NullReferenceException : Object reference not set to an '
+            'instance of an object.\n   at '
+            'MyProject.Tests.Real.RuntimeTests.DrawingConstants()'
         },
         {
           'path': '/',
@@ -124,7 +143,10 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'FileConstants failed',
-          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.FileConstants()'
+          'raw_details':
+            'System.NullReferenceException : Object reference not set to an '
+            'instance of an object.\n   at '
+            'MyProject.Tests.Real.RuntimeTests.FileConstants()'
         },
         {
           'path': '/',
@@ -133,7 +155,10 @@
           'annotation_level': 'warning',
           'message': 'mstest/clicketyclackety.xml',
           'title': 'PluginConstants failed',
-          'raw_details': '   at MyProject.Tests.Real.RuntimeTests.PluginConstants()'
+          'raw_details':
+            "System.MissingMethodException : Method not found: 'System.Object "
+            "MyProject.MyProjectPlugIn.get_Instance()'.\n   at "
+            "MyProject.Tests.Real.RuntimeTests.PluginConstants()"
         },
         {
           'path': '.github',

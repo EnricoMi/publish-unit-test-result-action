@@ -33,8 +33,7 @@
           'title': 'Unknown test failed',
           'raw_details':
             'OK: TestProcess.Execution.ExitCode == 0\r\nFAIL: Output differs '
-            'from reference.\r\n  Left:  data\\ref\r\n  Right: results\\out\r\n  \r'
-            '\n                    '
+            'from reference.\r\n  Left:  data\\ref\r\n  Right: results\\out'
         },
         {
           'path': '.github',

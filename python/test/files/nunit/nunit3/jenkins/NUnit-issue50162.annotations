@@ -33,10 +33,11 @@
           'message': 'nunit3/jenkins/NUnit-issue50162.xml',
           'title': 'TestWithParameters("Ä") failed',
           'raw_details':
-            '   bei UnitTests.HelloWorldTests.TestWithParameters(String param) '
-            'in C:\\Program Files '
+            '  Expected: greater than 2\n  But was:  1\n   bei '
+            'UnitTests.HelloWorldTests.TestWithParameters(String param) in '
+            'C:\\Program Files '
             '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
-            'WorldTests.cs:Zeile 27.\n'
+            'WorldTests.cs:Zeile 27.'
         },
         {
           'path': '/',
@@ -46,10 +47,11 @@
           'message': 'nunit3/jenkins/NUnit-issue50162.xml',
           'title': 'TestWithParameters("Ö") failed',
           'raw_details':
-            '   bei UnitTests.HelloWorldTests.TestWithParameters(String param) '
-            'in C:\\Program Files '
+            '  Expected: greater than 2\n  But was:  1\n   bei '
+            'UnitTests.HelloWorldTests.TestWithParameters(String param) in '
+            'C:\\Program Files '
             '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
-            'WorldTests.cs:Zeile 27.\n'
+            'WorldTests.cs:Zeile 27.'
         },
         {
           'path': '/',
@@ -59,10 +61,10 @@
           'message': 'nunit3/jenkins/NUnit-issue50162.xml',
           'title': 'FailThisTest failed',
           'raw_details':
-            '   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program '
-            'Files '
+            'Oh no the test failed!\n   bei '
+            'UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files '
             '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\Hello'
-            'WorldTests.cs:Zeile 18.\n'
+            'WorldTests.cs:Zeile 18.'
         },
         {
           'path': '.github',

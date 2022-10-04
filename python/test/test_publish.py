@@ -1581,16 +1581,17 @@ class PublishTest(unittest.TestCase):
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content='content3', time=1.0)
                     ])),
                     ('message4', list([
-                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.0),
-                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.1', time=1.0),
+                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.2', time=1.0)
                     ])),
                 ])),
+                # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='message6', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content='content5', time=1.0)
                     ]))
                 ])),
             ])),
@@ -1619,9 +1620,10 @@ class PublishTest(unittest.TestCase):
         ])
 
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3\ncontent3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4\ncontent4.1'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=False))
+        # the actual case message is taken, rather than the message given to get_case_annotation
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='actual message\ncontent5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=False))
 
         self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'skipped', None, report_individual_runs=False))
         self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'failure', None, report_individual_runs=False))
@@ -1649,9 +1651,10 @@ class PublishTest(unittest.TestCase):
                         UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.234)
                     ])),
                 ])),
+                # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='message6', content=None, time=1.2345)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content=None, time=1.2345)
                     ]))
                 ])),
             ]))
@@ -1660,7 +1663,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=True))
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=True))
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=True))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='actual message'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=True))
 
     def test_get_case_annotations(self):
         results = UnitTestCaseResults([
@@ -1706,7 +1709,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='3 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 1'
+                raw_details='fail message 1\nfail content 1'
             ), Annotation(
                 annotation_level='failure',
                 end_column=None,
@@ -1716,7 +1719,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
-                raw_details='error content'
+                raw_details='error message\nerror content'
             ), Annotation(
                 annotation_level='warning',
                 end_column=None,
@@ -1774,7 +1777,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 1'
+                raw_details='fail message 1\nfail content 1'
             ), Annotation(
                 annotation_level='warning',
                 end_column=None,
@@ -1784,7 +1787,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='2 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 2'
+                raw_details='fail message 2\nfail content 2'
             ), Annotation(
                 annotation_level='failure',
                 end_column=None,
@@ -1794,7 +1797,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
-                raw_details='error content'
+                raw_details='error message\nerror content'
             )
         ]
 

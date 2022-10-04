@@ -416,11 +416,17 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     cases_errors = [case for case in cases if case.result == 'error']
     cases_time = sum([case.time or 0 for case in cases])
 
-    # group cases by tests
+    # index cases by tests and state
     cases_results = UnitTestCaseResults()
     for case in cases:
-        key = (case.test_file if dedup_classes_by_file_name else None, case.class_name, case.test_name)
-        cases_results[key][case.result if case.result != 'disabled' else 'skipped'].append(case)
+        # index by test file name (when de-duplicating by file name), class name and test name
+        test = (case.test_file if dedup_classes_by_file_name else None, case.class_name, case.test_name)
+
+        # second index by state
+        state = case.result if case.result != 'disabled' else 'skipped'
+
+        # collect cases of test and state
+        cases_results[test][state].append(case)
 
     test_results = dict()
     for test, states in cases_results.items():

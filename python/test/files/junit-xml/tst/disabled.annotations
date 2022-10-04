@@ -41,7 +41,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'factorial_of_value_from_fixture failed'
+          'title': 'factorial_of_value_from_fixture failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/main.cpp:72: error: '
+            'check_eq(3628800, 3628801)'
         },
         {
           'path': '/',
@@ -49,7 +52,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'positive_arguments_must_produce_expected_result failed'
+          'title': 'positive_arguments_must_produce_expected_result failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, '
+            '6)hello world!'
         },
         {
           'path': '/',
@@ -57,7 +63,8 @@
           'end_line': 0,
           'annotation_level': 'failure',
           'message': 'tst/disabled.xml',
-          'title': 'test_which_throws_unknown_exception with error'
+          'title': 'test_which_throws_unknown_exception with error',
+          'raw_details': 'uncaught (anonymous namespace)::some_unknown_exception'
         },
         {
           'path': '/',
@@ -65,7 +72,8 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'positive_arguments_must_produce_expected_result[2] failed'
+          'title': 'positive_arguments_must_produce_expected_result[2] failed',
+          'raw_details': '/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)'
         },
         {
           'path': '/',
@@ -73,7 +81,8 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'factorial_of_value_from_fixture[0] failed'
+          'title': 'factorial_of_value_from_fixture[0] failed',
+          'raw_details': '/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2'
         },
         {
           'path': '/',
@@ -81,7 +90,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'test_which_fails_check_eq_with_custom_message failed'
+          'title': 'test_which_fails_check_eq_with_custom_message failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, '
+            '7)hello world!'
         },
         {
           'path': '/',
@@ -89,7 +101,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_ge_print failed'
+          'title': 'check_ge_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, '
+            '3)failed!'
         },
         {
           'path': '/',
@@ -97,7 +112,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_ge failed'
+          'title': 'check_ge failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, '
+            '3)Hello world!'
         },
         {
           'path': '/',
@@ -105,7 +123,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_gt_print failed'
+          'title': 'check_gt_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, '
+            '2)failed!'
         },
         {
           'path': '/',
@@ -113,7 +134,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_lt_print failed'
+          'title': 'check_lt_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, '
+            '2)failed!'
         },
         {
           'path': '/',
@@ -121,7 +145,8 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_print failed'
+          'title': 'check_print failed',
+          'raw_details': '/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!'
         },
         {
           'path': '/',
@@ -129,7 +154,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_gt failed'
+          'title': 'check_gt failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, '
+            '2)Hello world!'
         },
         {
           'path': '/',
@@ -137,7 +165,8 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check failed'
+          'title': 'check failed',
+          'raw_details': '/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!'
         },
         {
           'path': '/',
@@ -145,7 +174,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_le_print failed'
+          'title': 'check_le_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, '
+            '1)failed!'
         },
         {
           'path': '/',
@@ -153,7 +185,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_eq failed'
+          'title': 'check_eq failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, '
+            '2)Hello world!'
         },
         {
           'path': '/',
@@ -161,7 +196,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_eq_print failed'
+          'title': 'check_eq_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, '
+            '2)failed!'
         },
         {
           'path': '/',
@@ -169,7 +207,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_le failed'
+          'title': 'check_le failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, '
+            '1)Hello world!'
         },
         {
           'path': '/',
@@ -177,7 +218,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_ne failed'
+          'title': 'check_ne failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, '
+            '2)Hello world!'
         },
         {
           'path': '/',
@@ -185,7 +229,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_lt failed'
+          'title': 'check_lt failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, '
+            '2)Hello world!'
         },
         {
           'path': '/',
@@ -193,7 +240,10 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'tst/disabled.xml',
-          'title': 'check_ne_print failed'
+          'title': 'check_ne_print failed',
+          'raw_details':
+            '/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, '
+            '2)failed!'
         },
         {
           'path': '.github',
