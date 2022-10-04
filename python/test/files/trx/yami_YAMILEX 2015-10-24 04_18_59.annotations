@@ -45,7 +45,7 @@
             'le TAMP, Int32 TEXTERN) en '
             'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
             ' 363\n   en Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest() '
-            'en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 199\n'
+            'en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 199'
         },
         {
           'path': 'Prueba_Sistema.SIARAlgorithmTest',
@@ -66,7 +66,7 @@
             'e TINTPP, Double TAMP, Int32 TEXTERN, Int32 CRPBuscar) en '
             'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
             ' 474\n   en Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest() '
-            'en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 217\n'
+            'en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 217'
         },
         {
           'path': '.github',

@@ -40,7 +40,7 @@
           'annotation_level': 'failure',
           'message': 'junit.multiresult.xml',
           'title': 'test that errors (test class) with error',
-          'raw_details': 'stdout'
+          'raw_details': 'test teardown failure\nstdout'
         },
         {
           'path': 'test class',
@@ -49,7 +49,7 @@
           'annotation_level': 'warning',
           'message': 'junit.multiresult.xml',
           'title': 'test that fails (test class) failed',
-          'raw_details': 'Assertion failed'
+          'raw_details': 'test failure\nAssertion failed'
         },
         {
           'path': '.github',

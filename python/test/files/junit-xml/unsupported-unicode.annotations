@@ -34,7 +34,9 @@
           'annotation_level': 'warning',
           'message': 'unsupported-unicode.xml',
           'title': 'test 4 failed',
-          'raw_details': 'failed\n            '
+          'raw_details':
+            'Some unsupported unicode characters: '
+            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓\nfailed'
         },
         {
           'path': 'test/test-5.py',
@@ -44,8 +46,8 @@
           'message': 'unsupported-unicode.xml',
           'title': 'test 5 failed',
           'raw_details':
-            'Some unsupported unicode characters: '
-            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓\n            '
+            'message\nSome unsupported unicode characters: '
+            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓'
         },
         {
           'path': 'test/test-6.py',
@@ -54,7 +56,9 @@
           'annotation_level': 'failure',
           'message': 'unsupported-unicode.xml',
           'title': 'test 6 with error',
-          'raw_details': 'error\n            '
+          'raw_details':
+            'Some unsupported unicode characters: '
+            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓\nerror'
         },
         {
           'path': 'test/test-7.py',
@@ -64,8 +68,8 @@
           'message': 'unsupported-unicode.xml',
           'title': 'test 7 with error',
           'raw_details':
-            'Some unsupported unicode characters: '
-            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓\n            '
+            'message\nSome unsupported unicode characters: '
+            '헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓'
         },
         {
           'path': '.github',

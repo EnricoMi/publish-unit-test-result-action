@@ -31,7 +31,9 @@
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnitUnicode.xml',
           'title': 'UnitTests.UnicodeClassTest.TestFailure failed',
-          'raw_details': '  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]\n'
+          'raw_details':
+            '  Expected failure\n  Expected: ü\n  But was:  â\n  at '
+            'UnitTests.UnicodeClassTest.TestFailure () [0x00000]'
         },
         {
           'path': '.github',

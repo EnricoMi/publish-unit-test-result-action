@@ -41,7 +41,7 @@
             'do_test_rsh_events\n                self.do_test_rsh(command, 143, '
             'events=events)\n                test_spark.py:852: in do_test_rsh\n '
             '               self.assertEqual(expected_result, res)\n             '
-            '   E AssertionError: 143 != 0\n            '
+            '   E AssertionError: 143 != 0'
         },
         {
           'path': '.github',

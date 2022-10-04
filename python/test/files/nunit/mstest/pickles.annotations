@@ -56,7 +56,7 @@
             'ess.NUnit\\Addition.feature.cs:line 0\nat '
             'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in '
             'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
-            'ess.NUnit\\Addition.feature:line 18\n\n                      '
+            'ess.NUnit\\Addition.feature:line 18'
         },
         {
           'path': '.github',

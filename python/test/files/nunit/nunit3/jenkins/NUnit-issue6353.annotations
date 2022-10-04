@@ -31,7 +31,7 @@
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnit-issue6353.xml',
           'title': 'FailedTest failed',
-          'raw_details': 'Here comes the stack trace'
+          'raw_details': 'Reason\nHere comes the stack trace'
         },
         {
           'path': '.github',

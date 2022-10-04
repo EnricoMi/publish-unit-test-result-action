@@ -34,7 +34,7 @@
           'annotation_level': 'warning',
           'message': 'with-xml-entities.xml',
           'title': "Test with 'apostrophe' in the test name failed",
-          'raw_details': "Content with 'apostrophes'"
+          'raw_details': "A message with 'apostrophes'\nContent with 'apostrophes'"
         },
         {
           'path': '/',
@@ -43,7 +43,7 @@
           'annotation_level': 'failure',
           'message': 'with-xml-entities.xml',
           'title': 'Test with & in the test name with error',
-          'raw_details': 'Content with &'
+          'raw_details': 'A message with &\nContent with &'
         },
         {
           'path': '.github',
