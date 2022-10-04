@@ -3,7 +3,6 @@ import os
 import pathlib
 import re
 import sys
-import tempfile
 import unittest
 from glob import glob
 from typing import Optional, List
@@ -21,8 +20,9 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
-from publish_test_results import get_settings, get_test_results, get_stats, get_conclusion
-from publish.publisher import Settings, Publisher
+from publish_test_results import get_test_results, get_stats, get_conclusion, default_annotations
+from publish.publisher import Publisher
+from test_action_script import Test
 from test_utils import temp_locale
 
 test_path = pathlib.Path(__file__).resolve().parent
@@ -147,31 +147,16 @@ class JUnitXmlParseTest:
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         conclusion = get_conclusion(parsed, fail_on_failures=True, fail_on_errors=True)
+        settings = Test.get_settings(check_name='Test Results',
+                                     commit=commit,
+                                     compare_earlier=False,
+                                     report_individual_runs=False,
+                                     dedup_classes_by_file_name=False,
+                                     check_run_annotation=default_annotations)
 
         repo = mock.MagicMock(create_check_run=create_check_run)
         gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
         gha = mock.MagicMock()
-
-        with tempfile.NamedTemporaryFile('w') as file:
-            file.write('{}')
-            file.flush()
-            if sys.platform == 'win32':
-                file.close()
-
-            options = dict(
-                COMPARE_TO_EARLIER_COMMIT='false',
-                GITHUB_EVENT_PATH=file.name,
-                GITHUB_EVENT_NAME='push',
-                GITHUB_TOKEN='token',
-                GITHUB_REPOSITORY='repo',
-                GITHUB_SHA=commit
-            )
-
-            try:
-                settings = get_settings(options, gha)
-            finally:
-                if sys.platform == 'win32':
-                    os.unlink(file.name)
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
