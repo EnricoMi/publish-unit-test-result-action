@@ -1,22 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuites tests="352" failures="3" skipped="0" time="888.5251836">
-    <testsuite tests="3688" failures="3" skipped="0" time="888.525184" timestamp="2022-09-20 21:16:48Z" name="workspace">
+<testsuites tests="1" failures="1" skipped="0" time="2.117365">
+    <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="workspace">
         
         
-        <testsuite tests="352" failures="3" skipped="0" time="888.385199" timestamp="2022-09-20 21:16:48Z" name="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll">
+        <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll">
             
             
-            <testsuite tests="352" failures="3" skipped="0" time="888.339072" timestamp="2022-09-20 21:16:48Z" name="MP">
+            <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP">
                 
                 
-                <testsuite tests="352" failures="3" skipped="0" time="888.307736" timestamp="2022-09-20 21:16:48Z" name="MP.Tests">
+                <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP.Tests">
                     
                     
-                    <testsuite tests="351" failures="3" skipped="0" time="887.960312" timestamp="2022-09-20 21:16:48Z" name="MP.Tests.AssetValidatorTest">
+                    <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP.Tests.AssetValidatorTest">
                         
                         
                         <system-out/>
-                        <testsuite tests="56" failures="3" skipped="0" time="242.562296" timestamp="2022-09-20 21:24:21Z" name="MP.Tests.AssetValidatorTest.ValidateSceneContainer">
+                        <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:24:21Z" name="MP.Tests.AssetValidatorTest.ValidateSceneContainer">
                             
                             
                             <testcase name="ValidateSceneContainer(&quot;Assets/Scenes/Grid/GridTest.unity&quot;)" classname="" status="Failed" time="2.117365">

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<test-run id="2" testcasecount="352" result="Failed(Child)" total="352" passed="349" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="888.5251836">
-    <test-suite type="TestSuite" id="1000" name="workspace" fullname="workspace" runstate="Runnable" testcasecount="3688" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="888.525184" total="352" passed="349" failed="3" inconclusive="0" skipped="0" asserts="0">
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365">
+    <test-suite type="TestSuite" id="1000" name="workspace" fullname="workspace" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
         <properties>
             <property name="isRoot" value="True" />
         </properties>
         <failure>
             <message><![CDATA[One or more child tests had errors]]></message>
         </failure>
-        <test-suite type="Assembly" id="1361" name="MafiaPigs.EditorTests.dll" fullname="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="888.385199" total="352" passed="349" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="Assembly" id="1361" name="MafiaPigs.EditorTests.dll" fullname="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
             <properties>
                 <property name="_PID" value="1140" />
                 <property name="_APPDOMAIN" value="Unity Child Domain" />
@@ -19,23 +19,23 @@
             <failure>
                 <message><![CDATA[One or more child tests had errors]]></message>
             </failure>
-            <test-suite type="TestSuite" id="1362" name="MP" fullname="MP" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="888.339072" total="352" passed="349" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestSuite" id="1362" name="MP" fullname="MP" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
                 <properties />
                 <failure>
                     <message><![CDATA[One or more child tests had errors]]></message>
                 </failure>
-                <test-suite type="TestSuite" id="1363" name="Tests" fullname="MP.Tests" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="888.307736" total="352" passed="349" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <test-suite type="TestSuite" id="1363" name="Tests" fullname="MP.Tests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
                     <properties />
                     <failure>
                         <message><![CDATA[One or more child tests had errors]]></message>
                     </failure>
-                    <test-suite type="TestFixture" id="1003" name="AssetValidatorTest" fullname="MP.Tests.AssetValidatorTest" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="351" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:36Z" duration="887.960312" total="351" passed="348" failed="3" inconclusive="0" skipped="0" asserts="0">
+                    <test-suite type="TestFixture" id="1003" name="AssetValidatorTest" fullname="MP.Tests.AssetValidatorTest" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:36Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
                         <properties />
                         <failure>
                             <message><![CDATA[One or more child tests had errors]]></message>
                         </failure>
                         <output/>
-                        <test-suite type="ParameterizedMethod" id="1062" name="ValidateSceneContainer" fullname="MP.Tests.AssetValidatorTest.ValidateSceneContainer" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="56" result="Failed" site="Child" start-time="2022-09-20 21:24:21Z" end-time="2022-09-20 21:28:24Z" duration="242.562296" total="56" passed="53" failed="3" inconclusive="0" skipped="0" asserts="0">
+                        <test-suite type="ParameterizedMethod" id="1062" name="ValidateSceneContainer" fullname="MP.Tests.AssetValidatorTest.ValidateSceneContainer" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:24:21Z" end-time="2022-09-20 21:28:24Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
                             <properties />
                             <failure>
                                 <message><![CDATA[One or more child tests had errors]]></message>

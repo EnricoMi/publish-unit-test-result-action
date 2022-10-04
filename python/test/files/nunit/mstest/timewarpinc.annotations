@@ -7,29 +7,22 @@
     'output': {
       'title': '1 fail in 2s',
       'summary':
-        '\u205f\u2004\u2008\u205f\u2004\u205f\u20041 files\u2004\u2003\u205f\u2004\u2008\u205f\u2004\u205f\u2004'
-        '1 suites\u2004\u2003\u20022s '
+        '1 tests\u2002\u2003\u20030 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '2s '
         '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
-        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004\u2008\u205f\u2004\u205f'
-        '\u20041 tests\u2003\u205f\u2004\u2008\u205f\u2004\u205f\u20040 '
-        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
-        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
         '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
-        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20031 '
-        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
-        'b/v1.20/README.md#the-symbols "failed tests")\n3\u2008688 runs\u2006\u2003'
-        '3\u2008685 '
-        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
-        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u20030 '
-        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
-        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20033 '
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
         '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
         'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
         'commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMSQ6AIAwAv'
-        '0I4e1CJhvgZQ1Bjo4ApcDL+3WrA5daZtrPzCdbR845VBeM+QnhgiKgCOEtYE9Ii5NU99z'
-        '5qTaJ8xQLbT0wK1t/LiOgwnWC0V0+0UibKRVLNo97mzSkpMn+L2hkDgSBNzM+KHyf4wO+'
-        'Y4wAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQ6AIAwEv'
+        '0I4e1CPfsYQhNiIYAqcjH+3IgjednbbObkGozyf2NAx7iOED5aIIoCzhCMhDaFMKc8+Sk'
+        'lFX4sNjl+hBZjfi0J0mE8w2uJ7Yqt7udoSN7LErUu6fYdAkBPzq+DXDXGDl7HdAAAA\n',
       'annotations': [
         {
           'path': '/',
