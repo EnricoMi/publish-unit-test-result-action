@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.023
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -53,6 +59,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\Users\\Samw\\Documents\\Visual Studio '
         '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
         'ne 27\n',
+      stdout=None,
+      stderr=None,
       time=0.005
     ),
     publish.unittestresults.UnitTestCase(
@@ -67,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\Users\\Samw\\Documents\\Visual Studio '
         '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
         'ne 27\n',
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -81,6 +91,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\Users\\Samw\\Documents\\Visual Studio '
         '2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:li'
         'ne 27\n',
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -92,6 +104,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -103,6 +117,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -114,6 +130,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     )
   ]

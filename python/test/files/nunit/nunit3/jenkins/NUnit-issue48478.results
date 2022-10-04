@@ -17,6 +17,10 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout='Connecting to Wombat Database\n    Project Filename : '
+        'C:\\Data\\example.dat\n    Licence Server   : LICSERVER\n    Author  '
+        '         : AUTHOR\n    Subset      :  \nChecking 241 log ids\n',
+      stderr=None,
       time=11.129426
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +32,10 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout='Connecting to Wombat Database\n    Project Filename : '
+        'C:\\Data\\example.dat\n    Licence Server   : LICSERVER\n    Author  '
+        '         : AUTHOR\n    Subset      :  \nChecking 10 log ids\n',
+      stderr=None,
       time=0.48234
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +47,10 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout='Connecting to Wombat Database\n    Project Filename : '
+        'C:\\Data\\example.dat\n    Licence Server   : LICSERVER\n    Author  '
+        '         : AUTHOR\n    Subset      :  \n',
+      stderr=None,
       time=6.195858
     )
   ]

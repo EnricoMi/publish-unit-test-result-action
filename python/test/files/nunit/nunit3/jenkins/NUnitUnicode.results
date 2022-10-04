@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='  Expected failure\n  Expected: ü\n  But was:  â\n',
       content='  at UnitTests.UnicodeClassTest.TestFailure () [0x00000]\n',
+      stdout=None,
+      stderr=None,
       time=0.092
     )
   ]

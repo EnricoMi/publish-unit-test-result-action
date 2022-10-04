@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=3.284
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=3.885
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.615
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=5.338
     ),
     publish.unittestresults.UnitTestCase(
@@ -61,6 +69,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.68
     ),
     publish.unittestresults.UnitTestCase(
@@ -72,6 +82,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=5.279
     ),
     publish.unittestresults.UnitTestCase(
@@ -84,6 +96,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.422
     ),
     publish.unittestresults.UnitTestCase(
@@ -96,6 +110,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.329
     ),
     publish.unittestresults.UnitTestCase(
@@ -108,6 +124,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.32
     ),
     publish.unittestresults.UnitTestCase(
@@ -120,6 +138,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.324
     ),
     publish.unittestresults.UnitTestCase(
@@ -132,6 +152,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.318
     ),
     publish.unittestresults.UnitTestCase(
@@ -144,6 +166,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:149: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.321
     ),
     publish.unittestresults.UnitTestCase(
@@ -155,6 +179,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=2.914
     ),
     publish.unittestresults.UnitTestCase(
@@ -166,6 +192,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=3.739
     ),
     publish.unittestresults.UnitTestCase(
@@ -177,6 +205,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.611
     ),
     publish.unittestresults.UnitTestCase(
@@ -188,6 +218,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.809
     ),
     publish.unittestresults.UnitTestCase(
@@ -199,6 +231,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.597
     ),
     publish.unittestresults.UnitTestCase(
@@ -210,6 +244,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.788
     ),
     publish.unittestresults.UnitTestCase(
@@ -222,6 +258,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.377
     ),
     publish.unittestresults.UnitTestCase(
@@ -234,6 +272,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.361
     ),
     publish.unittestresults.UnitTestCase(
@@ -246,6 +286,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.373
     ),
     publish.unittestresults.UnitTestCase(
@@ -258,6 +300,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.436
     ),
     publish.unittestresults.UnitTestCase(
@@ -270,6 +314,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.351
     ),
     publish.unittestresults.UnitTestCase(
@@ -282,6 +328,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='MPI is not available',
       content='/horovod/test/integration/test_static_run.py:136: MPI is not '
         'available',
+      stdout=None,
+      stderr=None,
       time=1.425
     )
   ]

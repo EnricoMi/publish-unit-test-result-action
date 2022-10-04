@@ -70,6 +70,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=31.060108
     ),
     publish.unittestresults.UnitTestCase(
@@ -101,6 +103,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\My Requests\\Grid\\GridValidation.cs:line 65',
+      stdout=None,
+      stderr=None,
       time=0.012473
     ),
     publish.unittestresults.UnitTestCase(
@@ -165,6 +169,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.795745
     ),
     publish.unittestresults.UnitTestCase(
@@ -229,6 +235,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.704724
     ),
     publish.unittestresults.UnitTestCase(
@@ -260,6 +268,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Owner Election\\Grid\\GridValidation.cs:line 28',
+      stdout=None,
+      stderr=None,
       time=0.005167
     ),
     publish.unittestresults.UnitTestCase(
@@ -271,6 +281,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=5.974509
     ),
     publish.unittestresults.UnitTestCase(
@@ -305,6 +317,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'on.UI_MyTasks_OE_ViewOwnersElection(String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Owner Election\\Paging\\PagingValidation.cs:line 40',
+      stdout=None,
+      stderr=None,
       time=0.006152
     ),
     publish.unittestresults.UnitTestCase(
@@ -369,6 +383,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.750263
     ),
     publish.unittestresults.UnitTestCase(
@@ -400,6 +416,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Owner Election\\Progress\\ProgressValidation.cs:line 74',
+      stdout=None,
+      stderr=None,
       time=0.006624
     ),
     publish.unittestresults.UnitTestCase(
@@ -412,6 +430,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=6.756108
     ),
     publish.unittestresults.UnitTestCase(
@@ -444,6 +464,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Approve All\\ApproveAll.cs:line 29',
+      stdout=None,
+      stderr=None,
       time=0.0061
     ),
     publish.unittestresults.UnitTestCase(
@@ -477,6 +499,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Approve All\\ApproveAll.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.005707
     ),
     publish.unittestresults.UnitTestCase(
@@ -509,6 +533,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Approve All\\ApproveAll.cs:line 47',
+      stdout=None,
+      stderr=None,
       time=0.006506
     ),
     publish.unittestresults.UnitTestCase(
@@ -527,6 +553,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Browsers\\Browsers.cs:line 41\n',
+      stdout=None,
+      stderr=None,
       time=11.068501
     ),
     publish.unittestresults.UnitTestCase(
@@ -589,6 +617,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Clear All\\ClearAll.cs:line 90',
+      stdout=None,
+      stderr=None,
       time=6.804192
     ),
     publish.unittestresults.UnitTestCase(
@@ -621,6 +651,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Clear All\\ClearAll.cs:line 102',
+      stdout=None,
+      stderr=None,
       time=0.009398
     ),
     publish.unittestresults.UnitTestCase(
@@ -653,6 +685,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Clear All\\ClearAll.cs:line 13',
+      stdout=None,
+      stderr=None,
       time=0.008016
     ),
     publish.unittestresults.UnitTestCase(
@@ -685,6 +719,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Clear All\\ClearAll.cs:line 32',
+      stdout=None,
+      stderr=None,
       time=0.006259
     ),
     publish.unittestresults.UnitTestCase(
@@ -697,6 +733,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=6.921707
     ),
     publish.unittestresults.UnitTestCase(
@@ -731,6 +769,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Examine Text and '
         'Layout\\ExaminTextAndLayout.cs:line 67',
+      stdout=None,
+      stderr=None,
       time=0.00639
     ),
     publish.unittestresults.UnitTestCase(
@@ -765,6 +805,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Examine Text and '
         'Layout\\ExaminTextAndLayout.cs:line 15',
+      stdout=None,
+      stderr=None,
       time=0.006646
     ),
     publish.unittestresults.UnitTestCase(
@@ -799,6 +841,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Examine Text and '
         'Layout\\ExaminTextAndLayout.cs:line 50',
+      stdout=None,
+      stderr=None,
       time=0.005534
     ),
     publish.unittestresults.UnitTestCase(
@@ -832,6 +876,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Load\\Load.cs:line 15',
+      stdout=None,
+      stderr=None,
       time=35.390525
     ),
     publish.unittestresults.UnitTestCase(
@@ -864,6 +910,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Load\\Load.cs:line 34',
+      stdout=None,
+      stderr=None,
       time=0.007019
     ),
     publish.unittestresults.UnitTestCase(
@@ -897,6 +945,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Reject All\\RejectAll.cs:line 14',
+      stdout=None,
+      stderr=None,
       time=35.643121
     ),
     publish.unittestresults.UnitTestCase(
@@ -929,6 +979,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Reject All\\RejectAll.cs:line 29',
+      stdout=None,
+      stderr=None,
       time=0.006562
     ),
     publish.unittestresults.UnitTestCase(
@@ -962,6 +1014,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Reject All\\RejectAll.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.007306
     ),
     publish.unittestresults.UnitTestCase(
@@ -994,6 +1048,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Reject All\\RejectAll.cs:line 47',
+      stdout=None,
+      stderr=None,
       time=0.005689
     ),
     publish.unittestresults.UnitTestCase(
@@ -1006,6 +1062,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.670159
     ),
     publish.unittestresults.UnitTestCase(
@@ -1018,6 +1076,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001774
     ),
     publish.unittestresults.UnitTestCase(
@@ -1051,6 +1111,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Bulk Acions\\Saving\\Saving.cs:line 27',
+      stdout=None,
+      stderr=None,
       time=0.008969
     ),
     publish.unittestresults.UnitTestCase(
@@ -1100,6 +1162,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Approve '
         'All\\Graph\\ApproveAllGraph.cs:line 15',
+      stdout=None,
+      stderr=None,
       time=4.765661
     ),
     publish.unittestresults.UnitTestCase(
@@ -1134,6 +1198,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Approve '
         'All\\Graph\\ApproveAllGraph.cs:line 65',
+      stdout=None,
+      stderr=None,
       time=0.009578
     ),
     publish.unittestresults.UnitTestCase(
@@ -1168,6 +1234,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Approve '
         'All\\Graph\\ApproveAllGraph.cs:line 39',
+      stdout=None,
+      stderr=None,
       time=0.006023
     ),
     publish.unittestresults.UnitTestCase(
@@ -1202,6 +1270,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Approve '
         'All\\Graph\\ApproveAllGraph.cs:line 93',
+      stdout=None,
+      stderr=None,
       time=0.005994
     ),
     publish.unittestresults.UnitTestCase(
@@ -1251,6 +1321,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Clear '
         'All\\Graph\\ClearAllGraph.cs:line 15',
+      stdout=None,
+      stderr=None,
       time=4.814514
     ),
     publish.unittestresults.UnitTestCase(
@@ -1285,6 +1357,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Clear '
         'All\\Graph\\ClearAllGraph.cs:line 46',
+      stdout=None,
+      stderr=None,
       time=0.007531
     ),
     publish.unittestresults.UnitTestCase(
@@ -1319,6 +1393,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Clear '
         'All\\Graph\\ClearAllGraph.cs:line 112',
+      stdout=None,
+      stderr=None,
       time=0.006818
     ),
     publish.unittestresults.UnitTestCase(
@@ -1353,6 +1429,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Clear '
         'All\\Graph\\ClearAllGraph.cs:line 79',
+      stdout=None,
+      stderr=None,
       time=0.007179
     ),
     publish.unittestresults.UnitTestCase(
@@ -1404,6 +1482,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Column Filtering\\Filter further '
         'by\\Filter By\\FilterBy.cs:line 106',
+      stdout=None,
+      stderr=None,
       time=4.87986
     ),
     publish.unittestresults.UnitTestCase(
@@ -1440,6 +1520,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Column Filtering\\Filter further '
         'by\\Filter By\\FilterBy.cs:line 54',
+      stdout=None,
+      stderr=None,
       time=0.006724
     ),
     publish.unittestresults.UnitTestCase(
@@ -1476,6 +1558,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Column Filtering\\Filter further '
         'by\\Filter By\\FilterBy.cs:line 13',
+      stdout=None,
+      stderr=None,
       time=0.007172
     ),
     publish.unittestresults.UnitTestCase(
@@ -1525,6 +1609,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Entire Column\\EntireColumn.cs:line '
         '16',
+      stdout=None,
+      stderr=None,
       time=4.715226
     ),
     publish.unittestresults.UnitTestCase(
@@ -1560,6 +1646,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Entire Column\\EntireColumn.cs:line '
         '57',
+      stdout=None,
+      stderr=None,
       time=0.009371
     ),
     publish.unittestresults.UnitTestCase(
@@ -1595,6 +1683,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Entire Column\\EntireColumn.cs:line '
         '83',
+      stdout=None,
+      stderr=None,
       time=0.007183
     ),
     publish.unittestresults.UnitTestCase(
@@ -1607,6 +1697,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001224
     ),
     publish.unittestresults.UnitTestCase(
@@ -1642,6 +1734,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Entire Column\\EntireColumn.cs:line '
         '148',
+      stdout=None,
+      stderr=None,
       time=0.006828
     ),
     publish.unittestresults.UnitTestCase(
@@ -1676,6 +1770,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Entire Column\\EntireColumn.cs:line '
         '111',
+      stdout=None,
+      stderr=None,
       time=0.007697
     ),
     publish.unittestresults.UnitTestCase(
@@ -1724,6 +1820,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Menus\\Menus.cs:line 58',
+      stdout=None,
+      stderr=None,
       time=4.628458
     ),
     publish.unittestresults.UnitTestCase(
@@ -1756,6 +1854,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Menus\\Menus.cs:line 100',
+      stdout=None,
+      stderr=None,
       time=0.0081
     ),
     publish.unittestresults.UnitTestCase(
@@ -1788,6 +1888,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Menus\\Menus.cs:line 140',
+      stdout=None,
+      stderr=None,
       time=0.007192
     ),
     publish.unittestresults.UnitTestCase(
@@ -1820,6 +1922,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Menus\\Menus.cs:line 13',
+      stdout=None,
+      stderr=None,
       time=0.006358
     ),
     publish.unittestresults.UnitTestCase(
@@ -1869,6 +1973,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Reject '
         'All\\Graph\\RejectAllGraph.cs:line 15',
+      stdout=None,
+      stderr=None,
       time=4.669416
     ),
     publish.unittestresults.UnitTestCase(
@@ -1903,6 +2009,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Reject '
         'All\\Graph\\RejectAllGraph.cs:line 65',
+      stdout=None,
+      stderr=None,
       time=0.007605
     ),
     publish.unittestresults.UnitTestCase(
@@ -1937,6 +2045,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Reject '
         'All\\Graph\\RejectAllGraph.cs:line 39',
+      stdout=None,
+      stderr=None,
       time=0.006233
     ),
     publish.unittestresults.UnitTestCase(
@@ -1971,6 +2081,8 @@ publish.unittestresults.ParsedUnitTestResults(
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Chart Menu\\Reject '
         'All\\Graph\\RejectAllGraph.cs:line 93',
+      stdout=None,
+      stderr=None,
       time=0.005717
     ),
     publish.unittestresults.UnitTestCase(
@@ -2019,6 +2131,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 16',
+      stdout=None,
+      stderr=None,
       time=4.834914
     ),
     publish.unittestresults.UnitTestCase(
@@ -2052,6 +2166,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 55',
+      stdout=None,
+      stderr=None,
       time=0.00655
     ),
     publish.unittestresults.UnitTestCase(
@@ -2084,6 +2200,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 99',
+      stdout=None,
+      stderr=None,
       time=0.005979
     ),
     publish.unittestresults.UnitTestCase(
@@ -2117,6 +2235,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 34',
+      stdout=None,
+      stderr=None,
       time=0.006368
     ),
     publish.unittestresults.UnitTestCase(
@@ -2150,6 +2270,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.006124
     ),
     publish.unittestresults.UnitTestCase(
@@ -2182,6 +2304,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Certification\\Access Certification Inner '
         'Screen\\Chart View\\Look And Feel\\LookAndFeel.cs:line 121',
+      stdout=None,
+      stderr=None,
       time=0.006007
     ),
     publish.unittestresults.UnitTestCase(
@@ -2194,6 +2318,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2206,6 +2332,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2218,6 +2346,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2230,6 +2360,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2242,6 +2374,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2254,6 +2388,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2266,6 +2402,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2278,6 +2416,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2290,6 +2430,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2302,6 +2444,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='OneTimeSetUp: No suitable constructor was found',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -2366,6 +2510,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.834481
     ),
     publish.unittestresults.UnitTestCase(
@@ -2397,6 +2543,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Request\\Filters\\FiltersValidation.cs:line 83',
+      stdout=None,
+      stderr=None,
       time=0.023999
     ),
     publish.unittestresults.UnitTestCase(
@@ -2461,6 +2609,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.89347
     ),
     publish.unittestresults.UnitTestCase(
@@ -2492,6 +2642,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Request\\Grid\\GridValidation.cs:line 65',
+      stdout=None,
+      stderr=None,
       time=0.008822
     ),
     publish.unittestresults.UnitTestCase(
@@ -2556,6 +2708,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=31.057879
     ),
     publish.unittestresults.UnitTestCase(
@@ -2620,6 +2774,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.919321
     ),
     publish.unittestresults.UnitTestCase(
@@ -2651,6 +2807,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Access Request\\Progress\\ProgressValidation.cs:line 80',
+      stdout=None,
+      stderr=None,
       time=0.007383
     ),
     publish.unittestresults.UnitTestCase(
@@ -2715,6 +2873,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=31.007686
     ),
     publish.unittestresults.UnitTestCase(
@@ -2746,6 +2906,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Compliance Control\\Grid\\GridValidation.cs:line 66',
+      stdout=None,
+      stderr=None,
       time=0.00729
     ),
     publish.unittestresults.UnitTestCase(
@@ -2810,6 +2972,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.750044
     ),
     publish.unittestresults.UnitTestCase(
@@ -2874,6 +3038,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.779221
     ),
     publish.unittestresults.UnitTestCase(
@@ -2905,6 +3071,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Compliance Control\\Progress\\ProgressValidation.cs:line 76',
+      stdout=None,
+      stderr=None,
       time=0.005767
     ),
     publish.unittestresults.UnitTestCase(
@@ -2969,6 +3137,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.73849
     ),
     publish.unittestresults.UnitTestCase(
@@ -3000,6 +3170,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\My Requests\\Progress\\ProgressValidation.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.008522
     ),
     publish.unittestresults.UnitTestCase(
@@ -3064,6 +3236,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.683118
     ),
     publish.unittestresults.UnitTestCase(
@@ -3095,6 +3269,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\Compliance Control\\Filters\\FiltersValidation.cs:line 69',
+      stdout=None,
+      stderr=None,
       time=0.006491
     ),
     publish.unittestresults.UnitTestCase(
@@ -3159,6 +3335,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.720678
     ),
     publish.unittestresults.UnitTestCase(
@@ -3190,6 +3368,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\My'
         ' Tasks\\My Requests\\Filters\\FiltersValidation.cs:line 78',
+      stdout=None,
+      stderr=None,
       time=0.007269
     ),
     publish.unittestresults.UnitTestCase(
@@ -3254,6 +3434,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.617281
     ),
     publish.unittestresults.UnitTestCase(
@@ -3285,6 +3467,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 111',
+      stdout=None,
+      stderr=None,
       time=0.004977
     ),
     publish.unittestresults.UnitTestCase(
@@ -3316,6 +3500,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 575',
+      stdout=None,
+      stderr=None,
       time=0.004786
     ),
     publish.unittestresults.UnitTestCase(
@@ -3348,6 +3534,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 155',
+      stdout=None,
+      stderr=None,
       time=0.0045
     ),
     publish.unittestresults.UnitTestCase(
@@ -3379,6 +3567,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 204',
+      stdout=None,
+      stderr=None,
       time=0.005383
     ),
     publish.unittestresults.UnitTestCase(
@@ -3411,6 +3601,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String itteration, String browserName, String url, String names) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 532',
+      stdout=None,
+      stderr=None,
       time=0.004051
     ),
     publish.unittestresults.UnitTestCase(
@@ -3442,6 +3634,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 301',
+      stdout=None,
+      stderr=None,
       time=0.004175
     ),
     publish.unittestresults.UnitTestCase(
@@ -3473,6 +3667,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 349',
+      stdout=None,
+      stderr=None,
       time=0.003606
     ),
     publish.unittestresults.UnitTestCase(
@@ -3506,6 +3702,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'names) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 32',
+      stdout=None,
+      stderr=None,
       time=0.003472
     ),
     publish.unittestresults.UnitTestCase(
@@ -3537,6 +3735,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 397',
+      stdout=None,
+      stderr=None,
       time=0.004382
     ),
     publish.unittestresults.UnitTestCase(
@@ -3568,6 +3768,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 248',
+      stdout=None,
+      stderr=None,
       time=0.005425
     ),
     publish.unittestresults.UnitTestCase(
@@ -3600,6 +3802,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 488',
+      stdout=None,
+      stderr=None,
       time=0.004325
     ),
     publish.unittestresults.UnitTestCase(
@@ -3631,6 +3835,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Alert Exclusions\\AlertExclusions.cs:line 447',
+      stdout=None,
+      stderr=None,
       time=0.003597
     ),
     publish.unittestresults.UnitTestCase(
@@ -3696,6 +3902,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.67329
     ),
     publish.unittestresults.UnitTestCase(
@@ -3728,6 +3936,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 180',
+      stdout=None,
+      stderr=None,
       time=0.004622
     ),
     publish.unittestresults.UnitTestCase(
@@ -3760,6 +3970,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 78',
+      stdout=None,
+      stderr=None,
       time=0.004533
     ),
     publish.unittestresults.UnitTestCase(
@@ -3791,6 +4003,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 223',
+      stdout=None,
+      stderr=None,
       time=0.003773
     ),
     publish.unittestresults.UnitTestCase(
@@ -3824,6 +4038,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'names) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 267',
+      stdout=None,
+      stderr=None,
       time=0.004412
     ),
     publish.unittestresults.UnitTestCase(
@@ -3856,6 +4072,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 309',
+      stdout=None,
+      stderr=None,
       time=0.005649
     ),
     publish.unittestresults.UnitTestCase(
@@ -3887,6 +4105,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 31',
+      stdout=None,
+      stderr=None,
       time=0.004311
     ),
     publish.unittestresults.UnitTestCase(
@@ -3920,6 +4140,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url, String names) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 355',
+      stdout=None,
+      stderr=None,
       time=0.013288
     ),
     publish.unittestresults.UnitTestCase(
@@ -3952,6 +4174,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 398',
+      stdout=None,
+      stderr=None,
       time=0.005548
     ),
     publish.unittestresults.UnitTestCase(
@@ -3984,6 +4208,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Data Owner Exclusions\\DataOwnerExclusions.cs:line 438',
+      stdout=None,
+      stderr=None,
       time=0.005229
     ),
     publish.unittestresults.UnitTestCase(
@@ -4051,6 +4277,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.705834
     ),
     publish.unittestresults.UnitTestCase(
@@ -4085,6 +4313,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'columnName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Logical Mapped Path\\Settings\\Settings.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.006011
     ),
     publish.unittestresults.UnitTestCase(
@@ -4119,6 +4349,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'columnName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Logical Mapped Path\\Settings\\Settings.cs:line 192',
+      stdout=None,
+      stderr=None,
       time=0.004827
     ),
     publish.unittestresults.UnitTestCase(
@@ -4153,6 +4385,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'columnName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Logical Mapped Path\\Settings\\Settings.cs:line 36',
+      stdout=None,
+      stderr=None,
       time=0.003872
     ),
     publish.unittestresults.UnitTestCase(
@@ -4187,6 +4421,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'columnName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Logical Mapped Path\\Settings\\Settings.cs:line 119',
+      stdout=None,
+      stderr=None,
       time=0.005674
     ),
     publish.unittestresults.UnitTestCase(
@@ -4251,6 +4487,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=31.228887
     ),
     publish.unittestresults.UnitTestCase(
@@ -4284,6 +4522,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String companyName) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 79',
+      stdout=None,
+      stderr=None,
       time=0.005272
     ),
     publish.unittestresults.UnitTestCase(
@@ -4315,6 +4555,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'language, String itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 116',
+      stdout=None,
+      stderr=None,
       time=0.004819
     ),
     publish.unittestresults.UnitTestCase(
@@ -4346,6 +4588,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'itteration, String browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 172',
+      stdout=None,
+      stderr=None,
       time=0.006014
     ),
     publish.unittestresults.UnitTestCase(
@@ -4378,6 +4622,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'itteration, String browserName, String url, String htmlTxt) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 246',
+      stdout=None,
+      stderr=None,
       time=0.004563
     ),
     publish.unittestresults.UnitTestCase(
@@ -4410,6 +4656,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'itteration, String browserName, String url, String htmlTxt) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 285',
+      stdout=None,
+      stderr=None,
       time=0.004147
     ),
     publish.unittestresults.UnitTestCase(
@@ -4442,6 +4690,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 330',
+      stdout=None,
+      stderr=None,
       time=0.004674
     ),
     publish.unittestresults.UnitTestCase(
@@ -4474,6 +4724,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'userMail) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 407',
+      stdout=None,
+      stderr=None,
       time=0.004898
     ),
     publish.unittestresults.UnitTestCase(
@@ -4506,6 +4758,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'userMail) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 472',
+      stdout=None,
+      stderr=None,
       time=0.004947
     ),
     publish.unittestresults.UnitTestCase(
@@ -4538,6 +4792,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'userMail) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 549',
+      stdout=None,
+      stderr=None,
       time=0.004689
     ),
     publish.unittestresults.UnitTestCase(
@@ -4570,6 +4826,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'userMail) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 625',
+      stdout=None,
+      stderr=None,
       time=0.004852
     ),
     publish.unittestresults.UnitTestCase(
@@ -4602,6 +4860,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'userMail) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Messages\\MessagesTests.cs:line 712',
+      stdout=None,
+      stderr=None,
       time=0.005143
     ),
     publish.unittestresults.UnitTestCase(
@@ -4667,6 +4927,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.750478
     ),
     publish.unittestresults.UnitTestCase(
@@ -4702,6 +4964,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '347',
+      stdout=None,
+      stderr=None,
       time=0.005173
     ),
     publish.unittestresults.UnitTestCase(
@@ -4737,6 +5001,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '307',
+      stdout=None,
+      stderr=None,
       time=0.004699
     ),
     publish.unittestresults.UnitTestCase(
@@ -4771,6 +5037,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '443',
+      stdout=None,
+      stderr=None,
       time=0.005441
     ),
     publish.unittestresults.UnitTestCase(
@@ -4805,6 +5073,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '386',
+      stdout=None,
+      stderr=None,
       time=0.004257
     ),
     publish.unittestresults.UnitTestCase(
@@ -4840,6 +5110,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '500',
+      stdout=None,
+      stderr=None,
       time=0.005266
     ),
     publish.unittestresults.UnitTestCase(
@@ -4873,6 +5145,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '259',
+      stdout=None,
+      stderr=None,
       time=0.004204
     ),
     publish.unittestresults.UnitTestCase(
@@ -4906,6 +5180,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '213',
+      stdout=None,
+      stderr=None,
       time=0.003973
     ),
     publish.unittestresults.UnitTestCase(
@@ -4939,6 +5215,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '167',
+      stdout=None,
+      stderr=None,
       time=0.003754
     ),
     publish.unittestresults.UnitTestCase(
@@ -4972,6 +5250,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line '
         '121',
+      stdout=None,
+      stderr=None,
       time=0.004553
     ),
     publish.unittestresults.UnitTestCase(
@@ -5004,6 +5284,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'numberOfElementsInFile) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Bulk Upload\\BulkUpload.cs:line 75',
+      stdout=None,
+      stderr=None,
       time=0.004832
     ),
     publish.unittestresults.UnitTestCase(
@@ -5070,6 +5352,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.724787
     ),
     publish.unittestresults.UnitTestCase(
@@ -5135,6 +5419,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.649644
     ),
     publish.unittestresults.UnitTestCase(
@@ -5167,6 +5453,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'numberOfElementsInFile, String numberOfElementsAfterSearch) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Grid\\Grid.cs:line 145',
+      stdout=None,
+      stderr=None,
       time=0.005075
     ),
     publish.unittestresults.UnitTestCase(
@@ -5199,6 +5487,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String numberOfElementsAfterSearch) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Grid\\Grid.cs:line 196',
+      stdout=None,
+      stderr=None,
       time=0.006368
     ),
     publish.unittestresults.UnitTestCase(
@@ -5231,6 +5521,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String numberOfElementsAfterSearch) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Sensitive Account Exclusions\\Grid\\Grid.cs:line 31',
+      stdout=None,
+      stderr=None,
       time=0.005681
     ),
     publish.unittestresults.UnitTestCase(
@@ -5295,6 +5587,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.631177
     ),
     publish.unittestresults.UnitTestCase(
@@ -5361,6 +5655,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ementIsVisible>b__12(IWebDriver driver)\n   at '
         'OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 '
         'condition)',
+      stdout=None,
+      stderr=None,
       time=30.662187
     ),
     publish.unittestresults.UnitTestCase(
@@ -5392,6 +5688,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'browserName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Set Admin Roles\\SetAdminRoles.cs:line 97',
+      stdout=None,
+      stderr=None,
       time=0.005658
     ),
     publish.unittestresults.UnitTestCase(
@@ -5425,6 +5723,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'String dbSchema, String tableName, String columnName, String url) in '
         'C:\\branches\\1\\main-branch\\Automation\\UI\\MyCompanyUiSettings\\Tl\\Settin'
         'gs\\Set Admin Roles\\SetAdminRoles.cs:line 138',
+      stdout=None,
+      stderr=None,
       time=0.005589
     )
   ]

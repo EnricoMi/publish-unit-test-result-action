@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.146
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     )
   ]

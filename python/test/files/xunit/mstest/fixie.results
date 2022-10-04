@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -41,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       content='Expected: System.String\nActual:   System.Int32   at '
         '[genericTestClassForStackTrace].ShouldBeString[T](T genericArgument) '
         'in [fileLocation]:line #',
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -53,6 +59,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message="'Fail' failed!",
       content="'Fail' failed!   at [testClassForStackTrace].Fail() in "
         "[fileLocation]:line #",
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -65,6 +73,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='Expected: 2\nActual:   1',
       content='Expected: 2\nActual:   1   at '
         '[testClassForStackTrace].FailByAssertion() in [fileLocation]:line #',
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -76,6 +86,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -87,6 +99,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='⚠ Skipped with attribute.',
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.234
     )
   ]

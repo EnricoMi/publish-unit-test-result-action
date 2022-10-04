@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.1084258
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0001365
     ),
     publish.unittestresults.UnitTestCase(
@@ -43,6 +47,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'i) in '
         'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
         'sts.XUnitTests\\CalculatorTests.cs:line 67',
+      stdout=None,
+      stderr=None,
       time=0.0006537
     ),
     publish.unittestresults.UnitTestCase(
@@ -54,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -65,6 +73,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0001371
     ),
     publish.unittestresults.UnitTestCase(
@@ -76,6 +86,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=9.7e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -93,6 +105,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'DotnetTests.XUnitTests.CalculatorTests.Exception_In_TargetTest() in '
         'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
         'sts.XUnitTests\\CalculatorTests.cs:line 33',
+      stdout=None,
+      stderr=None,
       time=0.0008377
     ),
     publish.unittestresults.UnitTestCase(
@@ -107,6 +121,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'DotnetTests.XUnitTests.CalculatorTests.Exception_In_Test() in '
         'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
         'sts.XUnitTests\\CalculatorTests.cs:line 39',
+      stdout=None,
+      stderr=None,
       time=0.0025175
     ),
     publish.unittestresults.UnitTestCase(
@@ -121,6 +137,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'DotnetTests.XUnitTests.CalculatorTests.Failing_Test() in '
         'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
         'sts.XUnitTests\\CalculatorTests.cs:line 27',
+      stdout=None,
+      stderr=None,
       time=0.0038697
     ),
     publish.unittestresults.UnitTestCase(
@@ -132,6 +150,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=7.8e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -146,6 +166,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(Int32 i) in '
         'C:\\Users\\Michal\\Workspace\\dorny\\test-reporter\\reports\\dotnet\\DotnetTe'
         'sts.XUnitTests\\CalculatorTests.cs:line 59',
+      stdout=None,
+      stderr=None,
       time=0.0004141
     )
   ]

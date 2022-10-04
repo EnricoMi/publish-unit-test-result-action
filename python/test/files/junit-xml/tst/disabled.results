@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -29,6 +31,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/main.cpp:72: error: '
         'check_eq(3628800, 3628801)',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -40,6 +44,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -51,6 +57,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -62,6 +70,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='disabled',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -74,6 +84,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/main.cpp:45: error: check_ne(6, '
         '6)hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -85,6 +97,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message='uncaught (anonymous namespace)::some_unknown_exception',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -96,6 +110,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='/home/ivan/prj/tst/tests/failed/main.cpp:85: error: check(false)',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -107,6 +123,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -118,6 +136,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='/home/ivan/prj/tst/tests/failed/main.cpp:109: error: expected 2',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -129,6 +149,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='disabled',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -140,6 +162,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='disabled',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -151,6 +175,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='disabled',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -163,6 +189,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/main.cpp:62: error: check_eq(6, '
         '7)hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -174,6 +202,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='disabled',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -185,6 +215,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -196,6 +228,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -208,6 +242,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:59: error: check_ge(2, '
         '3)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -220,6 +256,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:55: error: check_ge(2, '
         '3)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -232,6 +270,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:43: error: check_gt(2, '
         '2)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -244,6 +284,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:35: error: check_lt(2, '
         '2)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -255,6 +297,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:11: error: failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -267,6 +311,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:39: error: check_gt(2, '
         '2)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -278,6 +324,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:7: error: Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -290,6 +338,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:51: error: check_le(2, '
         '1)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -302,6 +352,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:15: error: check_eq(1, '
         '2)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -314,6 +366,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:19: error: check_eq(1, '
         '2)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -326,6 +380,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:47: error: check_le(2, '
         '1)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -338,6 +394,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:23: error: check_ne(2, '
         '2)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -350,6 +408,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:31: error: check_lt(2, '
         '2)Hello world!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -362,6 +422,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='/home/ivan/prj/tst/tests/failed/checks.cpp:27: error: check_ne(2, '
         '2)failed!',
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     )
   ]

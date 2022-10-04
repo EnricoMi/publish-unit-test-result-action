@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=6.435
     ),
     publish.unittestresults.UnitTestCase(
@@ -29,6 +31,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='get_available_devices only supported in Spark 3.0 and above',
       content='/horovod/test/test_spark.py:1642: get_available_devices only\n        '
         '        supported in Spark 3.0 and above\n            ',
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -40,6 +44,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=6.417
     ),
     publish.unittestresults.UnitTestCase(
@@ -65,6 +71,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'events=events)\n                test_spark.py:852: in do_test_rsh\n   '
         '             self.assertEqual(expected_result, res)\n                '
         'E AssertionError: 143 != 0\n            ',
+      stdout=None,
+      stderr=None,
       time=7.541
     ),
     publish.unittestresults.UnitTestCase(
@@ -76,6 +84,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.514
     )
   ]

@@ -804,7 +804,7 @@ def get_case_annotation(messages: CaseMessages,
     details = [detail.rstrip()
                for detail in ([case.content]
                               if message_is_contained_in_content(case.message, case.content)
-                              else [case.message, case.content])
+                              else [case.message, case.content]) + [case.stdout, case.stderr]
                if detail and detail.rstrip()]
 
     return Annotation(

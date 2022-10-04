@@ -19,6 +19,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='This test fails due to https://github.com/horovod/horovod/issues/1994',
       content='/horovod/test/integration/test_elastic_spark_tensorflow.py:35: This '
         'test fails due to https://github.com/horovod/horovod/issues/1994',
+      stdout=None,
+      stderr=None,
       time=0.002
     ),
     publish.unittestresults.UnitTestCase(
@@ -31,6 +33,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=22.073
     ),
     publish.unittestresults.UnitTestCase(
@@ -43,6 +47,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=55.445
     ),
     publish.unittestresults.UnitTestCase(
@@ -55,6 +61,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=49.354
     ),
     publish.unittestresults.UnitTestCase(
@@ -67,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=41.024
     ),
     publish.unittestresults.UnitTestCase(
@@ -79,6 +89,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=40.743
     ),
     publish.unittestresults.UnitTestCase(
@@ -91,6 +103,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=40.671
     ),
     publish.unittestresults.UnitTestCase(
@@ -103,6 +117,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=40.612
     ),
     publish.unittestresults.UnitTestCase(
@@ -115,6 +131,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=30.312
     ),
     publish.unittestresults.UnitTestCase(
@@ -127,6 +145,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=12.623
     ),
     publish.unittestresults.UnitTestCase(
@@ -139,6 +159,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=15.757
     ),
     publish.unittestresults.UnitTestCase(
@@ -151,6 +173,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.113
     ),
     publish.unittestresults.UnitTestCase(
@@ -163,6 +187,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.65
     ),
     publish.unittestresults.UnitTestCase(
@@ -176,6 +202,8 @@ publish.unittestresults.ParsedUnitTestResults(
       message='This test fails due to https://github.com/horovod/horovod/issues/1994',
       content='/horovod/test/integration/test_elastic_spark_tensorflow.py:32: This '
         'test fails due to https://github.com/horovod/horovod/issues/1994',
+      stdout=None,
+      stderr=None,
       time=0.002
     ),
     publish.unittestresults.UnitTestCase(
@@ -188,6 +216,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=25.879
     ),
     publish.unittestresults.UnitTestCase(
@@ -200,6 +230,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.382
     ),
     publish.unittestresults.UnitTestCase(
@@ -212,6 +244,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.381
     ),
     publish.unittestresults.UnitTestCase(
@@ -224,6 +258,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.389
     ),
     publish.unittestresults.UnitTestCase(
@@ -236,6 +272,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.403
     ),
     publish.unittestresults.UnitTestCase(
@@ -248,6 +286,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=26.404
     ),
     publish.unittestresults.UnitTestCase(
@@ -260,6 +300,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=46.667
     ),
     publish.unittestresults.UnitTestCase(
@@ -272,6 +314,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=21.082
     )
   ]

@@ -21,6 +21,8 @@ publish.unittestresults.ParsedUnitTestResults(
       content='OK: TestProcess.Execution.ExitCode == 0\r\nFAIL: Output differs from '
         'reference.\r\n  Left:  data\\ref\r\n  Right: results\\out\r\n  \r\n      '
         '              ',
+      stdout=None,
+      stderr=None,
       time=36.7820544
     )
   ]

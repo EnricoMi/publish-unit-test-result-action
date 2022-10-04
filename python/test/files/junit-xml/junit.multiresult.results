@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message='test teardown failure',
       content='stdout',
+      stdout=None,
+      stderr=None,
       time=0.123
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='test failure',
       content='Assertion failed',
+      stdout=None,
+      stderr=None,
       time=0.234
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.345
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.456
     )
   ]

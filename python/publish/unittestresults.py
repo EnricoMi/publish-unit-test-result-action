@@ -15,6 +15,8 @@ class UnitTestCase:
     result: str
     message: Optional[str]
     content: Optional[str]
+    stdout: Optional[str]
+    stderr: Optional[str]
     time: Optional[float]
 
 
