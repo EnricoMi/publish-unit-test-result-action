@@ -38,6 +38,30 @@ def gh_action_env_file_test(test: unittest.TestCase, env_file_var_name: str, exp
 
 class TestGithubAction(unittest.TestCase):
 
+    env_file_var_name = None
+    output_file_var_name = None
+    path_file_var_name = None
+    job_summary_file_var_name = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.env_file_var_name = GithubAction.ENV_FILE_VAR_NAME
+        cls.output_file_var_name = GithubAction.OUTPUT_FILE_VAR_NAME
+        cls.path_file_var_name = GithubAction.PATH_FILE_VAR_NAME
+        cls.job_summary_file_var_name = GithubAction.JOB_SUMMARY_FILE_VAR_NAME
+
+        GithubAction.ENV_FILE_VAR_NAME = 'TEST_' + cls.env_file_var_name
+        GithubAction.OUTPUT_FILE_VAR_NAME = 'TEST_' + cls.output_file_var_name
+        GithubAction.PATH_FILE_VAR_NAME = 'TEST_' + cls.path_file_var_name
+        GithubAction.JOB_SUMMARY_FILE_VAR_NAME = 'TEST_' + cls.job_summary_file_var_name
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        GithubAction.ENV_FILE_VAR_NAME = cls.env_file_var_name
+        GithubAction.OUTPUT_FILE_VAR_NAME = cls.output_file_var_name
+        GithubAction.PATH_FILE_VAR_NAME = cls.path_file_var_name
+        GithubAction.JOB_SUMMARY_FILE_VAR_NAME = cls.job_summary_file_var_name
+
     def test_add_mask(self):
         with gh_action_command_test(self, '::add-mask::the mask') as gha:
             gha.add_mask('the mask')
