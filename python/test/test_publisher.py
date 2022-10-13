@@ -1739,7 +1739,7 @@ class TestPublisher(unittest.TestCase):
                                                  "reference_type": "type", "reference_commit": "ref"}
                         }
                     }
-                    gha.set_output.assert_called_once_with('json', json.dumps(expected, ensure_ascii=False))
+                    gha.add_to_output.assert_called_once_with('json', json.dumps(expected, ensure_ascii=False))
 
     def test_publish_job_summary_without_before(self):
         settings = self.create_settings(job_summary=True)
