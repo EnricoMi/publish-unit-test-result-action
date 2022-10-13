@@ -1223,7 +1223,7 @@ class TestPublisher(unittest.TestCase):
         # check the json output has been provided
         title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
         summary_errors = '{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''
-        gha.set_output.assert_called_once_with(
+        gha.add_to_output.assert_called_once_with(
             'json',
             '{'
             f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
@@ -1295,7 +1295,7 @@ class TestPublisher(unittest.TestCase):
         # check the json output has been provided
         title_errors = '{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''
         summary_errors = '{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''
-        gha.set_output.assert_called_once_with(
+        gha.add_to_output.assert_called_once_with(
             'json',
             '{'
             f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
