@@ -1,7 +1,6 @@
 import pathlib
 import unittest
 from collections import defaultdict
-from typing import Any
 
 import mock
 
@@ -15,7 +14,7 @@ from publish import Annotation, UnitTestCaseResults, UnitTestRunResults, UnitTes
     get_long_summary_without_runs_md,  get_long_summary_with_digest_md, \
     get_test_changes_md, get_test_changes_list_md,  get_test_changes_summary_md, \
     get_case_annotations, get_case_annotation, get_all_tests_list_annotation, \
-    get_skipped_tests_list_annotation, get_case_messages, chunk_test_list
+    get_skipped_tests_list_annotation, get_case_messages, chunk_test_list, message_is_contained_in_content
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
@@ -2071,6 +2070,24 @@ class PublishTest(unittest.TestCase):
                               f'  10 files        0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
+
+    def test_message_is_contained_in_content(self):
+        # non-contained test cases
+        for message, content in [(None, None),
+                                 ('message', None),
+                                 (None, 'content'),
+                                 ('message', 'content'),
+                                 ('message', 'the message in the content')]:
+            with self.subTest(message=message, content=content):
+                self.assertFalse(message_is_contained_in_content(message, content))
+
+        # contained test cases
+        for message, content in [('message', 'message'),
+                                 ('message', 'message in content'),
+                                 ('the message', ' the  message  in  content'),
+                                 ('the  message', '\tthe message in the content')]:
+            with self.subTest(message=message, content=content):
+                self.assertTrue(message_is_contained_in_content(message, content))
 
 
 if __name__ == '__main__':

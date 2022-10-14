@@ -748,6 +748,15 @@ class Annotation:
         return dictionary
 
 
+def message_is_contained_in_content(message: Optional[str], content: Optional[str]) -> bool:
+    # ignore new lines and any leading or trailing white spaces
+    if content and message:
+        content = re.sub(r'\s+', ' ', content.strip())
+        message = re.sub(r'\s+', ' ', message.strip())
+        return content.startswith(message)
+    return False
+
+
 def get_case_annotation(messages: CaseMessages,
                         key: Tuple[Optional[str], Optional[str], Optional[str]],
                         state: str,
@@ -792,19 +801,11 @@ def get_case_annotation(messages: CaseMessages,
         'notice'
     )
 
-    def message_is_contained_in_content(message: Optional[str], content: Optional[str]) -> bool:
-        # ignore new lines and any leading or trailing white spaces
-        if content and message:
-            content = re.sub(r'\s+', ' ', content.strip())
-            message = re.sub(r'\s+', ' ', message.strip())
-            return content.startswith(message)
-        return False
-
     # pick details from message and content, but try to avoid redundancy (e.g. when content repeats message)
+    # always add stdout and stderr if they are not empty
+    maybe_message = [case.message] if not message_is_contained_in_content(case.message, case.content) else []
     details = [detail.rstrip()
-               for detail in ([case.content]
-                              if message_is_contained_in_content(case.message, case.content)
-                              else [case.message, case.content]) + [case.stdout, case.stderr]
+               for detail in maybe_message + [case.content, case.stdout, case.stderr]
                if detail and detail.rstrip()]
 
     return Annotation(
