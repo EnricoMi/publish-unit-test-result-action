@@ -38,9 +38,29 @@ def gh_action_env_file_test(test: unittest.TestCase, env_file_var_name: str, exp
 
 class TestGithubAction(unittest.TestCase):
 
-    def test_set_output(self):
-        with gh_action_command_test(self, '::set-output name=varname::varval') as gha:
-            gha.set_output('varname', 'varval')
+    env_file_var_name = None
+    output_file_var_name = None
+    path_file_var_name = None
+    job_summary_file_var_name = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.env_file_var_name = GithubAction.ENV_FILE_VAR_NAME
+        cls.output_file_var_name = GithubAction.OUTPUT_FILE_VAR_NAME
+        cls.path_file_var_name = GithubAction.PATH_FILE_VAR_NAME
+        cls.job_summary_file_var_name = GithubAction.JOB_SUMMARY_FILE_VAR_NAME
+
+        GithubAction.ENV_FILE_VAR_NAME = 'TEST_' + cls.env_file_var_name
+        GithubAction.OUTPUT_FILE_VAR_NAME = 'TEST_' + cls.output_file_var_name
+        GithubAction.PATH_FILE_VAR_NAME = 'TEST_' + cls.path_file_var_name
+        GithubAction.JOB_SUMMARY_FILE_VAR_NAME = 'TEST_' + cls.job_summary_file_var_name
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        GithubAction.ENV_FILE_VAR_NAME = cls.env_file_var_name
+        GithubAction.OUTPUT_FILE_VAR_NAME = cls.output_file_var_name
+        GithubAction.PATH_FILE_VAR_NAME = cls.path_file_var_name
+        GithubAction.JOB_SUMMARY_FILE_VAR_NAME = cls.job_summary_file_var_name
 
     def test_add_mask(self):
         with gh_action_command_test(self, '::add-mask::the mask') as gha:
@@ -53,10 +73,6 @@ class TestGithubAction(unittest.TestCase):
     def test_continue_commands(self):
         with gh_action_command_test(self, '::the end token::') as gha:
             gha.continue_commands('the end token')
-
-    def test_save_state(self):
-        with gh_action_command_test(self, '::save-state name=state-name::state-value') as gha:
-            gha.save_state('state-name', 'state-value')
 
     def test_group(self):
         with gh_action_command_test(self, '::group::group title') as gha:
@@ -81,6 +97,12 @@ class TestGithubAction(unittest.TestCase):
             gha.warning('the message', column=2)
         with gh_action_command_test(self, '::warning file=the file,line=1,col=2::the message') as gha:
             gha.warning('the message', file='the file', line=1, column=2)
+
+    def test_notice(self):
+        with gh_action_command_test(self, '::notice::the message') as gha:
+            gha.notice('the message')
+        with gh_action_command_test(self, '::notice title=a title,file=the file,col=3,endColumn=4,line=1,endLine=2::the message') as gha:
+            gha.notice('the message', file='the file', line=1, end_line=2, column=3, end_column=4, title='a title')
 
     def test_error(self):
         with gh_action_command_test(self, '::error::the message') as gha:
@@ -181,6 +203,12 @@ class TestGithubAction(unittest.TestCase):
             except RuntimeError as re:
                 return re
 
+    def test_echo(self):
+        with gh_action_command_test(self, '::echo::on') as gha:
+            gha.echo(True)
+        with gh_action_command_test(self, '::echo::off') as gha:
+            gha.echo(False)
+
     def test_add_env(self):
         with gh_action_env_file_test(self, GithubAction.ENV_FILE_VAR_NAME, 'var=val\n') as gha:
             gha.add_to_env('var', 'val')
@@ -194,6 +222,17 @@ class TestGithubAction(unittest.TestCase):
     def test_add_path(self):
         with gh_action_env_file_test(self, GithubAction.PATH_FILE_VAR_NAME, 'additional-path\n') as gha:
             gha.add_to_path('additional-path')
+
+    def test_add_output(self):
+        with gh_action_env_file_test(self, GithubAction.OUTPUT_FILE_VAR_NAME, 'var=val\n') as gha:
+            gha.add_to_output('var', 'val')
+        with gh_action_env_file_test(self, GithubAction.OUTPUT_FILE_VAR_NAME, 'var1=val3\nvar2=val4\n') as gha:
+            gha.add_to_output('var1', 'val3')
+            gha.add_to_output('var2', 'val4')
+
+        # if there is no env file, the output is set via command
+        with gh_action_command_test(self, '::set-output name=varname::varval') as gha:
+            gha.add_to_output('varname', 'varval')
 
     def test_add_job_summary(self):
         with gh_action_env_file_test(self, GithubAction.JOB_SUMMARY_FILE_VAR_NAME, '# markdown') as gha:
