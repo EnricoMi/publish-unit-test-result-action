@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='A message with "quotes"',
       content='Content with "quotes"',
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message="A message with 'apostrophes'",
       content="Content with 'apostrophes'",
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message='A message with &',
       content='Content with &',
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='A message with < and >',
       content='Content with < and >',
+      stdout=None,
+      stderr=None,
       time=0.0
     )
   ]

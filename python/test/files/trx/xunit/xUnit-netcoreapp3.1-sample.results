@@ -20,6 +20,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.xUnit.TestServiceTests.FailTest() in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
         '\\TestServiceTests.cs:line 65',
+      stdout=None,
+      stderr=None,
       time=0.0011482
     ),
     publish.unittestresults.UnitTestCase(
@@ -34,6 +36,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
         '\\TestServiceTests.cs:line 29',
+      stdout=None,
+      stderr=None,
       time=0.0024407
     ),
     publish.unittestresults.UnitTestCase(
@@ -45,6 +49,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -56,6 +62,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0008798
     ),
     publish.unittestresults.UnitTestCase(
@@ -67,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0056919
     ),
     publish.unittestresults.UnitTestCase(
@@ -84,6 +94,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.xUnit.TestServiceTests.TestThrowingException() in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUnit'
         '\\TestServiceTests.cs:line 54',
+      stdout=None,
+      stderr=None,
       time=0.000522
     )
   ]

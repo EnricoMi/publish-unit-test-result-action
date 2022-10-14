@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0099709
     ),
     publish.unittestresults.UnitTestCase(
@@ -36,6 +38,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'marcado con el atributo [TestMethod] debe ser no estático, público, '
         'no debe devolver ningún valor ni tomar ningún parámetro. Por '
         'ejemplo: public void Test.Class1.Test().',
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -47,6 +51,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.4619928
     ),
     publish.unittestresults.UnitTestCase(
@@ -74,6 +80,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
         ' 363\n   en Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest() en '
         'E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 199\n',
+      stdout=None,
+      stderr=None,
       time=19.039413
     ),
     publish.unittestresults.UnitTestCase(
@@ -100,6 +108,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea'
         ' 474\n   en Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest() en '
         'E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 217\n',
+      stdout=None,
+      stderr=None,
       time=2.5091335
     ),
     publish.unittestresults.UnitTestCase(
@@ -111,6 +121,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=4.6492659
     ),
     publish.unittestresults.UnitTestCase(
@@ -122,6 +134,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -133,6 +147,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -144,6 +160,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -155,6 +173,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -166,6 +186,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -177,6 +199,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -188,6 +212,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -199,6 +225,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -210,6 +238,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -221,6 +251,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -232,6 +264,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -243,6 +277,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -254,6 +290,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -265,6 +303,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -276,6 +316,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -287,6 +329,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -298,6 +342,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -309,6 +355,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -320,6 +368,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     )
   ]

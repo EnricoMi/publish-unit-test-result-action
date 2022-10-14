@@ -1,0 +1,66 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 9 pass in 1s',
+      'summary':
+        '10 tests\u2002\u2003\u20039 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '1s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MQQ6AIAwEv'
+        '0I4e9CjfoYQhNgoYAqcjH8XEaG3zu52Lm7g0IEvbBoYDwligzWhjOBdxVzEUo0/iJCUys'
+        'ncgx3OHPSFkXDQf6ERPdYJJteE7019H3ddYWIrTGXKWwsxQ71Y2CS/HxbYkAffAAAA\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'nunit3/jenkins/NUnit-healthReport.xml',
+          'title': 'UnitTests.MainClassTest.TestFailure failed',
+          'raw_details':
+            '  Expected failure\n  Expected: 30\n  But was:  20\n  at '
+            'UnitTests.MainClassTest.TestFailure () [0x00000]\n  at <0x00000> '
+            '<unknown method>\n  at (wrapper managed-to-native) '
+            'System.Reflection.MonoMethod:InternalInvoke (object,object[])\n  '
+            'at System.Reflection.MonoMethod.Invoke (System.Object obj, '
+            'BindingFlags invokeAttr, System.Reflection.Binder binder, '
+            'System.Object[] parameters, System.Globalization.CultureInfo '
+            'culture) [0x00000]'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 10 tests, see "Raw output" for the full list of tests.',
+          'title': '10 tests found',
+          'raw_details':
+            'UnitTests.MainClassTest.TestFailure\n'
+            'UnitTests.MainClassTest.TestMethodUpdateValue\n'
+            'UnitTests.MainClassTest.TestPropertyValue\n'
+            'UnitTests.MainClassTest.TestPropertyValue1\n'
+            'UnitTests.MainClassTest.TestPropertyValue2\n'
+            'UnitTests.MainClassTest.TestPropertyValue3\n'
+            'UnitTests.MainClassTest.TestPropertyValue4\n'
+            'UnitTests.MainClassTest.TestPropertyValue5\n'
+            'UnitTests.MainClassTest.TestPropertyValue6\n'
+            'UnitTests.MainClassTest.TestPropertyValue7'
+        }
+      ]
+    }
+  }
+]

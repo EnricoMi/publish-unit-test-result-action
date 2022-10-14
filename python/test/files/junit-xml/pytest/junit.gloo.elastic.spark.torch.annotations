@@ -1,0 +1,84 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 22 tests pass in 11m 10s',
+      'summary':
+        '22 tests\u2002\u2003\u200322 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '11m 10s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u2003\u205f\u20040 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u2003\u205f\u20040 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MOw6AIBAFr'
+        '0KoLdRCEy9jCErc+MEsUBnv7oKIYrczbzMHV7CMhnesKhg3DmyCwaGwoDfCpi1J0GT9WN'
+        'cP9MZJ+TMz7GTSf68ELJkYETVGg25LRX9nwVu8vcCfXOBvTep1BUsQL2Ymwc8LUe9HxOM'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 22 tests, see "Raw output" for the full list of tests.',
+          'title': '22 tests found',
+          'raw_details':
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_down_by_discovery\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_down_by_exception\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_no_spark_black_list\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_spark_blacklist_no_executor_reuse\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_spark_blacklist_no_executor_reuse_in_app\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_spark_blacklist_no_executor_reuse_same_task\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_spark_blacklist_no_node_reuse\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_spark_blacklist_no_node_reuse_in_app\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_auto_scale_up\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_all_hosts_lost\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_exception_all_ranks\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_exception_single_rank\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_exception_with_min_hosts_timeout\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_hosts_added_and_removed\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_no_spark_blacklist\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_spark_blacklist_no_executor_reuse\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_spark_blacklist_no_executor_reuse_in_app\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_spark_blacklist_no_executor_reuse_same_task\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_spark_blacklist_no_node_reuse\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_spark_blacklist_no_node_reuse_in_app\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_fault_tolerance_unused_hosts_added_and_removed\n'
+            'test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ '
+            'test_happy_run'
+        }
+      ]
+    }
+  }
+]

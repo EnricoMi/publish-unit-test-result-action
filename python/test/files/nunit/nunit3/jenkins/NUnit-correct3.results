@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.219
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.047
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=16.392
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=60.395
     ),
     publish.unittestresults.UnitTestCase(
@@ -61,6 +69,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.016
     ),
     publish.unittestresults.UnitTestCase(
@@ -72,6 +82,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.578
     ),
     publish.unittestresults.UnitTestCase(
@@ -84,6 +96,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.375
     ),
     publish.unittestresults.UnitTestCase(
@@ -95,6 +109,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -106,6 +122,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -117,6 +135,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=51.051
     ),
     publish.unittestresults.UnitTestCase(
@@ -128,6 +148,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=33.346
     ),
     publish.unittestresults.UnitTestCase(
@@ -140,6 +162,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=6.203
     ),
     publish.unittestresults.UnitTestCase(
@@ -151,6 +175,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.719
     ),
     publish.unittestresults.UnitTestCase(
@@ -163,6 +189,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.063
     ),
     publish.unittestresults.UnitTestCase(
@@ -174,6 +202,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=5.032
     ),
     publish.unittestresults.UnitTestCase(
@@ -185,6 +215,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=10.219
     ),
     publish.unittestresults.UnitTestCase(
@@ -196,6 +228,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.813
     ),
     publish.unittestresults.UnitTestCase(
@@ -207,6 +241,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=16.204
     ),
     publish.unittestresults.UnitTestCase(
@@ -218,6 +254,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=23.095
     ),
     publish.unittestresults.UnitTestCase(
@@ -229,6 +267,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=3.188
     ),
     publish.unittestresults.UnitTestCase(
@@ -240,6 +280,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=8.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -251,6 +293,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=22.049
     )
   ]

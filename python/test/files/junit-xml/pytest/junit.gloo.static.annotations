@@ -1,0 +1,123 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 12 tests pass, 12 skipped in 1m 9s',
+      'summary':
+        '24 tests\u2002\u2003\u200312 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '1m 9s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u200312 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u2003\u205f\u20040 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMTQqAIBBGr'
+        'yKuW1REUJcJsaQhzRh1Fd29sR+z3bz3DW/nCvTkeM+qgnEXwCcYAwoPdiVsO2JafNzq5o'
+        'XBBSnjd/2ZBba/UQI0mTKJCdHiYzCsKRnvX/EWWfASWe/iPCetMeAJnou5WfDjBP7Rpw/'
+        'kAAAA\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There are 12 skipped tests, see "Raw output" for the full list of '
+            'skipped tests.',
+          'title': '12 skipped tests found',
+          'raw_details':
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_remote_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_remote_func'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 24 tests, see "Raw output" for the full list of tests.',
+          'title': '24 tests found',
+          'raw_details':
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_gloo_remote_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_failure_mpi_remote_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_gloo_remote_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_local_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_local_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_mixed_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_mixed_func\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_remote_cmd\n'
+            'test.integration.test_static_run.StaticRunTests ‑ '
+            'test_run_success_mpi_remote_func'
+        }
+      ]
+    }
+  }
+]

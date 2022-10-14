@@ -1,0 +1,41 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 2 tests pass in 0s',
+      'summary':
+        '2 tests\u2002\u2003\u20032 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20030 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
+        '0KoLdTSyxCCEDfyMQtUxrsLCgrdvJnJO6kCLT1dyDQQ6iOED9aIPICzCceEaQh5mmtmPg'
+        'rRFzsc7ZspDrorJKLD0mC01Zdjq3v5tz3cyB5uXcIZAyFBScRvnF43yWbLod0AAAA=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 2 tests, see "Raw output" for the full list of tests.',
+          'title': '2 tests found',
+          'raw_details':
+            'UnitTests.MainClassTest.TestMethodUpdateValue\n'
+            'UnitTests.MainClassTest.TestPropertyValue'
+        }
+      ]
+    }
+  }
+]

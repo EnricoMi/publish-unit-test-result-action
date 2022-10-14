@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓',
       content='skipped\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='message',
       content='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓',
       content='failed\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -61,6 +69,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='message',
       content='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -72,6 +82,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓',
       content='error\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     ),
     publish.unittestresults.UnitTestCase(
@@ -83,6 +95,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message='message',
       content='Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓\n            ',
+      stdout=None,
+      stderr=None,
       time=1.23
     )
   ]

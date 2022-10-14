@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.076891
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0111534
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.0055623
     ),
     publish.unittestresults.UnitTestCase(
@@ -80,6 +86,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() in '
         'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
         's.MSTest\\Addition.feature:line 18\n          ',
+      stdout=None,
+      stderr=None,
       time=0.0459057
     )
   ]

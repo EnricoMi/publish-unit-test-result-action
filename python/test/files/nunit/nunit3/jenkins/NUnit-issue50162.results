@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.018378
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.000179
     ),
     publish.unittestresults.UnitTestCase(
@@ -42,6 +46,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\Program Files '
         '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
         'rldTests.cs:Zeile 27.\n',
+      stdout=None,
+      stderr=None,
       time=0.00291
     ),
     publish.unittestresults.UnitTestCase(
@@ -56,6 +62,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'C:\\Program Files '
         '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
         'rldTests.cs:Zeile 27.\n',
+      stdout=None,
+      stderr=None,
       time=0.001015
     ),
     publish.unittestresults.UnitTestCase(
@@ -67,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.03631
     ),
     publish.unittestresults.UnitTestCase(
@@ -80,6 +90,8 @@ publish.unittestresults.ParsedUnitTestResults(
       content='   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files '
         '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
         'rldTests.cs:Zeile 18.\n',
+      stdout=None,
+      stderr=None,
       time=0.018525
     )
   ]

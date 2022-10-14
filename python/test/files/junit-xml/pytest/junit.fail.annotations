@@ -1,0 +1,74 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 1 skipped, 3 pass in 2s',
+      'summary':
+        '5 tests\u2002\u2003\u20033 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '2s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20031 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
+        '0KoLfzExssYghA3IpgFKuPdXVEUuzez2dm5BqM8H1hTMe4jhBemiCKAs4QtIR3CderzHn'
+        '2UkkT3iQW25/kWWoD5CYXokExNBqPNvWuWuZu/WuIilrhsSbeuEAiexfws+HECiWEEJ90'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': 'test/test_spark.py',
+          'start_line': 819,
+          'end_line': 819,
+          'annotation_level': 'warning',
+          'message': 'pytest/junit.fail.xml',
+          'title': 'test_rsh_events (test.test_spark.SparkTests) failed',
+          'raw_details':
+            'self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n        '
+            '        def test_rsh_events(self):\n                > '
+            'self.do_test_rsh_events(3)\n\n                test_spark.py:821:\n  '
+            '              _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ '
+            '_ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test_spark.py:836: in '
+            'do_test_rsh_events\n                self.do_test_rsh(command, 143, '
+            'events=events)\n                test_spark.py:852: in do_test_rsh\n '
+            '               self.assertEqual(expected_result, res)\n             '
+            '   E AssertionError: 143 != 0'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'test.test_spark.SparkTests ‑ test_get_available_devices'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 5 tests, see "Raw output" for the full list of tests.',
+          'title': '5 tests found',
+          'raw_details':
+            'test.test_spark.SparkTests ‑ test_check_shape_compatibility\n'
+            'test.test_spark.SparkTests ‑ test_get_available_devices\n'
+            'test.test_spark.SparkTests ‑ test_get_col_info\n'
+            'test.test_spark.SparkTests ‑ test_rsh_events\n'
+            'test.test_spark.SparkTests ‑ test_rsh_with_non_zero_exit_code'
+        }
+      ]
+    }
+  }
+]

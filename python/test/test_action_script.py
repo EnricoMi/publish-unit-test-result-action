@@ -217,7 +217,7 @@ class Test(unittest.TestCase):
         options = self.do_test_get_settings()
         options = {f'INPUT_{key}': value
                    for key, value in options.items()
-                   if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA'}}
+                   if key not in {'GITHUB_API_URL', 'GITHUB_GRAPHQL_URL', 'GITHUB_SHA', 'GITHUB_EVENT_PATH'}}
         self.do_test_get_settings(**options)
 
     def test_get_settings_event_file(self):
@@ -225,17 +225,14 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(EVENT_FILE='', expected=self.get_settings(event_file=None))
         self.do_test_get_settings(EVENT_FILE=None, expected=self.get_settings(event_file=None))
 
-        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
-            file.write(b'{}')
-            file.flush()
-            if sys.platform == 'win32':
-                file.close()
+        with tempfile.TemporaryDirectory() as path:
+            event = {"key": "val"}
 
-            try:
-                self.do_test_get_settings(EVENT_FILE=file.name, expected=self.get_settings(event_file=file.name))
-            finally:
-                if sys.platform == 'win32':
-                    os.unlink(file.name)
+            filepath = os.path.join(path, 'event.json')
+            with open(filepath, 'wt', encoding='utf-8') as w:
+                w.write(json.dumps(event, ensure_ascii=False))
+
+            self.do_test_get_settings(EVENT_FILE=filepath, expected=self.get_settings(event=event, event_file=filepath))
 
     def test_get_settings_github_api_url(self):
         self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
@@ -482,24 +479,18 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(event, gha, warning=warning, expected=expected, **options)
 
     def do_test_get_settings(self,
-                             event: dict = {},
+                             event: Optional[dict] = None,
                              gha: Optional[GithubAction] = None,
                              warning: Optional[Union[str, List[str]]] = None,
                              exception: Optional[Type[Exception]] = None,
                              expected: Settings = get_settings.__func__(),
                              **kwargs):
-        event = event.copy()
+        if event is None:
+            event = {}
+
         with tempfile.TemporaryDirectory() as path:
-            filepath = os.path.join(path, 'event.json')
-            with open(filepath, 'wt', encoding='utf-8') as w:
-                w.write(json.dumps(event, ensure_ascii=False))
-
-            for key in ['GITHUB_EVENT_PATH', 'INPUT_GITHUB_EVENT_PATH']:
-                if key in kwargs and kwargs[key]:
-                    kwargs[key] = filepath
-
+            # default options
             options = dict(
-                GITHUB_EVENT_PATH=filepath,
                 GITHUB_EVENT_NAME='event name',
                 GITHUB_API_URL='http://github.api.url/',  #defaults to github
                 GITHUB_GRAPHQL_URL='http://github.graphql.url/',  #defaults to github
@@ -522,6 +513,15 @@ class Test(unittest.TestCase):
                 SECONDS_BETWEEN_GITHUB_READS='1.5',
                 SECONDS_BETWEEN_GITHUB_WRITES='2.5'
             )
+
+            # provide event via GITHUB_EVENT_PATH when there is no EVENT_FILE given
+            if 'EVENT_FILE' not in kwargs or not kwargs['EVENT_FILE']:
+                filepath = os.path.join(path, 'event.json')
+                with open(filepath, 'wt', encoding='utf-8') as w:
+                    w.write(json.dumps(event, ensure_ascii=False))
+                options.update(GITHUB_EVENT_PATH=filepath)
+
+            # overwrite default options
             options.update(**kwargs)
             for arg in kwargs:
                 if arg.startswith('INPUT_'):
@@ -542,7 +542,7 @@ class Test(unittest.TestCase):
                     return None
 
                 actual = get_settings(options, gha)
-                m.assert_called_once_with(options, event)
+                m.assert_called_once_with(options, expected.event)
                 if warning:
                     if isinstance(warning, list):
                         gha.warning.assert_has_calls([mock.call(w) for w in warning], any_order=False)
@@ -810,10 +810,10 @@ class Test(unittest.TestCase):
 
             self.assertEqual(5, len(l.info.call_args_list))
             self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (26 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (23 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 66 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 67 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
@@ -823,26 +823,26 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(66, actual.files)
+        self.assertEqual(67, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error
             self.assertEqual(8, len(actual.errors))
-            self.assertEqual(355, actual.suites)
-            self.assertEqual(1924, actual.suite_tests)
+            self.assertEqual(356, actual.suites)
+            self.assertEqual(1925, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
-            self.assertEqual(223, actual.suite_failures)
+            self.assertEqual(224, actual.suite_failures)
             self.assertEqual(8, actual.suite_errors)
-            self.assertEqual(3964, actual.suite_time)
-            self.assertEqual(1912, len(actual.cases))
+            self.assertEqual(3966, actual.suite_time)
+            self.assertEqual(1913, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
-            self.assertEqual(357, actual.suites)
-            self.assertEqual(1928, actual.suite_tests)
+            self.assertEqual(358, actual.suites)
+            self.assertEqual(1929, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
-            self.assertEqual(225, actual.suite_failures)
+            self.assertEqual(226, actual.suite_failures)
             self.assertEqual(8, actual.suite_errors)
-            self.assertEqual(3964, actual.suite_time)
-            self.assertEqual(1916, len(actual.cases))
+            self.assertEqual(3966, actual.suite_time)
+            self.assertEqual(1917, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -966,25 +966,20 @@ class Test(unittest.TestCase):
                 self.assertEqual(expected, is_float(value), value)
 
     def test_main_fork_pr_check(self):
-        with tempfile.NamedTemporaryFile(mode='wb', delete=sys.platform != 'win32') as file:
-            file.write(b'{ "pull_request": { "head": { "repo": { "full_name": "fork/repo" } } } }')
-            file.flush()
-            if sys.platform == 'win32':
-                file.close()
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file')
+            with open(filepath, 'wt', encoding='utf-8') as file:
+                file.write('{ "pull_request": { "head": { "repo": { "full_name": "fork/repo" } } } }')
 
             gha = mock.MagicMock()
-            try:
-                settings = get_settings(dict(
-                    COMMIT='commit',
-                    GITHUB_TOKEN='********',
-                    GITHUB_EVENT_PATH=file.name,
-                    GITHUB_EVENT_NAME='pull_request',
-                    GITHUB_REPOSITORY='repo',
-                    EVENT_FILE=None
-                ), gha)
-            finally:
-                if sys.platform == 'win32':
-                    os.unlink(file.name)
+            settings = get_settings(dict(
+                COMMIT='commit',
+                GITHUB_TOKEN='********',
+                GITHUB_EVENT_PATH=file.name,
+                GITHUB_EVENT_NAME='pull_request',
+                GITHUB_REPOSITORY='repo',
+                EVENT_FILE=None
+            ), gha)
 
             def do_raise(*args):
                 # if this is raised, the tested main method did not return where expected but continued

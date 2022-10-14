@@ -1,0 +1,79 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 3 pass in 0s',
+      'summary':
+        '4 tests\u2002\u2003\u20033 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n2 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBBEr'
+        '0KoLfxVXoYQxLiRj1mgMt7dFSHSzZuZvItvYHTgCxs6xkOCmGEkWBPKCN4R9oQ0xHeaax'
+        'YhKUXF9BcHnO1bbBJMUX+FRvRYLphc9b2x1X382zI3ssytS3lrIRKUxMIu+f0AuKmg790'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'mstest/pickles.xml',
+          'title': 'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers failed',
+          'raw_details':
+            '\n                        at '
+            'Pickles.TestHarness.xUnit.Steps.ThenTheResultShouldBePass(Int32 '
+            'result) in '
+            'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.NUnit\\Steps.cs:line 26\nat lambda_method(Closure , '
+            'IContextManager , Int32 )\nat '
+            'TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManag'
+            'er contextManager, Object[] arguments, ITestTracer testTracer, '
+            'TimeSpan& duration)\nat '
+            'TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextMan'
+            'ager contextManager, ITestTracer testTracer, Object[] arguments, '
+            'TimeSpan& duration)\nat '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMat'
+            'ch(BindingMatch match, Object[] arguments)\nat '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(St'
+            'epArgs stepArgs)\nat '
+            'TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastSte'
+            'p()\nat TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()\nat '
+            'Pickles.TestHarness.AdditionFeature.ScenarioCleanup() in '
+            'C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.NUnit\\Addition.feature.cs:line 0\nat '
+            'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers() in '
+            'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
+            'ess.NUnit\\Addition.feature:line 18'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 4 tests, see "Raw output" for the full list of tests.',
+          'title': '4 tests found',
+          'raw_details':
+            'Pickles.TestHarness.AdditionFeature.AddTwoNumbers\n'
+            'Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers("40","50",'
+            '"90",System.String[])\n'
+            'Pickles.TestHarness.AdditionFeature.AddingSeveralNumbers("60","70",'
+            '"130",System.String[])\n'
+            'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers'
+        }
+      ]
+    }
+  }
+]

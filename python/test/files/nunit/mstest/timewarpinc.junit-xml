@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="1" failures="1" skipped="0" time="2.117365">
+    <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="workspace">
+        
+        
+        <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll">
+            
+            
+            <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP">
+                
+                
+                <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP.Tests">
+                    
+                    
+                    <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:16:48Z" name="MP.Tests.AssetValidatorTest">
+                        
+                        
+                        <system-out/>
+                        <testsuite tests="1" failures="1" skipped="0" time="2.117365" timestamp="2022-09-20 21:24:21Z" name="MP.Tests.AssetValidatorTest.ValidateSceneContainer">
+                            
+                            
+                            <testcase name="ValidateSceneContainer(&quot;Assets/Scenes/Grid/GridTest.unity&quot;)" classname="" status="Failed" time="2.117365">
+                                
+                                <failure message="Zenject.ZenjectException : Zenject Validation Failed!  See errors below for details.">  at Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () [0x0009c] in /github/workspace/Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:82
+  at MP.Tests.AssetValidatorTest.ValidateSceneContainer (System.String scenePath) [0x00009] in /github/workspace/Assets/Tests/EditorMode/AssetValidatorTest.cs:58
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&amp;)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in &lt;b67d2f60bf2548a58dc569b37fe71c3d&gt;:0 </failure>
+                                <system-out>AssertionException: Could not find a tilemap tagged with LevelBounds.
+Assertion failure. Value was Null
+Expected: Value was not Null
+UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsNotNull (UnityEngine.Object value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:58)
+UnityEngine.Assertions.Assert.IsNotNull[T] (T value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:46)
+MP.Gameplay.Level.LevelInstaller.InstallBindings () (at Assets/Scripts/Gameplay/Level/LevelInstaller.cs:30)
+Zenject.CompositeMonoInstaller.InstallBindings () (at Assets/ThirdParty/Zenject/Source/Install/CompositeMonoInstaller.cs:25)
+Zenject.Context.InstallInstallers (System.Collections.Generic.List`1[T] normalInstallers, System.Collections.Generic.List`1[T] normalInstallerTypes, System.Collections.Generic.List`1[T] scriptableObjectInstallers, System.Collections.Generic.List`1[T] installers, System.Collections.Generic.List`1[T] installerPrefabs) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:218)
+Zenject.Context.InstallInstallers () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:139)
+Zenject.SceneContext.InstallBindings (System.Collections.Generic.List`1[T] injectableMonoBehaviours) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:346)
+Zenject.SceneContext.Install () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:265)
+Zenject.SceneContext.Validate () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:121)
+Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:67)
+UnityEngine.Debug:LogException(Exception)
+ModestTree.Log:ErrorException(Exception) (at Assets/ThirdParty/Zenject/Source/Internal/Log.cs:60)
+Zenject.Internal.ZenUnityEditorUtil:ValidateCurrentSceneSetup() (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:72)
+MP.Tests.AssetValidatorTest:ValidateSceneContainer(String) (at Assets/Tests/EditorMode/AssetValidatorTest.cs:58)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod(MethodInfo, Object, Object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke(Object, Object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod(ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod(ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute(ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /home/bokken/buildslave/unity/build/Editor/Mono/EditorApplication.cs:359)
+
+</system-out>
+                            </testcase>
+                        </testsuite>
+                    </testsuite>
+                </testsuite>
+            </testsuite>
+        </testsuite>
+    </testsuite>
+</testsuites>

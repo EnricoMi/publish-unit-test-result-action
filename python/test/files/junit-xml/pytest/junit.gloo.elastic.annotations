@@ -1,0 +1,87 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 10 tests pass, 4 skipped in 1m 12s',
+      'summary':
+        '14 tests\u2002\u2003\u200310 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '1m 12s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u2003\u205f\u20044 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u2003\u205f\u20040 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
+        'yKuW1QEQZcJMaMhzRh1Fd290SxrN+/94R18Bq0cH1hTMe4C+BemgMKD3Qj7lpgWn7bugd'
+        'EFKaOpi1lhJ1NeZgGaRPlQiBazwbC9xXj/grcovcSfXOJvTVpjwBPki7lF8PMCyjZFT+I'
+        'AAAA=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There are 4 skipped tests, see "Raw output" for the full list of '
+            'skipped tests.',
+          'title': '4 skipped tests found',
+          'raw_details':
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_all_hosts_blacklisted\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_min_hosts_timeout\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_all_hosts_blacklisted\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_min_hosts_timeout'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 14 tests, see "Raw output" for the full list of tests.',
+          'title': '14 tests found',
+          'raw_details':
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_all_hosts_blacklisted\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_all_ranks_failure\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_fault_tolerance_without_scaling\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_hosts_added_and_removed\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_min_hosts_timeout\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_reset_limit\n'
+            'test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ '
+            'test_single_rank_failure\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_all_hosts_blacklisted\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_all_ranks_failure\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_fault_tolerance_without_scaling\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_hosts_added_and_removed\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_min_hosts_timeout\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_reset_limit\n'
+            'test.integration.test_elastic_torch.ElasticTorchTests ‑ '
+            'test_single_rank_failure'
+        }
+      ]
+    }
+  }
+]

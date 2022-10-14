@@ -6,6 +6,7 @@ import sys
 import unittest
 from glob import glob
 from typing import Optional, List
+import mock
 
 import junitparser
 import prettyprinter as pp
@@ -19,6 +20,9 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
+from publish_test_results import get_test_results, get_stats, get_conclusion, default_annotations
+from publish.publisher import Publisher
+from test_action_script import Test
 from test_utils import temp_locale
 
 test_path = pathlib.Path(__file__).resolve().parent
@@ -90,6 +94,10 @@ class JUnitXmlParseTest:
                         actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)])
                         self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
+                        annotations_expectation_path = path.parent / (path.stem + '.annotations')
+                        actual_annotations = self.get_check_runs(actual_results)
+                        self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2), annotations_expectation_path)
+
     def test_parse_and_process_files(self):
         for file in self.get_test_files():
             self.do_test_parse_and_process_files(file)
@@ -113,6 +121,48 @@ class JUnitXmlParseTest:
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
                     results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)])
                     w.write(pp.pformat(results, indent=2))
+                with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
+                    check_runs = cls.get_check_runs(results)
+                    w.write(pp.pformat(check_runs, indent=2))
+
+    @classmethod
+    def get_check_runs(cls, parsed):
+        check_runs = []
+
+        def edit(output: dict):
+            check_runs.append(dict(output=output))
+
+        def create_check_run(name: str,
+                             head_sha: str,
+                             status: str,
+                             conclusion: str,
+                             output: dict):
+            check_runs.append(
+                dict(name=name, head_sha=head_sha, status=status, conclusion=conclusion, output=output)
+            )
+            return mock.MagicMock(html_url='html', edit=mock.Mock(side_effect=edit))
+
+        commit = 'commit sha'
+        parsed = parsed.with_commit(commit)
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        conclusion = get_conclusion(parsed, fail_on_failures=True, fail_on_errors=True)
+        settings = Test.get_settings(check_name='Test Results',
+                                     commit=commit,
+                                     compare_earlier=False,
+                                     report_individual_runs=False,
+                                     dedup_classes_by_file_name=False,
+                                     check_run_annotation=default_annotations)
+
+        repo = mock.MagicMock(create_check_run=create_check_run)
+        gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
+        gha = mock.MagicMock()
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+        return check_runs
 
     @staticmethod
     def prettify_exception(exception) -> str:
@@ -195,8 +245,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 line=None,
                                 test_name='diff options with empty diff column name',
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.259 * time_factor
                             ),
                             UnitTestCase(
@@ -206,8 +258,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=1.959 * time_factor
                             ),
                             UnitTestCase(
@@ -217,8 +271,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.002 * time_factor
                             ),
                             UnitTestCase(
@@ -228,8 +284,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.002 * time_factor
                             ),
                             UnitTestCase(
@@ -239,8 +297,10 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
-                                content=None,
                                 message=None,
+                                content=None,
+                                stdout=None,
+                                stderr=None,
                                 time=0.001 * time_factor
                             )
                         ]

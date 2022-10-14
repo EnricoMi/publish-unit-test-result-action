@@ -709,12 +709,13 @@ def get_long_summary_with_digest_md(stats: UnitTestRunResultsOrDeltaResults,
 
 
 def get_case_messages(case_results: UnitTestCaseResults) -> CaseMessages:
+    """ Re-index cases from test+state to test+state+message. """
     messages = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-    for key in case_results:
-        for state in case_results[key]:
-            for case in case_results[key][state]:
+    for test in case_results:
+        for state in case_results[test]:
+            for case in case_results[test][state]:
                 message = case.message if case.result in ['skipped', 'disabled'] else case.content
-                messages[key][state][message].append(case)
+                messages[test][state][message].append(case)
     return CaseMessages(messages)
 
 
@@ -745,6 +746,15 @@ class Annotation:
         if not dictionary.get('raw_details'):
             del dictionary['raw_details']
         return dictionary
+
+
+def message_is_contained_in_content(message: Optional[str], content: Optional[str]) -> bool:
+    # ignore new lines and any leading or trailing white spaces
+    if content and message:
+        content = re.sub(r'\s+', ' ', content.strip())
+        message = re.sub(r'\s+', ' ', message.strip())
+        return content.startswith(message)
+    return False
 
 
 def get_case_annotation(messages: CaseMessages,
@@ -791,6 +801,13 @@ def get_case_annotation(messages: CaseMessages,
         'notice'
     )
 
+    # pick details from message and content, but try to avoid redundancy (e.g. when content repeats message)
+    # always add stdout and stderr if they are not empty
+    maybe_message = [case.message] if not message_is_contained_in_content(case.message, case.content) else []
+    details = [detail.rstrip()
+               for detail in maybe_message + [case.content, case.stdout, case.stderr]
+               if detail and detail.rstrip()]
+
     return Annotation(
         path=test_file or class_name or '/',
         start_line=line,
@@ -800,7 +817,7 @@ def get_case_annotation(messages: CaseMessages,
         annotation_level=level,
         message='\n'.join(sorted(same_result_files)),
         title=title,
-        raw_details=message
+        raw_details='\n'.join(details) if details else None
     )
 
 

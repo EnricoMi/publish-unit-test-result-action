@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=None
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=None
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=None
     ),
     publish.unittestresults.UnitTestCase(
@@ -50,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='error',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=None
     )
   ]

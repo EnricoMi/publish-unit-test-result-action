@@ -1,7 +1,6 @@
 import pathlib
 import unittest
 from collections import defaultdict
-from typing import Any
 
 import mock
 
@@ -15,7 +14,7 @@ from publish import Annotation, UnitTestCaseResults, UnitTestRunResults, UnitTes
     get_long_summary_without_runs_md,  get_long_summary_with_digest_md, \
     get_test_changes_md, get_test_changes_list_md,  get_test_changes_summary_md, \
     get_case_annotations, get_case_annotation, get_all_tests_list_annotation, \
-    get_skipped_tests_list_annotation, get_case_messages, chunk_test_list
+    get_skipped_tests_list_annotation, get_case_messages, chunk_test_list, message_is_contained_in_content
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError
 from publish.unittestresults import get_test_results
@@ -1445,34 +1444,34 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.0),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.1),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', time=1.2),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', time=None),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', time=None),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
                 ])),
                 ('failure', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', time=1.23),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', time=1.234),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
                 ])),
                 ('error', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', time=1.2345),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('failure', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('error', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
             ]))
         ])
@@ -1481,52 +1480,52 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', defaultdict(list, [
                     ('content1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.0),
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', time=1.1),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
                     ])),
                     ('content2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', time=1.2),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
                     ]))
                 ])),
                 ('skipped', defaultdict(list, [
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', time=None),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
                     ])),
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', time=None),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
                     ]))
                 ])),
                 ('failure', defaultdict(list, [
                     ('content4', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', time=1.23),
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', time=1.234),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
                     ])),
                 ])),
                 ('error', defaultdict(list, [
                     ('content5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', time=1.2345),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
                     ])),
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('skipped', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('failure', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('error', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
             ]))
@@ -1571,57 +1570,59 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('skipped', dict([
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content='content3', stdout=None, stderr=None, time=1.0)
                     ])),
                     ('message4', list([
-                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.0),
-                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.1', stdout=None, stderr=None, time=1.0),
+                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.2', stdout=None, stderr=None, time=1.0)
                     ])),
                 ])),
+                # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='message6', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content='content5', stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('skipped', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('failure', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('error', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
             ]))
         ])
 
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=False))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1', raw_details='message3\ncontent3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=False))
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1\nresult-file2\nresult-file3', title='3 out of 6 runs failed: test1 (class1)', raw_details='message4\ncontent4.1'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=False))
+        # the actual case message is taken, rather than the message given to get_case_annotation
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='actual message\ncontent5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=False))
 
         self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 4 runs skipped: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'skipped', None, report_individual_runs=False))
         self.assertEqual(Annotation(path='class2', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 4 runs failed: test2 (class2)', raw_details=None), get_case_annotation(messages, (None, 'class2', 'test2'), 'failure', None, report_individual_runs=False))
@@ -1632,26 +1633,27 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('skipped', dict([
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, stdout=None, stderr=None, time=None)
                     ]))
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content=None, time=1.23)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content=None, stdout=None, stderr=None, time=1.23)
                     ])),
                     ('message4', list([
-                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.234),
-                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, time=1.234)
+                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, stdout=None, stderr=None, time=1.234),
+                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, stdout=None, stderr=None, time=1.234)
                     ])),
                 ])),
+                # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='message6', content=None, time=1.2345)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content=None, stdout=None, stderr=None, time=1.2345)
                     ]))
                 ])),
             ]))
@@ -1660,38 +1662,39 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='notice', message='result-file1', title='1 out of 6 runs skipped: test1', raw_details='message2'), get_case_annotation(messages, (None, 'class1', 'test1'), 'skipped', 'message2', report_individual_runs=True))
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file1', title='1 out of 6 runs failed: test1', raw_details='message3'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message3', report_individual_runs=True))
         self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='warning', message='result-file2\nresult-file3', title='2 out of 6 runs failed: test1 (class1)', raw_details='message4'), get_case_annotation(messages, (None, 'class1', 'test1'), 'failure', 'message4', report_individual_runs=True))
-        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='message5'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=True))
+        # the actual case message is taken, rather than the message given to get_case_annotation
+        self.assertEqual(Annotation(path='file1', start_line=123, end_line=123, start_column=None, end_column=None, annotation_level='failure', message='result-file1', title='1 out of 6 runs with error: test1 (class1)', raw_details='actual message'), get_case_annotation(messages, (None, 'class1', 'test1'), 'error', 'message5', report_individual_runs=True))
 
     def test_get_case_annotations(self):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ])),
                 ('failure', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', time=1.2),
-                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', time=1.23),
-                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', time=1.234)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
+                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
+                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 3', content='fail content 3', stdout='fail stdout 3', stderr='fail stderr 3', time=1.234)
                 ])),
                 ('error', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', time=1.2345)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=1.2345)
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('failure', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
                 ('error', list([
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
                 ])),
             ]))
         ])
@@ -1706,7 +1709,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='3 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 1'
+                raw_details='fail message 1\nfail content 1\nfail stdout 1\nfail stderr 1'
             ), Annotation(
                 annotation_level='failure',
                 end_column=None,
@@ -1716,7 +1719,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
-                raw_details='error content'
+                raw_details='error message\nerror content\nerror stdout\nerror stderr'
             ), Annotation(
                 annotation_level='warning',
                 end_column=None,
@@ -1748,18 +1751,18 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ])),
                 ('failure', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', time=1.2),
-                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', time=1.23),
-                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', time=1.234)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
+                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
+                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.234)
                 ])),
                 ('error', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', time=0.1)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=0.1)
                 ])),
             ]))
         ])
@@ -1774,7 +1777,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 1'
+                raw_details='fail message 1\nfail content 1\nfail stdout 1\nfail stderr 1'
             ), Annotation(
                 annotation_level='warning',
                 end_column=None,
@@ -1784,7 +1787,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='2 out of 6 runs failed: test1 (class1)',
-                raw_details='fail content 2'
+                raw_details='fail message 2\nfail content 2\nfail stdout 2\nfail stderr 2'
             ), Annotation(
                 annotation_level='failure',
                 end_column=None,
@@ -1794,7 +1797,7 @@ class PublishTest(unittest.TestCase):
                 start_column=None,
                 start_line=123,
                 title='1 out of 6 runs with error: test1 (class1)',
-                raw_details='error content'
+                raw_details='error message\nerror content\nerror stdout\nerror stderr'
             )
         ]
 
@@ -1812,20 +1815,20 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ])),
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ])),
             ])),
             (('file', 'class1', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ]))
         ])
@@ -1840,20 +1843,20 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ])),
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ])),
             ])),
             (('file', 'class1', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ]))
         ])
@@ -1871,20 +1874,20 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test2'), dict([
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ])),
             ((None, 'class1', 'test1'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ])),
             ])),
             (('file', 'class1', 'test2'), dict([
                 ('success', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ]))
         ])
@@ -1898,17 +1901,17 @@ class PublishTest(unittest.TestCase):
         results = UnitTestCaseResults([
             ((None, 'class1', 'test2'), dict([
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ])),
             ((None, 'class1', 'test1'), dict([
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ])),
             (('file', 'class1', 'test2'), dict([
                 ('skipped', list([
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ])),
             ]))
         ])
@@ -2067,6 +2070,24 @@ class PublishTest(unittest.TestCase):
                               f'  10 files        0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
+
+    def test_message_is_contained_in_content(self):
+        # non-contained test cases
+        for message, content in [(None, None),
+                                 ('message', None),
+                                 (None, 'content'),
+                                 ('message', 'content'),
+                                 ('message', 'the message in the content')]:
+            with self.subTest(message=message, content=content):
+                self.assertFalse(message_is_contained_in_content(message, content))
+
+        # contained test cases
+        for message, content in [('message', 'message'),
+                                 ('message', 'message in content'),
+                                 ('the message', ' the  message  in  content'),
+                                 ('the  message', '\tthe message in the content')]:
+            with self.subTest(message=message, content=content):
+                self.assertTrue(message_is_contained_in_content(message, content))
 
 
 if __name__ == '__main__':

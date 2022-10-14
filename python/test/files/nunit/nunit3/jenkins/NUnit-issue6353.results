@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1.0
     ),
     publish.unittestresults.UnitTestCase(
@@ -28,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Reason',
       content=None,
+      stdout=None,
+      stderr=None,
       time=None
     ),
     publish.unittestresults.UnitTestCase(
@@ -39,6 +43,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='failure',
       message='Reason',
       content='Here comes the stack trace',
+      stdout=None,
+      stderr=None,
       time=2.0
     )
   ]

@@ -187,6 +187,7 @@ class TestPublisher(unittest.TestCase):
                     result_file='result file', test_file='test file', line=0,
                     class_name='class', test_name='test',
                     result='success', message=None, content=None,
+                    stdout=None, stderr=None,
                     time=1.2
                 )
             ],
@@ -195,6 +196,7 @@ class TestPublisher(unittest.TestCase):
                     result_file='result file', test_file='test file', line=0,
                     class_name='class', test_name='test',
                     result='failure', message='message', content='content',
+                    stdout='stdout', stderr='stderr',
                     time=1.234
                 )
             ]
@@ -205,6 +207,7 @@ class TestPublisher(unittest.TestCase):
                     result_file='result file', test_file='test file', line=0,
                     class_name='class', test_name='test2',
                     result='skipped', message='skipped', content=None,
+                    stdout=None, stderr=None,
                     time=None
                 )
             ],
@@ -213,6 +216,7 @@ class TestPublisher(unittest.TestCase):
                     result_file='result file', test_file='test file', line=0,
                     class_name='class', test_name='test2',
                     result='error', message='error message', content='error content',
+                    stdout='error stdout', stderr='error stderr',
                     time=1.2345
                 )
             ]
@@ -223,6 +227,7 @@ class TestPublisher(unittest.TestCase):
                     result_file='result file', test_file='test file', line=0,
                     class_name='class', test_name='test3',
                     result='skipped', message='skipped', content=None,
+                    stdout=None, stderr=None,
                     time=None
                 )
             ]
@@ -1177,8 +1182,8 @@ class TestPublisher(unittest.TestCase):
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
         annotations = error_annotations + [
-            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'}
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'}
         ] + (
             [
                  {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
@@ -1276,8 +1281,8 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n'.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': error_annotations + [
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
                 ]
@@ -1341,8 +1346,8 @@ class TestPublisher(unittest.TestCase):
                            '2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zH'
                            'dX73QAAAA==\n',
                 'annotations': [
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'content'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error content'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
                 ]
@@ -1371,6 +1376,7 @@ class TestPublisher(unittest.TestCase):
                         result_file='result file', test_file='test file', line=i,
                         class_name='class', test_name=f'test{i}',
                         result='failure', message=f'message{i}', content=f'content{i}',
+                        stdout=f'stdout{i}', stderr=f'stderr{i}',
                         time=1.234 + i / 1000
                     )
                 ]
@@ -1403,7 +1409,7 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
-                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
                     # we expect the first 50 annotations in the create call
                     for i in range(1, 51)
                 ])
@@ -1436,7 +1442,7 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
-                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'content{i}'}
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
                     # for each edit we expect a batch of 50 annotations starting at start
                     for i in range(start, start + 50)
                 ] if start < 151 else [

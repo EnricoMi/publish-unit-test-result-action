@@ -17,6 +17,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -29,6 +31,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -43,6 +47,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'access-token',
       content='Opens the authorization page in the system browse, to get a real '
         'access-token',
+      stdout=None,
+      stderr=None,
       time=8.3e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -55,6 +61,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.161
     ),
     publish.unittestresults.UnitTestCase(
@@ -66,6 +74,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -77,6 +87,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.003
     ),
     publish.unittestresults.UnitTestCase(
@@ -88,6 +100,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -99,6 +113,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -110,6 +126,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -122,6 +140,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -133,6 +153,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.007
     ),
     publish.unittestresults.UnitTestCase(
@@ -145,6 +167,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -157,6 +181,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.016
     ),
     publish.unittestresults.UnitTestCase(
@@ -169,6 +195,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
+      stdout=None,
+      stderr=None,
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -181,6 +209,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -193,6 +223,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -205,6 +237,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
+      stdout=None,
+      stderr=None,
       time=1.4e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -216,6 +250,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -228,6 +264,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -240,6 +278,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.004
     ),
     publish.unittestresults.UnitTestCase(
@@ -252,6 +292,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -264,6 +306,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -275,6 +319,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -287,6 +333,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -298,6 +346,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -309,6 +359,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -320,6 +372,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.009
     ),
     publish.unittestresults.UnitTestCase(
@@ -332,6 +386,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.007
     ),
     publish.unittestresults.UnitTestCase(
@@ -344,6 +400,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -356,6 +414,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.006
     ),
     publish.unittestresults.UnitTestCase(
@@ -368,6 +428,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.002
     ),
     publish.unittestresults.UnitTestCase(
@@ -379,6 +441,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.003
     ),
     publish.unittestresults.UnitTestCase(
@@ -391,6 +455,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -402,6 +468,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -413,6 +481,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.006
     ),
     publish.unittestresults.UnitTestCase(
@@ -424,6 +494,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -435,6 +507,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -446,6 +520,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -458,6 +534,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.006
     ),
     publish.unittestresults.UnitTestCase(
@@ -470,6 +548,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.014
     ),
     publish.unittestresults.UnitTestCase(
@@ -481,6 +561,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -492,6 +574,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.006
     ),
     publish.unittestresults.UnitTestCase(
@@ -504,6 +588,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -516,6 +602,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -528,6 +616,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
+      stdout=None,
+      stderr=None,
       time=0.0004561
     ),
     publish.unittestresults.UnitTestCase(
@@ -542,6 +632,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'authorization-code',
       content='Opens the authorization page in the system browse, to get a real '
         'authorization-code',
+      stdout=None,
+      stderr=None,
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -554,6 +646,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.002
     ),
     publish.unittestresults.UnitTestCase(
@@ -566,6 +660,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -577,6 +673,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -588,6 +686,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.007
     ),
     publish.unittestresults.UnitTestCase(
@@ -599,6 +699,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -610,6 +712,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -622,6 +726,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.04
     ),
     publish.unittestresults.UnitTestCase(
@@ -633,6 +739,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -644,6 +752,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -656,6 +766,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
+      stdout=None,
+      stderr=None,
       time=3.1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -668,6 +780,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.015
     ),
     publish.unittestresults.UnitTestCase(
@@ -679,6 +793,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.003
     ),
     publish.unittestresults.UnitTestCase(
@@ -691,6 +807,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
+      stdout=None,
+      stderr=None,
       time=3.3e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -703,6 +821,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
+      stdout=None,
+      stderr=None,
       time=5.94e-05
     ),
     publish.unittestresults.UnitTestCase(
@@ -715,6 +835,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.095
     ),
     publish.unittestresults.UnitTestCase(
@@ -726,6 +848,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -740,6 +864,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'authorization-code',
       content='Opens the authorization page in the system browse, to get a real '
         'authorization-code',
+      stdout=None,
+      stderr=None,
       time=1.2e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -751,6 +877,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -763,6 +891,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
+      stdout=None,
+      stderr=None,
       time=1e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -774,6 +904,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.002
     ),
     publish.unittestresults.UnitTestCase(
@@ -785,6 +917,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -796,6 +930,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -807,6 +943,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -819,6 +957,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -831,6 +971,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
+      stdout=None,
+      stderr=None,
       time=1.31e-05
     ),
     publish.unittestresults.UnitTestCase(
@@ -842,6 +984,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.007
     ),
     publish.unittestresults.UnitTestCase(
@@ -853,6 +997,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -865,6 +1011,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.016
     ),
     publish.unittestresults.UnitTestCase(
@@ -876,6 +1024,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=0.001
     ),
     publish.unittestresults.UnitTestCase(
@@ -887,6 +1037,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -899,6 +1051,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
+      stdout=None,
+      stderr=None,
       time=1.2e-06
     ),
     publish.unittestresults.UnitTestCase(
@@ -910,6 +1064,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     ),
     publish.unittestresults.UnitTestCase(
@@ -921,6 +1077,8 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout=None,
+      stderr=None,
       time=1e-07
     )
   ]

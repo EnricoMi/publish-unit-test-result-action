@@ -27,6 +27,25 @@ publish.unittestresults.ParsedUnitTestResults(
         'ThenTheResultShouldBeOnTheScreen(int p0)\n{\n    '
         'ScenarioContext.Current.Pending();\n}\n    }\n}\n',
       content=None,
+      stdout='Given I have entered 50 into the calculator\nNo matching step '
+        'definition found for the step. Use the following code to create one:\n'
+        '        [Given(@"I have entered (.*) into the calculator")]\npublic '
+        'void GivenIHaveEnteredIntoTheCalculator(int p0)\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n\nAnd I have entered 70 into '
+        'the calculator\nNo matching step definition found for the step. Use '
+        'the following code to create one:\n        [Given(@"I have entered '
+        '(.*) into the calculator")]\npublic void '
+        'GivenIHaveEnteredIntoTheCalculator(int p0)\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n\nWhen I press add\nNo '
+        'matching step definition found for the step. Use the following code '
+        'to create one:\n        [When(@"I press add")]\npublic void '
+        'WhenIPressAdd()\n{\n    ScenarioContext.Current.Pending();\n}\n\n'
+        'Then the result should be 120 on the screen\nNo matching step '
+        'definition found for the step. Use the following code to create one:\n'
+        '        [Then(@"the result should be (.*) on the screen")]\npublic '
+        'void ThenTheResultShouldBeOnTheScreen(int p0)\n{\n    '
+        'ScenarioContext.Current.Pending();\n}\n\n',
+      stderr=None,
       time=0.186579
     ),
     publish.unittestresults.UnitTestCase(
@@ -38,6 +57,15 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
+      stdout='Given I have an active Sub user Geo with username Geonw and password '
+        'dev1234567\ndone: '
+        'LoginSteps.GivenIHaveAnActiveSubUserWithUsernameAndPassword("Geo", '
+        '"Geonw", "dev1234567") (0.0s)\nAnd he is on Sub login page\ndone: '
+        'LoginSteps.GivenHeIsOnSubLoginPage() (0.6s)\nWhen he logs in using '
+        'his credentials\ndone: LoginSteps.WhenHeLogsInUsingHisCredentials() '
+        '(1.8s)\nThen he should land on the Accounts homepage\ndone: '
+        'LoginSteps.ThenHeShouldLandOnTheAccountsHomePage() (0.3s)\n',
+      stderr=None,
       time=6.40203
     )
   ]

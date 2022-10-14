@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365">
+    <test-suite type="TestSuite" id="1000" name="workspace" fullname="workspace" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties>
+            <property name="isRoot" value="True" />
+        </properties>
+        <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="Assembly" id="1361" name="MafiaPigs.EditorTests.dll" fullname="/github/workspace/Library/ScriptAssemblies/MafiaPigs.EditorTests.dll" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+                <property name="_PID" value="1140" />
+                <property name="_APPDOMAIN" value="Unity Child Domain" />
+                <property name="platform" value="EditMode" />
+                <property name="isAssembly" value="True" />
+                <property name="EditorOnly" value="True" />
+                <property name="RequiresPlayMode" value="False" />
+            </properties>
+            <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1362" name="MP" fullname="MP" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                    <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-suite type="TestSuite" id="1363" name="Tests" fullname="MP.Tests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:37Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                    <properties />
+                    <failure>
+                        <message><![CDATA[One or more child tests had errors]]></message>
+                    </failure>
+                    <test-suite type="TestFixture" id="1003" name="AssetValidatorTest" fullname="MP.Tests.AssetValidatorTest" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:16:48Z" end-time="2022-09-20 21:31:36Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                        <properties />
+                        <failure>
+                            <message><![CDATA[One or more child tests had errors]]></message>
+                        </failure>
+                        <output/>
+                        <test-suite type="ParameterizedMethod" id="1062" name="ValidateSceneContainer" fullname="MP.Tests.AssetValidatorTest.ValidateSceneContainer" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2022-09-20 21:24:21Z" end-time="2022-09-20 21:28:24Z" duration="2.117365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                            <properties />
+                            <failure>
+                                <message><![CDATA[One or more child tests had errors]]></message>
+                            </failure>
+                            <test-case id="1017" name="ValidateSceneContainer(&quot;Assets/Scenes/Grid/GridTest.unity&quot;)" fullname="MP.Tests.AssetValidatorTest.ValidateSceneContainer(&quot;Assets/Scenes/Grid/GridTest.unity&quot;)" methodname="ValidateSceneContainer" classname="MP.Tests.AssetValidatorTest" runstate="Runnable" seed="78278819" result="Failed" label="Error" start-time="2022-09-20 21:25:49Z" end-time="2022-09-20 21:25:51Z" duration="2.117365" asserts="0">
+                                <properties />
+                                <failure>
+                                    <message><![CDATA[Zenject.ZenjectException : Zenject Validation Failed!  See errors below for details.]]></message>
+                                    <stack-trace><![CDATA[  at Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () [0x0009c] in /github/workspace/Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:82
+  at MP.Tests.AssetValidatorTest.ValidateSceneContainer (System.String scenePath) [0x00009] in /github/workspace/Assets/Tests/EditorMode/AssetValidatorTest.cs:58
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <b67d2f60bf2548a58dc569b37fe71c3d>:0 ]]></stack-trace>
+                                </failure>
+                                <output><![CDATA[AssertionException: Could not find a tilemap tagged with LevelBounds.
+Assertion failure. Value was Null
+Expected: Value was not Null
+UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsNotNull (UnityEngine.Object value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:58)
+UnityEngine.Assertions.Assert.IsNotNull[T] (T value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:46)
+MP.Gameplay.Level.LevelInstaller.InstallBindings () (at Assets/Scripts/Gameplay/Level/LevelInstaller.cs:30)
+Zenject.CompositeMonoInstaller.InstallBindings () (at Assets/ThirdParty/Zenject/Source/Install/CompositeMonoInstaller.cs:25)
+Zenject.Context.InstallInstallers (System.Collections.Generic.List`1[T] normalInstallers, System.Collections.Generic.List`1[T] normalInstallerTypes, System.Collections.Generic.List`1[T] scriptableObjectInstallers, System.Collections.Generic.List`1[T] installers, System.Collections.Generic.List`1[T] installerPrefabs) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:218)
+Zenject.Context.InstallInstallers () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:139)
+Zenject.SceneContext.InstallBindings (System.Collections.Generic.List`1[T] injectableMonoBehaviours) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:346)
+Zenject.SceneContext.Install () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:265)
+Zenject.SceneContext.Validate () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:121)
+Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:67)
+UnityEngine.Debug:LogException(Exception)
+ModestTree.Log:ErrorException(Exception) (at Assets/ThirdParty/Zenject/Source/Internal/Log.cs:60)
+Zenject.Internal.ZenUnityEditorUtil:ValidateCurrentSceneSetup() (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:72)
+MP.Tests.AssetValidatorTest:ValidateSceneContainer(String) (at Assets/Tests/EditorMode/AssetValidatorTest.cs:58)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod(MethodInfo, Object, Object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke(Object, Object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod(ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod(ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute(ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /home/bokken/buildslave/unity/build/Editor/Mono/EditorApplication.cs:359)
+
+]]></output>
+                            </test-case>
+                        </test-suite>
+                    </test-suite>
+                </test-suite>
+            </test-suite>
+        </test-suite>
+    </test-suite>
+</test-run>

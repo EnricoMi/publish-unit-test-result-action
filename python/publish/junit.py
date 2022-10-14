@@ -216,6 +216,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
                 for suite in suites
                 for leaf_suite in get_suites(suite)] + ([suite] if cases or not suites else [])
 
+    # junit allows for multiple results for a single test case (e.g. success and failure for the same test)
+    # we pick the most severe result, which could still be multiple results, so we aggregate those, which is messy
     cases = [
         UnitTestCase(
             result_file=result_file,
@@ -226,11 +228,14 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
             result=get_result(results),
             message=get_message(results),
             content=get_content(results),
+            stdout=case.system_out,
+            stderr=case.system_err,
             time=case.time * time_factor if case.time is not None else case.time
         )
         for result_file, suite in suites
         for case in get_cases(suite)
         if case.classname is not None or case.name is not None
+        # junit allows for multiple results in one test case, pick the most severe results
         for results in [get_results(case.result, case.status)]
     ]
 
