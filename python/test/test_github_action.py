@@ -231,7 +231,7 @@ class TestGithubAction(unittest.TestCase):
             gha.add_to_output('var2', 'val4')
 
         # if there is no env file, the output is set via command
-        with gh_action_command_test(self, '::set-output name=varname::varval') as gha:
+        with gh_action_command_test(self, 'varname=varval >>$GITHUB_OUTPUT') as gha:
             gha.add_to_output('varname', 'varval')
 
     def test_add_job_summary(self):

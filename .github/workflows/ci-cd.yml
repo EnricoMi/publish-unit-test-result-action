@@ -389,16 +389,16 @@ jobs:
         run: |
           case "$OS" in
             ubuntu*)
-              echo "::set-output name=path-sep::/"
-              echo "::set-output name=pip-cache::~/.cache/pip"
+              echo "path-sep=/" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/.cache/pip" >>$GITHUB_OUTPUT
               ;;
             macos*)
-              echo "::set-output name=path-sep::/"
-              echo "::set-output name=pip-cache::~/Library/Caches/pip"
+              echo "path-sep=/" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/Library/Caches/pip" >>$GITHUB_OUTPUT
               ;;
             windows*)
-              echo "::set-output name=path-sep::\\"
-              echo "::set-output name=pip-cache::~\\AppData\\Local\\pip\\Cache"
+              echo "path-sep=\\" >>$GITHUB_OUTPUT
+              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >>$GITHUB_OUTPUT
               ;;
           esac
         shell: bash
@@ -592,8 +592,8 @@ jobs:
         run: |
           image=$(grep -A 10 "^runs:" action.yml | grep -E "^\s+image:\s" | sed -E -e "s/^\s+image:\s*'//" -e "s/docker:\/\///" -e "s/'\s*$//")
           version=$(cut -d : -f 2 <<< "$image")
-          echo "::set-output name=image::$image"
-          echo "::set-output name=version::$version"
+          echo "image=$image" >>$GITHUB_OUTPUT
+          echo "version=$version" >>$GITHUB_OUTPUT
         shell: bash
 
       - name: Check action image existence
@@ -603,7 +603,7 @@ jobs:
         run: |
           if docker manifest inspect '${{ steps.action.outputs.image }}'
           then
-            echo "::set-output name=exists::true"
+            echo "exists=true" >>$GITHUB_OUTPUT
           fi
         shell: bash
 
