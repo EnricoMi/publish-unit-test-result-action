@@ -268,7 +268,7 @@ The list of most notable options:
 |`check_run_annotations_branch`|`event.repository.default_branch` or `"main, master"`|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`.|
 |`json_file`|no file|Results are written to this JSON file.|
 |`json_thousands_separator`|`" "`|Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).|
-|`json_test_case_results`|`false`|Write out all individual test case results to the json output file. Setting this to true can greatly increase the size of the output. Defaults to false.|
+|`json_test_case_results`|`false`|Write out all individual test case results to the JSON file. Setting this to `true` can greatly increase the size of the output. Defaults to `false`.|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
