@@ -169,6 +169,7 @@ jobs:
           check_name: Test Results (Dockerfile)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_test_case_results: true
           log_level: DEBUG
 
       - name: JSON output
@@ -304,6 +305,8 @@ jobs:
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
+          INPUT_JSON_TEST_CASE_RESULT: true
+
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -429,6 +432,7 @@ jobs:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
+          json_test_case_results: true
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -479,6 +483,7 @@ jobs:
           check_name: Test Results (setup-python)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_test_case_results: true
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -522,6 +527,7 @@ jobs:
           xunit_files: "test-files/xunit/**/*.xml"
           trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
+          json_test_case_results: true
           log_level: DEBUG
 
       - name: JSON output
@@ -563,6 +569,7 @@ jobs:
           fail_on: nothing
           junit_files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
+          json_test_case_results: true
           log_level: DEBUG
 
       - name: JSON output
