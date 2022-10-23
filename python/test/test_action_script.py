@@ -178,7 +178,8 @@ class Test(unittest.TestCase):
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
-                     json_thousands_separator=punctuation_space) -> Settings:
+                     json_thousands_separator=punctuation_space,
+                    json_test_case_results=False) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
@@ -191,6 +192,7 @@ class Test(unittest.TestCase):
             commit=commit,
             json_file=json_file,
             json_thousands_separator=json_thousands_separator,
+            json_test_case_results=json_test_case_results,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             junit_files_glob=junit_files_glob,
@@ -822,7 +824,6 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith('reading TRX files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
-
         self.assertEqual(67, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error

@@ -370,6 +370,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         json_file=get_var('JSON_FILE', options),
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
+        json_test_case_results=get_bool_var('JSON_TEST_CASE_RESULTS', options, default=False),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
         junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,

@@ -40,6 +40,7 @@ class Settings:
     commit: str
     json_file: Optional[str]
     json_thousands_separator: str
+    json_test_case_results: bool
     fail_on_errors: bool
     fail_on_failures: bool
     # one of these *_files_glob must be set
@@ -72,6 +73,7 @@ class PublishData:
     stats_with_delta: Optional[UnitTestRunDeltaResults]
     annotations: List[Annotation]
     check_url: str
+    cases: Optional[UnitTestCaseResults]
 
     @classmethod
     def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
@@ -347,7 +349,8 @@ class Publisher:
             stats=stats,
             stats_with_delta=stats_with_delta if before_stats is not None else None,
             annotations=all_annotations,
-            check_url=check_run.html_url
+            check_url=check_run.html_url,
+            cases=cases if self._settings.json_test_case_results else None
         )
         self.publish_json(data)
 

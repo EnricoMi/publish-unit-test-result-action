@@ -101,6 +101,10 @@ inputs:
     description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
     default: ' '
     required: false
+  json_test_case_results:
+    description: 'Write out all individual test case results to JSON file. This may greatly increase the size of the output'
+    default: false
+    required: false
 
 outputs:
   json:
