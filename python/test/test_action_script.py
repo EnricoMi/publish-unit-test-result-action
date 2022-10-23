@@ -824,6 +824,7 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith('reading TRX files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
+
         self.assertEqual(67, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error
@@ -850,7 +851,6 @@ class Test(unittest.TestCase):
             gha = GithubAction(file=string)
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
-            self.maxDiff = None
             expected = [
                 "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
                 "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",

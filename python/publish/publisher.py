@@ -119,7 +119,7 @@ class PublishData:
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         data = self._as_dict()
 
-        # replace some large fields with their lengths
+        # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
             d = deepcopy(d)
             if d.get('stats', {}).get('errors') is not None:
@@ -128,6 +128,8 @@ class PublishData:
                 d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
             if d.get('annotations') is not None:
                 d['annotations'] = len(d['annotations'])
+            if d.get('cases') is not None:
+                del d['cases']
             return d
 
         data = reduce(data)
