@@ -305,7 +305,7 @@ jobs:
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
-          INPUT_JSON_TEST_CASE_RESULT: true
+          INPUT_JSON_TEST_CASE_RESULTS: true
 
 
       - name: JSON output
