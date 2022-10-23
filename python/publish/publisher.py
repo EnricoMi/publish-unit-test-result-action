@@ -371,6 +371,7 @@ class Publisher:
                     pass
 
         # provide a reduced version to Github actions
+        print(data)
         self._gha.add_to_output('json', json.dumps(data.to_reduced_dict(self._settings.json_thousands_separator), ensure_ascii=False))
 
     def publish_job_summary(self,
