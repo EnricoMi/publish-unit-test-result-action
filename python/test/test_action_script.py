@@ -179,7 +179,7 @@ class Test(unittest.TestCase):
                      seconds_between_github_writes=2.5,
                      json_file=None,
                      json_thousands_separator=punctuation_space,
-                    json_test_case_results=False) -> Settings:
+                     json_test_case_results=False) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
