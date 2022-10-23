@@ -102,7 +102,7 @@ inputs:
     default: ' '
     required: false
   json_test_case_results:
-    description: 'Write out all individual test case results to JSON file. This may greatly increase the size of the output'
+    description: 'Write out all individual test case results to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
     default: false
     required: false
 outputs:
