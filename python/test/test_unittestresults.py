@@ -5,7 +5,7 @@ from xml.etree.ElementTree import ParseError as XmlParseError
 
 from publish.unittestresults import get_test_results, get_stats, get_stats_delta, \
     ParsedUnitTestResults, ParsedUnitTestResultsWithCommit, \
-    UnitTestCase, UnitTestResults, UnitTestCaseResults, \
+    UnitTestCase, UnitTestResults, create_unit_test_case_results, \
     UnitTestRunResults, UnitTestRunDeltaResults, ParseError
 from test_utils import d, n
 
@@ -186,7 +186,7 @@ class TestUnitTestResults(unittest.TestCase):
             files=0,
             errors=[],
             suites=0, suite_tests=0, suite_skipped=0, suite_failures=0, suite_errors=0, suite_time=0,
-            cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results=UnitTestCaseResults(),
+            cases=0, cases_skipped=0, cases_failures=0, cases_errors=0, cases_time=0, case_results=create_unit_test_case_results(),
             tests=0, tests_skipped=0, tests_failures=0, tests_errors=0,
             commit='commit'
         ))
@@ -211,15 +211,15 @@ class TestUnitTestResults(unittest.TestCase):
             errors=errors,
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
-            case_results=UnitTestCaseResults([
-                ((None, 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)])),
-                ((None, 'class1', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)])),
-                ((None, 'class1', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)])),
-                ((None, 'class2', 'test1'), dict(error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)])),
-                ((None, 'class2', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)])),
-                ((None, 'class2', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)])),
-                ((None, 'class2', 'test4'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                (None, 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)]),
+                (None, 'class1', 'test2'): dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)]),
+                (None, 'class1', 'test3'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)]),
+                (None, 'class2', 'test1'): dict(error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)]),
+                (None, 'class2', 'test2'): dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)]),
+                (None, 'class2', 'test3'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)]),
+                (None, 'class2', 'test4'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)]),
+        }),
             tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
             commit='commit'
         ))
@@ -253,13 +253,13 @@ class TestUnitTestResults(unittest.TestCase):
             errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
-            case_results=UnitTestCaseResults([
-                ((None, 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1), UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)])),
-                ((None, 'class1', 'test2'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)], skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)])),
-                ((None, 'class1', 'test3'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5), UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)])),
-                ((None, 'class1', 'test4'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)], failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)])),
-                ((None, 'class1', 'test5'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)], error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                (None, 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1), UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)]),
+                (None, 'class1', 'test2'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)], skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)]),
+                (None, 'class1', 'test3'): dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5), UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)]),
+                (None, 'class1', 'test4'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)], failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)]),
+                (None, 'class1', 'test5'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)], error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)]),
+            }),
             tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
             commit='commit'
         ))
@@ -295,13 +295,13 @@ class TestUnitTestResults(unittest.TestCase):
             errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
-            case_results=UnitTestCaseResults([
-                ((None, 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1), UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)])),
-                ((None, 'class1', 'test2'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)], skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)])),
-                ((None, 'class1', 'test3'), dict(skipped=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5), UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)])),
-                ((None, 'class1', 'test4'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)], failure=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)])),
-                ((None, 'class1', 'test5'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)], error=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                (None, 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1), UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)]),
+                (None, 'class1', 'test2'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)], skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)]),
+                (None, 'class1', 'test3'): dict(skipped=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5), UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)]),
+                (None, 'class1', 'test4'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)], failure=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)]),
+                (None, 'class1', 'test5'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)], error=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)]),
+            }),
             tests=5, tests_skipped=1, tests_failures=1, tests_errors=1,
             commit='commit'
         ))
@@ -311,18 +311,18 @@ class TestUnitTestResults(unittest.TestCase):
             errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=10, cases_skipped=3, cases_failures=1, cases_errors=1, cases_time=55,
-            case_results=UnitTestCaseResults([
-                (('test1', 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)])),
-                (('test2', 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)])),
-                (('test1', 'class1', 'test2'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)])),
-                (('test2', 'class1', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)])),
-                (('test1', 'class1', 'test3'), dict(skipped=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)])),
-                (('test2', 'class1', 'test3'), dict(skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)])),
-                (('test1', 'class1', 'test4'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)])),
-                (('test2', 'class1', 'test4'), dict(failure=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)])),
-                (('test1', 'class1', 'test5'), dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)])),
-                (('test2', 'class1', 'test5'), dict(error=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                ('test1', 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)]),
+                ('test2', 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)]),
+                ('test1', 'class1', 'test2'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test2', result='success', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)]),
+                ('test2', 'class1', 'test2'): dict(skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)]),
+                ('test1', 'class1', 'test3'): dict(skipped=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test3', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)]),
+                ('test2', 'class1', 'test3'): dict(skipped=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test3', result='skipped', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)]),
+                ('test1', 'class1', 'test4'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test4', result='success', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)]),
+                ('test2', 'class1', 'test4'): dict(failure=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test4', result='failure', message='message8', content='content8', stdout='stdout8', stderr='stderr8', time=8)]),
+                ('test1', 'class1', 'test5'): dict(success=[UnitTestCase(result_file='result', test_file='test1', line=123, class_name='class1', test_name='test5', result='success', message='message9', content='content9', stdout='stdout9', stderr='stderr9', time=9)]),
+                ('test2', 'class1', 'test5'): dict(error=[UnitTestCase(result_file='result', test_file='test2', line=123, class_name='class1', test_name='test5', result='error', message='message10', content='content10', stdout='stdout10', stderr='stderr10', time=10)]),
+            }),
             tests=10, tests_skipped=3, tests_failures=1, tests_errors=1,
             commit='commit'
         ))
@@ -344,10 +344,10 @@ class TestUnitTestResults(unittest.TestCase):
             errors=[],
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=4, cases_skipped=2, cases_failures=1, cases_errors=0, cases_time=3,
-            case_results=UnitTestCaseResults([
-                ((None, 'class', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)], skipped=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None)])),
-                ((None, 'class', 'test2'), dict(failure=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=2)], skipped=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=None)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                (None, 'class', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)], skipped=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None)]),
+                (None, 'class', 'test2'): dict(failure=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=2)], skipped=[UnitTestCase(result_file='result', test_file=None, line=None, class_name='class', test_name='test2', result='skipped', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=None)]),
+            }),
             tests=2, tests_skipped=0, tests_failures=1, tests_errors=0,
             commit='commit'
         ))
@@ -372,15 +372,15 @@ class TestUnitTestResults(unittest.TestCase):
             errors=errors,
             suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
             cases=7, cases_skipped=2, cases_failures=3, cases_errors=1, cases_time=28,
-            case_results=UnitTestCaseResults([
-                ((None, 'class1', 'test1'), dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)])),
-                ((None, 'class1', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)])),
-                ((None, 'class1', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)])),
-                ((None, 'class2', 'test1'), dict(error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)])),
-                ((None, 'class2', 'test2'), dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='disabled', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)])),
-                ((None, 'class2', 'test3'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)])),
-                ((None, 'class2', 'test4'), dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)])),
-            ]),
+            case_results=create_unit_test_case_results({
+                (None, 'class1', 'test1'): dict(success=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1)]),
+                (None, 'class1', 'test2'): dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2)]),
+                (None, 'class1', 'test3'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3)]),
+                (None, 'class2', 'test1'): dict(error=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4)]),
+                (None, 'class2', 'test2'): dict(skipped=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='disabled', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5)]),
+                (None, 'class2', 'test3'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6)]),
+                (None, 'class2', 'test4'): dict(failure=[UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7)]),
+            }),
             tests=7, tests_skipped=2, tests_failures=3, tests_errors=1,
             commit='commit'
         ))
@@ -402,7 +402,7 @@ class TestUnitTestResults(unittest.TestCase):
             cases_failures=12,
             cases_errors=13,
             cases_time=4,
-            case_results=UnitTestCaseResults(),
+            case_results=create_unit_test_case_results(),
 
             tests=30,
             tests_skipped=8,

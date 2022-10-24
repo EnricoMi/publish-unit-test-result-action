@@ -1,7 +1,8 @@
 import dataclasses
 from collections import defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
-from typing import Optional, List, Mapping, Any, Union, Dict, Callable
+from typing import Optional, List, Mapping, Any, Union, Dict, Callable, Tuple, AbstractSet
 from xml.etree.ElementTree import ParseError as XmlParseError
 
 
@@ -20,11 +21,18 @@ class UnitTestCase:
     time: Optional[float]
 
 
-class UnitTestCaseResults(defaultdict):
-    def __init__(self, items=None):
-        if items is None:
-            items = []
-        super(UnitTestCaseResults, self).__init__(lambda: defaultdict(list), items)
+UnitTestCaseFileName = str
+UnitTestCaseClassName = str
+UnitTestCaseTestName = str
+UnitTestCaseResultKey = Tuple[Optional[UnitTestCaseFileName], UnitTestCaseClassName, UnitTestCaseTestName]
+UnitTestCaseState = str
+UnitTestCaseResults = Mapping[UnitTestCaseResultKey, Mapping[UnitTestCaseState, List[UnitTestCase]]]
+
+
+def create_unit_test_case_results(indexed_cases: Optional[UnitTestCaseResults] = None) -> UnitTestCaseResults:
+    if indexed_cases:
+        return deepcopy(indexed_cases)
+    return defaultdict(lambda: defaultdict(list))
 
 
 @dataclass(frozen=True)
@@ -130,7 +138,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             cases_failures=self.suite_failures,
             cases_errors=self.suite_errors,
             cases_time=self.suite_time,
-            case_results=UnitTestCaseResults(),
+            case_results=create_unit_test_case_results(),
 
             tests=self.suite_tests,
             tests_skipped=self.suite_skipped,
@@ -390,7 +398,7 @@ class UnitTestRunDeltaResults:
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]
 
 
-def aggregate_states(states: List[str]) -> str:
+def aggregate_states(states: AbstractSet[str]) -> str:
     return 'error' if 'error' in states else \
            'failure' if 'failure' in states else \
            'success' if 'success' in states else \
@@ -419,7 +427,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     cases_time = sum([case.time or 0 for case in cases])
 
     # index cases by tests and state
-    cases_results = UnitTestCaseResults()
+    cases_results = create_unit_test_case_results()
     for case in cases:
         # index by test file name (when de-duplicating by file name), class name and test name
         test = (case.test_file if dedup_classes_by_file_name else None, case.class_name, case.test_name)
@@ -432,7 +440,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
 
     test_results = dict()
     for test, states in cases_results.items():
-        test_results[test] = aggregate_states(states)
+        test_results[test] = aggregate_states(states.keys())
 
     tests = len(test_results)
     tests_skipped = len([test for test, state in test_results.items() if state in ['skipped', 'disabled']])

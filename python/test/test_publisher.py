@@ -24,7 +24,7 @@ from publish import comment_mode_off, comment_mode_always, \
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestCaseResults
+    UnitTestCaseResults, create_unit_test_case_results
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
@@ -182,8 +182,8 @@ class TestPublisher(unittest.TestCase):
 
         return gh, gha, gh._Github__requester, repo, commit
 
-    cases = UnitTestCaseResults([
-        ((None, 'class', 'test'), dict(
+    cases = create_unit_test_case_results({
+        (None, 'class', 'test'): dict(
             success=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -202,8 +202,8 @@ class TestPublisher(unittest.TestCase):
                     time=1.234
                 )
             ]
-        )),
-        ((None, 'class', 'test2'), dict(
+        ),
+        (None, 'class', 'test2'): dict(
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -222,8 +222,8 @@ class TestPublisher(unittest.TestCase):
                     time=1.2345
                 )
             ]
-        )),
-        ((None, 'class', 'test3'), dict(
+        ),
+        (None, 'class', 'test3'): dict(
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -233,8 +233,8 @@ class TestPublisher(unittest.TestCase):
                     time=None
                 )
             ]
-        ))
-    ])
+        )
+    })
 
     @staticmethod
     def get_stats(base: str) -> UnitTestRunResults:
@@ -271,7 +271,7 @@ class TestPublisher(unittest.TestCase):
                             prs: List[object] = [],
                             cr: object = None):
         # UnitTestCaseResults is mutable, always copy it
-        cases = UnitTestCaseResults(cases)
+        cases = create_unit_test_case_results(cases)
 
         # mock Publisher and call publish
         publisher = mock.MagicMock(Publisher)
@@ -287,11 +287,11 @@ class TestPublisher(unittest.TestCase):
         return mock_calls
 
     def test_get_test_list_annotations(self):
-        cases = UnitTestCaseResults([
-            ((None, 'class', 'test abcd'), {'success': [None]}),
-            ((None, 'class', 'test efgh'), {'skipped': [None]}),
-            ((None, 'class', 'test ijkl'), {'skipped': [None]}),
-        ])
+        cases = create_unit_test_case_results({
+            (None, 'class', 'test abcd'): {'success': [None]},
+            (None, 'class', 'test efgh'): {'skipped': [None]},
+            (None, 'class', 'test ijkl'): {'skipped': [None]},
+        })
 
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
@@ -305,11 +305,11 @@ class TestPublisher(unittest.TestCase):
         ], annotations)
 
     def test_get_test_list_annotations_chunked_and_restricted_unicode(self):
-        cases = UnitTestCaseResults([
-            ((None, 'class', 'test 𝒂'), {'success': [None]}),
-            ((None, 'class', 'test 𝒃'), {'skipped': [None]}),
-            ((None, 'class', 'test 𝒄'), {'skipped': [None]}),
-        ])
+        cases = create_unit_test_case_results({
+            (None, 'class', 'test 𝒂'): {'success': [None]},
+            (None, 'class', 'test 𝒃'): {'skipped': [None]},
+            (None, 'class', 'test 𝒄'): {'skipped': [None]},
+        })
 
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
@@ -495,7 +495,7 @@ class TestPublisher(unittest.TestCase):
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -553,14 +553,14 @@ class TestPublisher(unittest.TestCase):
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         # the new test cases with un-restricted unicode, as they come from test result files
-        cases = UnitTestCaseResults([
+        cases = create_unit_test_case_results({
             # removed test 𝒂
-            ((None, 'class', 'test 𝒃'), {'success': [None]}),     # unchanged test 𝒃
+            (None, 'class', 'test 𝒃'): {'success': [None]},     # unchanged test 𝒃
             # removed skipped 𝒄
-            ((None, 'class', 'skipped 𝒅'), {'skipped': [None]}),  # unchanged skipped 𝒅
-            ((None, 'class', 'skipped 𝒆'), {'skipped': [None]}),  # added skipped 𝒆
-            ((None, 'class', 'test 𝒇'), {'success': [None]}),     # added test 𝒇
-        ])
+            (None, 'class', 'skipped 𝒅'): {'skipped': [None]},  # unchanged skipped 𝒅
+            (None, 'class', 'skipped 𝒆'): {'skipped': [None]},  # added skipped 𝒆
+            (None, 'class', 'test 𝒇'): {'success': [None]},     # added test 𝒇
+        })
 
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
@@ -669,7 +669,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -695,7 +695,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -744,7 +744,7 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock()
         lc = mock.MagicMock(body='latest comment') if one_exists else None
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(comment_mode=comment_mode_always, compare_earlier=False)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -1371,8 +1371,8 @@ class TestPublisher(unittest.TestCase):
         publisher = Publisher(settings, gh, gha)
 
         # generate a lot cases
-        cases = UnitTestCaseResults([
-            ((None, 'class', f'test{i}'), dict(
+        cases = create_unit_test_case_results({
+            (None, 'class', f'test{i}'): dict(
                 failure=[
                     UnitTestCase(
                         result_file='result file', test_file='test file', line=i,
@@ -1382,9 +1382,9 @@ class TestPublisher(unittest.TestCase):
                         time=1.234 + i / 1000
                     )
                 ]
-            ))
+            )
             for i in range(1, 151)
-        ])
+        })
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
