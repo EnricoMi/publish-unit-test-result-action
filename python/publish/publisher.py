@@ -107,8 +107,9 @@ class PublishData:
             stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
             # turn defaultdict into simple dict
             cases={test: {state: cases for state, cases in states.items()}
-                   for test, states in self.cases.items()}
+                   for test, states in self.cases.items()} if self.cases else None
         )
+
         # the dict_factory removes None values
         return dataclasses.asdict(self_without_exceptions,
                                   dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
