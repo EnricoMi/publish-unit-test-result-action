@@ -118,17 +118,19 @@ class PublishData:
         d = self._as_dict()
 
         # beautify cases, turn tuple-key into proper fields
-        d['cases'] = [{k: v for k, v in [('file_name', test[0]),
-                                         ('class_name', test[1]),
-                                         ('test_name', test[2]),
-                                         ('states', states)]
-                       if v}
-                      for test, states in d['cases'].items()]
+        if d.get('cases'):
+            d['cases'] = [{k: v for k, v in [('file_name', test[0]),
+                                             ('class_name', test[1]),
+                                             ('test_name', test[2]),
+                                             ('states', states)]
+                           if v}
+                          for test, states in d['cases'].items()]
 
         # provide formatted stats and delta
         d.update(formatted=self._formatted_stats_and_delta(
             d.get('stats'), d.get('stats_with_delta'), thousands_separator
         ))
+
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
