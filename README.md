@@ -268,6 +268,7 @@ The list of most notable options:
 |`check_run_annotations_branch`|`event.repository.default_branch` or `"main, master"`|Adds check run annotations only on given branches. If not given, this defaults to the default branch of your repository, e.g. `main` or `master`. Comma separated list of branch names allowed, asterisk `"*"` matches all branches. Example: `main, master, branch_one`.|
 |`json_file`|no file|Results are written to this JSON file.|
 |`json_thousands_separator`|`" "`|Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).|
+|`json_test_case_results`|`false`|Write out all individual test case results to the JSON file. Setting this to `true` can greatly increase the size of the output. Defaults to `false`.|
 |`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
 
 Pull request comments highlight removal of tests or tests that the pull request moves into skip state.
@@ -360,7 +361,11 @@ via `json_thousands_separator`. Formatted numbers are especially useful when tho
 is not easily available, e.g. when [creating a badge from test results](#create-a-badge-from-test-results).
 
 The optional `json_file` allows to configure a file where extended JSON information are to be written.
-Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information than just the number of errors and annotations, respectively:
+Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information
+than just the number of errors and annotations, respectively.
+
+Additionally, `json_test_case_results` can be enabled to add the `cases` field to the JSON file, which provides
+all test results of all tests. Enabling this may greatly increase the output size of the JSON file.
 
 ```json
 {
@@ -388,9 +393,54 @@ Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` c
          "title": "1 out of 3 runs failed: test_events (test.Tests)",
          "raw_details": "self = <test.Tests testMethod=test_events>\n\n                def test_events(self):\n                > self.do_test_events(3)\n\n                test.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test.py:836: in do_test_events\n                self.do_test_rsh(command, 143, events=events)\n                test.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            "
       }
+   ],
+   "cases": [
+      {
+         "class_name": "class1",
+         "test_name": "test1",
+         "states": {
+            "success": [
+               {
+                  "result_file": "result",
+                  "test_file": "test",
+                  "line": 123,
+                  "class_name": "class1",
+                  "test_name": "test1",
+                  "result": "success",
+                  "message": "message1",
+                  "content": "content1",
+                  "stdout": "stdout1",
+                  "stderr": "stderr1",
+                  "time": 1
+               }
+            ]
+         }
+      },
+      {
+         "class_name": "class1",
+         "test_name": "test2",
+         "states": {
+            "skipped": [
+               {
+                  "result_file": "result",
+                  "test_file": "test",
+                  "line": 123,
+                  "class_name": "class1",
+                  "test_name": "test2",
+                  "result": "skipped",
+                  "message": "message2",
+                  "content": "content2",
+                  "stdout": "stdout2",
+                  "stderr": "stderr2",
+                  "time": 2
+               }
+            ]
+         }
+      }
    ]
 }
 ```
+
 </details>
 
 See [Create a badge from test results](#create-a-badge-from-test-results) for an example on how to create a badge from this JSON.

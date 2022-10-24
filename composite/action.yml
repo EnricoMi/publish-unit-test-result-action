@@ -101,7 +101,10 @@ inputs:
     description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
     default: ' '
     required: false
-
+  json_test_case_results:
+    description: 'Write out all individual test case results to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
+    default: false
+    required: false
 outputs:
   json:
     description: "Test results as JSON"
@@ -177,6 +180,7 @@ runs:
         SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
         JSON_FILE: ${{ inputs.json_file }}
         JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
+        JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}

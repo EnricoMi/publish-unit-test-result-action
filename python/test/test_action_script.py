@@ -178,7 +178,8 @@ class Test(unittest.TestCase):
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
-                     json_thousands_separator=punctuation_space) -> Settings:
+                     json_thousands_separator=punctuation_space,
+                     json_test_case_results=False) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
@@ -191,6 +192,7 @@ class Test(unittest.TestCase):
             commit=commit,
             json_file=json_file,
             json_thousands_separator=json_thousands_separator,
+            json_test_case_results=json_test_case_results,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
             junit_files_glob=junit_files_glob,
@@ -849,7 +851,6 @@ class Test(unittest.TestCase):
             gha = GithubAction(file=string)
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
-            self.maxDiff = None
             expected = [
                 "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
                 "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",

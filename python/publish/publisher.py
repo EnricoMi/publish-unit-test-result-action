@@ -24,7 +24,7 @@ from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestRunResultsOrDeltaResults, get_stats_delta
+    UnitTestRunResultsOrDeltaResults, get_stats_delta, create_unit_test_case_results
 
 
 @dataclass(frozen=True)
@@ -40,6 +40,7 @@ class Settings:
     commit: str
     json_file: Optional[str]
     json_thousands_separator: str
+    json_test_case_results: bool
     fail_on_errors: bool
     fail_on_failures: bool
     # one of these *_files_glob must be set
@@ -72,6 +73,7 @@ class PublishData:
     stats_with_delta: Optional[UnitTestRunDeltaResults]
     annotations: List[Annotation]
     check_url: str
+    cases: Optional[UnitTestCaseResults]
 
     @classmethod
     def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
@@ -100,24 +102,41 @@ class PublishData:
     def _as_dict(self) -> Dict[str, Any]:
         self_without_exceptions = dataclasses.replace(
             self,
+            # remove exceptions
             stats=self.stats.without_exceptions(),
-            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None
+            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
+            # turn defaultdict into simple dict
+            cases={test: {state: cases for state, cases in states.items()}
+                   for test, states in self.cases.items()} if self.cases else None
         )
+
         # the dict_factory removes None values
         return dataclasses.asdict(self_without_exceptions,
                                   dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
     def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         d = self._as_dict()
+
+        # beautify cases, turn tuple-key into proper fields
+        if d.get('cases'):
+            d['cases'] = [{k: v for k, v in [('file_name', test[0]),
+                                             ('class_name', test[1]),
+                                             ('test_name', test[2]),
+                                             ('states', states)]
+                           if v}
+                          for test, states in d['cases'].items()]
+
+        # provide formatted stats and delta
         d.update(formatted=self._formatted_stats_and_delta(
             d.get('stats'), d.get('stats_with_delta'), thousands_separator
         ))
+
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         data = self._as_dict()
 
-        # replace some large fields with their lengths
+        # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
             d = deepcopy(d)
             if d.get('stats', {}).get('errors') is not None:
@@ -126,6 +145,8 @@ class PublishData:
                 d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
             if d.get('annotations') is not None:
                 d['annotations'] = len(d['annotations'])
+            if d.get('cases') is not None:
+                del d['cases']
             return d
 
         data = reduce(data)
@@ -347,7 +368,8 @@ class Publisher:
             stats=stats,
             stats_with_delta=stats_with_delta if before_stats is not None else None,
             annotations=all_annotations,
-            check_url=check_run.html_url
+            check_url=check_run.html_url,
+            cases=cases if self._settings.json_test_case_results else None
         )
         self.publish_json(data)
 

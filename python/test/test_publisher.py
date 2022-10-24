@@ -24,7 +24,7 @@ from publish import comment_mode_off, comment_mode_always, \
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
 from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestCaseResults
+    UnitTestCaseResults, create_unit_test_case_results, get_test_results, get_stats, ParsedUnitTestResultsWithCommit
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
@@ -87,6 +87,7 @@ class TestPublisher(unittest.TestCase):
                         event_name: str = 'event name',
                         json_file: Optional[str] = None,
                         json_thousands_separator: str = punctuation_space,
+                        json_test_case_results: Optional[bool] = False,
                         pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5):
         return Settings(
@@ -101,6 +102,7 @@ class TestPublisher(unittest.TestCase):
             commit='commit',
             json_file=json_file,
             json_thousands_separator=json_thousands_separator,
+            json_test_case_results=json_test_case_results,
             fail_on_errors=True,
             fail_on_failures=True,
             junit_files_glob='*.xml',
@@ -180,8 +182,8 @@ class TestPublisher(unittest.TestCase):
 
         return gh, gha, gh._Github__requester, repo, commit
 
-    cases = UnitTestCaseResults([
-        ((None, 'class', 'test'), dict(
+    cases = create_unit_test_case_results({
+        (None, 'class', 'test'): dict(
             success=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -200,8 +202,8 @@ class TestPublisher(unittest.TestCase):
                     time=1.234
                 )
             ]
-        )),
-        ((None, 'class', 'test2'), dict(
+        ),
+        (None, 'class', 'test2'): dict(
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -220,8 +222,8 @@ class TestPublisher(unittest.TestCase):
                     time=1.2345
                 )
             ]
-        )),
-        ((None, 'class', 'test3'), dict(
+        ),
+        (None, 'class', 'test3'): dict(
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
@@ -231,8 +233,8 @@ class TestPublisher(unittest.TestCase):
                     time=None
                 )
             ]
-        ))
-    ])
+        )
+    })
 
     @staticmethod
     def get_stats(base: str) -> UnitTestRunResults:
@@ -269,7 +271,7 @@ class TestPublisher(unittest.TestCase):
                             prs: List[object] = [],
                             cr: object = None):
         # UnitTestCaseResults is mutable, always copy it
-        cases = UnitTestCaseResults(cases)
+        cases = create_unit_test_case_results(cases)
 
         # mock Publisher and call publish
         publisher = mock.MagicMock(Publisher)
@@ -285,11 +287,11 @@ class TestPublisher(unittest.TestCase):
         return mock_calls
 
     def test_get_test_list_annotations(self):
-        cases = UnitTestCaseResults([
-            ((None, 'class', 'test abcd'), {'success': [None]}),
-            ((None, 'class', 'test efgh'), {'skipped': [None]}),
-            ((None, 'class', 'test ijkl'), {'skipped': [None]}),
-        ])
+        cases = create_unit_test_case_results({
+            (None, 'class', 'test abcd'): {'success': [None]},
+            (None, 'class', 'test efgh'): {'skipped': [None]},
+            (None, 'class', 'test ijkl'): {'skipped': [None]},
+        })
 
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
@@ -303,11 +305,11 @@ class TestPublisher(unittest.TestCase):
         ], annotations)
 
     def test_get_test_list_annotations_chunked_and_restricted_unicode(self):
-        cases = UnitTestCaseResults([
-            ((None, 'class', 'test 𝒂'), {'success': [None]}),
-            ((None, 'class', 'test 𝒃'), {'skipped': [None]}),
-            ((None, 'class', 'test 𝒄'), {'skipped': [None]}),
-        ])
+        cases = create_unit_test_case_results({
+            (None, 'class', 'test 𝒂'): {'success': [None]},
+            (None, 'class', 'test 𝒃'): {'skipped': [None]},
+            (None, 'class', 'test 𝒄'): {'skipped': [None]},
+        })
 
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
@@ -493,7 +495,7 @@ class TestPublisher(unittest.TestCase):
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -551,14 +553,14 @@ class TestPublisher(unittest.TestCase):
         bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         # the new test cases with un-restricted unicode, as they come from test result files
-        cases = UnitTestCaseResults([
+        cases = create_unit_test_case_results({
             # removed test 𝒂
-            ((None, 'class', 'test 𝒃'), {'success': [None]}),     # unchanged test 𝒃
+            (None, 'class', 'test 𝒃'): {'success': [None]},     # unchanged test 𝒃
             # removed skipped 𝒄
-            ((None, 'class', 'skipped 𝒅'), {'skipped': [None]}),  # unchanged skipped 𝒅
-            ((None, 'class', 'skipped 𝒆'), {'skipped': [None]}),  # added skipped 𝒆
-            ((None, 'class', 'test 𝒇'), {'success': [None]}),     # added test 𝒇
-        ])
+            (None, 'class', 'skipped 𝒅'): {'skipped': [None]},  # unchanged skipped 𝒅
+            (None, 'class', 'skipped 𝒆'): {'skipped': [None]},  # added skipped 𝒆
+            (None, 'class', 'test 𝒇'): {'success': [None]},     # added test 𝒇
+        })
 
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
@@ -667,7 +669,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock()
         cr = mock.MagicMock()
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -693,7 +695,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -742,7 +744,7 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock()
         lc = mock.MagicMock(body='latest comment') if one_exists else None
         stats = self.stats
-        cases = UnitTestCaseResults(self.cases)
+        cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(comment_mode=comment_mode_always, compare_earlier=False)
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
@@ -1369,8 +1371,8 @@ class TestPublisher(unittest.TestCase):
         publisher = Publisher(settings, gh, gha)
 
         # generate a lot cases
-        cases = UnitTestCaseResults([
-            ((None, 'class', f'test{i}'), dict(
+        cases = create_unit_test_case_results({
+            (None, 'class', f'test{i}'): dict(
                 failure=[
                     UnitTestCase(
                         result_file='result file', test_file='test file', line=i,
@@ -1380,9 +1382,9 @@ class TestPublisher(unittest.TestCase):
                         time=1.234 + i / 1000
                     )
                 ]
-            ))
+            )
             for i in range(1, 151)
-        ])
+        })
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
@@ -1496,13 +1498,201 @@ class TestPublisher(unittest.TestCase):
             title=f'Error processing result file',
             raw_details='file'
         )],
-        check_url='http://check-run.url'
+        check_url='http://check-run.url',
+        cases=create_unit_test_case_results({
+            (None, 'class name', 'test name'): {"success": [
+                UnitTestCase(
+                    class_name='test.classpath.classname',
+                    content='content',
+                    line=1,
+                    message='message',
+                    result='success',
+                    result_file='/path/to/test/test.classpath.classname',
+                    stderr='stderr',
+                    stdout='stdout',
+                    test_file='file1',
+                    test_name='casename',
+                    time=0.1
+                )
+            ]},
+        })
     )
+
+    def test_publish_check_with_cases(self):
+        results = get_test_results(ParsedUnitTestResultsWithCommit(
+            files=1,
+            errors=errors,
+            suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+            cases=[
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test3', result='failure', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=3),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test1', result='error', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=4),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test2', result='skipped', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=5),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test3', result='failure', message='message6', content='content6', stdout='stdout6', stderr='stderr6', time=6),
+                UnitTestCase(result_file='result', test_file='test', line=123, class_name='class2', test_name='test4', result='failure', message='message7', content='content7', stdout='stdout7', stderr='stderr7', time=7),
+            ],
+            commit='commit'
+        ), False)
+        stats = get_stats(results)
+
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file.json')
+            settings = self.create_settings(event={}, json_file=filepath, json_test_case_results=True)
+            gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
+            publisher = Publisher(settings, gh, gha)
+
+            # makes gzipped digest deterministic
+            with mock.patch('gzip.time.time', return_value=0):
+                check_run, before_check_run = publisher.publish_check(stats, results.case_results, 'conclusion')
+
+            repo.get_commit.assert_not_called()
+
+            create_check_run_kwargs = dict(
+                name=settings.check_name,
+                head_sha=settings.commit,
+                status='completed',
+                conclusion='conclusion',
+                output={
+                    'title': '1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s',
+                    'summary': '1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "duration of all tests")\n'
+                               '7 tests\u2003\u205f\u20041 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests")\u20032 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20033 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\u20031 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors")\n'
+                               '3 runs\u2006\u2003-12 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "passed tests")\u20034 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "skipped / disabled tests")\u20035 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "failed tests")\u20036 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols "test errors")\n'
+                               '\n'
+                               'Results for commit commit.\n'
+                               '\n'
+                               '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MSwqAMAxEryJd68I/eBmRWiH4qST'
+                               'tSry7URNxN+8NM4eZYHFkuiRPE0MRwgMFwxhxCOA3xpaRi0D/3FO0VoYiZthl/IppgIVF+QmH6FE2GDeS8o56l+'
+                               'XFZ96/SlnuamV9a1hYv64QGDSdF7scnZDbAAAA\n',
+                    'annotations': [
+                        {'path': 'file', 'start_line': 1, 'end_line': 1, 'start_column': 2, 'end_column': 2, 'annotation_level': 'failure', 'message': 'error', 'title': 'Error processing result file', 'raw_details': 'file'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class1) failed', 'raw_details': 'message3\ncontent3\nstdout3\nstderr3'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'failure', 'message': 'result', 'title': 'test1 (class2) with error', 'raw_details': 'message4\ncontent4\nstdout4\nstderr4'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class2) failed', 'raw_details': 'message6\ncontent6\nstdout6\nstderr6'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test4 (class2) failed', 'raw_details': 'message7\ncontent7\nstdout7\nstderr7'},
+                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', 'title': '2 skipped tests found', 'raw_details': 'class1 ‑ test2\nclass2 ‑ test2'},
+                        {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 7 tests, see "Raw output" for the full list of tests.', 'title': '7 tests found', 'raw_details': 'class1 ‑ test1\nclass1 ‑ test2\nclass1 ‑ test3\nclass2 ‑ test1\nclass2 ‑ test2\nclass2 ‑ test3\nclass2 ‑ test4'}
+                    ]
+                }
+            )
+            repo.create_check_run.assert_called_once_with(**create_check_run_kwargs)
+
+            # this checks that publisher.publish_check returned
+            # the result of the last call to repo.create_check_run
+            self.assertIsInstance(check_run, mock.Mock)
+            self.assertTrue(hasattr(check_run, 'create_check_run_kwargs'))
+            self.assertEqual(create_check_run_kwargs, check_run.create_check_run_kwargs)
+            self.assertIsNone(before_check_run)
+
+            # assert the json file
+            with open(filepath, encoding='utf-8') as r:
+                actual = r.read()
+                self.assertEqual(
+                    '{'
+                    '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
+                    '"summary": "'
+                    '1 files    1 errors  2 suites   7s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"duration of all tests\\")\\n'
+                    '7 tests   1 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 2 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") 3 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") 1 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n'
+                    '3 runs  -12 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\") 4 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\") 5 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\") 6 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n'
+                    '\\n'
+                    'Results for commit commit.\\n", '
+                    '"conclusion": "conclusion", '
+                    '"stats": {"files": 1, "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": 2, "duration": 7, "tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
+                    '"annotations": ['
+                    '{"path": "file", "start_line": 1, "end_line": 1, "start_column": 2, "end_column": 2, "annotation_level": "failure", "message": "error", "title": "Error processing result file", "raw_details": "file"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "failure", "message": "result", "title": "test1 (class2) with error", "raw_details": "message4\\ncontent4\\nstdout4\\nstderr4"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class2) failed", "raw_details": "message6\\ncontent6\\nstdout6\\nstderr6"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test4 (class2) failed", "raw_details": "message7\\ncontent7\\nstdout7\\nstderr7"}, '
+                    '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 2 skipped tests, see \\"Raw output\\" for the full list of skipped tests.", "title": "2 skipped tests found", "raw_details": "class1 ‑ test2\\nclass2 ‑ test2"}, '
+                    '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 7 tests, see \\"Raw output\\" for the full list of tests.", "title": "7 tests found", "raw_details": "class1 ‑ test1\\nclass1 ‑ test2\\nclass1 ‑ test3\\nclass2 ‑ test1\\nclass2 ‑ test2\\nclass2 ‑ test3\\nclass2 ‑ test4"}'
+                    '], '
+                    '"check_url": "mock url", '
+                    '"cases": ['
+                    '{'
+                    '"class_name": "class1", '
+                    '"test_name": "test1", '
+                    '"states": {'
+                    '"success": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class1", "test_name": "test1", "result": "success", "message": "message1", "content": "content1", "stdout": "stdout1", "stderr": "stderr1", "time": 1}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class1", '
+                    '"test_name": "test2", '
+                    '"states": {'
+                    '"skipped": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class1", "test_name": "test2", "result": "skipped", "message": "message2", "content": "content2", "stdout": "stdout2", "stderr": "stderr2", "time": 2}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class1", '
+                    '"test_name": "test3", '
+                    '"states": {'
+                    '"failure": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class1", "test_name": "test3", "result": "failure", "message": "message3", "content": "content3", "stdout": "stdout3", "stderr": "stderr3", "time": 3}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class2", '
+                    '"test_name": "test1", '
+                    '"states": {'
+                    '"error": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class2", "test_name": "test1", "result": "error", "message": "message4", "content": "content4", "stdout": "stdout4", "stderr": "stderr4", "time": 4}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class2", '
+                    '"test_name": "test2", '
+                    '"states": {'
+                    '"skipped": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class2", "test_name": "test2", "result": "skipped", "message": "message5", "content": "content5", "stdout": "stdout5", "stderr": "stderr5", "time": 5}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class2", '
+                    '"test_name": "test3", '
+                    '"states": {'
+                    '"failure": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class2", "test_name": "test3", "result": "failure", "message": "message6", "content": "content6", "stdout": "stdout6", "stderr": "stderr6", "time": 6}'
+                    ']'
+                    '}'
+                    '}, {'
+                    '"class_name": "class2", '
+                    '"test_name": "test4", "states": {'
+                    '"failure": ['
+                    '{"result_file": "result", "test_file": "test", "line": 123, "class_name": "class2", "test_name": "test4", "result": "failure", "message": "message7", "content": "content7", "stdout": "stdout7", "stderr": "stderr7", "time": 7}'
+                    ']'
+                    '}'
+                    '}'
+                    '], '
+                    '"formatted": {"stats": {"files": "1", "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": "2", "duration": "7", "tests": "7", "tests_succ": "1", "tests_skip": "2", "tests_fail": "3", "tests_error": "1", "runs": "3", "runs_succ": "-12", "runs_skip": "4", "runs_fail": "5", "runs_error": "6", "commit": "commit"}}'
+                    '}',
+                    actual
+                )
+
+            # check the json output has been provided
+            gha.add_to_output.assert_called_once_with(
+                'json',
+                '{'
+                '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
+                '"summary": "'
+                '1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"duration of all tests\\")\\n'
+                '7 tests\u2003\u205f\u20041 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\")\u20032 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\")\u20033 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\")\u20031 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n'
+                '3 runs\u2006\u2003-12 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"passed tests\\")\u20034 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"skipped / disabled tests\\")\u20035 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"failed tests\\")\u20036 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols \\"test errors\\")\\n'
+                '\\n'
+                'Results for commit commit.\\n", '
+                '"conclusion": "conclusion", '
+                '"stats": {"files": 1, "errors": 1, "suites": 2, "duration": 7, "tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
+                '"annotations": 7, '
+                '"check_url": "mock url", '
+                '"formatted": {"stats": {"files": "1", "errors": "1", "suites": "2", "duration": "7", "tests": "7", "tests_succ": "1", "tests_skip": "2", "tests_fail": "3", "tests_error": "1", "runs": "3", "runs_succ": "-12", "runs_skip": "4", "runs_fail": "5", "runs_error": "6", "commit": "commit"}}'
+                '}'
+            )
 
     def test_publish_data(self):
         for separator in ['.', ',', ' ', punctuation_space]:
             with self.subTest(json_thousands_separator=separator):
-                self.maxDiff = None
                 self.assertEqual({
                     'title': 'title',
                     'summary': 'summary',
@@ -1600,7 +1790,31 @@ class TestPublisher(unittest.TestCase):
                                      'start_column': 3,
                                      'start_line': 1,
                                      'title': 'Error processing result file'}],
-                    'check_url': 'http://check-run.url'},
+                    'check_url': 'http://check-run.url',
+                    'cases': [
+                        {
+                            'class_name': 'class name',
+                            'test_name': 'test name',
+                            'states': {
+                                'success': [
+                                    {
+                                        'class_name': 'test.classpath.classname',
+                                        'content': 'content',
+                                        'line': 1,
+                                        'message': 'message',
+                                        'result': 'success',
+                                        'result_file': '/path/to/test/test.classpath.classname',
+                                        'stderr': 'stderr',
+                                        'stdout': 'stdout',
+                                        'test_file': 'file1',
+                                        'test_name': 'casename',
+                                        'time': 0.1
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
                     self.publish_data.to_dict(separator))
 
                 self.assertEqual({
@@ -1680,7 +1894,7 @@ class TestPublisher(unittest.TestCase):
             with self.subTest(json_thousands_separator=separator):
                 with tempfile.TemporaryDirectory() as path:
                     filepath = os.path.join(path, 'file.json')
-                    settings = self.create_settings(json_file=filepath, json_thousands_separator=separator)
+                    settings = self.create_settings(json_file=filepath, json_thousands_separator=separator, json_test_case_results=True)
 
                     gh, gha, req, repo, commit = self.create_mocks(digest=self.base_digest, check_names=[settings.check_name])
                     publisher = Publisher(settings, gh, gha)
@@ -1700,6 +1914,9 @@ class TestPublisher(unittest.TestCase):
                             '"stats_with_delta": {"files": {"number": 1234, "delta": -1234}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3456, "delta": -3456}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
                             '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}], '
                             '"check_url": "http://check-run.url", '
+                            '"cases": ['
+                            '{"class_name": "class name", "test_name": "test name", "states": {"success": [{"result_file": "/path/to/test/test.classpath.classname", "test_file": "file1", "line": 1, "class_name": "test.classpath.classname", "test_name": "casename", "result": "success", "message": "message", "content": "content", "stdout": "stdout", "stderr": "stderr", "time": 0.1}]}}'
+                            '], '
                             '"formatted": {'
                             '"stats": {"files": "12' + separator + '345", "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": "2", "duration": "3' + separator + '456", "tests": "4", "tests_succ": "5", "tests_skip": "6", "tests_fail": "7", "tests_error": "8' + separator + '901", "runs": "9", "runs_succ": "10", "runs_skip": "11", "runs_fail": "12", "runs_error": "1' + separator + '345", "commit": "commit"}, '
                             '"stats_with_delta": {"files": {"number": "1' + separator + '234", "delta": "-1' + separator + '234"}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": "2", "delta": "-2"}, "duration": {"number": "3' + separator + '456", "delta": "-3' + separator + '456"}, "tests": {"number": "4", "delta": "-4"}, "tests_succ": {"number": "5", "delta": "-5"}, "tests_skip": {"number": "6", "delta": "-6"}, "tests_fail": {"number": "7", "delta": "-7"}, "tests_error": {"number": "8", "delta": "-8"}, "runs": {"number": "9", "delta": "-9"}, "runs_succ": {"number": "10", "delta": "-10"}, "runs_skip": {"number": "11", "delta": "-11"}, "runs_fail": {"number": "12", "delta": "-12"}, "runs_error": {"number": "1' + separator + '345", "delta": "-1' + separator + '345"}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}'
