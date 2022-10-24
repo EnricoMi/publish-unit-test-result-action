@@ -24,7 +24,7 @@ from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestRunResultsOrDeltaResults, get_stats_delta
+    UnitTestRunResultsOrDeltaResults, get_stats_delta, create_unit_test_case_results
 
 
 @dataclass(frozen=True)
@@ -102,8 +102,12 @@ class PublishData:
     def _as_dict(self) -> Dict[str, Any]:
         self_without_exceptions = dataclasses.replace(
             self,
+            # remove exceptions
             stats=self.stats.without_exceptions(),
-            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None
+            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
+            # turn defaultdict into simple dict
+            cases={test: {state: cases for state, cases in states.items()}
+                   for test, states in self.cases.items()}
         )
         # the dict_factory removes None values
         return dataclasses.asdict(self_without_exceptions,
@@ -111,6 +115,16 @@ class PublishData:
 
     def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         d = self._as_dict()
+
+        # beautify cases, turn tuple-key into proper fields
+        d['cases'] = [{k: v for k, v in [('file_name', test[0]),
+                                         ('class_name', test[1]),
+                                         ('test_name', test[2]),
+                                         ('states', states)]
+                       if v}
+                      for test, states in d['cases'].items()]
+
+        # provide formatted stats and delta
         d.update(formatted=self._formatted_stats_and_delta(
             d.get('stats'), d.get('stats_with_delta'), thousands_separator
         ))
