@@ -1585,7 +1585,6 @@ class TestPublisher(unittest.TestCase):
             self.assertIsNone(before_check_run)
 
             # assert the json file
-            self.maxDiff = None
             with open(filepath, encoding='utf-8') as r:
                 actual = r.read()
                 self.assertEqual(
@@ -1692,7 +1691,6 @@ class TestPublisher(unittest.TestCase):
             )
 
     def test_publish_data(self):
-        self.maxDiff = None
         for separator in ['.', ',', ' ', punctuation_space]:
             with self.subTest(json_thousands_separator=separator):
                 self.assertEqual({
@@ -1892,7 +1890,6 @@ class TestPublisher(unittest.TestCase):
                     self.publish_data.to_reduced_dict(separator))
 
     def test_publish_json(self):
-        self.maxDiff = None
         for separator in ['.', ',', ' ', punctuation_space]:
             with self.subTest(json_thousands_separator=separator):
                 with tempfile.TemporaryDirectory() as path:
