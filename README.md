@@ -350,15 +350,16 @@ Here is an example JSON:
   "annotations": 31
 }
 ```
-</details>
-
-<details>
-<summary>Access JSON via file</summary>
 
 The `formatted` key provides a copy of `stats` and `stats_with_delta`, where numbers are formatted to strings.
 For example, `"duration": 2352` is formatted as `"duration": "2 352"`. The thousands separator can be configured
 via `json_thousands_separator`. Formatted numbers are especially useful when those values are used where formatting
 is not easily available, e.g. when [creating a badge from test results](#create-a-badge-from-test-results).
+
+</details>
+
+<details>
+<summary>Access JSON via file</summary>
 
 The optional `json_file` allows to configure a file where extended JSON information are to be written.
 Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information
@@ -394,50 +395,37 @@ all test results of all tests. Enabling this may greatly increase the output siz
          "raw_details": "self = <test.Tests testMethod=test_events>\n\n                def test_events(self):\n                > self.do_test_events(3)\n\n                test.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test.py:836: in do_test_events\n                self.do_test_rsh(command, 143, events=events)\n                test.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            "
       }
    ],
+   …,
    "cases": [
       {
-         "class_name": "class1",
-         "test_name": "test1",
+         "class_name": "test.test_spark_keras.SparkKerasTests",
+         "test_name": "test_batch_generator_fn",
          "states": {
             "success": [
                {
-                  "result_file": "result",
-                  "test_file": "test",
-                  "line": 123,
-                  "class_name": "class1",
-                  "test_name": "test1",
+                  "result_file": "test-files/junit-xml/pytest/junit.spark.integration.1.xml",
+                  "test_file": "test/test_spark_keras.py",
+                  "line": 454,
+                  "class_name": "test.test_spark_keras.SparkKerasTests",
+                  "test_name": "test_batch_generator_fn",
                   "result": "success",
-                  "message": "message1",
-                  "content": "content1",
-                  "stdout": "stdout1",
-                  "stderr": "stderr1",
-                  "time": 1
+                  "time": 0.006
+               },
+               {
+                  "result_file": "test-files/junit-xml/pytest/junit.spark.integration.2.xml",
+                  "test_file": "test/test_spark_keras.py",
+                  "line": 454,
+                  "class_name": "test.test_spark_keras.SparkKerasTests",
+                  "test_name": "test_batch_generator_fn",
+                  "result": "success",
+                  "time": 0.006
                }
             ]
          }
       },
-      {
-         "class_name": "class1",
-         "test_name": "test2",
-         "states": {
-            "skipped": [
-               {
-                  "result_file": "result",
-                  "test_file": "test",
-                  "line": 123,
-                  "class_name": "class1",
-                  "test_name": "test2",
-                  "result": "skipped",
-                  "message": "message2",
-                  "content": "content2",
-                  "stdout": "stdout2",
-                  "stderr": "stderr2",
-                  "time": 2
-               }
-            ]
-         }
-      }
-   ]
+   …
+   ],
+   …
 }
 ```
 
