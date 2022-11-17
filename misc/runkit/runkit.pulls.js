@@ -1,7 +1,7 @@
 exports.endpoint = async function(request, response) {
-  const got = require("got")
-  const jsdom = require("jsdom");
-  const humanize = require("humanize-plus");
+  const got = require("got@11.8.2")
+  const jsdom = require("jsdom@16.5.1");
+  const humanize = require("humanize-plus@1.8.2");
 
   var resp = await got("https://github.com/EnricoMi/publish-unit-test-result-action/pkgs/container/publish-unit-test-result-action");
   const html = new jsdom.JSDOM(resp.body);

@@ -1,5 +1,5 @@
 const opts = { headers: { Authorization: `bearer ${process.env['github.token']}` }, responseType: 'json' };
-var search = query => require("got")(`https://api.github.com/search/code?${query}`, opts);
+var search = query => require("got@11.8.2")(`https://api.github.com/search/code?${query}`, opts);
 
 exports.endpoint = async function(request, response) {
   var query = q => `q=%22${q}%22+path%3A.github%2Fworkflows%2F+language%3AYAML&type=Code`;
