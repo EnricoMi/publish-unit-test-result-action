@@ -9,7 +9,7 @@ exports.endpoint = async function(request, response) {
   var resp = {
     subject: 'Docker pulls',
     status: `${all} (${day}/day)`,
-    color: "blue"
+    color: 'blue'
   }
 
   response.end(JSON.stringify(resp));

@@ -5,7 +5,7 @@ exports.endpoint = async function(request, response) {
   var resp = {
     subject: 'GitHub Workflows',
     status: workflows.toLocaleString('en-US'),
-    color: "blue"
+    color: 'blue'
   }
 
   response.end(JSON.stringify(resp));
