@@ -55,8 +55,8 @@ print(f'per_day={per_day}')
 if 'GITHUB_OUTPUT' in os.environ:
     print(f'output file is {os.environ["GITHUB_OUTPUT"]}')
     with open(os.environ['GITHUB_OUTPUT'], 'at') as w:
-        w.write(f'total={total}')
-        w.write(f'per_day={per_day}')
+        print(f'total={total}', file=w)
+        print(f'per_day={per_day}', file=w)
 else:
     print(f'::set-output name=total::{total}')
     print(f'::set-output name=per_day::{per_day}')

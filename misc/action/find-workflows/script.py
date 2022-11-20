@@ -23,6 +23,6 @@ print(f'found {total} workflows')
 
 if 'GITHUB_OUTPUT' in os.environ:
     with open(os.environ['GITHUB_OUTPUT'], 'wt') as w:
-        w.write(f'total={total}')
+        print(f'total={total}', file=w)
 else:
     print(f'::set-output name=total::{total}')
