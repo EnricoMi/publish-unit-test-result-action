@@ -1,7 +1,6 @@
 name: Badges
 
 on:
-  pull_request:
   schedule:
     - cron: '24 03 * * *'
   workflow_dispatch:
