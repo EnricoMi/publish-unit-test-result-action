@@ -1,0 +1,46 @@
+name: 'GHCR package downloads'
+author: 'EnricoMi'
+description: 'A GitHub Action that fetches the number of downloads of a GHCR package'
+
+inputs:
+  url:
+    description: 'GitHub URL'
+    required: true
+  repo:
+    description: 'Name of the repository including the owner'
+    required: true
+  package:
+    description: 'Name of the package'
+    required: true
+outputs:
+  total_downloads:
+    description: 'Total number of downloads'
+    value: ${{ steps.downloads.outputs.total }}
+  recent_downloads_per_day:
+    description: 'Recent number of downloads per day'
+    value: ${{ steps.downloads.outputs.per_day }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade --force --no-cache-dir pip
+        pip install --force --no-cache-dir -r ${{ github.action_path }}/requirements.txt
+        pip freeze | sort
+
+    - name: Get download info
+      id: downloads
+      shell: bash
+      run: |
+        python ${{ github.action_path }}/script.py ${{ inputs.url }} ${{ inputs.repo }} ${{ inputs.package }}
+
+branding:
+  icon: 'download-cloud'
+  color: 'green'

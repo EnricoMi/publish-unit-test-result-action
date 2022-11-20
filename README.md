@@ -2,20 +2,20 @@
 
 [![CI/CD](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml)
 [![GitHub release badge](https://badgen.net/github/release/EnricoMi/publish-unit-test-result-action/stable)](https://github.com/EnricoMi/publish-unit-test-result-action/releases/latest)
-[![GitHub license badge](https://badgen.net/github/license/EnricoMi/publish-unit-test-result-action)](http://www.apache.org/licenses/LICENSE-2.0)
-[![GitHub Workflows badge](https://badgen.net/runkit/enricom/605360cab46642001a8d33cf)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
-[![Docker pulls badge](https://badgen.net/runkit/enricom/60537dac094960001a30c2a7)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
+[![GitHub license badge](misc/badge-license.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub Workflows badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/dcd47059c132c967f53027ac89cdff55ad26e3b1/workflows.svg)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
+[![Docker pulls badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/dcd47059c132c967f53027ac89cdff55ad26e3b1/downloads.svg)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
 
-![Ubuntu badge](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label)
-![macOS badge](https://badgen.net/badge/icon/macOS?icon=apple&label)
-![Windows badge](https://badgen.net/badge/icon/Windows?icon=windows&label)
+![Ubuntu badge](misc/badge-ubuntu.svg)
+![macOS badge](misc/badge-macos.svg)
+![Windows badge](misc/badge-windows.svg)
 &nbsp;&nbsp;&nbsp;
-![JUnit badge](https://badgen.net/badge/JUnit/XML/green)
-![NUnit badge](https://badgen.net/badge/NUnit/XML/green)
-![XUnit badge](https://badgen.net/badge/XUnit/XML/green)
-![TRX badge](https://badgen.net/badge/TRX/OK/green)
+![JUnit badge](misc/badge-junit-xml.svg)
+![NUnit badge](misc/badge-nunit-xml.svg)
+![XUnit badge](misc/badge-xunit-xml.svg)
+![TRX badge](misc/badge-trx.svg)
 
-[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
 
 This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports the TRX file format and JUnit, NUnit and XUnit XML formats, and runs on Linux, macOS and Windows.

@@ -1,0 +1,20 @@
+<svg width="71.5" height="20" viewBox="0 0 715 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Ubuntu">
+  <title>Ubuntu</title>
+  <linearGradient id="a" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="m"><rect width="715" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#m)">
+    <rect width="212" height="200" fill="#555"/>
+    <rect width="503" height="200" fill="#08C" x="212"/>
+    <rect width="715" height="200" fill="url(#a)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="172" y="148" textLength="0" fill="#000" opacity="0.25"></text>
+    <text x="162" y="138" textLength="0"></text>
+    <text x="267" y="148" textLength="403" fill="#000" opacity="0.25">Ubuntu</text>
+    <text x="257" y="138" textLength="403">Ubuntu</text>
+  </g>
+  <image x="40" y="35" width="130" height="130" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiNmZmYiIHZpZXdCb3g9IjAgMCA4OTYgMTAyNCI+PHBhdGggZD0iTTgzMSAxMjdINjNhNjQgNjQgMCAwMC02NCA2NHY2NDBhNjQgNjQgMCAwMDY0IDY0aDc2OGE2NCA2NCAwIDAwNjQtNjRWMTkxYTY0IDY0IDAgMDAtNjQtNjR6TTEyNyA1NzVsMTI4LTEyOC0xMjgtMTI4IDY0LTY0IDE5MiAxOTItMTkyIDE5Mi02NC02NHptNTEyIDY0SDM4M3YtNjRoMjU2djY0eiIvPjwvc3ZnPgo="/>
+</svg>

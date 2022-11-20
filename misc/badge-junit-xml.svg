@@ -1,0 +1,20 @@
+<svg width="70.3" height="20" viewBox="0 0 703 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JUnit: XML">
+  <title>JUnit: XML</title>
+  <linearGradient id="a" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="m"><rect width="703" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#m)">
+    <rect width="374" height="200" fill="#555"/>
+    <rect width="329" height="200" fill="#3C1" x="374"/>
+    <rect width="703" height="200" fill="url(#a)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="60" y="148" textLength="274" fill="#000" opacity="0.25">JUnit</text>
+    <text x="50" y="138" textLength="274">JUnit</text>
+    <text x="429" y="148" textLength="229" fill="#000" opacity="0.25">XML</text>
+    <text x="419" y="138" textLength="229">XML</text>
+  </g>
+  
+</svg>
