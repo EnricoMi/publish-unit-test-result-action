@@ -31,7 +31,7 @@ runs:
 
     - name: Find workflows
       id: workflows
-      with:
+      env:
         GITHUB_TOKEN: ${{ github.token }}
       shell: bash
       run: |
