@@ -18,7 +18,7 @@ query = sys.argv[2]
 headers = {'Authorization': f'token {os.environ.get("GITHUB_TOKEN")}'}
 response = requests.get(f'{url}/search/code?q=%22{query}%22+path%3A.github%2Fworkflows%2F+language%3AYAML&type=Code', headers=headers).json()
 
-total = response['total_count']
+total = f'{response["total_count"]:,}'
 print(f'found {total} workflows')
 
 if 'GITHUB_OUTPUT' in os.environ:
