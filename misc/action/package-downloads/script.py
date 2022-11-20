@@ -14,7 +14,8 @@ url = sys.argv[1]
 repo = sys.argv[2]
 pkg = sys.argv[3]
 
-html = requests.get(f'{url}/{repo}/pkgs/container/{pkg}').text
+url = f'{url}/{repo}/pkgs/container/{pkg}'
+html = requests.get(url).text
 
 soup = BeautifulSoup(html, 'html.parser')
 downloads = [span.find_next('h3').attrs.get('title')
@@ -48,8 +49,12 @@ def humanize(n):
 total = humanize(int(total))
 per_day = humanize(int(per_day))
 
+print(f'total={total}')
+print(f'per_day={per_day}')
+
 if 'GITHUB_OUTPUT' in os.environ:
-    with open(os.environ['GITHUB_OUTPUT'], 'wt') as w:
+    print(f'output file is {os.environ["GITHUB_OUTPUT"]}')
+    with open(os.environ['GITHUB_OUTPUT'], 'at') as w:
         w.write(f'total={total}')
         w.write(f'per_day={per_day}')
 else:
