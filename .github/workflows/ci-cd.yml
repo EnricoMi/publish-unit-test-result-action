@@ -254,6 +254,8 @@ jobs:
             -e "INPUT_COMMENT_TITLE" \
             -e "INPUT_COMMENT_MODE" \
             -e "INPUT_FAIL_ON" \
+            -e "INPUT_ACTION_FAIL" \
+            -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
             -e "INPUT_FILES" \
             -e "INPUT_NUNIT_FILES" \
             -e "INPUT_XUNIT_FILES" \

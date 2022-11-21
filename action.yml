@@ -29,6 +29,14 @@ inputs:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     default: 'test failures'
     required: false
+  action_fail:
+    description: 'When set "true", the action itself fails when tests have failed (see option fail_on).'
+    default: 'false'
+    required: false
+  action_fail_on_inconclusive:
+    description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
+    default: 'false'
+    required: false
   files:
     description: 'Deprecated, use "junit_files" instead.'
     required: false
