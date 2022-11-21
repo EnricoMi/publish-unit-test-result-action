@@ -43,6 +43,8 @@ class Settings:
     json_test_case_results: bool
     fail_on_errors: bool
     fail_on_failures: bool
+    action_fail: bool
+    action_fail_on_inconclusive: bool
     # one of these *_files_glob must be set
     junit_files_glob: Optional[str]
     nunit_files_glob: Optional[str]

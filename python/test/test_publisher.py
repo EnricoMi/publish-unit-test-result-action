@@ -105,6 +105,8 @@ class TestPublisher(unittest.TestCase):
             json_test_case_results=json_test_case_results,
             fail_on_errors=True,
             fail_on_failures=True,
+            action_fail=False,
+            action_fail_on_inconclusive=False,
             junit_files_glob='*.xml',
             nunit_files_glob=None,
             xunit_files_glob=None,

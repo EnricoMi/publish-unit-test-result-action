@@ -17,7 +17,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import ParsedUnitTestResults, ParseError
-from publish_test_results import get_conclusion, get_commit_sha, get_var, \
+from publish_test_results import action_fail_required, get_conclusion, get_commit_sha, get_var, \
     check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
 from test_utils import chdir
@@ -159,6 +159,8 @@ class Test(unittest.TestCase):
                      commit='commit',
                      fail_on_errors=True,
                      fail_on_failures=True,
+                     action_fail=False,
+                     action_fail_on_inconclusive=False,
                      junit_files_glob='junit-files',
                      nunit_files_glob='nunit-files',
                      xunit_files_glob='xunit-files',
@@ -195,6 +197,8 @@ class Test(unittest.TestCase):
             json_test_case_results=json_test_case_results,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
+            action_fail=action_fail,
+            action_fail_on_inconclusive=action_fail_on_inconclusive,
             junit_files_glob=junit_files_glob,
             nunit_files_glob=nunit_files_glob,
             xunit_files_glob=xunit_files_glob,
@@ -331,6 +335,24 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(FAIL_ON=fail_on_mode_failures, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
         self.do_test_get_settings(FAIL_ON=fail_on_mode_errors, expected=self.get_settings(fail_on_errors=True, fail_on_failures=False))
         self.do_test_get_settings(FAIL_ON=fail_on_mode_nothing, expected=self.get_settings(fail_on_errors=False, fail_on_failures=False))
+
+    def test_get_settings_action_fail_on(self):
+        warning = 'Option action_fail has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(ACTION_FAIL='true', expected=self.get_settings(action_fail=True))
+        self.do_test_get_settings(ACTION_FAIL='True', expected=self.get_settings(action_fail=True))
+        self.do_test_get_settings(ACTION_FAIL='false', expected=self.get_settings(action_fail=False))
+        self.do_test_get_settings(ACTION_FAIL='false', expected=self.get_settings(action_fail=False))
+        self.do_test_get_settings(ACTION_FAIL='foo', expected=self.get_settings(action_fail=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(ACTION_FAIL=None, expected=self.get_settings(action_fail=False))
+
+    def test_get_settings_action_fail_on_inconclusive(self):
+        warning = 'Option action_fail_on_inconclusive has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='true', expected=self.get_settings(action_fail_on_inconclusive=True))
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='True', expected=self.get_settings(action_fail_on_inconclusive=True))
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='false', expected=self.get_settings(action_fail_on_inconclusive=False))
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='false', expected=self.get_settings(action_fail_on_inconclusive=False))
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='foo', expected=self.get_settings(action_fail_on_inconclusive=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE=None, expected=self.get_settings(action_fail_on_inconclusive=False))
 
     def test_get_settings_pull_request_build(self):
         for mode in pull_request_build_modes:
@@ -1053,3 +1075,16 @@ class Test(unittest.TestCase):
 
             deprecate_val('deprecated', 'deprecated_var', {'deprecated': 'replace'}, None)
             l.warning.assert_called_once_with('Value "deprecated" for option deprecated_var is deprecated! Instead, use value "replace".')
+
+    def test_action_fail(self):
+        for action_fail, action_fail_on_inconclusive, expecteds in [
+            (False, False, [False] * 3),
+            (False, True, [True, False, False]),
+            (True, False, [False, False, True]),
+            (True, True, [True, False, True]),
+        ]:
+            for expected, conclusion in zip(expecteds, ['inconclusive', 'success', 'failure']):
+                with self.subTest(action_fail=action_fail, action_fail_on_inconclusive=action_fail_on_inconclusive, conclusion=conclusion):
+                    settings = self.get_settings(action_fail=action_fail, action_fail_on_inconclusive=action_fail_on_inconclusive)
+                    actual = action_fail_required(conclusion, settings)
+                    self.assertEqual(expected, actual)
