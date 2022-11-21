@@ -2,7 +2,7 @@ name: Badges
 
 on:
   schedule:
-    - cron: '24 03 * * *'
+    - cron: '24 03 * * 3'
   workflow_dispatch:
 
 permissions: {}
