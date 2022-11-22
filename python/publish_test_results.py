@@ -130,9 +130,9 @@ def log_parse_errors(errors: List[ParseError], gha: GithubAction):
      for error in errors]
 
 
-def action_fail_required(conclusion: str, settings: Settings) -> bool:
-    return settings.action_fail and conclusion == 'failure' or \
-           settings.action_fail_on_inconclusive and conclusion == 'inconclusive'
+def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inconclusive: bool) -> bool:
+    return action_fail and conclusion == 'failure' or \
+           action_fail_on_inconclusive and conclusion == 'inconclusive'
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
@@ -177,8 +177,10 @@ def main(settings: Settings, gha: GithubAction) -> None:
     )
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
-    if action_fail_required(conclusion, settings):
-        gha.error(f'Conclusion is {conclusion}, which is configured to make this action fail.')
+    if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
+        gha.error(f'This action finished successfully, but test results have status {conclusion}.')
+        gha.error(f'Configuration requires this action to fail (action_fail={settings.action_fail}, '
+                  f'action_fail_on_inconclusive={settings.action_fail_on_inconclusive}).')
         sys.exit(1)
 
 

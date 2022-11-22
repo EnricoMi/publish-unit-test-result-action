@@ -1085,6 +1085,5 @@ class Test(unittest.TestCase):
         ]:
             for expected, conclusion in zip(expecteds, ['inconclusive', 'success', 'failure']):
                 with self.subTest(action_fail=action_fail, action_fail_on_inconclusive=action_fail_on_inconclusive, conclusion=conclusion):
-                    settings = self.get_settings(action_fail=action_fail, action_fail_on_inconclusive=action_fail_on_inconclusive)
-                    actual = action_fail_required(conclusion, settings)
+                    actual = action_fail_required(conclusion, action_fail, action_fail_on_inconclusive)
                     self.assertEqual(expected, actual)
