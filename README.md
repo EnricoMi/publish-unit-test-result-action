@@ -15,7 +15,7 @@
 ![XUnit badge](misc/badge-xunit-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
 
-[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
+[![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)
 
 This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports the TRX file format and JUnit, NUnit and XUnit XML formats, and runs on Linux, macOS and Windows.
