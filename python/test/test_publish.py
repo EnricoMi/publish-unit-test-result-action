@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import mock
 
-from publish import Annotation, UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
+from publish import Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
     get_error_annotation, get_digest_from_stats, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
     duration_label_md, SomeTestChanges, abbreviate, abbreviate_bytes, get_test_name, get_formatted_digits, \
@@ -27,6 +27,7 @@ errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"
 
 class PublishTest(unittest.TestCase):
     old_locale = None
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
 
     def test_test_changes(self):
         changes = SomeTestChanges(['removed-test', 'removed-skip', 'remain-test', 'remain-skip', 'skip', 'unskip'],
@@ -485,7 +486,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_stats_digest_undigest(self):
         digest = get_digest_from_stats(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -494,7 +495,7 @@ class PublishTest(unittest.TestCase):
         self.assertTrue(len(digest) > 100)
         stats = get_stats_from_digest(digest)
         self.assertEqual(stats, UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=None,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -514,7 +515,7 @@ class PublishTest(unittest.TestCase):
                                   '+RWSc4DuD2/eALcCk+UZcC8winiBPCCS1rzXn1HnqC5wzBEpnH'
                                   'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA'),
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=None,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                 runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
                 commit='commit'
@@ -522,19 +523,19 @@ class PublishTest(unittest.TestCase):
         )
 
     def test_get_short_summary(self):
-        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, errors=[], suites=0, duration=123, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors', get_short_summary(UnitTestRunResults(files=1, errors=errors, suites=0, duration=0, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=4, tests_succ=4, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=5, tests_succ=4, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, errors=[], suites=0, duration=123, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors', get_short_summary(UnitTestRunResults(files=1, errors=errors, suites=0, duration=0, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=4, tests_succ=4, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=5, tests_succ=4, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
 
     def test_label_md(self):
         self.assertEqual(all_tests_label_md, 'tests')
@@ -546,7 +547,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -574,7 +575,7 @@ class PublishTest(unittest.TestCase):
         ]:
             with self.subTest(fails=fails, errors=errors, parse_errors=parse_errors):
                 stats = UnitTestRunResults(
-                    files=1, errors=[None] * parse_errors, suites=2, duration=3,
+                    files=1, errors=[None] * parse_errors, suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=4 - 1 - fails - errors, tests_skip=1, tests_fail=fails, tests_error=errors,
                     runs=4, runs_succ=4 - 1 - fails - errors, runs_skip=1, runs_fail=fails, runs_error=errors,
                     commit='commit'
@@ -587,7 +588,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_commit_line_md(self):
         stats = UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -616,12 +617,12 @@ class PublishTest(unittest.TestCase):
     # test that get_long_summary_md calls into get_long_summary_with_runs_md and get_long_summary_without_runs_md
     ####
 
-    @staticmethod
-    def test_get_long_summary_md_with_single_runs():
+    @classmethod
+    def test_get_long_summary_md_with_single_runs(cls):
         with mock.patch('publish.get_long_summary_with_runs_md') as w:
             with mock.patch('publish.get_long_summary_without_runs_md') as wo:
                 stats = UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=cls.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'
@@ -631,12 +632,12 @@ class PublishTest(unittest.TestCase):
                 w.assert_not_called()
                 wo.assert_called_once_with(stats, 'url', test_changes, 10)
 
-    @staticmethod
-    def test_get_long_summary_md_with_multiple_runs():
+    @classmethod
+    def test_get_long_summary_md_with_multiple_runs(cls):
         with mock.patch('publish.get_long_summary_with_runs_md') as w:
             with mock.patch('publish.get_long_summary_without_runs_md') as wo:
                 stats = UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=cls.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
                     commit='commit'
@@ -652,7 +653,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_with_runs_md(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
             commit='commit'
@@ -664,7 +665,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_with_runs_md_with_errors(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
@@ -689,7 +690,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md_with_details_url_with_fails(self):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                 runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
                 commit='commit'
@@ -707,7 +708,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md_with_details_url_without_fails(self):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
                 runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -723,7 +724,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md_with_test_lists(self):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
                 runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -783,7 +784,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_without_runs_md(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
             commit='commit'
@@ -795,7 +796,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_without_runs_md_with_errors(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
-            files=1, errors=[], suites=2, duration=3,
+            files=1, errors=[], suites=2, duration=3, suite_details=self.details,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
@@ -832,7 +833,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_details_url_with_fails(self):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
                 commit='commit'
@@ -850,7 +851,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_details_url_without_fails(self):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -866,7 +867,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_test_lists(self):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
-                files=1, errors=[], suites=2, duration=3,
+                files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                 tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
                 runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -923,7 +924,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_all_tests_removed(self):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
-                files=0, errors=[], suites=0, duration=0,
+                files=0, errors=[], suites=0, duration=0, suite_details=self.details,
                 tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
                 runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -943,7 +944,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_some_files_but_all_tests_removed(self):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
-                files=2, errors=[], suites=0, duration=0,
+                files=2, errors=[], suites=0, duration=0, suite_details=self.details,
                 tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
                 runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
                 commit='commit'
@@ -965,7 +966,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'
@@ -989,7 +990,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
                     commit='commit'
@@ -1013,7 +1014,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
                     commit='commit'
@@ -1037,7 +1038,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
-                    files=1, errors=errors, suites=2, duration=3,
+                    files=1, errors=errors, suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
                     commit='commit'
@@ -1066,7 +1067,7 @@ class PublishTest(unittest.TestCase):
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
                 ), UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'
@@ -1095,7 +1096,7 @@ class PublishTest(unittest.TestCase):
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
                 ), UnitTestRunResults(
-                    files=1, errors=[], suites=2, duration=3,
+                    files=1, errors=[], suites=2, duration=3, suite_details=self.details,
                     tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
                     runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
                     commit='commit'

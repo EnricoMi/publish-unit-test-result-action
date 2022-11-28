@@ -16,7 +16,7 @@ from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_o
     fail_on_mode_nothing, comment_modes, comment_mode_always, \
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
-from publish.unittestresults import ParsedUnitTestResults, ParseError
+from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, ParseError
 from publish_test_results import action_fail_required, get_conclusion, get_commit_sha, get_var, \
     check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
@@ -28,6 +28,7 @@ event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
 
 class Test(unittest.TestCase):
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
 
     def test_get_conclusion_success(self):
         for fail_on_errors in [True, False]:
@@ -42,6 +43,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('success', actual)
@@ -59,6 +61,7 @@ class Test(unittest.TestCase):
                         suite_failures=1,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_failures else 'success', actual)
@@ -76,6 +79,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=1,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_errors else 'success', actual)
@@ -93,6 +97,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=0,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('neutral', actual)
@@ -110,6 +115,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_errors else 'success', actual)
@@ -444,7 +450,7 @@ class Test(unittest.TestCase):
         # Note: more tests in test_get_annotations_config*
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation', expected=None)
-        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
+        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, suite outputs, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
@@ -836,11 +842,11 @@ class Test(unittest.TestCase):
                 print(call.args[0])
 
             self.assertEqual(5, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (28 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (29 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 69 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 70 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
@@ -850,26 +856,26 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(69, actual.files)
+        self.assertEqual(70, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 we see one particular error
             self.assertEqual(8, len(actual.errors))
-            self.assertEqual(358, actual.suites)
-            self.assertEqual(2036, actual.suite_tests)
+            self.assertEqual(359, actual.suites)
+            self.assertEqual(2037, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
             self.assertEqual(224, actual.suite_failures)
-            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
-            self.assertEqual(2024, len(actual.cases))
+            self.assertEqual(2025, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
-            self.assertEqual(360, actual.suites)
-            self.assertEqual(2040, actual.suite_tests)
+            self.assertEqual(361, actual.suites)
+            self.assertEqual(2041, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
             self.assertEqual(226, actual.suite_failures)
-            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
-            self.assertEqual(2028, len(actual.cases))
+            self.assertEqual(2029, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:

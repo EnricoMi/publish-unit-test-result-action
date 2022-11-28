@@ -15,7 +15,7 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import available_annotations, default_annotations, \
+from publish import available_annotations, suite_outputs, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -122,7 +122,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
             elems.extend(parse_trx_files(trx_files, progress))
 
     # get the test results
-    return process_junit_xml_elems(elems, settings.time_factor).with_commit(settings.commit)
+    return process_junit_xml_elems(elems, settings.time_factor, suite_outputs in settings.check_run_annotation).with_commit(settings.commit)
 
 
 def log_parse_errors(errors: List[ParseError], gha: GithubAction):

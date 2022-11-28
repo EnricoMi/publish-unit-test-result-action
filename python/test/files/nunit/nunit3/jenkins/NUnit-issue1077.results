@@ -7,6 +7,7 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=0,
   suite_errors=0,
   suite_time=35,
+  suite_details=[],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-issue1077.xml',

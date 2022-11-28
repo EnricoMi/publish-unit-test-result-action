@@ -17,13 +17,13 @@ from publish import comment_mode_off, comment_mode_always, \
     comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
-    all_tests_list, skipped_tests_list, none_list, \
+    all_tests_list, skipped_tests_list, none_annotations, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
     duration_label_md, pull_request_build_mode_merge, punctuation_space, \
     get_long_summary_with_digest_md
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
-from publish.unittestresults import UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
+from publish.unittestresults import UnitTestSuite, UnitTestCase, ParseError, UnitTestRunResults, UnitTestRunDeltaResults, \
     UnitTestCaseResults, create_unit_test_case_results, get_test_results, get_stats, ParsedUnitTestResultsWithCommit
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
@@ -132,6 +132,8 @@ class TestPublisher(unittest.TestCase):
         errors=[],
         suites=2,
         duration=3,
+
+        suite_details=[],
 
         tests=22,
         tests_succ=4,
@@ -245,6 +247,8 @@ class TestPublisher(unittest.TestCase):
             errors=[],
             suites=2,
             duration=3,
+
+            suite_details=[],
 
             tests=21,
             tests_succ=12,
@@ -495,7 +499,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock()
         bcr = mock.MagicMock()
-        bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
+        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
@@ -552,7 +556,7 @@ class TestPublisher(unittest.TestCase):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         cr = mock.MagicMock(html_url='html://url')
         bcr = mock.MagicMock()
-        bs = UnitTestRunResults(1, [], 1, 1, 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
+        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
         stats = self.stats
         # the new test cases with un-restricted unicode, as they come from test result files
         cases = create_unit_test_case_results({
@@ -1157,7 +1161,7 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
 
     def test_publish_check_without_annotations(self):
-        self.do_test_publish_check_without_base_stats([], [none_list])
+        self.do_test_publish_check_without_base_stats([], [none_annotations])
 
     def test_publish_check_with_default_annotations(self):
         self.do_test_publish_check_without_base_stats([], default_annotations)
@@ -1467,6 +1471,7 @@ class TestPublisher(unittest.TestCase):
             files=12345,
             errors=[ParseError('file', 'message', 1, 2, exception=ValueError("Invalid value"))],
             suites=2,
+            suite_details=[UnitTestSuite('suite', 7, 3, 2, 1, 'stdout', 'stderr')],
             duration=3456,
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8901,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=1345,
@@ -1524,7 +1529,7 @@ class TestPublisher(unittest.TestCase):
         results = get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
             errors=errors,
-            suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7,
+            suites=2, suite_tests=3, suite_skipped=4, suite_failures=5, suite_errors=6, suite_time=7, suite_details=[],
             cases=[
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1),
                 UnitTestCase(result_file='result', test_file='test', line=123, class_name='class1', test_name='test2', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=2),
@@ -1994,7 +1999,7 @@ class TestPublisher(unittest.TestCase):
         cr = mock.MagicMock(html_url='http://check-run.url')
         bcr = mock.MagicMock()
         bs = UnitTestRunResults(
-            files=2, errors=[], suites=3, duration=4,
+            files=2, errors=[], suites=3, duration=4, suite_details=[UnitTestSuite('suite', 7, 3, 2, 1, 'stdout', 'stderr')],
             tests=20, tests_succ=5, tests_skip=4, tests_fail=5, tests_error=6,
             runs=37, runs_succ=10, runs_skip=9, runs_fail=8, runs_error=7,
             commit='before'

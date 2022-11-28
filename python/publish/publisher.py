@@ -17,9 +17,9 @@ from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
-    get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, \
+    get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, get_suite_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
-    get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
+    get_skipped_tests_list, all_tests_list, skipped_tests_list, suite_outputs, pull_request_build_mode_merge, \
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
@@ -102,10 +102,10 @@ class PublishData:
         return d
 
     def _as_dict(self) -> Dict[str, Any]:
-        self_without_exceptions = dataclasses.replace(
+        self_without_exceptions_and_suite_details = dataclasses.replace(
             self,
-            # remove exceptions
-            stats=self.stats.without_exceptions(),
+            # remove exceptions and suite details
+            stats=self.stats.without_exceptions().without_suite_details(),
             stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
             # turn defaultdict into simple dict
             cases={test: {state: cases for state, cases in states.items()}
@@ -113,7 +113,7 @@ class PublishData:
         )
 
         # the dict_factory removes None values
-        return dataclasses.asdict(self_without_exceptions,
+        return dataclasses.asdict(self_without_exceptions_and_suite_details,
                                   dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
     def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
@@ -331,8 +331,9 @@ class Publisher:
 
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
+        output_annotations = get_suite_annotations(stats.suite_details) if suite_outputs in self._settings.check_run_annotation else []
         file_list_annotations = self.get_test_list_annotations(cases)
-        all_annotations = error_annotations + case_annotations + file_list_annotations
+        all_annotations = error_annotations + case_annotations + output_annotations + file_list_annotations
 
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)

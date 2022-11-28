@@ -7,6 +7,7 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=1,
   suite_errors=0,
   suite_time=0,
+  suite_details=[],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='mstest/jenkinsci/testcase6.xml',

@@ -7,7 +7,7 @@ import junitparser
 from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
 from junitparser.junitparser import etree
 
-from publish.unittestresults import ParsedUnitTestResults, UnitTestCase, ParseError
+from publish.unittestresults import ParsedUnitTestResults, UnitTestSuite, UnitTestCase, ParseError
 
 try:
     import lxml.etree
@@ -155,7 +155,7 @@ def parse_junit_xml_files(files: Iterable[str],
     return progress_safe_parse_xml_file(files, parse, progress)
 
 
-def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0) -> ParsedUnitTestResults:
+def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0, suite_details: bool = False) -> ParsedUnitTestResults:
     def create_junitxml(filepath: str, tree: JUnitTree) -> JUnitXmlOrParseError:
         try:
             instance = JUnitXml.fromroot(tree.getroot())
@@ -203,7 +203,7 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
                 for suite in suites
                 for case in get_cases(suite)] + cases
 
-    def get_suites(suite: TestSuite) -> List[TestSuite]:
+    def get_leaf_suites(suite: TestSuite) -> List[TestSuite]:
         """
         JUnit allows for testsuite tags inside testsuite tags at any depth.
         https://llg.cubic.org/docs/junit/
@@ -214,7 +214,31 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
         cases = list(suite.iterchildren(TestCase))
         return [leaf_suite
                 for suite in suites
-                for leaf_suite in get_suites(suite)] + ([suite] if cases or not suites else [])
+                for leaf_suite in get_leaf_suites(suite)] + ([suite] if cases or not suites else [])
+
+    leaf_suites = [leaf_suite
+                   for _, suite in suites
+                   for leaf_suite in get_leaf_suites(suite)]
+
+    def get_text(elem, tag):
+        child = elem.find(tag)
+        if child is not None:
+            text = child.text.strip()
+            return text if text else None
+        return None
+
+    suite_details = [
+        UnitTestSuite(
+            leaf_suite.name,
+            leaf_suite.tests,
+            leaf_suite.skipped,
+            leaf_suite.failures,
+            leaf_suite.errors,
+            get_text(leaf_suite._elem, 'system-out'),
+            get_text(leaf_suite._elem, 'system-err'),
+        )
+        for leaf_suite in leaf_suites
+    ] if suite_details else []
 
     # junit allows for multiple results for a single test case (e.g. success and failure for the same test)
     # we pick the most severe result, which could still be multiple results, so we aggregate those, which is messy
@@ -243,14 +267,13 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
         files=len(list(trees)),
         errors=errors,
         # test state counts from suites
-        suites=len([leaf_suite
-                    for _, suite in suites
-                    for leaf_suite in get_suites(suite)]),
+        suites=len(leaf_suites),
         suite_tests=suite_tests,
         suite_skipped=suite_skipped,
         suite_failures=suite_failures,
         suite_errors=suite_errors,
         suite_time=suite_time,
+        suite_details=suite_details,
         # test cases
         cases=cases
     )

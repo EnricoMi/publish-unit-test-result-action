@@ -17,10 +17,11 @@ from packaging.version import Version
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
+from publish import available_annotations, none_annotations
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTreeOrParseError, ParseError
-from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
-from publish_test_results import get_test_results, get_stats, get_conclusion, default_annotations
+from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, UnitTestCase
+from publish_test_results import get_test_results, get_stats, get_conclusion
 from publish.publisher import Publisher
 from test_action_script import Test
 from test_utils import temp_locale
@@ -152,7 +153,7 @@ class JUnitXmlParseTest:
                                      compare_earlier=False,
                                      report_individual_runs=False,
                                      dedup_classes_by_file_name=False,
-                                     check_run_annotation=default_annotations)
+                                     check_run_annotation=set(available_annotations).difference(set(none_annotations)))
 
         repo = mock.MagicMock(create_check_run=create_check_run)
         gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
@@ -204,6 +205,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                 suite_failures=0,
                 suite_errors=0,
                 suite_time=0,
+                suite_details=[],
                 cases=[]
             ))
 
@@ -237,6 +239,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=int(2.222 * time_factor),
+                        suite_details=[],
                         cases=[
                             UnitTestCase(
                                 class_name='uk.co.gresearch.spark.diff.DiffOptionsSuite',
