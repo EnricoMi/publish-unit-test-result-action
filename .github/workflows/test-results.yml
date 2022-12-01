@@ -47,6 +47,7 @@ jobs:
           log_level: DEBUG
 
       - name: Set badge color
+        if: github.event.workflow_run.event != 'schedule'
         shell: bash
         run: |
           case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
@@ -62,6 +63,7 @@ jobs:
           esac
 
       - name: Create badge
+        if: github.event.workflow_run.event != 'schedule'
         uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
         with:
           label: Tests
@@ -70,10 +72,9 @@ jobs:
           path: tests.svg
 
       - name: Upload badge to Gist
-        # Upload only for master branch
+        # Upload only for master branch and not for scheduled event
         if: >
-          github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'master' ||
-          github.event_name != 'workflow_run' && github.ref == 'refs/heads/master'
+          github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'master' && github.event.workflow_run.event != 'schedule'
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
