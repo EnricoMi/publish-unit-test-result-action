@@ -56,7 +56,7 @@ jobs:
 
           - os: macos-latest
             python-version: "3.6"
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             python-version: "3.6"
           - os: windows-latest
             python-version: "3.6"
@@ -354,7 +354,7 @@ jobs:
         include:
           - os: macos-latest
             os-label: macOS
-            python: "3.6"
+            python: "3.8"
           - os: macos-latest
             os-label: macOS
             python: "installed"
@@ -364,7 +364,7 @@ jobs:
 
           - os: ubuntu-latest
             os-label: Linux
-            python: "3.6"
+            python: "3.8"
           - os: ubuntu-latest
             os-label: Linux
             python: "installed"
