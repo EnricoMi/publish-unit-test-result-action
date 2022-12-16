@@ -9,7 +9,7 @@ LABEL com.github.actions.description="A GitHub Action to publish test results."
 LABEL com.github.actions.icon="check-circle"
 LABEL com.github.actions.color="green"
 
-RUN apk add --no-cache --upgrade expat libuuid
+RUN apk add --no-cache --upgrade expat libuuid git
 
 COPY python/requirements.txt /action/
 RUN apk add --no-cache build-base libffi-dev; \

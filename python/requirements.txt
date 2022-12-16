@@ -5,7 +5,7 @@ junitparser==2.8.0
   future==0.18.3
 lxml==4.9.1
 psutil==5.9.4
-PyGithub==1.56
+PyGithub @ git+https://github.com/EnricoMi/PyGithub.git@16af8e8795810dca9175b8d31c1ed342cd5d8838
   Deprecated==1.2.13
     wrapt==1.15.0
   PyJWT==2.4.0
