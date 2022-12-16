@@ -69,6 +69,7 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
+    secondary_rate_limit_wait_seconds: int
     search_pull_requests: bool
 
 

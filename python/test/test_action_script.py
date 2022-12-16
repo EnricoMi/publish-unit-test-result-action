@@ -194,6 +194,7 @@ class Test(unittest.TestCase):
                      check_run_annotation=default_annotations,
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
+                     secondary_rate_limit_wait_seconds=60,
                      json_file=None,
                      json_thousands_separator=punctuation_space,
                      json_suite_details=False,
@@ -239,6 +240,7 @@ class Test(unittest.TestCase):
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes,
+            secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
             search_pull_requests=search_pull_requests
         )
 
