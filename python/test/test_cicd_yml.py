@@ -22,10 +22,10 @@ class TestActionYml(unittest.TestCase):
         self.assertEqual(1, len(docker_image_step))
         docker_image_run = docker_image_step[0].get('run')
         self.assertTrue(docker_image_run)
-        vars = [var[6:].lower()
+        vars = [var[7:-1].lower() if var.startswith('"') and var.endswith('"') else var[6:].lower()
                 for line in docker_image_run.split('\n')
                 for part in line.split(' ')
                 for var in [part.strip()]
-                if var.startswith('INPUT_')]
+                if var.startswith('INPUT_') or var.startswith('"INPUT_')]
 
-        self.assertEqual(sorted(list(action.get('inputs', {}).keys()) + ['log_level']), sorted(vars))
+        self.assertEqual(sorted(list(action.get('inputs', {}).keys()) + ['log_level', 'root_log_level']), sorted(vars))
