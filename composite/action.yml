@@ -103,11 +103,11 @@ inputs:
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
-    default: '0.25'
+    default: '0.001'
     required: false
   seconds_between_github_writes:
     description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
-    default: '2.0'
+    default: '0.001'
     required: false
   json_file:
     description: 'Results are written to this JSON file.'

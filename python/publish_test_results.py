@@ -449,8 +449,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
 
     retries = get_var('GITHUB_RETRIES', options) or '10'
-    seconds_between_github_reads = get_var('SECONDS_BETWEEN_GITHUB_READS', options) or '1'
-    seconds_between_github_writes = get_var('SECONDS_BETWEEN_GITHUB_WRITES', options) or '2'
+    seconds_between_github_reads = get_var('SECONDS_BETWEEN_GITHUB_READS', options) or '0.001'
+    seconds_between_github_writes = get_var('SECONDS_BETWEEN_GITHUB_WRITES', options) or '0.001'
     check_var_condition(retries.isnumeric(), f'GITHUB_RETRIES must be a positive integer or 0: {retries}')
     check_var_condition(is_float(seconds_between_github_reads), f'SECONDS_BETWEEN_GITHUB_READS must be a positive number: {seconds_between_github_reads}')
     check_var_condition(is_float(seconds_between_github_writes), f'SECONDS_BETWEEN_GITHUB_WRITES must be a positive number: {seconds_between_github_writes}')

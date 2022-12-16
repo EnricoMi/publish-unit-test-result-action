@@ -509,10 +509,10 @@ class Test(unittest.TestCase):
         self.assertEqual("Some values in 'all tests, skipped tests, more' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
-        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
+        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 0.001)
 
     def test_get_settings_seconds_between_github_writes(self):
-        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_WRITES', 'seconds_between_github_writes', 2.0)
+        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_WRITES', 'seconds_between_github_writes', 0.001)
 
     def do_test_get_settings_seconds_between_github_requests(self, env_var_name: str, settings_var_name: str, default: float):
         self.do_test_get_settings(**{env_var_name: '0.001', 'expected': self.get_settings(**{settings_var_name: 0.001})})
