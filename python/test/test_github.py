@@ -116,9 +116,9 @@ class TestGitHub(unittest.TestCase):
             self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
             log.assert_has_calls([
                 mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                mock.call(10, 'Retrying after 1 seconds'),
+                mock.call(20, 'Retrying after 1 seconds'),
                 mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                mock.call(10, 'Retrying after 1 seconds')
+                mock.call(20, 'Retrying after 1 seconds')
             ], any_order=False)
 
     def test_github_get_retry_403_with_primary_error_rate_retry_message(self):
@@ -134,12 +134,10 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     log.assert_has_calls([
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle'),
-                        mock.call(10, 'Setting next backoff to 0s'),
+                        mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle'),
+                        mock.call(20, 'Setting next backoff to 0s'),
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle')
+                        mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle')
                     ], any_order=False)
                     sleep.assert_not_called()
 
@@ -157,13 +155,10 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     log.assert_has_calls([
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}'),
-                        mock.call(10, f'Secondary rate limit has backoff of {DEFAULT_SECONDARY_RATE_WAIT}s'),
-                        mock.call(10, f'Setting next backoff to {DEFAULT_SECONDARY_RATE_WAIT}s'),
+                        mock.call(10, f'Response body indicates retry-able secondary rate limit error: {message}'),
+                        mock.call(20, f'Setting next backoff to {DEFAULT_SECONDARY_RATE_WAIT}s'),
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}')
+                        mock.call(10, f'Response body indicates retry-able secondary rate limit error: {message}')
                     ], any_order=False)
                     sleep.assert_has_calls([mock.call(DEFAULT_SECONDARY_RATE_WAIT)])
 
@@ -180,13 +175,11 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     log.assert_has_calls([
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}'),
+                        mock.call(10, f'Response body indicates retry-able primary rate limit error: {message}'),
                         mock.call(10, 'Reset occurs in 0:00:30 (1644768030 / 2022-02-13 16:00:30)'),
-                        mock.call(10, 'Setting next backoff to 31.0s'),
+                        mock.call(20, 'Setting next backoff to 31.0s'),
                         mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}')
+                        mock.call(10, f'Response body indicates retry-able primary rate limit error: {message}')
                     ], any_order=False)
                     sleep.assert_has_calls([mock.call(30.0 + 1)])  # we sleep one extra second
 
@@ -202,12 +195,10 @@ class TestGitHub(unittest.TestCase):
             self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
             log.assert_has_calls([
                 mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                mock.call(10, 'There is no Retry-After in the response header'),
-                mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle'),
-                mock.call(10, 'Setting next backoff to 0s'),
+                mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle'),
+                mock.call(20, 'Setting next backoff to 0s'),
                 mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                mock.call(10, 'There is no Retry-After in the response header'),
-                mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle')
+                mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle')
             ], any_order=False)
 
     def test_github_get_retry_403_without_message(self):
@@ -238,7 +229,6 @@ class TestGitHub(unittest.TestCase):
                     if status == 403:
                         log.assert_has_calls([
                             mock.call(20, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                            mock.call(10, 'There is no Retry-After in the response header'),
                             mock.call(10, 'Response message does not indicate retry-able error')
                         ], any_order=False)
                     else:
@@ -300,9 +290,9 @@ class TestGitHub(unittest.TestCase):
             self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
             log.assert_has_calls([
                 mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                mock.call(10, 'Retrying after 1 seconds'),
+                mock.call(20, 'Retrying after 1 seconds'),
                 mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                mock.call(10, 'Retrying after 1 seconds')
+                mock.call(20, 'Retrying after 1 seconds')
             ], any_order=False)
 
     def test_github_post_retry_403_with_primary_error_retry_message(self):
@@ -323,12 +313,10 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     log.assert_has_calls([
                         mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle'),
-                        mock.call(10, 'Setting next backoff to 0s'),
+                        mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle'),
+                        mock.call(20, 'Setting next backoff to 0s'),
                         mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, 'Response body indicates retry-able rate limit error: api rate limit exceeded, please be gentle')
+                        mock.call(10, 'Response body indicates retry-able primary rate limit error: api rate limit exceeded, please be gentle')
                     ], any_order=False)
 
     def test_github_post_retry_403_with_secondary_error_retry_message(self):
@@ -351,13 +339,10 @@ class TestGitHub(unittest.TestCase):
                     self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
                     log.assert_has_calls([
                         mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}'),
-                        mock.call(10, f'Secondary rate limit has backoff of {DEFAULT_SECONDARY_RATE_WAIT}s'),
-                        mock.call(10, f'Setting next backoff to {DEFAULT_SECONDARY_RATE_WAIT}s'),
+                        mock.call(10, f'Response body indicates retry-able secondary rate limit error: {message}'),
+                        mock.call(20, f'Setting next backoff to {DEFAULT_SECONDARY_RATE_WAIT}s'),
                         mock.call(20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                        mock.call(10, 'There is no Retry-After in the response header'),
-                        mock.call(10, f'Response body indicates retry-able rate limit error: {message}')
+                        mock.call(10, f'Response body indicates retry-able secondary rate limit error: {message}')
                     ], any_order=False)
                     sleep.assert_has_calls([mock.call(DEFAULT_SECONDARY_RATE_WAIT)])
 
@@ -379,7 +364,6 @@ class TestGitHub(unittest.TestCase):
                     self.assertEqual(content.encode('utf-8'), context.exception.args[1])
                     self.assertListEqual([
                         (20, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'),
-                        (10, 'There is no Retry-After in the response header'),
                         (30, 'Failed to inspect response message')
                     ], [call.args for call in log.mock_calls])
 
