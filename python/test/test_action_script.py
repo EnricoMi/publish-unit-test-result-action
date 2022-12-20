@@ -341,7 +341,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(ACTION_FAIL='true', expected=self.get_settings(action_fail=True))
         self.do_test_get_settings(ACTION_FAIL='True', expected=self.get_settings(action_fail=True))
         self.do_test_get_settings(ACTION_FAIL='false', expected=self.get_settings(action_fail=False))
-        self.do_test_get_settings(ACTION_FAIL='false', expected=self.get_settings(action_fail=False))
+        self.do_test_get_settings(ACTION_FAIL='False', expected=self.get_settings(action_fail=False))
         self.do_test_get_settings(ACTION_FAIL='foo', expected=self.get_settings(action_fail=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(ACTION_FAIL=None, expected=self.get_settings(action_fail=False))
 
@@ -350,7 +350,7 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='true', expected=self.get_settings(action_fail_on_inconclusive=True))
         self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='True', expected=self.get_settings(action_fail_on_inconclusive=True))
         self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='false', expected=self.get_settings(action_fail_on_inconclusive=False))
-        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='false', expected=self.get_settings(action_fail_on_inconclusive=False))
+        self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='False', expected=self.get_settings(action_fail_on_inconclusive=False))
         self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE='foo', expected=self.get_settings(action_fail_on_inconclusive=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(ACTION_FAIL_ON_INCONCLUSIVE=None, expected=self.get_settings(action_fail_on_inconclusive=False))
 
