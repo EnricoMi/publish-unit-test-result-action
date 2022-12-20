@@ -33,6 +33,7 @@ jobs:
             gh api $url > "$name.zip"
             unzip -d "$name" "$name.zip"
           done
+        shell: bash
 
       - name: Publish Test Results
         id: test-results
@@ -48,7 +49,6 @@ jobs:
 
       - name: Set badge color
         if: github.event.workflow_run.event != 'schedule'
-        shell: bash
         run: |
           case ${{ fromJSON( steps.test-results.outputs.json ).conclusion }} in
             success)
@@ -61,6 +61,7 @@ jobs:
               echo "BADGE_COLOR=696969" >> $GITHUB_ENV
               ;;
           esac
+        shell: bash
 
       - name: Create badge
         if: github.event.workflow_run.event != 'schedule'

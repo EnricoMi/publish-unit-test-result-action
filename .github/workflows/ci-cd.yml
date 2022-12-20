@@ -73,6 +73,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install language-pack-en language-pack-de
+        shell: bash
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -88,6 +89,7 @@ jobs:
           pip install --force --no-cache-dir -r python/requirements.txt
           pip install --force --no-cache-dir -r python/test/requirements.txt -c python/test/constraints.txt
           pip freeze | sort
+        shell: bash
 
       - name: Update expectation files
         id: changes
@@ -101,6 +103,7 @@ jobs:
             zip changes.zip $(git diff --name-only) $(git ls-files -o  --exclude-standard)
             exit 1
           fi
+        shell: bash
       - name: Upload changed expectation files
         if: steps.changes.outcome == 'failure'
         uses: actions/upload-artifact@v3
@@ -114,6 +117,7 @@ jobs:
         run: |
           cd python/test
           python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
+        shell: bash
 
       - name: PyTest (EST)
         env:
@@ -123,6 +127,7 @@ jobs:
         run: |
           cd python/test
           python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
+        shell: bash
 
       - name: PyTest (CET)
         env:
@@ -132,6 +137,7 @@ jobs:
         run: |
           cd python/test
           python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
+        shell: bash
 
       - name: Upload Test Results
         if: always()
@@ -167,6 +173,7 @@ jobs:
       - name: Prepare publish action from this branch
         run: |
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+        shell: bash
 
       - name: Publish Test Results
         id: test-results
@@ -225,6 +232,12 @@ jobs:
       - name: Publish Test Results
         id: test-results
         if: always()
+        env:
+          INPUT_GITHUB_TOKEN: ${{ github.token }}
+          INPUT_CHECK_NAME: Test Results (Docker Image)
+          INPUT_JUNIT_FILES: "artifacts/**/*.xml"
+          INPUT_JSON_FILE: "tests.json"
+          INPUT_JSON_TEST_CASE_RESULTS: true
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
@@ -310,13 +323,7 @@ jobs:
             -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
             -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
             enricomi/publish-unit-test-result-action:latest
-        env:
-          INPUT_GITHUB_TOKEN: ${{ github.token }}
-          INPUT_CHECK_NAME: Test Results (Docker Image)
-          INPUT_JUNIT_FILES: "artifacts/**/*.xml"
-          INPUT_JSON_FILE: "tests.json"
-          INPUT_JSON_TEST_CASE_RESULTS: true
-
+        shell: bash
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -434,6 +441,7 @@ jobs:
       - name: Install package wheel
         if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
         run: python3 -m pip install wheel
+        shell: bash
 
       - name: Publish Test Results
         id: test-results
@@ -521,10 +529,12 @@ jobs:
 
       - name: Copy test result files
         run: cp -rv python/test/files test-files
+        shell: bash
 
       - name: Prepare publish action from this branch
         run: |
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+        shell: bash
 
       - name: Publish Test Results
         id: test-results
@@ -566,10 +576,12 @@ jobs:
 
       - name: Copy test junit xml files
         run: cp -rv python/test/files/junit-xml test-files
+        shell: bash
 
       - name: Prepare publish action from this branch
         run: |
           sed --in-place "s/image: .*/image: 'Dockerfile'/" action.yml
+        shell: bash
 
       - name: Publish Test Results
         id: test-results
