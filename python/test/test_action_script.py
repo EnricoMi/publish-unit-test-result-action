@@ -1006,27 +1006,15 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(145, actual.files)
-        if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-            # on macOS and Python 3.10 and above we see one particular error
-            self.assertEqual(17, len(actual.errors))
-            self.assertEqual(731, actual.suites)
-            self.assertEqual(4109, actual.suite_tests)
-            self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(450, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
-            self.assertEqual(7956, actual.suite_time)
-            self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4085, len(actual.cases))
-        else:
-            self.assertEqual(13, len(actual.errors))
-            self.assertEqual(735, actual.suites)
-            self.assertEqual(4117, actual.suite_tests)
-            self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(454, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
-            self.assertEqual(7957, actual.suite_time)
-            self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4093, len(actual.cases))
+        self.assertEqual(13, len(actual.errors))
+        self.assertEqual(735, actual.suites)
+        self.assertEqual(4117, actual.suite_tests)
+        self.assertEqual(214, actual.suite_skipped)
+        self.assertEqual(454, actual.suite_failures)
+        self.assertEqual(21, actual.suite_errors)
+        self.assertEqual(7957, actual.suite_time)
+        self.assertEqual(0, len(actual.suite_details))
+        self.assertEqual(4093, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -1058,13 +1046,6 @@ class Test(unittest.TestCase):
                 '::error file=malformed-json.json::Error processing result file: Unsupported file format: malformed-json.json',
                 '::error file=non-json.json::Error processing result file: Unsupported file format: non-json.json',
             ]
-            if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-                expected.extend([
-                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
-                    '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
-                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
-                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)',
-                ] * 2)
             self.assertEqual(
                 sorted(expected),
                 sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', re.sub(r'format: .*[/\\]', 'format: ', line)))
