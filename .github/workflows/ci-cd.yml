@@ -98,7 +98,7 @@ jobs:
           python/test/files/update_expectations.sh
           git status
 
-          if [[ ! git diff --exit-code ]] || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
+          if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
           then
             zip changes.zip $(git diff --name-only) $(git ls-files -o  --exclude-standard)
             exit 1
