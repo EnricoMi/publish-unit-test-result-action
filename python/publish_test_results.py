@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import sys
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -129,6 +130,11 @@ def log_parse_errors(errors: List[ParseError], gha: GithubAction):
      for error in errors]
 
 
+def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inconclusive: bool) -> bool:
+    return action_fail and conclusion == 'failure' or \
+           action_fail_on_inconclusive and conclusion == 'inconclusive'
+
+
 def main(settings: Settings, gha: GithubAction) -> None:
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -170,6 +176,12 @@ def main(settings: Settings, gha: GithubAction) -> None:
         gh._Github__requester._Requester__requestRaw
     )
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+    if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
+        gha.error(f'This action finished successfully, but test results have status {conclusion}.')
+        gha.error(f'Configuration requires this action to fail (action_fail={settings.action_fail}, '
+                  f'action_fail_on_inconclusive={settings.action_fail_on_inconclusive}).')
+        sys.exit(1)
 
 
 def throttle_gh_request_raw(seconds_between_requests: float, seconds_between_writes: float, gh_request_raw):
@@ -373,6 +385,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         json_test_case_results=get_bool_var('JSON_TEST_CASE_RESULTS', options, default=False),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
+        action_fail=get_bool_var('ACTION_FAIL', options, default=False),
+        action_fail_on_inconclusive=get_bool_var('ACTION_FAIL_ON_INCONCLUSIVE', options, default=False),
         junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,
         nunit_files_glob=get_var('NUNIT_FILES', options),
         xunit_files_glob=get_var('XUNIT_FILES', options),
