@@ -383,7 +383,7 @@ class Publisher:
         check_run = None
         summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
         split_annotations = [annotation.to_dict() for annotation in all_annotations]
-        split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
+        split_annotations = [split_annotations[x:x+2] for x in range(0, len(split_annotations), 2)] or [[]]
         for annotations in split_annotations:
             output = dict(
                 title=title,
