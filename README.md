@@ -641,7 +641,7 @@ Here is an example how to use the [JSON](#json-result) output of this action to 
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/badge.svg)
 
 <details>
-<summary>Example worklow YAML</summary>
+<summary>Example workflow YAML</summary>
 
 ```yaml
 steps:
