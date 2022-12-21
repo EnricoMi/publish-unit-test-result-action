@@ -43,9 +43,7 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
 def get_github(token: str, url: str, retries: int, backoff_factor: float, secondaryRateWait: int) -> github.Github:
     retry = github.GithubRetry(total=retries,
                                backoff_factor=backoff_factor,
-                               secondaryRateWait=secondaryRateWait,
-                               allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
-                               status_forcelist=list(range(500, 600)))
+                               secondaryRateWait=secondaryRateWait)
     return github.Github(login_or_token=token, base_url=url, per_page=2, retry=retry)
 
 
