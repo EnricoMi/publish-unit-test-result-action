@@ -64,12 +64,12 @@ Check your favorite development and test environment for its TRX file or JUnit, 
 
 |Test Environment | JUnit<br/>XML | NUnit<br/>XML | XUnit<br/>XML | TRX<br/>file |
 |-----------------|:---------:|:---------:|:---------:|:---:|
-|[Jest](https://jestjs.io/docs/configuration#default-reporter)|✅| | | |
-|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|✅| | | |
-|MSTest           |✅|✅|✅|✅|
-|[Pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|✅| | | |
-|[Scala sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|✅| | | |
-|Visual Studio    |✅|✅|✅|✅|
+|[Jest](https://jestjs.io/docs/configuration#default-reporter)|:heavy_check_mark:| | | |
+|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|:heavy_check_mark:| | | |
+|MSTest           |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|[Pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|:heavy_check_mark:| | | |
+|[Scala sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|:heavy_check_mark:| | | |
+|Visual Studio    |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
 ## What is new in version 2
 
