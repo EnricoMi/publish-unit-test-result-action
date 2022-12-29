@@ -11,6 +11,7 @@
 ![Windows badge](misc/badge-windows.svg)
 &nbsp;&nbsp;&nbsp;
 ![JUnit badge](misc/badge-junit-xml.svg)
+[![Jest badge](misc/badge-jest-junit.svg)](https://jestjs.io/docs/configuration#default-reporter)
 ![NUnit badge](misc/badge-nunit-xml.svg)
 ![XUnit badge](misc/badge-xunit-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
