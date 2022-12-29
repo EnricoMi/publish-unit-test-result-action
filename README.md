@@ -70,6 +70,7 @@ Check your favorite development and test environment for its TRX file or JUnit, 
 |MSTest    |.Net|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:heavy_check_mark:| | | |
 |[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:heavy_check_mark:| | | |
+|Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:heavy_check_mark:| | | |
 
 ## What is new in version 2
 
