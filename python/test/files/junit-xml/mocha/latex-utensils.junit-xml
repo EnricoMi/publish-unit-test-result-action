@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="Mocha Tests" tests="109" failures="0" errors="0" skipped="0" timestamp="Sat, 03 Dec 2022 23:10:07 GMT" time="0.29">
+<testcase classname="bibtexParser" name="parse a simple bib file" time="0.003"/>
+<testcase classname="bibtexParser" name="parse fields ending ," time="0"/>
+<testcase classname="bibtexParser" name="parse an entry with only key" time="0"/>
+<testcase classname="bibtexParser" name="parse bib with comments" time="0.001"/>
+<testcase classname="bibtexParser" name="parse only @comment" time="0"/>
+<testcase classname="bibtexParser" name="parse @comment @article @comment" time="0"/>
+<testcase classname="bibtexParser" name="parse bib with abbreviation" time="0.001"/>
+<testcase classname="bibtexParser" name="parse entry with empty citeky" time="0"/>
+<testcase classname="bibtexParser" name="parse entry with command" time="0"/>
+<testcase classname="bibtexParser" name="parse entry with command" time="0.001"/>
+<testcase classname="bibtexParser" name="parse entry with concat" time="0"/>
+<testcase classname="bibtexParser" name="parse entry with quotes" time="0"/>
+<testcase classname="bibtexParser" name="should not throw SyntaxError" time="0"/>
+<testcase classname="bibtexParser" name="should throw SyntaxError" time="0.002"/>
+<testcase classname="latexLogParser" name="parse LaTeX log files" time="0.117"/>
+<testcase classname="latexLogParser" name="parse LaTeX log files generated with -halt-on-error" time="0.071"/>
+<testcase classname="latexParser matchers findAll" name="test latexParser.findAll" time="0.007"/>
+<testcase classname="latexParser matchers findAllSeqences" name="test latexParser.findAllSeqences" time="0.001"/>
+<testcase classname="latexParser matchers pattern" name="test latexParser.pattern" time="0.001"/>
+<testcase classname="latexParser matchers pattern" name="test latexParser.pattern.match" time="0"/>
+<testcase classname="latexParser matchers pattern" name="test latexParser.pattern" time="0"/>
+<testcase classname="latexParser matchers latexParser findNodeAt" name="test latexParser.findNodeAt" time="0.001"/>
+<testcase classname="latexParser matchers latexParser findNodeAt" name="test latexParser.findNodeAt" time="0.002"/>
+<testcase classname="latexParser matchers latexParser findNodeAt" name="test latexParser.findNodeAt" time="0"/>
+<testcase classname="latexParser matchers latexParser findNodeAt" name="test latexParser.findNodeAt with line and column" time="0.001"/>
+<testcase classname="latexParser matchers latexParser findNodeAt" name="test latexParser.findNodeAt with line and column for multiple lines" time="0"/>
+<testcase classname="latexParser matchers type" name="test that properties having a Node-related-type value are only content, args, and arg." time="0"/>
+<testcase classname="latexParser matchers type" name="test the types of content, arg, and args." time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{center}..." time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{center}\endcommand" time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{center} \begin{itemize}" time="0.002"/>
+<testcase classname="latexParser parse" name="parse unbalanced \begin" time="0.001"/>
+<testcase classname="latexParser parse" name="parse unbalanced \end" time="0"/>
+<testcase classname="latexParser parse" name="parse $1$" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \url" time="0"/>
+<testcase classname="latexParser parse" name="parse \url" time="0"/>
+<testcase classname="latexParser parse" name="parse \href" time="0"/>
+<testcase classname="latexParser parse" name="parse \href" time="0"/>
+<testcase classname="latexParser parse" name="parse \verb|1|" time="0"/>
+<testcase classname="latexParser parse" name="parse \verb*|1|" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \verbatimfont{\small}" time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{verbatim}..." time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{verbatim}... 02" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \begin{verbatim*}..." time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{minted}..." time="0.001"/>
+<testcase classname="latexParser parse" name="parse \begin{lstlisting}..." time="0"/>
+<testcase classname="latexParser parse" name="parse comments" time="0.004"/>
+<testcase classname="latexParser parse" name="parse \begin{align}..." time="0.001"/>
+<testcase classname="latexParser parse" name="parse \begin{align}..." time="0"/>
+<testcase classname="latexParser parse" name="parse unbalanced \begin{aligned}" time="0.001"/>
+<testcase classname="latexParser parse" name="parse newenvironment command" time="0.001"/>
+<testcase classname="latexParser parse" name="parse an optional argument having only spaces" time="0.001"/>
+<testcase classname="latexParser parse" name="parse optional arguments having spaces" time="0.002"/>
+<testcase classname="latexParser parse" name="parse optional arguments having a tilde" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \node[label={abc}, efg]" time="0"/>
+<testcase classname="latexParser parse" name="parse \def\abc{abc}" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \def\abc [#1]#2 {#2#1abc}" time="0"/>
+<testcase classname="latexParser parse" name="parse a command whose name has @" time="0.001"/>
+<testcase classname="latexParser parse" name="parse invalid commands without error" time="0"/>
+<testcase classname="latexParser parse" name="parse \part" time="0"/>
+<testcase classname="latexParser parse" name="parse \par\par" time="0"/>
+<testcase classname="latexParser parse" name="parse \newlineMyCommand" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \linebreakMyCommand" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \label{a_b}" time="0.002"/>
+<testcase classname="latexParser parse" name="parse a_b" time="0.001"/>
+<testcase classname="latexParser parse" name="parse a^b" time="0"/>
+<testcase classname="latexParser parse" name="parse $a^b$" time="0"/>
+<testcase classname="latexParser parse" name="parse $a^b$ with {enableMathCharacterLocation: true}" time="0.004"/>
+<testcase classname="latexParser parse" name="parse ~" time="0"/>
+<testcase classname="latexParser parse" name="should throw SyntaxError" time="0.002"/>
+<testcase classname="latexParser parse" name="parse $ a ^ b $" time="0.003"/>
+<testcase classname="latexParser parse" name="parse $\left(1\right]$" time="0.001"/>
+<testcase classname="latexParser parse" name="parse $\left.1\right]$" time="0"/>
+<testcase classname="latexParser parse" name="parse { }, including only spaces" time="0.001"/>
+<testcase classname="latexParser parse" name="parse $ $, including only spaces" time="0"/>
+<testcase classname="latexParser parse" name="parse \( \)" time="0"/>
+<testcase classname="latexParser parse" name="parse \[ \]" time="0"/>
+<testcase classname="latexParser parse" name="parse $$ $$" time="0.001"/>
+<testcase classname="latexParser parse" name="parse \begin{align} \end{align}" time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{align} \begin{aligned}" time="0"/>
+<testcase classname="latexParser parse" name="parse \begin{align} \begin{alignedat}" time="0.001"/>
+<testcase classname="latexParser parse" name="parse unbalanced \begin{aligned}" time="0"/>
+<testcase classname="latexParser parse" name="parse unbalanced \end{aligned}" time="0.002"/>
+<testcase classname="latexParser parse" name="parse preamble" time="0.001"/>
+<testcase classname="latexParser parse" name="parse empty preamble" time="0"/>
+<testcase classname="latexParser parse 2" name="parse \&quot;\i" time="0.001"/>
+<testcase classname="latexParser parse 2" name="parse Sch\&quot;onbrunner Schlo\ss{} Stra\ss e" time="0"/>
+<testcase classname="latexParser parse 2" name="parse a\\b c\newline" time="0.001"/>
+<testcase classname="latexParser parse 2" name="parse space + \begin{center}" time="0"/>
+<testcase classname="latexParser parse 2" name="parse { a }d" time="0"/>
+<testcase classname="latexParser parse 2" name="parse x {a} { b }d" time="0.001"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify a b" time="0"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify a  b" time="0.001"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify a_b" time="0"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify a\nb" time="0"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify newcommand 01" time="0"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify newcommand 02" time="0.001"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify newcommand 03" time="0.008"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify with lineBreak 01" time="0"/>
+<testcase classname="latexParser stringify" name="test latexParser.stringify with lineBreak 02" time="0.001"/>
+<testcase classname="latexParser stringify" name="test stringify a_b" time="0"/>
+<testcase classname="latexParser stringify" name="test stringify $a^b$" time="0"/>
+<testcase classname="latexParser stringify" name="test stringify $ \sin x$" time="0"/>
+<testcase classname="latexParser stringify" name="test stringify \def\abc [#1]#2 {#2#1abc}" time="0.001"/>
+<testcase classname="latexParser stringify" name="test stringify \url" time="0"/>
+<testcase classname="latexParser stringify" name="test stringify \href[]{}{}" time="0.001"/>
+<testcase classname="latexParser stringify" name="test stringify \href{}{}" time="0"/>
+<testcase classname="latexParser other" name="test type guard" time="0"/>
+<testcase classname="latexParser other" name="test type guard with assingment and never type" time="0"/>
+</testsuite>

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="jest tests" tests="2" failures="0" errors="0" time="0.929">
+  <testsuite name="widget.test.js" errors="0" failures="0" skipped="0" timestamp="2022-12-29T15:34:28" time="0.566" tests="2">
+    <testcase classname="" name="Load widget via link" time="0.272">
+    </testcase>
+    <testcase classname="" name="Mount iframe" time="0.023">
+    </testcase>
+  </testsuite>
+</testsuites>

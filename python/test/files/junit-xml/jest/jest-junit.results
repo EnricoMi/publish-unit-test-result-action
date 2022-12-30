@@ -1,0 +1,38 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=2,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=0,
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='jest/jest-junit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Load widget via link',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.272
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='jest/jest-junit.xml',
+      test_file=None,
+      line=None,
+      class_name='',
+      test_name='Mount iframe',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.023
+    )
+  ]
+)
