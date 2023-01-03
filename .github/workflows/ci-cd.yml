@@ -116,26 +116,12 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          echo '##[group]Pip cache info'
-          pip cache info
-          echo '##[endgroup]'
-          echo '##[group]Pip cache list'
-          pip cache list
-          echo '##[endgroup]'
-          echo '##[group]Install packages'
           python -m pip install --upgrade --force pip wheel
           pip install --force -r python/requirements.txt
           pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
-          echo '##[endgroup]'
-          echo '##[group]Installed packages'
           pip freeze | sort
-          echo '##[endgroup]'
-          echo '##[group]Pip cache info'
           pip cache info
-          echo '##[endgroup]'
-          echo '##[group]Pip cache list'
           pip cache list
-          echo '##[endgroup]'
         shell: bash
 
       - name: Update expectation files
