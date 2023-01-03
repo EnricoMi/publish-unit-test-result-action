@@ -7,6 +7,17 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=0,
   suite_errors=0,
   suite_time=0,
-  suite_details=[],
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='E:\\Jenkins2\\workspace\\KundM.Api.Csv\\KundM.Api.Csv-Build\\build\\'
+        'bin\\Debug\\KundM.Api.Csv.UnitTest.DLL',
+      tests=0,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[]
 )

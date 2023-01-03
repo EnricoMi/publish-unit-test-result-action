@@ -7,7 +7,35 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=3,
   suite_errors=0,
   suite_time=0,
-  suite_details=[],
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='AnotherTest',
+      tests=3,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='FailTest',
+      tests=3,
+      skipped=0,
+      failures=3,
+      errors=0,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='ShowBrowsers',
+      tests=3,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-issue5674.xml',

@@ -7,7 +7,17 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=2,
   suite_errors=1,
   suite_time=1,
-  suite_details=[],
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='test suite',
+      tests=4,
+      skipped=3,
+      failures=2,
+      errors=1,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='junit.multiresult.xml',
