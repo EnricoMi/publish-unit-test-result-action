@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="bazel/failing_absl_test" tests="1" failures="0" errors="1">
+    <testcase name="bazel/failing_absl_test" status="run" duration="0" time="0"><error message="exited with error code 1"/></testcase>
+      <system-out>
+Generated test.log (if the file is not UTF-8, then this may be unreadable):
+exec ${PAGER:-/usr/bin/less} "$0" || exit 1
+Executing tests from //bazel:failing_absl_test
+-----------------------------------------------------------------------------
+Traceback (most recent call last):
+  File "&lt;reducted&gt;", line 3, in &lt;module&gt;
+    import non_existent_package
+ModuleNotFoundError: No module named 'non_existent_package'
+      </system-out>
+      <system-err>
+Generated test.err
+      </system-err>
+    </testsuite>
+</testsuites>
