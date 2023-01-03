@@ -109,9 +109,9 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/action.yml') }}
+          key: ${{ matrix.os }}-pip-${{ hashFiles('**/requirements.txt', '**/action.yml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ matrix.os }}-pip-
 
       - name: Install package wheel
         if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
@@ -120,12 +120,18 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          echo '##[group]Install packages'
-          python -m pip install --upgrade --force --no-cache-dir pip
-          pip install --force --no-cache-dir -r python/requirements.txt
-          pip install --force --no-cache-dir -r python/test/requirements.txt -c python/test/constraints.txt
+          echo '##[group]Pip cache info'
+          pip cache info
           echo '##[endgroup]'
-          echo '##[group]List installed packages'
+          echo '##[group]Pip cache list'
+          pip cache list
+          echo '##[endgroup]'
+          echo '##[group]Install packages'
+          python -m pip install --upgrade --force pip
+          pip install --force -r python/requirements.txt
+          pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+          echo '##[endgroup]'
+          echo '##[group]Installed packages'
           pip freeze | sort
           echo '##[endgroup]'
           echo '##[group]Pip cache info'
@@ -481,9 +487,9 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+          key: ${{ matrix.os }}-pip-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ matrix.os }}-pip-
 
       - name: Install package wheel
         if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
@@ -526,10 +532,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-extra-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+          key: ${{ matrix.os }}-pip-extra-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-extra-
-            ${{ runner.os }}-pip-
+            ${{ matrix.os }}-pip-extra-
+            ${{ matrix.os }}-pip-
 
       - name: Setup Python
         uses: actions/setup-python@v4
