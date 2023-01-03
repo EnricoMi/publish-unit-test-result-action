@@ -109,9 +109,10 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-${{ hashFiles('**/requirements.txt', '**/action.yml') }}
+          key: ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}
           restore-keys: |
-            ${{ matrix.os }}-pip-
+            ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-
+            ${{ matrix.os }}-pip-test-
 
       - name: Install package wheel
         if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
@@ -487,8 +488,9 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+          key: ${{ matrix.os }}-pip-${{ matrix.python }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
           restore-keys: |
+            ${{ matrix.os }}-pip-${{ matrix.python }}-
             ${{ matrix.os }}-pip-
 
       - name: Install package wheel
