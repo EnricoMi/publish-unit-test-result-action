@@ -216,6 +216,7 @@ jobs:
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
           json_test_case_results: true
+          check_run_annotations: 'all tests, skipped tests, suite outputs'
           log_level: DEBUG
 
       - name: JSON output
@@ -271,6 +272,7 @@ jobs:
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
           INPUT_JSON_TEST_CASE_RESULTS: true
+          INPUT_CHECK_RUN_ANNOTATIONS: 'all tests, skipped tests, suite outputs'
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
@@ -487,6 +489,7 @@ jobs:
           junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
           json_test_case_results: true
+          check_run_annotations: 'all tests, skipped tests, suite outputs'
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -538,6 +541,7 @@ jobs:
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
           json_test_case_results: true
+          check_run_annotations: 'all tests, skipped tests, suite outputs'
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -584,6 +588,7 @@ jobs:
           trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
           json_test_case_results: true
+          check_run_annotations: 'all tests, skipped tests, suite outputs'
           log_level: DEBUG
 
       - name: JSON output
@@ -628,6 +633,7 @@ jobs:
           junit_files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
           json_test_case_results: true
+          check_run_annotations: 'all tests, skipped tests, suite outputs'
           log_level: DEBUG
 
       - name: JSON output
