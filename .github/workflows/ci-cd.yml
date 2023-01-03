@@ -114,11 +114,6 @@ jobs:
             ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-
             ${{ matrix.os }}-pip-test-
 
-      - name: Install package wheel
-        if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: python3 -m pip install wheel
-        shell: bash
-
       - name: Install Python dependencies
         run: |
           echo '##[group]Pip cache info'
@@ -128,7 +123,7 @@ jobs:
           pip cache list
           echo '##[endgroup]'
           echo '##[group]Install packages'
-          python -m pip install --upgrade --force pip
+          python -m pip install --upgrade --force pip wheel
           pip install --force -r python/requirements.txt
           pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
           echo '##[endgroup]'
