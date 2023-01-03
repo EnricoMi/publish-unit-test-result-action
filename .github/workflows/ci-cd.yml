@@ -83,12 +83,57 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Detect OS
+        id: os
+        env:
+          OS: ${{ matrix.os }}
+        run: |
+          case "$OS" in
+            ubuntu*)
+              echo "path-sep=/" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/.cache/pip" >>$GITHUB_OUTPUT
+              ;;
+            macos*)
+              echo "path-sep=/" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/Library/Caches/pip" >>$GITHUB_OUTPUT
+              ;;
+            windows*)
+              echo "path-sep=\\" >>$GITHUB_OUTPUT
+              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >>$GITHUB_OUTPUT
+              ;;
+          esac
+        shell: bash
+
+      - name: Cache PIP Packages
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${{ steps.os.outputs.pip-cache }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/action.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install package wheel
+        if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: python3 -m pip install wheel
+        shell: bash
+
       - name: Install Python dependencies
         run: |
+          echo '##[group]Install packages'
           python -m pip install --upgrade --force --no-cache-dir pip
           pip install --force --no-cache-dir -r python/requirements.txt
           pip install --force --no-cache-dir -r python/test/requirements.txt -c python/test/constraints.txt
+          echo '##[endgroup]'
+          echo '##[group]List installed packages'
           pip freeze | sort
+          echo '##[endgroup]'
+          echo '##[group]Pip cache info'
+          pip cache info
+          echo '##[endgroup]'
+          echo '##[group]Pip cache list'
+          pip cache list
+          echo '##[endgroup]'
         shell: bash
 
       - name: Update expectation files
