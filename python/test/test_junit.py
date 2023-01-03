@@ -92,7 +92,7 @@ class JUnitXmlParseTest:
                         self.assert_expectation(self.test, actual_tree, xml_expectation_path)
 
                         results_expectation_path = path.parent / (path.stem + '.results')
-                        actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)], suite_details=True)
+                        actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)], add_suite_details=True)
                         self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
                         annotations_expectation_path = path.parent / (path.stem + '.annotations')
@@ -120,7 +120,7 @@ class JUnitXmlParseTest:
                     xml = etree.tostring(actual, encoding='utf-8', xml_declaration=True, pretty_print=True)
                     w.write(xml.decode('utf-8'))
                 with open(path.parent / (path.stem + '.results'), 'w', encoding='utf-8') as w:
-                    results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)], suite_details=True)
+                    results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)], add_suite_details=True)
                     w.write(pp.pformat(results, indent=2))
                 with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
                     check_runs = cls.get_check_runs(results)

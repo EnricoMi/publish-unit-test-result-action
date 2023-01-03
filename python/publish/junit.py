@@ -155,7 +155,7 @@ def parse_junit_xml_files(files: Iterable[str],
     return progress_safe_parse_xml_file(files, parse, progress)
 
 
-def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0, suite_details: bool = False) -> ParsedUnitTestResults:
+def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0, add_suite_details: bool = False) -> ParsedUnitTestResults:
     def create_junitxml(filepath: str, tree: JUnitTree) -> JUnitXmlOrParseError:
         try:
             instance = JUnitXml.fromroot(tree.getroot())
@@ -238,7 +238,7 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
             get_text(leaf_suite._elem, 'system-err'),
         )
         for leaf_suite in leaf_suites
-    ] if suite_details else []
+    ] if add_suite_details else []
 
     # junit allows for multiple results for a single test case (e.g. success and failure for the same test)
     # we pick the most severe result, which could still be multiple results, so we aggregate those, which is messy

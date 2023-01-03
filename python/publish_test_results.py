@@ -122,7 +122,11 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
             elems.extend(parse_trx_files(trx_files, progress))
 
     # get the test results
-    return process_junit_xml_elems(elems, settings.time_factor, suite_outputs in settings.check_run_annotation).with_commit(settings.commit)
+    return process_junit_xml_elems(
+        elems,
+        time_factor=settings.time_factor,
+        add_suite_details=suite_outputs in settings.check_run_annotation
+    ).with_commit(settings.commit)
 
 
 def log_parse_errors(errors: List[ParseError], gha: GithubAction):

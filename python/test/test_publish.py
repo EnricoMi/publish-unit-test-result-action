@@ -1991,7 +1991,8 @@ class PublishTest(unittest.TestCase):
                                    str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
                                    str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
                                    str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
-                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')])).with_commit('example')
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')])
+        ).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
