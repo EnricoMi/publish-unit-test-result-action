@@ -53,9 +53,11 @@ pull_request_build_modes = [
 
 all_tests_list = 'all tests'
 skipped_tests_list = 'skipped tests'
-suite_outputs = 'suite outputs'
+suite_out_log = 'suite output logs'
+suite_err_log = 'suite error logs'
+suite_logs = 'suite logs'
 none_annotations = 'none'
-available_annotations = [all_tests_list, skipped_tests_list, suite_outputs, none_annotations]
+available_annotations = [all_tests_list, skipped_tests_list, suite_out_log, suite_err_log, suite_logs, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]
 
 
@@ -852,7 +854,7 @@ def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
     return [get_error_annotation(error) for error in parse_errors]
 
 
-def get_suite_annotations_for_suite(suite: UnitTestSuite) -> List[Annotation]:
+def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
     return [
         Annotation(
             path=suite.name,
@@ -865,15 +867,16 @@ def get_suite_annotations_for_suite(suite: UnitTestSuite) -> List[Annotation]:
             title=f'Logging on {source} of test suite {suite.name}',
             raw_details=details
         )
-        for details, source in [(suite.stdout, 'stdout'), (suite.stderr, 'stderr')]
+        for details, source in ([(suite.stdout, 'stdout')] if with_suite_out_logs else []) +
+                               ([(suite.stderr, 'stderr')] if with_suite_err_logs else [])
         if details
     ]
 
 
-def get_suite_annotations(suites: List[UnitTestSuite]) -> List[Annotation]:
+def get_suite_annotations(suites: List[UnitTestSuite], with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
     return [annotation
             for suite in suites
-            for annotation in get_suite_annotations_for_suite(suite)]
+            for annotation in get_suite_annotations_for_suite(suite, with_suite_out_logs, with_suite_err_logs)]
 
 
 def get_test_name(file_name: Optional[str],

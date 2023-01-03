@@ -450,7 +450,7 @@ class Test(unittest.TestCase):
         # Note: more tests in test_get_annotations_config*
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation', expected=None)
-        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, suite outputs, none", str(re.exception))
+        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, suite output logs, suite error logs, suite logs, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
