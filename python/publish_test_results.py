@@ -448,4 +448,6 @@ if __name__ == "__main__":
         gha.echo(True)
 
     settings = get_settings(options, gha)
+    logger.debug(f'Settings: {settings}')
+
     main(settings, gha)

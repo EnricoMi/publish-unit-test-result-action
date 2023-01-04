@@ -173,6 +173,8 @@ class Publisher:
                 cases: UnitTestCaseResults,
                 conclusion: str):
         logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'Publishing {stats}')
         check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
