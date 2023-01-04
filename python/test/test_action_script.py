@@ -1000,6 +1000,43 @@ class Test(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertEqual(expected, is_float(value), value)
 
+    def test_main(self):
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file')
+            with open(filepath, 'wt', encoding='utf-8') as file:
+                file.write('{}')
+
+            gha = mock.MagicMock()
+            settings = get_settings(dict(
+                COMMIT='commit',
+                GITHUB_TOKEN='********',
+                GITHUB_EVENT_PATH=file.name,
+                GITHUB_EVENT_NAME='push',
+                GITHUB_REPOSITORY='repo',
+                EVENT_FILE=None,
+                CHECK_RUN_ANNOTATIONS='all tests, skipped tests, suite logs',
+                JUNIT_FILES='files/junit-xml/**/*.xml',
+                NUNIT_FILES='files/nunit/**/*.xml',
+                XUNIT_FILES='files/xunit/**/*.xml',
+                TRX_FILES='files/trx/**/*.xml',
+            ), gha)
+
+            with mock.patch('publish_test_results.get_github'), \
+                 mock.patch('publish.publisher.Publisher.publish') as m:
+                main(settings, gha)
+
+                # Publisher.publish is expected to have been called once
+                self.assertEqual(1, len(m.call_args_list))
+                self.assertEqual(3, len(m.call_args_list[0].args))
+
+                # Publisher.publish is expected to have been called with these arguments
+                results, cases, conclusion = m.call_args_list[0].args
+                self.assertEqual(61, results.files)
+                self.assertEqual(352, results.suites)
+                self.assertEqual(352, len(results.suite_details))
+                self.assertEqual(851, len(cases))
+                self.assertEqual('failure', conclusion)
+
     def test_main_fork_pr_check(self):
         with tempfile.TemporaryDirectory() as path:
             filepath = os.path.join(path, 'file')
