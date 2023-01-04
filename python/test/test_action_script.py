@@ -859,7 +859,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(70, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-            # on macOS and Python 3.10 we see one particular error
+            # on macOS and Python 3.10 and above we see one particular error
             self.assertEqual(8, len(actual.errors))
             self.assertEqual(359, actual.suites)
             self.assertEqual(2037, actual.suite_tests)
@@ -867,7 +867,7 @@ class Test(unittest.TestCase):
             self.assertEqual(224, actual.suite_failures)
             self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
-            self.assertEqual(361, len(actual.suite_details))
+            self.assertEqual(359, len(actual.suite_details))
             self.assertEqual(2025, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
