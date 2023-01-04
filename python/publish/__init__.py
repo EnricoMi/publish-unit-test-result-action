@@ -56,7 +56,6 @@ skipped_tests_list = 'skipped tests'
 suite_out_log = 'suite output logs'
 suite_err_log = 'suite error logs'
 suite_logs = 'suite logs'
-any_suite_logs = [suite_logs, suite_out_log, suite_err_log]
 none_annotations = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, suite_out_log, suite_err_log, suite_logs, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]

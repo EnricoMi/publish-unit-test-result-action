@@ -40,6 +40,7 @@ class Settings:
     commit: str
     json_file: Optional[str]
     json_thousands_separator: str
+    json_suite_details: bool
     json_test_case_results: bool
     fail_on_errors: bool
     fail_on_failures: bool
@@ -62,6 +63,8 @@ class Settings:
     dedup_classes_by_file_name: bool
     ignore_runs: bool
     check_run_annotation: List[str]
+    suite_out_log_annotations: bool
+    suite_err_log_annotations: bool
     seconds_between_github_reads: float
     seconds_between_github_writes: float
 
@@ -76,6 +79,23 @@ class PublishData:
     annotations: List[Annotation]
     check_url: str
     cases: Optional[UnitTestCaseResults]
+
+    def without_exceptions(self) -> 'PublishData':
+        return dataclasses.replace(
+            self,
+            # remove exceptions
+            stats=self.stats.without_exceptions(),
+            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
+            # turn defaultdict into simple dict
+            cases={test: {state: cases for state, cases in states.items()}
+                   for test, states in self.cases.items()} if self.cases else None
+        )
+
+    def without_suite_details(self) -> 'PublishData':
+        return dataclasses.replace(self, stats=self.stats.without_suite_details())
+
+    def without_cases(self) -> 'PublishData':
+        return dataclasses.replace(self, cases=None)
 
     @classmethod
     def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
@@ -102,22 +122,16 @@ class PublishData:
         return d
 
     def _as_dict(self) -> Dict[str, Any]:
-        self_without_exceptions_and_suite_details = dataclasses.replace(
-            self,
-            # remove exceptions
-            stats=self.stats.without_exceptions(),
-            stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
-            # turn defaultdict into simple dict
-            cases={test: {state: cases for state, cases in states.items()}
-                   for test, states in self.cases.items()} if self.cases else None
-        )
-
         # the dict_factory removes None values
-        return dataclasses.asdict(self_without_exceptions_and_suite_details,
-                                  dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
+        return dataclasses.asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
-    def to_dict(self, thousands_separator: str) -> Mapping[str, Any]:
-        d = self._as_dict()
+    def to_dict(self, thousands_separator: str, with_suite_details: bool, with_cases: bool) -> Mapping[str, Any]:
+        data = self.without_exceptions()
+        if not with_suite_details:
+            data = data.without_suite_details()
+        if not with_cases:
+            data = data.without_cases()
+        d = data._as_dict()
 
         # beautify cases, turn tuple-key into proper fields
         if d.get('cases'):
@@ -136,8 +150,8 @@ class PublishData:
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
-        # remove suite details from stats
-        data = dataclasses.replace(self, stats=self.stats.without_suite_details())._as_dict()
+        # remove exceptions, suite details and cases
+        data = self.without_exceptions().without_suite_details().without_cases()._as_dict()
 
         # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
@@ -148,14 +162,13 @@ class PublishData:
                 d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
             if d.get('annotations') is not None:
                 d['annotations'] = len(d['annotations'])
-            if d.get('cases') is not None:
-                del d['cases']
             return d
 
         data = reduce(data)
         data.update(formatted=self._formatted_stats_and_delta(
             data.get('stats'), data.get('stats_with_delta'), thousands_separator
         ))
+
         return data
 
 
@@ -334,10 +347,7 @@ class Publisher:
 
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
-        annotations = self._settings.check_run_annotation
-        with_suite_out_logs = suite_logs in annotations or suite_out_log in annotations
-        with_suite_err_logs = suite_logs in annotations or suite_err_log in annotations
-        output_annotations = get_suite_annotations(stats.suite_details, with_suite_out_logs, with_suite_err_logs)
+        output_annotations = get_suite_annotations(stats.suite_details, self._settings.suite_out_log_annotations, self._settings.suite_err_log_annotations)
         file_list_annotations = self.get_test_list_annotations(cases)
         all_annotations = error_annotations + case_annotations + output_annotations + file_list_annotations
 
@@ -378,7 +388,7 @@ class Publisher:
             stats_with_delta=stats_with_delta if before_stats is not None else None,
             annotations=all_annotations,
             check_url=check_run.html_url,
-            cases=cases if self._settings.json_test_case_results else None
+            cases=cases
         )
         self.publish_json(data)
 
@@ -388,7 +398,11 @@ class Publisher:
         if self._settings.json_file:
             try:
                 with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
-                    json.dump(data.to_dict(self._settings.json_thousands_separator), w, ensure_ascii=False)
+                    json.dump(data.to_dict(
+                        self._settings.json_thousands_separator,
+                        self._settings.json_suite_details,
+                        self._settings.json_test_case_results
+                    ), w, ensure_ascii=False)
             except Exception as e:
                 self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:

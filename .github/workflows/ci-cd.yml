@@ -215,6 +215,7 @@ jobs:
           check_name: Test Results (Dockerfile)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
           check_run_annotations: 'all tests, skipped tests, suite logs'
           log_level: DEBUG
@@ -271,6 +272,7 @@ jobs:
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
+          INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
           INPUT_CHECK_RUN_ANNOTATIONS: 'all tests, skipped tests, suite logs'
         run: |
@@ -280,6 +282,7 @@ jobs:
             -e "INPUT_CHECK_NAME" \
             -e "INPUT_JUNIT_FILES" \
             -e "INPUT_JSON_FILE" \
+            -e "INPUT_JSON_SUITE_DETAILS" \
             -e "INPUT_JSON_TEST_CASE_RESULTS" \
             -e "INPUT_LOG_LEVEL" \
             -e "INPUT_ROOT_LOG_LEVEL" \
@@ -488,6 +491,7 @@ jobs:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
           check_run_annotations: 'all tests, skipped tests, suite logs'
 
@@ -540,6 +544,7 @@ jobs:
           check_name: Test Results (setup-python)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
           check_run_annotations: 'all tests, skipped tests, suite logs'
 
@@ -587,6 +592,7 @@ jobs:
           xunit_files: "test-files/xunit/**/*.xml"
           trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
           check_run_annotations: 'all tests, skipped tests, suite logs'
           log_level: DEBUG
@@ -632,6 +638,7 @@ jobs:
           fail_on: nothing
           junit_files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
           check_run_annotations: 'all tests, skipped tests, suite logs'
           log_level: DEBUG

@@ -15,7 +15,7 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import available_annotations, any_suite_logs, default_annotations, \
+from publish import available_annotations, suite_out_log, suite_err_log, suite_logs, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -125,7 +125,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
-        add_suite_details=any(logs in settings.check_run_annotation for logs in any_suite_logs)
+        add_suite_details=settings.suite_out_log_annotations or settings.suite_err_log_annotations or settings.json_suite_details
     ).with_commit(settings.commit)
 
 
@@ -386,6 +386,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         json_file=get_var('JSON_FILE', options),
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
+        json_suite_details=get_bool_var('JSON_SUITE_DETAILS', options, default=False),
         json_test_case_results=get_bool_var('JSON_TEST_CASE_RESULTS', options, default=False),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
@@ -407,6 +408,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
         ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
         check_run_annotation=annotations,
+        suite_out_log_annotations=suite_logs in annotations or suite_out_log in annotations,
+        suite_err_log_annotations=suite_logs in annotations or suite_err_log in annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
     )
