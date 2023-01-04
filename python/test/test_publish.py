@@ -11,10 +11,10 @@ from publish import Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDe
     get_magnitude, get_delta, as_short_commit, as_delta, as_stat_number, as_stat_duration, get_stats_from_digest, \
     digest_string, ungest_string, get_details_line_md, get_commit_line_md, restrict_unicode, \
     get_short_summary, get_short_summary_md, get_long_summary_md, get_long_summary_with_runs_md, \
-    get_long_summary_without_runs_md,  get_long_summary_with_digest_md, \
-    get_test_changes_md, get_test_changes_list_md,  get_test_changes_summary_md, \
-    get_case_annotations, get_case_annotation, get_all_tests_list_annotation, \
-    get_skipped_tests_list_annotation, get_case_messages, chunk_test_list, message_is_contained_in_content
+    get_long_summary_without_runs_md,  get_long_summary_with_digest_md, get_test_changes_md, get_test_changes_list_md,  \
+    get_test_changes_summary_md, get_case_annotations, get_case_annotation, get_suite_annotations, \
+    get_suite_annotations_for_suite, get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_case_messages, \
+    chunk_test_list, message_is_contained_in_content
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError, get_test_results, create_unit_test_case_results
 from test_utils import temp_locale, d, n
@@ -1810,6 +1810,72 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=None, end_column=None, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, None, None)))
         self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, None)))
         self.assertEqual(Annotation(path='file', start_line=12, end_line=12, start_column=34, end_column=34, annotation_level='failure', message='message', title='Error processing result file', raw_details='file'), get_error_annotation(ParseError('file', 'message', 12, 34, ValueError('invalid value'))))
+
+    def test_get_suite_annotations_and_for_suite(self):
+        out_log = 'stdout log'
+        err_log = 'stderr log'
+        multiline_out_log = 'stdout\nlog'
+        multiline_err_log = 'stderr\nlog'
+        empty_string = ''
+        whitespaces = ' \t\n'
+        whitespaces2 = '\n\t '
+
+        suites = [
+            UnitTestSuite('no logs', 0, 0, 0, 0, None, None),
+            UnitTestSuite('out logs', 0, 0, 0, 0, out_log, None),
+            UnitTestSuite('err logs', 0, 0, 0, 0, None, err_log),
+            UnitTestSuite('both logs', 0, 0, 0, 0, multiline_out_log, multiline_err_log),
+            UnitTestSuite('empty string logs', 0, 0, 0, 0, empty_string, empty_string),
+            UnitTestSuite('whitespace logs', 0, 0, 0, 0, whitespaces, whitespaces2),
+        ]
+
+        def create_annotation(name: str, source: str, log: str) -> Annotation:
+            return Annotation(
+                path=name,
+                start_line=0,
+                end_line=0,
+                start_column=None,
+                end_column=None,
+                annotation_level='warning' if source == 'stderr' else 'notice',
+                message=f'Test suite {name} has the following {source} output (see Raw output).',
+                title=f'Logging on {source} of test suite {name}',
+                raw_details=log
+            )
+
+        for suite in suites:
+            for with_out_logs, with_err_logs in [(False, False), (True, False), (False, True), (True, True)]:
+                with self.subTest(suite=suite, with_suite_out_logs=with_out_logs, with_suite_err_logs=with_err_logs):
+                    actual = get_suite_annotations_for_suite(suite, with_suite_out_logs=with_out_logs, with_suite_err_logs=with_err_logs)
+
+                    expected_size = 0
+                    if with_out_logs and suite.stdout and suite.stdout.strip():
+                        expected = create_annotation(suite.name, 'stdout', suite.stdout)
+                        self.assertIn(expected, actual)
+                        expected_size = expected_size + 1
+                    if with_err_logs and suite.stderr and suite.stderr.strip():
+                        expected = create_annotation(suite.name, 'stderr', suite.stderr)
+                        self.assertIn(expected, actual)
+                        expected_size = expected_size + 1
+
+                    self.assertEqual(expected_size, len(actual))
+
+        out_log_annotation = create_annotation('out logs', 'stdout', out_log)
+        err_log_annotation = create_annotation('err logs', 'stderr', err_log)
+        multiline_out_log_annotation = create_annotation('both logs', 'stdout', multiline_out_log)
+        multiline_err_log_annotation = create_annotation('both logs', 'stderr', multiline_err_log)
+
+        tests = [
+            (False, False, []),
+            (True, False, [out_log_annotation, multiline_out_log_annotation]),
+            (False, True, [err_log_annotation, multiline_err_log_annotation]),
+            (True, True, [out_log_annotation, err_log_annotation, multiline_out_log_annotation, multiline_err_log_annotation]),
+        ]
+
+        for with_out_logs, with_err_logs, expected in tests:
+            with self.subTest(with_suite_out_logs=with_out_logs, with_suite_err_logs=with_err_logs):
+                self.maxDiff = None
+                actual = get_suite_annotations(suites, with_suite_out_logs=with_out_logs, with_suite_err_logs=with_err_logs)
+                self.assertEqual(expected, actual)
 
     def test_get_all_tests_list_annotation(self):
         results = create_unit_test_case_results({

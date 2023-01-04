@@ -15,7 +15,7 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import available_annotations, suite_logs, default_annotations, \
+from publish import available_annotations, any_suite_logs, default_annotations, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -125,7 +125,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
-        add_suite_details=suite_logs in settings.check_run_annotation
+        add_suite_details=any(logs in settings.check_run_annotation for logs in any_suite_logs)
     ).with_commit(settings.commit)
 
 

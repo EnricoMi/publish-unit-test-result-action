@@ -56,6 +56,7 @@ skipped_tests_list = 'skipped tests'
 suite_out_log = 'suite output logs'
 suite_err_log = 'suite error logs'
 suite_logs = 'suite logs'
+any_suite_logs = [suite_logs, suite_out_log, suite_err_log]
 none_annotations = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, suite_out_log, suite_err_log, suite_logs, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]
@@ -869,7 +870,7 @@ def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: b
         )
         for details, source in ([(suite.stdout, 'stdout')] if with_suite_out_logs else []) +
                                ([(suite.stderr, 'stderr')] if with_suite_err_logs else [])
-        if details
+        if details and details.strip()
     ]
 
 

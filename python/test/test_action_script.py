@@ -13,7 +13,7 @@ import mock
 from packaging.version import Version
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_always, \
+    fail_on_mode_nothing, comment_modes, comment_mode_always, suite_logs, \
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, ParseError
@@ -834,7 +834,8 @@ class Test(unittest.TestCase):
         settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                                      nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
                                      xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
-                                     trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
+                                     trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'),
+                                     check_run_annotation=[suite_logs])
         with mock.patch('publish_test_results.logger') as l:
             actual = parse_files(settings, gha)
 
@@ -866,6 +867,7 @@ class Test(unittest.TestCase):
             self.assertEqual(224, actual.suite_failures)
             self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
+            self.assertEqual(361, len(actual.suite_details))
             self.assertEqual(2025, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
@@ -875,6 +877,7 @@ class Test(unittest.TestCase):
             self.assertEqual(226, actual.suite_failures)
             self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
+            self.assertEqual(361, len(actual.suite_details))
             self.assertEqual(2029, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
