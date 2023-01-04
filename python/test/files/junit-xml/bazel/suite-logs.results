@@ -26,7 +26,7 @@ publish.unittestresults.ParsedUnitTestResults(
   ],
   cases=[
     publish.unittestresults.UnitTestCase(
-      result_file='bazel/suite-stdout.xml',
+      result_file='bazel/suite-logs.xml',
       test_file=None,
       line=None,
       class_name=None,
