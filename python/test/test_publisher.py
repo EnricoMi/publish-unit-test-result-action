@@ -1526,6 +1526,7 @@ class TestPublisher(unittest.TestCase):
     )
 
     def test_publish_check_with_cases(self):
+        self.maxDiff = None
         results = get_test_results(ParsedUnitTestResultsWithCommit(
             files=1,
             errors=errors,
@@ -1604,7 +1605,7 @@ class TestPublisher(unittest.TestCase):
                     '\\n'
                     'Results for commit commit.\\n", '
                     '"conclusion": "conclusion", '
-                    '"stats": {"files": 1, "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": 2, "duration": 7, "tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
+                    '"stats": {"files": 1, "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": 2, "duration": 7, "suite_details": [], "tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
                     '"annotations": ['
                     '{"path": "file", "start_line": 1, "end_line": 1, "start_column": 2, "end_column": 2, "annotation_level": "failure", "message": "error", "title": "Error processing result file", "raw_details": "file"}, '
                     '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
@@ -1673,7 +1674,7 @@ class TestPublisher(unittest.TestCase):
                     '}'
                     '}'
                     '], '
-                    '"formatted": {"stats": {"files": "1", "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": "2", "duration": "7", "tests": "7", "tests_succ": "1", "tests_skip": "2", "tests_fail": "3", "tests_error": "1", "runs": "3", "runs_succ": "-12", "runs_skip": "4", "runs_fail": "5", "runs_error": "6", "commit": "commit"}}'
+                    '"formatted": {"stats": {"files": "1", "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": "2", "duration": "7", "suite_details": [], "tests": "7", "tests_succ": "1", "tests_skip": "2", "tests_fail": "3", "tests_error": "1", "runs": "3", "runs_succ": "-12", "runs_skip": "4", "runs_fail": "5", "runs_error": "6", "commit": "commit"}}'
                     '}',
                     actual
                 )
@@ -1706,6 +1707,13 @@ class TestPublisher(unittest.TestCase):
                     'conclusion': 'conclusion',
                     'stats': {'commit': 'commit',
                               'duration': 3456,
+                              'suite_details': [{'errors': 1,
+                                                 'failures': 2,
+                                                 'name': 'suite',
+                                                 'skipped': 3,
+                                                 'stderr': 'stderr',
+                                                 'stdout': 'stdout',
+                                                 'tests': 7}],
                               'errors': [{'column': 2,
                                           'file': 'file',
                                           'line': 1,
@@ -1758,6 +1766,13 @@ class TestPublisher(unittest.TestCase):
                                             'runs_fail': "12",
                                             'runs_skip': "11",
                                             'runs_succ': "10",
+                                            'suite_details': [{'errors': 1,
+                                                               'failures': 2,
+                                                               'name': 'suite',
+                                                               'skipped': 3,
+                                                               'stderr': 'stderr',
+                                                               'stdout': 'stdout',
+                                                               'tests': 7}],
                                             'suites': "2",
                                             'tests': "4",
                                             'tests_error': "8" + separator + "901",
@@ -1917,7 +1932,7 @@ class TestPublisher(unittest.TestCase):
                             '"title": "title", '
                             '"summary": "summary", '
                             '"conclusion": "conclusion", '
-                            '"stats": {"files": 12345, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3456, "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8901, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 1345, "commit": "commit"}, '
+                            '"stats": {"files": 12345, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": 2, "duration": 3456, "suite_details": [{"name": "suite", "tests": 7, "skipped": 3, "failures": 2, "errors": 1, "stdout": "stdout", "stderr": "stderr"}], "tests": 4, "tests_succ": 5, "tests_skip": 6, "tests_fail": 7, "tests_error": 8901, "runs": 9, "runs_succ": 10, "runs_skip": 11, "runs_fail": 12, "runs_error": 1345, "commit": "commit"}, '
                             '"stats_with_delta": {"files": {"number": 1234, "delta": -1234}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": 2, "delta": -2}, "duration": {"number": 3456, "delta": -3456}, "tests": {"number": 4, "delta": -4}, "tests_succ": {"number": 5, "delta": -5}, "tests_skip": {"number": 6, "delta": -6}, "tests_fail": {"number": 7, "delta": -7}, "tests_error": {"number": 8, "delta": -8}, "runs": {"number": 9, "delta": -9}, "runs_succ": {"number": 10, "delta": -10}, "runs_skip": {"number": 11, "delta": -11}, "runs_fail": {"number": 12, "delta": -12}, "runs_error": {"number": 1345, "delta": -1345}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}, '
                             '"annotations": [{"path": "path", "start_line": 1, "end_line": 2, "start_column": 3, "end_column": 4, "annotation_level": "failure", "message": "message", "title": "Error processing result file", "raw_details": "file"}], '
                             '"check_url": "http://check-run.url", '
@@ -1925,7 +1940,7 @@ class TestPublisher(unittest.TestCase):
                             '{"class_name": "class name", "test_name": "test name", "states": {"success": [{"result_file": "/path/to/test/test.classpath.classname", "test_file": "file1", "line": 1, "class_name": "test.classpath.classname", "test_name": "casename", "result": "success", "message": "message", "content": "content", "stdout": "stdout", "stderr": "stderr", "time": 0.1}]}}'
                             '], '
                             '"formatted": {'
-                            '"stats": {"files": "12' + separator + '345", "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": "2", "duration": "3' + separator + '456", "tests": "4", "tests_succ": "5", "tests_skip": "6", "tests_fail": "7", "tests_error": "8' + separator + '901", "runs": "9", "runs_succ": "10", "runs_skip": "11", "runs_fail": "12", "runs_error": "1' + separator + '345", "commit": "commit"}, '
+                            '"stats": {"files": "12' + separator + '345", "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}], "suites": "2", "duration": "3' + separator + '456", "suite_details": [{"name": "suite", "tests": 7, "skipped": 3, "failures": 2, "errors": 1, "stdout": "stdout", "stderr": "stderr"}], "tests": "4", "tests_succ": "5", "tests_skip": "6", "tests_fail": "7", "tests_error": "8' + separator + '901", "runs": "9", "runs_succ": "10", "runs_skip": "11", "runs_fail": "12", "runs_error": "1' + separator + '345", "commit": "commit"}, '
                             '"stats_with_delta": {"files": {"number": "1' + separator + '234", "delta": "-1' + separator + '234"}, "errors": [{"file": "file", "message": "message", "line": 1, "column": 2}, {"file": "file2", "message": "message2", "line": 2, "column": 4}], "suites": {"number": "2", "delta": "-2"}, "duration": {"number": "3' + separator + '456", "delta": "-3' + separator + '456"}, "tests": {"number": "4", "delta": "-4"}, "tests_succ": {"number": "5", "delta": "-5"}, "tests_skip": {"number": "6", "delta": "-6"}, "tests_fail": {"number": "7", "delta": "-7"}, "tests_error": {"number": "8", "delta": "-8"}, "runs": {"number": "9", "delta": "-9"}, "runs_succ": {"number": "10", "delta": "-10"}, "runs_skip": {"number": "11", "delta": "-11"}, "runs_fail": {"number": "12", "delta": "-12"}, "runs_error": {"number": "1' + separator + '345", "delta": "-1' + separator + '345"}, "commit": "commit", "reference_type": "type", "reference_commit": "ref"}'
                             '}'
                             '}',

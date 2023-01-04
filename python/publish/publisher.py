@@ -104,8 +104,8 @@ class PublishData:
     def _as_dict(self) -> Dict[str, Any]:
         self_without_exceptions_and_suite_details = dataclasses.replace(
             self,
-            # remove exceptions and suite details
-            stats=self.stats.without_exceptions().without_suite_details(),
+            # remove exceptions
+            stats=self.stats.without_exceptions(),
             stats_with_delta=self.stats_with_delta.without_exceptions() if self.stats_with_delta else None,
             # turn defaultdict into simple dict
             cases={test: {state: cases for state, cases in states.items()}
@@ -136,7 +136,8 @@ class PublishData:
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
-        data = self._as_dict()
+        # remove suite details from stats
+        data = dataclasses.replace(self, stats=self.stats.without_suite_details())._as_dict()
 
         # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
