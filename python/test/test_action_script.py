@@ -1067,10 +1067,10 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 EVENT_FILE=None,
                 CHECK_RUN_ANNOTATIONS='all tests, skipped tests, suite logs',
-                JUNIT_FILES='files/junit-xml/**/*.xml',
-                NUNIT_FILES='files/nunit/**/*.xml',
-                XUNIT_FILES='files/xunit/**/*.xml',
-                TRX_FILES='files/trx/**/*.xml',
+                JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
+                XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),
+                TRX_FILES=str(test_files_path / 'trx' / '**' / '*.trx'),
             ), gha)
 
             with mock.patch('publish_test_results.get_github'), \
@@ -1083,14 +1083,16 @@ class Test(unittest.TestCase):
 
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
-                self.assertEqual(61, results.files)
-                self.assertEqual(352, results.suites)
+                self.assertEqual(70, results.files)
                 if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                     # on macOS and Python 3.10 and above we see one particular error
-                    self.assertEqual(350, len(results.suite_details))
+                    self.assertEqual(359, results.suites)
+                    self.assertEqual(359, len(results.suite_details))
+                    self.assertEqual(1786, len(cases))
                 else:
-                    self.assertEqual(352, len(results.suite_details))
-                self.assertEqual(851, len(cases))
+                    self.assertEqual(361, results.suites)
+                    self.assertEqual(361, len(results.suite_details))
+                    self.assertEqual(1786, len(cases))
                 self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check(self):
