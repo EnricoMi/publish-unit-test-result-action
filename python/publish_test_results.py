@@ -15,7 +15,8 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import available_annotations, suite_out_log, suite_err_log, suite_logs, default_annotations, \
+from publish import available_annotations, default_annotations, none_annotations, \
+    report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -125,7 +126,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
-        add_suite_details=settings.suite_out_log_annotations or settings.suite_err_log_annotations or settings.json_suite_details
+        add_suite_details=settings.report_suite_out_logs or settings.report_suite_err_logs or settings.json_suite_details
     ).with_commit(settings.commit)
 
 
@@ -360,6 +361,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
 
     check_name = get_var('CHECK_NAME', options) or 'Test Results'
     annotations = get_annotations_config(options, event)
+    suite_logs_mode = get_var('REPORT_SUITE_LOGS', options) or default_report_suite_logs
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
@@ -405,11 +407,11 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
         report_individual_runs=get_bool_var('REPORT_INDIVIDUAL_RUNS', options, default=False),
+        report_suite_out_logs=suite_logs_mode in {report_suite_logs, report_suite_out_log},
+        report_suite_err_logs=suite_logs_mode in {report_suite_logs, report_suite_err_log},
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
         ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
         check_run_annotation=annotations,
-        suite_out_log_annotations=suite_logs in annotations or suite_out_log in annotations,
-        suite_err_log_annotations=suite_logs in annotations or suite_err_log in annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)
     )
@@ -419,7 +421,9 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
+    check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
+    check_var_condition(none_annotations not in settings.check_run_annotation or len(settings.check_run_annotation) == 1, f"CHECK_RUN_ANNOTATIONS '{none_annotations}' cannot be combined with other annotations: {', '.join(settings.check_run_annotation)}")
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')

@@ -13,8 +13,10 @@ import mock
 from packaging.version import Version
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_always, default_annotations, all_tests_list, skipped_tests_list, \
-    suite_out_log, suite_err_log, suite_logs, pull_request_build_modes, punctuation_space
+    fail_on_mode_nothing, comment_modes, comment_mode_always,\
+    report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
+    default_annotations, all_tests_list, skipped_tests_list, none_annotations, \
+    pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, ParseError
 from publish_test_results import action_fail_required, get_conclusion, get_commit_sha, get_var, \
@@ -180,11 +182,11 @@ class Test(unittest.TestCase):
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
                      report_individual_runs=True,
+                     report_suite_out_logs=False,
+                     report_suite_err_logs=False,
                      dedup_classes_by_file_name=True,
                      ignore_runs=False,
                      check_run_annotation=default_annotations,
-                     suite_out_log_annotations=False,
-                     suite_err_log_annotations=False,
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
@@ -222,11 +224,11 @@ class Test(unittest.TestCase):
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
             report_individual_runs=report_individual_runs,
+            report_suite_out_logs=report_suite_out_logs,
+            report_suite_err_logs=report_suite_err_logs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
-            suite_out_log_annotations=suite_out_log_annotations,
-            suite_err_log_annotations=suite_err_log_annotations,
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes
         )
@@ -434,6 +436,18 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
+    def test_get_settings_report_suite_logs(self):
+        self.do_test_get_settings(REPORT_SUITE_LOGS=None, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=default_report_suite_logs, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_no_suite_logs, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_out_log, expected=self.get_settings(report_suite_out_logs=True, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_err_log, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=True))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_logs, expected=self.get_settings(report_suite_out_logs=True, report_suite_err_logs=True))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(REPORT_SUITE_LOGS='logs')
+        self.assertEqual("Value 'logs' is not supported for variable REPORT_SUITE_LOGS, expected: info, error, any, none", str(re.exception))
+
     def test_get_settings_dedup_classes_by_file_name(self):
         warning = 'Option deduplicate_classes_by_file_name has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='false', expected=self.get_settings(dedup_classes_by_file_name=False))
@@ -453,17 +467,23 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
 
     def test_get_settings_check_run_annotations(self):
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join(default_annotations), expected=self.get_settings(check_run_annotation=[all_tests_list, skipped_tests_list], suite_out_log_annotations=False, suite_err_log_annotations=False))
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=suite_logs, expected=self.get_settings(check_run_annotation=[suite_logs], suite_out_log_annotations=True, suite_err_log_annotations=True))
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=suite_out_log, expected=self.get_settings(check_run_annotation=[suite_out_log], suite_out_log_annotations=True, suite_err_log_annotations=False))
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=suite_err_log, expected=self.get_settings(check_run_annotation=[suite_err_log], suite_out_log_annotations=False, suite_err_log_annotations=True))
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([suite_out_log, suite_err_log]), expected=self.get_settings(check_run_annotation=[suite_out_log, suite_err_log], suite_out_log_annotations=True, suite_err_log_annotations=True))
-        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([suite_out_log, suite_err_log, suite_logs]), expected=self.get_settings(check_run_annotation=[suite_out_log, suite_err_log, suite_logs], suite_out_log_annotations=True, suite_err_log_annotations=True))
-        # Note: more tests in test_get_annotations_config*
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=None, expected=self.get_settings(check_run_annotation=default_annotations))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join(default_annotations), expected=self.get_settings(check_run_annotation=default_annotations))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=all_tests_list, expected=self.get_settings(check_run_annotation=[all_tests_list]))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=skipped_tests_list, expected=self.get_settings(check_run_annotation=[skipped_tests_list]))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=none_annotations, expected=self.get_settings(check_run_annotation=[none_annotations]))
 
         with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation', expected=None)
-        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, suite output logs, suite error logs, suite logs, none", str(re.exception))
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([all_tests_list, skipped_tests_list, none_annotations]), expected=self.get_settings(check_run_annotation=[]))
+        self.assertEqual("CHECK_RUN_ANNOTATIONS 'none' cannot be combined with other annotations: all tests, skipped tests, none", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotations')
+        self.assertEqual("Some values in 'annotations' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([all_tests_list, skipped_tests_list, "more"]))
+        self.assertEqual("Some values in 'all tests, skipped tests, more' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
@@ -945,9 +965,9 @@ class Test(unittest.TestCase):
 
     def test_parse_files_with_suite_details(self):
         for options in [
-            {'check_run_annotation': [suite_logs], 'suite_out_log_annotations': True, 'suite_err_log_annotations': True},
-            {'check_run_annotation': [suite_out_log], 'suite_out_log_annotations': True, 'suite_err_log_annotations': True},
-            {'check_run_annotation': [suite_err_log], 'suite_out_log_annotations': True, 'suite_err_log_annotations': True},
+            {'report_suite_out_logs': True, 'report_suite_err_logs': False},
+            {'report_suite_out_logs': False, 'report_suite_err_logs': True},
+            {'report_suite_out_logs': True, 'report_suite_err_logs': True},
             {'json_suite_details': True}
         ]:
             with self.subTest(**options):
@@ -1066,11 +1086,11 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_NAME='push',
                 GITHUB_REPOSITORY='repo',
                 EVENT_FILE=None,
-                CHECK_RUN_ANNOTATIONS='all tests, skipped tests, suite logs',
                 JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                 NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
                 XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),
                 TRX_FILES=str(test_files_path / 'trx' / '**' / '*.trx'),
+                REPORT_SUITE_LOGS='info'
             ), gha)
 
             with mock.patch('publish_test_results.get_github'), \

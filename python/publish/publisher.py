@@ -19,7 +19,7 @@ from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, get_suite_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
-    get_skipped_tests_list, all_tests_list, skipped_tests_list, suite_logs, suite_out_log, suite_err_log, pull_request_build_mode_merge, \
+    get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
@@ -60,11 +60,11 @@ class Settings:
     pull_request_build: str
     test_changes_limit: int
     report_individual_runs: bool
+    report_suite_out_logs: bool
+    report_suite_err_logs: bool
     dedup_classes_by_file_name: bool
     ignore_runs: bool
     check_run_annotation: List[str]
-    suite_out_log_annotations: bool
-    suite_err_log_annotations: bool
     seconds_between_github_reads: float
     seconds_between_github_writes: float
 
@@ -347,7 +347,7 @@ class Publisher:
 
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
-        output_annotations = get_suite_annotations(stats.suite_details, self._settings.suite_out_log_annotations, self._settings.suite_err_log_annotations)
+        output_annotations = get_suite_annotations(stats.suite_details, self._settings.report_suite_out_logs, self._settings.report_suite_err_logs)
         file_list_annotations = self.get_test_list_annotations(cases)
         all_annotations = error_annotations + case_annotations + output_annotations + file_list_annotations
 

@@ -4,7 +4,7 @@ description: 'A GitHub Action that publishes JUnit, NUnit, XUnit, and TRX test r
 
 inputs:
   github_token:
-    description: 'GitHub API Access Token'
+    description: 'GitHub API Access Token.'
     default: ${{ github.token }}
     required: false
   github_retries:
@@ -15,14 +15,14 @@ inputs:
     description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
     required: false
   check_name:
-    description: 'Name of the created check run'
+    description: 'Name of the created check run.'
     default: 'Test Results'
     required: false
   comment_title:
-    description: 'An alternative title for the pull request comment. Defaults to value of check_name input'
+    description: 'An alternative title for the pull request comment. Defaults to value of check_name input.'
     required: false
   comment_mode:
-    description: 'The action posts comments to pull requests that are associated with the commit. Set to "always" - always comment, "changes" - comment when changes w.r.t. the target branch exist, "changes in failures" - when changes in the number of failures and errors exist, "changes in errors" - when changes in the number of (only) errors exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments'
+    description: 'The action posts comments to pull requests that are associated with the commit. Set to "always" - always comment, "changes" - comment when changes w.r.t. the target branch exist, "changes in failures" - when changes in the number of failures and errors exist, "changes in errors" - when changes in the number of (only) errors exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments.'
     default: 'always'
     required: false
   fail_on:
@@ -57,21 +57,25 @@ inputs:
     default: 'seconds'
     required: false
   report_individual_runs:
-    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise'
+    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
+    required: false
+  report_suite_logs:
+    description: 'In addition to reporting regular test logs, also report test suite logs. These are logs provided on suite level, not individual test level. Set to "info" for normal output, "error" for error output, "any" for both, or "none" for no suite logs at all. Defaults to "none".'
+    default: 'none'
     required: false
   deduplicate_classes_by_file_name:
-    description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise'
+    description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise.'
     required: false
   ignore_runs:
-    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations'
+    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
     default: 'false'
     required: false
   job_summary:
-    description: 'Set to "true", the results are published as part of the job summary page of the workflow run'
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
     default: 'true'
     required: false
   compare_to_earlier_commit:
-    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits'
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits.'
     default: 'true'
     required: false
   pull_request_build:
@@ -88,18 +92,18 @@ inputs:
     description: 'Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of 0. The default is 10.'
     required: false
   check_run_annotations:
-    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all'
+    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all.'
     default: 'all tests, skipped tests'
     required: false
   check_run_annotations_branch:
     description: 'Adds check run annotations only on given branches. Comma-separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
     required: false
   seconds_between_github_reads:
-    description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
+    description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
     default: '0.25'
     required: false
   seconds_between_github_writes:
-    description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits'
+    description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
     default: '2.0'
     required: false
   json_file:
@@ -181,6 +185,7 @@ runs:
         TRX_FILES: ${{ inputs.trx_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
+        REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
         IGNORE_RUNS: ${{ inputs.ignore_runs }}
         COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}

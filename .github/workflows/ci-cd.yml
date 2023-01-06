@@ -217,7 +217,7 @@ jobs:
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
-          check_run_annotations: 'all tests, skipped tests, suite logs'
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output
@@ -274,7 +274,7 @@ jobs:
           INPUT_JSON_FILE: "tests.json"
           INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
-          INPUT_CHECK_RUN_ANNOTATIONS: 'all tests, skipped tests, suite logs'
+          INPUT_report_suite_logs: "any"
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
@@ -300,6 +300,7 @@ jobs:
             -e "INPUT_TRX_FILES" \
             -e "INPUT_TIME_UNIT" \
             -e "INPUT_REPORT_INDIVIDUAL_RUNS" \
+            -e "INPUT_REPORT_SUITE_LOGS" \
             -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
             -e "INPUT_IGNORE_RUNS" \
             -e "INPUT_JOB_SUMMARY" \
@@ -493,7 +494,7 @@ jobs:
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
-          check_run_annotations: 'all tests, skipped tests, suite logs'
+          report_suite_logs: "any"
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -546,7 +547,7 @@ jobs:
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
-          check_run_annotations: 'all tests, skipped tests, suite logs'
+          report_suite_logs: "any"
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -594,7 +595,7 @@ jobs:
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
-          check_run_annotations: 'all tests, skipped tests, suite logs'
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output
@@ -640,7 +641,7 @@ jobs:
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
-          check_run_annotations: 'all tests, skipped tests, suite logs'
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output

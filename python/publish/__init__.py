@@ -44,6 +44,13 @@ fail_on_modes = [
     fail_on_mode_failures
 ]
 
+report_suite_out_log = 'info'
+report_suite_err_log = 'error'
+report_suite_logs = 'any'
+report_no_suite_logs = 'none'
+available_report_suite_logs = [report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs]
+default_report_suite_logs = report_no_suite_logs
+
 pull_request_build_mode_commit = 'commit'
 pull_request_build_mode_merge = 'merge'
 pull_request_build_modes = [
@@ -53,11 +60,8 @@ pull_request_build_modes = [
 
 all_tests_list = 'all tests'
 skipped_tests_list = 'skipped tests'
-suite_out_log = 'suite output logs'
-suite_err_log = 'suite error logs'
-suite_logs = 'suite logs'
 none_annotations = 'none'
-available_annotations = [all_tests_list, skipped_tests_list, suite_out_log, suite_err_log, suite_logs, none_annotations]
+available_annotations = [all_tests_list, skipped_tests_list, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]
 
 
