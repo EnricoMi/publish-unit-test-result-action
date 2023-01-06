@@ -152,6 +152,8 @@ class JUnitXmlParseTest:
                                      commit=commit,
                                      compare_earlier=False,
                                      report_individual_runs=False,
+                                     report_suite_out_logs=True,
+                                     report_suite_err_logs=True,
                                      dedup_classes_by_file_name=False,
                                      check_run_annotation=set(available_annotations).difference(set(none_annotations)))
 
