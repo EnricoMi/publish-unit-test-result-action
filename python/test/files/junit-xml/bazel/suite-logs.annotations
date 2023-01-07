@@ -1,0 +1,79 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 errors in 0s',
+      'summary':
+        '1 tests\u2002\u2003\u20030 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20030 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u2003\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMMQ6AIBAEv'
+        '0KoLbT1M4QgxIsC5g4q498liHp0OzvJnNLBbknOYhqEpAzpgyWjThBDwbFgEelVdSvKxn'
+        'CpaIOjO5yGvTssYsQWwRyITZ57+K9VZrHKvGWi95AKtCVo1fK6AX55nzvdAAAA\n',
+      'annotations': [
+        {
+          'path': '/',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'failure',
+          'message': 'bazel/suite-logs.xml',
+          'title': 'bazel/failing_absl_test with error',
+          'raw_details': 'exited with error code 1'
+        },
+        {
+          'path': 'bazel/failing_absl_test',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'Test suite bazel/failing_absl_test has the following stdout output '
+            '(see Raw output).',
+          'title': 'Logging on stdout of test suite bazel/failing_absl_test',
+          'raw_details':
+            'Generated test.log (if the file is not UTF-8, then this may be '
+            'unreadable):\nexec ${PAGER:-/usr/bin/less} "$0" || exit 1\n'
+            'Executing tests from //bazel:failing_absl_test\n'
+            '-------------------------------------------------------------------'
+            '----------\nTraceback (most recent call last):\n  File '
+            '"<reducted>", line 3, in <module>\n    import non_existent_package\n'
+            'ModuleNotFoundError: No module named \'non_existent_package\''
+        },
+        {
+          'path': 'bazel/failing_absl_test',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message':
+            'Test suite bazel/failing_absl_test has the following stderr output '
+            '(see Raw output).',
+          'title': 'Logging on stderr of test suite bazel/failing_absl_test',
+          'raw_details': 'Generated test.err'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There is 1 test, see "Raw output" for the name of the test.',
+          'title': '1 test found',
+          'raw_details': 'bazel/failing_absl_test'
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,42 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=1,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=1,
+  suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='bazel/failing_absl_test',
+      tests=1,
+      skipped=0,
+      failures=0,
+      errors=1,
+      stdout='Generated test.log (if the file is not UTF-8, then this may be '
+        'unreadable):\nexec ${PAGER:-/usr/bin/less} "$0" || exit 1\nExecuting '
+        'tests from //bazel:failing_absl_test\n'
+        '---------------------------------------------------------------------'
+        '--------\nTraceback (most recent call last):\n  File "<reducted>", '
+        'line 3, in <module>\n    import non_existent_package\n'
+        'ModuleNotFoundError: No module named \'non_existent_package\'',
+      stderr='Generated test.err'
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='bazel/suite-logs.xml',
+      test_file=None,
+      line=None,
+      class_name=None,
+      test_name='bazel/failing_absl_test',
+      result='error',
+      message='exited with error code 1',
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.0
+    )
+  ]
+)

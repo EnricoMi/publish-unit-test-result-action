@@ -13,10 +13,12 @@ import mock
 from packaging.version import Version
 
 from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_always, \
+    fail_on_mode_nothing, comment_modes, comment_mode_always,\
+    report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
+    default_annotations, all_tests_list, skipped_tests_list, none_annotations, \
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
-from publish.unittestresults import ParsedUnitTestResults, ParseError
+from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, ParseError
 from publish_test_results import action_fail_required, get_conclusion, get_commit_sha, get_var, \
     check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
     get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
@@ -28,6 +30,7 @@ event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
 
 class Test(unittest.TestCase):
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
 
     def test_get_conclusion_success(self):
         for fail_on_errors in [True, False]:
@@ -42,6 +45,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('success', actual)
@@ -59,6 +63,7 @@ class Test(unittest.TestCase):
                         suite_failures=1,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_failures else 'success', actual)
@@ -76,6 +81,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=1,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_errors else 'success', actual)
@@ -93,6 +99,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=0,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('neutral', actual)
@@ -110,6 +117,7 @@ class Test(unittest.TestCase):
                         suite_failures=0,
                         suite_errors=0,
                         suite_time=10,
+                        suite_details=self.details,
                         cases=[]
                     ), fail_on_errors=fail_on_errors, fail_on_failures=fail_on_failures)
                     self.assertEqual('failure' if fail_on_errors else 'success', actual)
@@ -174,13 +182,16 @@ class Test(unittest.TestCase):
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
                      report_individual_runs=True,
+                     report_suite_out_logs=False,
+                     report_suite_err_logs=False,
                      dedup_classes_by_file_name=True,
                      ignore_runs=False,
-                     check_run_annotation=[],
+                     check_run_annotation=default_annotations,
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
                      json_file=None,
                      json_thousands_separator=punctuation_space,
+                     json_suite_details=False,
                      json_test_case_results=False) -> Settings:
         return Settings(
             token=token,
@@ -194,6 +205,7 @@ class Test(unittest.TestCase):
             commit=commit,
             json_file=json_file,
             json_thousands_separator=json_thousands_separator,
+            json_suite_details=json_suite_details,
             json_test_case_results=json_test_case_results,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
@@ -212,6 +224,8 @@ class Test(unittest.TestCase):
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
             report_individual_runs=report_individual_runs,
+            report_suite_out_logs=report_suite_out_logs,
+            report_suite_err_logs=report_suite_err_logs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
@@ -422,6 +436,18 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='foo', expected=self.get_settings(report_individual_runs=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS=None, expected=self.get_settings(report_individual_runs=False))
 
+    def test_get_settings_report_suite_logs(self):
+        self.do_test_get_settings(REPORT_SUITE_LOGS=None, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=default_report_suite_logs, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_no_suite_logs, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_out_log, expected=self.get_settings(report_suite_out_logs=True, report_suite_err_logs=False))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_err_log, expected=self.get_settings(report_suite_out_logs=False, report_suite_err_logs=True))
+        self.do_test_get_settings(REPORT_SUITE_LOGS=report_suite_logs, expected=self.get_settings(report_suite_out_logs=True, report_suite_err_logs=True))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(REPORT_SUITE_LOGS='logs')
+        self.assertEqual("Value 'logs' is not supported for variable REPORT_SUITE_LOGS, expected: info, error, any, none", str(re.exception))
+
     def test_get_settings_dedup_classes_by_file_name(self):
         warning = 'Option deduplicate_classes_by_file_name has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='false', expected=self.get_settings(dedup_classes_by_file_name=False))
@@ -441,10 +467,23 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
 
     def test_get_settings_check_run_annotations(self):
-        # Note: more tests in test_get_annotations_config*
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=None, expected=self.get_settings(check_run_annotation=default_annotations))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join(default_annotations), expected=self.get_settings(check_run_annotation=default_annotations))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=all_tests_list, expected=self.get_settings(check_run_annotation=[all_tests_list]))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=skipped_tests_list, expected=self.get_settings(check_run_annotation=[skipped_tests_list]))
+        self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=none_annotations, expected=self.get_settings(check_run_annotation=[none_annotations]))
+
         with self.assertRaises(RuntimeError) as re:
-            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotation', expected=None)
-        self.assertEqual("Some values in 'annotation' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([all_tests_list, skipped_tests_list, none_annotations]), expected=self.get_settings(check_run_annotation=[]))
+        self.assertEqual("CHECK_RUN_ANNOTATIONS 'none' cannot be combined with other annotations: all tests, skipped tests, none", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS='annotations')
+        self.assertEqual("Some values in 'annotations' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=','.join([all_tests_list, skipped_tests_list, "more"]))
+        self.assertEqual("Some values in 'all tests, skipped tests, more' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
         self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
@@ -475,6 +514,24 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=',', expected=self.get_settings(json_thousands_separator=','))
         self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR='.', expected=self.get_settings(json_thousands_separator='.'))
         self.do_test_get_settings(JSON_THOUSANDS_SEPARATOR=' ', expected=self.get_settings(json_thousands_separator=' '))
+
+    def test_get_settings_json_test_case_results(self):
+        warning = 'Option json_test_case_results has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS='false', expected=self.get_settings(json_test_case_results=False))
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS='False', expected=self.get_settings(json_test_case_results=False))
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS='true', expected=self.get_settings(json_test_case_results=True))
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS='True', expected=self.get_settings(json_test_case_results=True))
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS='foo', expected=self.get_settings(json_test_case_results=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(JSON_TEST_CASE_RESULTS=None, expected=self.get_settings(json_test_case_results=False))
+
+    def test_get_settings_json_suite_details(self):
+        warning = 'Option json_suite_details has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(JSON_SUITE_DETAILS='false', expected=self.get_settings(json_suite_details=False))
+        self.do_test_get_settings(JSON_SUITE_DETAILS='False', expected=self.get_settings(json_suite_details=False))
+        self.do_test_get_settings(JSON_SUITE_DETAILS='true', expected=self.get_settings(json_suite_details=True))
+        self.do_test_get_settings(JSON_SUITE_DETAILS='True', expected=self.get_settings(json_suite_details=True))
+        self.do_test_get_settings(JSON_SUITE_DETAILS='foo', expected=self.get_settings(json_suite_details=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(JSON_SUITE_DETAILS=None, expected=self.get_settings(json_suite_details=False))
 
     def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:
@@ -554,7 +611,7 @@ class Test(unittest.TestCase):
             # Note: functionality of get_annotations_config is simplified here,
             #       its true behaviour is tested in get_annotations_config*
             annotations_config = options.get('CHECK_RUN_ANNOTATIONS').split(',') \
-                if options.get('CHECK_RUN_ANNOTATIONS') is not None else []
+                if options.get('CHECK_RUN_ANNOTATIONS') is not None else default_annotations
             with mock.patch('publish_test_results.get_annotations_config', return_value=annotations_config) as m:
                 if gha is None:
                     gha = mock.MagicMock()
@@ -836,11 +893,11 @@ class Test(unittest.TestCase):
                 print(call.args[0])
 
             self.assertEqual(5, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (28 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (29 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 69 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 70 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(4, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
@@ -850,26 +907,28 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(69, actual.files)
+        self.assertEqual(70, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-            # on macOS and Python 3.10 we see one particular error
+            # on macOS and Python 3.10 and above we see one particular error
             self.assertEqual(8, len(actual.errors))
-            self.assertEqual(358, actual.suites)
-            self.assertEqual(2036, actual.suite_tests)
+            self.assertEqual(359, actual.suites)
+            self.assertEqual(2037, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
             self.assertEqual(224, actual.suite_failures)
-            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
-            self.assertEqual(2024, len(actual.cases))
+            self.assertEqual(0, len(actual.suite_details))
+            self.assertEqual(2025, len(actual.cases))
         else:
             self.assertEqual(6, len(actual.errors))
-            self.assertEqual(360, actual.suites)
-            self.assertEqual(2040, actual.suite_tests)
+            self.assertEqual(361, actual.suites)
+            self.assertEqual(2041, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
             self.assertEqual(226, actual.suite_failures)
-            self.assertEqual(8, actual.suite_errors)
+            self.assertEqual(9, actual.suite_errors)
             self.assertEqual(3967, actual.suite_time)
-            self.assertEqual(2028, len(actual.cases))
+            self.assertEqual(0, len(actual.suite_details))
+            self.assertEqual(2029, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -903,6 +962,28 @@ class Test(unittest.TestCase):
                         for line in string.getvalue().split(os.linesep) if line])
             )
             # self.assertEqual([], m.method_calls)
+
+    def test_parse_files_with_suite_details(self):
+        for options in [
+            {'report_suite_out_logs': True, 'report_suite_err_logs': False},
+            {'report_suite_out_logs': False, 'report_suite_err_logs': True},
+            {'report_suite_out_logs': True, 'report_suite_err_logs': True},
+            {'json_suite_details': True}
+        ]:
+            with self.subTest(**options):
+                gha = mock.MagicMock()
+                settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                                             nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
+                                             xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
+                                             trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'),
+                                             **options)
+                actual = parse_files(settings, gha)
+
+                if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+                    # on macOS and Python 3.10 and above we see one particular error
+                    self.assertEqual(359, len(actual.suite_details))
+                else:
+                    self.assertEqual(361, len(actual.suite_details))
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
@@ -990,6 +1071,49 @@ class Test(unittest.TestCase):
         ]:
             with self.subTest(value=value):
                 self.assertEqual(expected, is_float(value), value)
+
+    def test_main(self):
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file')
+            with open(filepath, 'wt', encoding='utf-8') as file:
+                file.write('{}')
+
+            gha = mock.MagicMock()
+            settings = get_settings(dict(
+                COMMIT='commit',
+                GITHUB_TOKEN='********',
+                GITHUB_EVENT_PATH=file.name,
+                GITHUB_EVENT_NAME='push',
+                GITHUB_REPOSITORY='repo',
+                EVENT_FILE=None,
+                JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+                NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
+                XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),
+                TRX_FILES=str(test_files_path / 'trx' / '**' / '*.trx'),
+                REPORT_SUITE_LOGS='info'
+            ), gha)
+
+            with mock.patch('publish_test_results.get_github'), \
+                 mock.patch('publish.publisher.Publisher.publish') as m:
+                main(settings, gha)
+
+                # Publisher.publish is expected to have been called once
+                self.assertEqual(1, len(m.call_args_list))
+                self.assertEqual(3, len(m.call_args_list[0].args))
+
+                # Publisher.publish is expected to have been called with these arguments
+                results, cases, conclusion = m.call_args_list[0].args
+                self.assertEqual(70, results.files)
+                if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+                    # on macOS and Python 3.10 and above we see one particular error
+                    self.assertEqual(359, results.suites)
+                    self.assertEqual(359, len(results.suite_details))
+                    self.assertEqual(1786, len(cases))
+                else:
+                    self.assertEqual(361, results.suites)
+                    self.assertEqual(361, len(results.suite_details))
+                    self.assertEqual(1786, len(cases))
+                self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check(self):
         with tempfile.TemporaryDirectory() as path:

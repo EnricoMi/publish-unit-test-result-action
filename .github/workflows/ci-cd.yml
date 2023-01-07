@@ -215,7 +215,9 @@ jobs:
           check_name: Test Results (Dockerfile)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output
@@ -270,7 +272,9 @@ jobs:
           INPUT_CHECK_NAME: Test Results (Docker Image)
           INPUT_JUNIT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
+          INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
+          INPUT_report_suite_logs: "any"
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
@@ -278,6 +282,7 @@ jobs:
             -e "INPUT_CHECK_NAME" \
             -e "INPUT_JUNIT_FILES" \
             -e "INPUT_JSON_FILE" \
+            -e "INPUT_JSON_SUITE_DETAILS" \
             -e "INPUT_JSON_TEST_CASE_RESULTS" \
             -e "INPUT_LOG_LEVEL" \
             -e "INPUT_ROOT_LOG_LEVEL" \
@@ -295,6 +300,7 @@ jobs:
             -e "INPUT_TRX_FILES" \
             -e "INPUT_TIME_UNIT" \
             -e "INPUT_REPORT_INDIVIDUAL_RUNS" \
+            -e "INPUT_REPORT_SUITE_LOGS" \
             -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
             -e "INPUT_IGNORE_RUNS" \
             -e "INPUT_JOB_SUMMARY" \
@@ -486,7 +492,9 @@ jobs:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
           junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
+          report_suite_logs: "any"
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -537,7 +545,9 @@ jobs:
           check_name: Test Results (setup-python)
           junit_files: "artifacts/**/*.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
+          report_suite_logs: "any"
 
       - name: JSON output
         uses: ./misc/action/json-output
@@ -583,7 +593,9 @@ jobs:
           xunit_files: "test-files/xunit/**/*.xml"
           trx_files: "test-files/trx/**/*.trx"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output
@@ -627,7 +639,9 @@ jobs:
           fail_on: nothing
           junit_files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
+          json_suite_details: true
           json_test_case_results: true
+          report_suite_logs: "any"
           log_level: DEBUG
 
       - name: JSON output

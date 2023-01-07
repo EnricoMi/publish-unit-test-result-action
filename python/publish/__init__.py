@@ -7,7 +7,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable
 
-from publish.unittestresults import Numeric, UnitTestCaseResults, UnitTestRunResults, \
+from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 logger = logging.getLogger('publish')
@@ -44,6 +44,13 @@ fail_on_modes = [
     fail_on_mode_failures
 ]
 
+report_suite_out_log = 'info'
+report_suite_err_log = 'error'
+report_suite_logs = 'any'
+report_no_suite_logs = 'none'
+available_report_suite_logs = [report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs]
+default_report_suite_logs = report_no_suite_logs
+
 pull_request_build_mode_commit = 'commit'
 pull_request_build_mode_merge = 'merge'
 pull_request_build_modes = [
@@ -53,8 +60,8 @@ pull_request_build_modes = [
 
 all_tests_list = 'all tests'
 skipped_tests_list = 'skipped tests'
-none_list = 'none'
-available_annotations = [all_tests_list, skipped_tests_list, none_list]
+none_annotations = 'none'
+available_annotations = [all_tests_list, skipped_tests_list, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]
 
 
@@ -849,6 +856,31 @@ def get_error_annotation(error: ParseError) -> Annotation:
 
 def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
     return [get_error_annotation(error) for error in parse_errors]
+
+
+def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
+    return [
+        Annotation(
+            path=suite.name,
+            start_line=0,
+            end_line=0,
+            start_column=None,
+            end_column=None,
+            annotation_level='warning' if source == 'stderr' else 'notice',
+            message=f'Test suite {suite.name} has the following {source} output (see Raw output).',
+            title=f'Logging on {source} of test suite {suite.name}',
+            raw_details=details
+        )
+        for details, source in ([(suite.stdout, 'stdout')] if with_suite_out_logs else []) +
+                               ([(suite.stderr, 'stderr')] if with_suite_err_logs else [])
+        if details and details.strip()
+    ]
+
+
+def get_suite_annotations(suites: List[UnitTestSuite], with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
+    return [annotation
+            for suite in suites
+            for annotation in get_suite_annotations_for_suite(suite, with_suite_out_logs, with_suite_err_logs)]
 
 
 def get_test_name(file_name: Optional[str],

@@ -73,6 +73,7 @@ class ParsedUnitTestResults:
     suite_failures: int
     suite_errors: int
     suite_time: int
+    suite_details: List['UnitTestSuite']
     cases: List[UnitTestCase]
 
     def with_commit(self, commit: str) -> 'ParsedUnitTestResultsWithCommit':
@@ -85,6 +86,7 @@ class ParsedUnitTestResults:
             self.suite_failures,
             self.suite_errors,
             self.suite_time,
+            self.suite_details,
             self.cases,
             commit
         )
@@ -113,7 +115,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             suite_failures=self.suite_failures,
             suite_errors=self.suite_errors,
             suite_time=self.suite_time,
-
+            suite_details=self.suite_details,
             commit=self.commit,
 
             cases=len(self.cases),
@@ -148,6 +150,17 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
 
 
 @dataclass(frozen=True)
+class UnitTestSuite:
+    name: str
+    tests: int
+    skipped: int
+    failures: int
+    errors: int
+    stdout: Optional[str]
+    stderr: Optional[str]
+
+
+@dataclass(frozen=True)
 class UnitTestResults(ParsedUnitTestResultsWithCommit):
     cases: int
     cases_skipped: int
@@ -168,6 +181,8 @@ class UnitTestRunResults:
     errors: List[ParseError]
     suites: int
     duration: int
+
+    suite_details: Optional[List[UnitTestSuite]]
 
     tests: int
     tests_succ: int
@@ -230,6 +245,8 @@ class UnitTestRunResults:
             suites=self.suites,
             duration=self.duration,
 
+            suite_details=self.suite_details,
+
             tests=self.tests,
             tests_succ=self.tests_succ,
             tests_skip=self.tests_skip,
@@ -247,30 +264,17 @@ class UnitTestRunResults:
 
     # exceptions can be arbitrary types and might not be serializable
     def without_exceptions(self) -> 'UnitTestRunResults':
-        return UnitTestRunResults(
-            files=self.files,
-            errors=[error.without_exception() for error in self.errors],
-            suites=self.suites,
-            duration=self.duration,
+        return dataclasses.replace(self, errors=[error.without_exception() for error in self.errors])
 
-            tests=self.tests,
-            tests_succ=self.tests_succ,
-            tests_skip=self.tests_skip,
-            tests_fail=self.tests_fail,
-            tests_error=self.tests_error,
-
-            runs=self.runs,
-            runs_succ=self.runs_succ,
-            runs_skip=self.runs_skip,
-            runs_fail=self.runs_fail,
-            runs_error=self.runs_error,
-
-            commit=self.commit
-        )
+    def without_suite_details(self) -> 'UnitTestRunResults':
+        return dataclasses.replace(self, suite_details=None)
 
     def to_dict(self) -> Dict[str, Any]:
         # dict is usually used to serialize, but exceptions are likely not serializable, so we exclude them
-        return dataclasses.asdict(self.without_exceptions())
+        # suite details might be arbitrarily large, we exclude those too
+        return dataclasses.asdict(self.without_exceptions().without_suite_details(),
+                                  # the dict_factory removes None values
+                                  dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
     @staticmethod
     def from_dict(values: Mapping[str, Any]) -> 'UnitTestRunResults':
@@ -279,6 +283,8 @@ class UnitTestRunResults:
             errors=values.get('errors', []),
             suites=values.get('suites'),
             duration=values.get('duration'),
+
+            suite_details=None,
 
             tests=values.get('tests'),
             tests_succ=values.get('tests_succ'),
@@ -364,35 +370,13 @@ class UnitTestRunDeltaResults:
         def d(value: Numeric) -> int:
             return value['duration']
 
-        return UnitTestRunResults(files=v(self.files), errors=self.errors, suites=v(self.suites), duration=d(self.duration),
+        return UnitTestRunResults(files=v(self.files), errors=self.errors, suites=v(self.suites), duration=d(self.duration), suite_details=None,
                                   tests=v(self.tests), tests_succ=v(self.tests_succ), tests_skip=v(self.tests_skip), tests_fail=v(self.tests_fail), tests_error=v(self.tests_error),
                                   runs=v(self.runs), runs_succ=v(self.runs_succ), runs_skip=v(self.runs_skip), runs_fail=v(self.runs_fail), runs_error=v(self.runs_error),
                                   commit=self.commit)
 
     def without_exceptions(self) -> 'UnitTestRunDeltaResults':
-        return UnitTestRunDeltaResults(
-            files=self.files,
-            errors=[error.without_exception() for error in self.errors],
-            suites=self.suites,
-            duration=self.duration,
-
-            tests=self.tests,
-            tests_succ=self.tests_succ,
-            tests_skip=self.tests_skip,
-            tests_fail=self.tests_fail,
-            tests_error=self.tests_error,
-
-            runs=self.runs,
-            runs_succ=self.runs_succ,
-            runs_skip=self.runs_skip,
-            runs_fail=self.runs_fail,
-            runs_error=self.runs_error,
-
-            commit=self.commit,
-
-            reference_type=self.reference_type,
-            reference_commit=self.reference_commit
-        )
+        return dataclasses.replace(self, errors=[error.without_exception() for error in self.errors])
 
 
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]
@@ -473,6 +457,8 @@ def get_stats(test_results: UnitTestResults) -> UnitTestRunResults:
         errors=test_results.errors,
         suites=test_results.suites,
         duration=test_results.suite_time,
+
+        suite_details=test_results.suite_details,
 
         tests=test_results.tests,
         tests_succ=tests_succ,

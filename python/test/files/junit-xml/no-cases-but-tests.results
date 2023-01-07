@@ -7,5 +7,16 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=1,
   suite_errors=0,
   suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='pytest',
+      tests=6,
+      skipped=2,
+      failures=1,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[]
 )

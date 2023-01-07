@@ -7,6 +7,17 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=0,
   suite_errors=0,
   suite_time=69,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='pytest',
+      tests=24,
+      skipped=12,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='pytest/junit.gloo.static.xml',

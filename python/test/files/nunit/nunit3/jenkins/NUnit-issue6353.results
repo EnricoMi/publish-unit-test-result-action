@@ -7,6 +7,17 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=1,
   suite_errors=0,
   suite_time=3,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='MyTests',
+      tests=3,
+      skipped=1,
+      failures=1,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-issue6353.xml',

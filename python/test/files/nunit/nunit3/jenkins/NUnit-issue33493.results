@@ -7,6 +7,26 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=0,
   suite_errors=0,
   suite_time=6,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='Automation.Features.CMFeature',
+      tests=1,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='Automation.Features.SubFeature.SubSmokeTest',
+      tests=1,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='nunit3/jenkins/NUnit-issue33493.xml',

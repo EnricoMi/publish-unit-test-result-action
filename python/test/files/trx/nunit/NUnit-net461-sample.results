@@ -7,6 +7,17 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_failures=3,
   suite_errors=0,
   suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='MSTestSuite',
+      tests=6,
+      skipped=1,
+      failures=3,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
   cases=[
     publish.unittestresults.UnitTestCase(
       result_file='nunit/NUnit-net461-sample.trx',
