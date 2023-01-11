@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.github.guenhter.spek2.AssertionsSpek" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-01-11T08:51:38" hostname="pcs" time="0.008">
+  <properties/>
+  <testcase name="check some assertions" classname="com.github.guenhter.spek2.AssertionsSpek" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

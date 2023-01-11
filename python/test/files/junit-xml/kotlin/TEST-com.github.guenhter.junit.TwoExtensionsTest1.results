@@ -1,0 +1,40 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=1,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='com.github.guenhter.junit.TwoExtensionsTest1',
+      tests=1,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout='--- beforeAll\nxxx beforeAll\n--- postProcessTestInstance\nxxx '
+        'postProcessTestInstance\n--- beforeEach\nxxx beforeEach\n--- '
+        'beforeTestExecution\nxxx beforeTestExecution\nxxx afterTestExecution\n'
+        '--- afterTestExecution\nxxx afterEach\n--- afterEach\nxxx afterAll\n'
+        '--- afterAll',
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='kotlin/TEST-com.github.guenhter.junit.TwoExtensionsTest1.xml',
+      test_file=None,
+      line=None,
+      class_name='com.github.guenhter.junit.TwoExtensionsTest1',
+      test_name='it is true()',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.001
+    )
+  ]
+)

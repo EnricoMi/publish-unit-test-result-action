@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.github.guenhter.junit.TwoExtensionsTest1" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-01-11T08:51:38" hostname="pcs" time="0.001">
+  <properties/>
+  <testcase name="it is true()" classname="com.github.guenhter.junit.TwoExtensionsTest1" time="0.001"/>
+  <system-out><![CDATA[--- beforeAll
+xxx beforeAll
+--- postProcessTestInstance
+xxx postProcessTestInstance
+--- beforeEach
+xxx beforeEach
+--- beforeTestExecution
+xxx beforeTestExecution
+xxx afterTestExecution
+--- afterTestExecution
+xxx afterEach
+--- afterEach
+xxx afterAll
+--- afterAll
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

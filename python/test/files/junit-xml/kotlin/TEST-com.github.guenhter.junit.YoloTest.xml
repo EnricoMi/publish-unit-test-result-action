@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.github.guenhter.junit.YoloTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-01-11T08:51:38" hostname="pcs" time="0.001">
+  <properties/>
+  <testcase name="it is true()" classname="com.github.guenhter.junit.YoloTest" time="0.001"/>
+  <system-out><![CDATA[Hi beforeAll
+Hi postProcessTestInstance
+Hi beforeEach
+Hi beforeTestExecution
+Hi afterTestExecution
+Hi afterEach
+Hi afterAll
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

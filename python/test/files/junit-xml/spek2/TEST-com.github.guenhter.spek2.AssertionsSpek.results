@@ -1,0 +1,36 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=1,
+  suite_skipped=0,
+  suite_failures=0,
+  suite_errors=0,
+  suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='com.github.guenhter.spek2.AssertionsSpek',
+      tests=1,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='spek2/TEST-com.github.guenhter.spek2.AssertionsSpek.xml',
+      test_file=None,
+      line=None,
+      class_name='com.github.guenhter.spek2.AssertionsSpek',
+      test_name='check some assertions',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.008
+    )
+  ]
+)

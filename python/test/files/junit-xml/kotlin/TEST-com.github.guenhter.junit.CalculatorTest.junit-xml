@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="com.github.guenhter.junit.CalculatorTest" tests="24" skipped="0" failures="0" errors="0" timestamp="2023-01-11T08:51:38" hostname="pcs" time="0.065">
+  <properties/>
+  <testcase name="adding two numbers should be a positive sum when summing two positive numbers()" classname="com.github.guenhter.junit.CalculatorTest" time="0.003"/>
+  <testcase name="[1] 1, 2, 3" classname="com.github.guenhter.junit.CalculatorTest" time="0.012"/>
+  <testcase name="[2] 1, 3, 4" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[3] 5, 7, 12" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[4] -3, 3, 0" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="adding two numbers should be a positive number when one number is negative and absolute-smaller than the other()" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="additionTest()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="multiplicationTest()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="multiplication of two numbers()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="adding two numbers should be a negative number when one number is negative and absolute-bigger than the other()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="[1] 1, 2, -1" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[2] 1, 3, -2" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[3] 5, 7, -2" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="[4] -3, 3, -6" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="subtractionTest()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="subtracting two numbers should be a positive sum when subtracting a negative number from a positive number()" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[1] 1, 2, 2" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[2] 1, 3, 3" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="[3] 5, 7, 35" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="[4] -3, 3, -9" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="addition of two numbers()" classname="com.github.guenhter.junit.CalculatorTest" time="0.001"/>
+  <testcase name="subtraction of two numbers()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="adding two numbers should be zero when one number is negative and absolute-equal to the positive one()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <testcase name="subtracting two numbers should be a positive number when subtracting a positive number from a negative number()" classname="com.github.guenhter.junit.CalculatorTest" time="0.0"/>
+  <system-out></system-out>
+  <system-err></system-err>
+</testsuite>

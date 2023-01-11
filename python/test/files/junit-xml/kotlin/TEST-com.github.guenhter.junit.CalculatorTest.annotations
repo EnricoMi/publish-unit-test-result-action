@@ -1,0 +1,75 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 24 tests pass in 0s',
+      'summary':
+        '24 tests\u2002\u2003\u200324 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '1 suites\u2003\u2003\u205f\u20040 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u2003\u205f\u20040 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSw6AIAwFr'
+        '0JYu1DjyssQghobBUxpV8a7iz9Ed515zaxygLkPshVVIWRgoAQdoybwLmIZMQ50THXzgA'
+        'pszM9MsOT/atAwf0SP6PE2yC4Vj/sTvMTbOznLnZzXjLcWKMJ9iTBque2ErmVr4QAAAA='
+        '=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 24 tests, see "Raw output" for the full list of tests.',
+          'title': '24 tests found',
+          'raw_details':
+            'com.github.guenhter.junit.CalculatorTest ‑ [1] 1, 2, -1\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [1] 1, 2, 2\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [1] 1, 2, 3\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [2] 1, 3, -2\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [2] 1, 3, 3\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [2] 1, 3, 4\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [3] 5, 7, -2\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [3] 5, 7, 12\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [3] 5, 7, 35\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [4] -3, 3, -6\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [4] -3, 3, -9\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ [4] -3, 3, 0\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ adding two numbers '
+            'should be a negative number when one number is negative and '
+            'absolute-bigger than the other()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ adding two numbers '
+            'should be a positive number when one number is negative and '
+            'absolute-smaller than the other()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ adding two numbers '
+            'should be a positive sum when summing two positive numbers()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ adding two numbers '
+            'should be zero when one number is negative and absolute-equal to '
+            'the positive one()\ncom.github.guenhter.junit.CalculatorTest ‑ '
+            'addition of two numbers()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ additionTest()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ multiplication of two '
+            'numbers()\ncom.github.guenhter.junit.CalculatorTest ‑ '
+            'multiplicationTest()\ncom.github.guenhter.junit.CalculatorTest ‑ '
+            'subtracting two numbers should be a positive number when '
+            'subtracting a positive number from a negative number()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ subtracting two numbers '
+            'should be a positive sum when subtracting a negative number from a '
+            'positive number()\ncom.github.guenhter.junit.CalculatorTest ‑ '
+            'subtraction of two numbers()\n'
+            'com.github.guenhter.junit.CalculatorTest ‑ subtractionTest()'
+        }
+      ]
+    }
+  }
+]

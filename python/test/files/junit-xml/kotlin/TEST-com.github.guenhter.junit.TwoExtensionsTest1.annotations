@@ -1,0 +1,57 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 1 tests pass in 0s',
+      'summary':
+        '1 tests\u2002\u2003\u20031 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n1 '
+        'suites\u2003\u20030 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n1 files\u2004'
+        '\u2002\u2003\u20030 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\n\nResults for commit '
+        'commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
+        '0KoLbT1MoYgxI18zAKV8e4igi7dvJnJO7kGowKf2TQwHhLED9aEIoJ3GceMeYhtKnkJSc'
+        'q+2OGg70ULMF2hED3WBpNrvidS3cu/rTCRFaYu6a2FmKEmFjbBrxu911Od3QAAAA==\n',
+      'annotations': [
+        {
+          'path': 'com.github.guenhter.junit.TwoExtensionsTest1',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'Test suite com.github.guenhter.junit.TwoExtensionsTest1 has the '
+            'following stdout output (see Raw output).',
+          'title':
+            'Logging on stdout of test suite '
+            'com.github.guenhter.junit.TwoExtensionsTest1',
+          'raw_details':
+            '--- beforeAll\nxxx beforeAll\n--- postProcessTestInstance\nxxx '
+            'postProcessTestInstance\n--- beforeEach\nxxx beforeEach\n--- '
+            'beforeTestExecution\nxxx beforeTestExecution\nxxx '
+            'afterTestExecution\n--- afterTestExecution\nxxx afterEach\n--- '
+            'afterEach\nxxx afterAll\n--- afterAll'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There is 1 test, see "Raw output" for the name of the test.',
+          'title': '1 test found',
+          'raw_details': 'com.github.guenhter.junit.TwoExtensionsTest1 ‑ it is true()'
+        }
+      ]
+    }
+  }
+]
