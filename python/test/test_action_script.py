@@ -944,15 +944,15 @@ class Test(unittest.TestCase):
         self.assertEqual(140, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 and above we see one particular error
-            self.assertEqual(16, len(actual.errors))
-            self.assertEqual(363, actual.suites)
-            self.assertEqual(2037, actual.suite_tests)
-            self.assertEqual(106, actual.suite_skipped)
-            self.assertEqual(224, actual.suite_failures)
-            self.assertEqual(9, actual.suite_errors)
-            self.assertEqual(3967, actual.suite_time)
+            self.assertEqual(14, len(actual.errors))
+            self.assertEqual(726, actual.suites)
+            self.assertEqual(4092, actual.suite_tests)
+            self.assertEqual(212, actual.suite_skipped)
+            self.assertEqual(452, actual.suite_failures)
+            self.assertEqual(18, actual.suite_errors)
+            self.assertEqual(7945, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(2025, len(actual.cases))
+            self.assertEqual(4068, len(actual.cases))
         else:
             self.assertEqual(10, len(actual.errors))
             self.assertEqual(730, actual.suites)
@@ -985,8 +985,8 @@ class Test(unittest.TestCase):
                 "::error file=non-junit.xml::Error processing result file: Invalid format.",
                 "::error file=non-xml.xml",
                 "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
-                "::error::RuntimeError: Unsupported file format: /home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/non-junit.xml",
-                '::error::RuntimeError: Unsupported file format: /home/enrico/Work/git/publish-unit-test-result-action/python/test/files/non-xml.xml',
+                "::error::RuntimeError: Unsupported file format: non-junit.xml",
+                '::error::RuntimeError: Unsupported file format: non-xml.xml',
             ]
             if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                 expected.extend([
@@ -997,7 +997,7 @@ class Test(unittest.TestCase):
                 ] * 2)
             self.assertEqual(
                 sorted(expected),
-                sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line))
+                sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', re.sub(r'format: .*[/\\]', 'format: ', line)))
                         for line in string.getvalue().split(os.linesep) if line])
             )
             # self.assertEqual([], m.method_calls)
@@ -1147,8 +1147,8 @@ class Test(unittest.TestCase):
                 self.assertEqual(140, results.files)
                 if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                     # on macOS and Python 3.10 and above we see one particular error
-                    self.assertEqual(363, results.suites)
-                    self.assertEqual(363, len(results.suite_details))
+                    self.assertEqual(726, results.suites)
+                    self.assertEqual(726, len(results.suite_details))
                     self.assertEqual(1786, len(cases))
                 else:
                     self.assertEqual(730, results.suites)
