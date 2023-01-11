@@ -88,9 +88,11 @@ def get_files_size(files: List[str]) -> str:
         return 'unknown size'
 
 
-def get_number_of_files(files: List[str]) -> str:
-    number_of_files = '{number:,} file{s}'.format(
-        number=len(files), s='s' if len(files) > 1 else ''
+def get_number_of_files(files: List[str], label: str = 'file') -> str:
+    number_of_files = '{number:,} {label}{s}'.format(
+        number=len(files),
+        label=label,
+        s='s' if len(files) > 1 else ''
     ).replace(',', punctuation_space)
     return number_of_files
 
@@ -99,25 +101,47 @@ def parse_xml_files(files: Iterable[str],
                     large_files: bool = False,
                     drop_testcases: bool = False,
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    junit_files = []
+    nunit_files = []
+    xunit_files = []
+    trx_files = []
+    unknown_files = []
+
     def parse(path: str) -> JUnitTree:
         if is_junit(path):
+            junit_files.append(path)
             return parse_junit_xml_file(path, large_files, drop_testcases)
 
         from publish.nunit import is_nunit, parse_nunit_file
         if is_nunit(path):
+            nunit_files.append(path)
             return parse_nunit_file(path, large_files)
 
         from publish.xunit import is_xunit, parse_xunit_file
         if is_xunit(path):
+            xunit_files.append(path)
             return parse_xunit_file(path, large_files)
 
         from publish.trx import is_trx, parse_trx_file
         if is_trx(path):
+            trx_files.append(path)
             return parse_trx_file(path, large_files)
 
+        unknown_files.append(path)
         raise RuntimeError(f'Unsupported file format: {path}')
 
-    return progress_safe_parse_xml_file(files, parse, progress)
+    try:
+        return progress_safe_parse_xml_file(files, parse, progress)
+    finally:
+        for flavour, files in [
+            ('JUnit', junit_files),
+            ('NUnit', nunit_files),
+            ('XUnit', xunit_files),
+            ('TRX', trx_files),
+            ('unsupported', unknown_files)
+        ]:
+            logger.info(f'Detected {get_number_of_files(files, f"{flavour} file")} ({get_files_size(files)})')
+            logger.debug(f'detected {flavour} files {list(files)}')
 
 
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
