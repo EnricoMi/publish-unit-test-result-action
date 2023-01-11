@@ -8,7 +8,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent.parent))
 
 from publish.junit import JUnitTreeOrParseError
-from publish.xunit import parse_xunit_files
+from publish.xunit import parse_xunit_files, is_xunit
 from test_junit import JUnitXmlParseTest
 
 
@@ -21,6 +21,9 @@ class TestXunit(unittest.TestCase, JUnitXmlParseTest):
     @property
     def test(self):
         return self
+
+    def is_supported(self, path: str) -> bool:
+        return is_xunit(path)
 
     @staticmethod
     def _test_files_path():

@@ -7,7 +7,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union, Mapping, Tuple, Any
+from typing import List, Optional, Union, Mapping, Tuple, Any, Iterable, Callable
 
 import github
 import humanize
@@ -20,7 +20,8 @@ from publish import available_annotations, default_annotations, none_annotations
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
-from publish.junit import parse_junit_xml_files, process_junit_xml_elems
+from publish.junit import JUnitTree, parse_junit_xml_files, parse_junit_xml_file, process_junit_xml_elems, \
+    ParsedJUnitFile, progress_safe_parse_xml_file, is_junit
 from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
@@ -62,17 +63,18 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
-def expand_glob(pattern: Optional[str], file_format: str, gha: GithubAction) -> List[str]:
+def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubAction) -> List[str]:
     if not pattern:
         return []
 
     files = get_files(pattern)
+    file_format = f' {file_format}' if file_format else ''
 
     if len(files) == 0:
-        gha.warning(f'Could not find any {file_format} files for {pattern}')
+        gha.warning(f'Could not find any{file_format} files for {pattern}')
     else:
-        logger.info(f'Reading {file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {file_format} files {list(files)}')
+        logger.info(f'Reading{file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading{file_format} files {list(files)}')
 
     return files
 
@@ -93,8 +95,34 @@ def get_number_of_files(files: List[str]) -> str:
     return number_of_files
 
 
+def parse_xml_files(files: Iterable[str],
+                    large_files: bool = False,
+                    drop_testcases: bool = False,
+                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    def parse(path: str) -> JUnitTree:
+        if is_junit(path):
+            return parse_junit_xml_file(path, large_files, drop_testcases)
+
+        from publish.nunit import is_nunit, parse_nunit_file
+        if is_nunit(path):
+            return parse_nunit_file(path, large_files)
+
+        from publish.xunit import is_xunit, parse_xunit_file
+        if is_xunit(path):
+            return parse_xunit_file(path, large_files)
+
+        from publish.trx import is_trx, parse_trx_file
+        if is_trx(path):
+            return parse_trx_file(path, large_files)
+
+        raise RuntimeError(f'Unsupported file format: {path}')
+
+    return progress_safe_parse_xml_file(files, parse, progress)
+
+
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
+    files = expand_glob(settings.files_glob, None, gha)
     junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
     nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
     xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
@@ -104,12 +132,14 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
 
     # parse files, log the progress
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
-    with progress_logger(items=len(junit_files + nunit_files + xunit_files + trx_files),
+    with progress_logger(items=len(files + junit_files + nunit_files + xunit_files + trx_files),
                          interval_seconds=10,
                          progress_template='Read {progress} files in {time}',
                          finish_template='Finished reading {observations} files in {duration}',
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
+        if files:
+            elems.extend(parse_xml_files(files, settings.large_files, settings.ignore_runs, progress))
         if junit_files:
             elems.extend(parse_junit_xml_files(junit_files, settings.large_files, settings.ignore_runs, progress))
         if xunit_files:

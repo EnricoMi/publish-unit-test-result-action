@@ -16,6 +16,20 @@ except ImportError:
     lxml_available = False
 
 
+def xml_has_root_element(path: str, allowed_root_elements: List[str]) -> bool:
+    try:
+        with open(path, 'rb') as r:
+            it = etree.iterparse(r, events=['start'])
+            action, elem = next(it, (None, None))
+            return action == 'start' and elem is not None and etree.QName(elem).localname in allowed_root_elements
+    except:
+        return False
+
+
+def is_junit(path: str) -> bool:
+    return xml_has_root_element(path, ['testsuites', 'testsuite'])
+
+
 def get_results(results: Union[Element, List[Element]], status: Optional[str] = None) -> List[Element]:
     """
     Returns the results with the most severe state.
@@ -141,21 +155,26 @@ def progress_safe_parse_xml_file(files: Iterable[str],
     return [progress((file, safe_parse_xml_file(file, parse))) for file in files]
 
 
+def parse_junit_xml_file(path: str,
+                         large_files: bool = False,
+                         drop_testcases: bool = False) -> JUnitTree:
+    if drop_testcases:
+        builder = DropTestCaseBuilder()
+        parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=large_files)
+        return etree.parse(path, parser=parser)
+    elif large_files:
+        parser = etree.XMLParser(huge_tree=True)
+        return etree.parse(path, parser=parser)
+    return etree.parse(path)
+
+
 def parse_junit_xml_files(files: Iterable[str],
                           large_files: bool = False,
                           drop_testcases: bool = False,
                           progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses junit xml files."""
     def parse(path: str) -> JUnitTree:
-        if drop_testcases:
-            builder = DropTestCaseBuilder()
-            parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=large_files)
-            return etree.parse(path, parser=parser)
-        elif large_files:
-            parser = etree.XMLParser(huge_tree=True)
-            return etree.parse(path, parser=parser)
-        else:
-            return etree.parse(path)
+        return parse_junit_xml_file(path, large_files, drop_testcases)
 
     return progress_safe_parse_xml_file(files, parse, progress)
 

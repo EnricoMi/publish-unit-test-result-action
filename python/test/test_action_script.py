@@ -171,7 +171,7 @@ class Test(unittest.TestCase):
                      fail_on_failures=True,
                      action_fail=False,
                      action_fail_on_inconclusive=False,
-                     files_glob='files',
+                     files_glob='all-files',
                      junit_files_glob='junit-files',
                      nunit_files_glob='nunit-files',
                      xunit_files_glob='xunit-files',
@@ -601,7 +601,7 @@ class Test(unittest.TestCase):
                 GITHUB_TOKEN='token',
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
-                FILES='files',
+                FILES='all-files',
                 JUNIT_FILES='junit-files',
                 NUNIT_FILES='nunit-files',
                 XUNIT_FILES='xunit-files',
@@ -903,7 +903,8 @@ class Test(unittest.TestCase):
 
     def test_parse_files(self):
         gha = mock.MagicMock()
-        settings = self.get_settings(junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
+        settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'), str(test_files_path / '**' / '*.trx')]),
+                                     junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                                      nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
                                      xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
                                      trx_files_glob=str(test_files_path / 'trx' / '**' / '*.trx'))
@@ -913,14 +914,16 @@ class Test(unittest.TestCase):
             for call in l.info.call_args_list:
                 print(call.args[0])
 
-            self.assertEqual(5, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (29 files, ') for call in l.info.call_args_list]))
+            self.assertEqual(6, len(l.info.call_args_list))
+            self.assertTrue(any([call.args[0].startswith(f'Reading files {settings.files_glob} (71 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (28 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 70 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 140 files in ') for call in l.info.call_args_list]))
 
-            self.assertEqual(4, len(l.debug.call_args_list))
+            self.assertEqual(5, len(l.debug.call_args_list))
+            self.assertTrue(any([call.args[0].startswith('reading files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading NUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading XUnit files [') for call in l.debug.call_args_list]))
@@ -928,11 +931,11 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(70, actual.files)
+        self.assertEqual(140, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 and above we see one particular error
-            self.assertEqual(8, len(actual.errors))
-            self.assertEqual(359, actual.suites)
+            self.assertEqual(16, len(actual.errors))
+            self.assertEqual(363, actual.suites)
             self.assertEqual(2037, actual.suite_tests)
             self.assertEqual(106, actual.suite_skipped)
             self.assertEqual(224, actual.suite_failures)
@@ -941,15 +944,15 @@ class Test(unittest.TestCase):
             self.assertEqual(0, len(actual.suite_details))
             self.assertEqual(2025, len(actual.cases))
         else:
-            self.assertEqual(6, len(actual.errors))
-            self.assertEqual(361, actual.suites)
-            self.assertEqual(2041, actual.suite_tests)
-            self.assertEqual(106, actual.suite_skipped)
-            self.assertEqual(226, actual.suite_failures)
-            self.assertEqual(9, actual.suite_errors)
-            self.assertEqual(3967, actual.suite_time)
+            self.assertEqual(10, len(actual.errors))
+            self.assertEqual(730, actual.suites)
+            self.assertEqual(4092, actual.suite_tests)
+            self.assertEqual(212, actual.suite_skipped)
+            self.assertEqual(452, actual.suite_failures)
+            self.assertEqual(18, actual.suite_errors)
+            self.assertEqual(7945, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(2029, len(actual.cases))
+            self.assertEqual(4068, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -957,26 +960,31 @@ class Test(unittest.TestCase):
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
             expected = [
-                "::error::lxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1",
-                "::error file=non-xml.xml::Error processing result file: Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)",
-                "::error::Exception: File is empty.",
-                "::error file=empty.xml::Error processing result file: File is empty.",
+                # these occur twice, once from FILES and once from *_FILES options
                 "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
                 "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
-                "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
-                "::error file=non-junit.xml::Error processing result file: Invalid format.",
                 "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
                 "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
                 "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
                 "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+            ] * 2 + [
+                # these occur once, either from FILES and or from *_FILES options
+                "::error::Exception: File is empty.",
+                "::error file=empty.xml::Error processing result file: File is empty.",
+                "::error file=non-junit.xml",
+                "::error file=non-junit.xml::Error processing result file: Invalid format.",
+                "::error file=non-xml.xml",
+                "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
+                "::error::RuntimeError: Unsupported file format: /home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/non-junit.xml",
+                '::error::RuntimeError: Unsupported file format: /home/enrico/Work/git/publish-unit-test-result-action/python/test/files/non-xml.xml',
             ]
             if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                 expected.extend([
                     '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
                     '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
                     '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
-                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)'
-                ])
+                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)',
+                ] * 2)
             self.assertEqual(
                 sorted(expected),
                 sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', line))
@@ -1002,9 +1010,9 @@ class Test(unittest.TestCase):
 
                 if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                     # on macOS and Python 3.10 and above we see one particular error
-                    self.assertEqual(359, len(actual.suite_details))
+                    self.assertEqual(363, len(actual.suite_details))
                 else:
-                    self.assertEqual(361, len(actual.suite_details))
+                    self.assertEqual(365, len(actual.suite_details))
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
@@ -1107,6 +1115,8 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_NAME='push',
                 GITHUB_REPOSITORY='repo',
                 EVENT_FILE=None,
+                FILES='\n'.join(str(path) for path in [test_files_path / '**' / '*.xml',
+                                                       test_files_path / '**' / '*.trx']),
                 JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                 NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
                 XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),
@@ -1124,15 +1134,15 @@ class Test(unittest.TestCase):
 
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
-                self.assertEqual(70, results.files)
+                self.assertEqual(140, results.files)
                 if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                     # on macOS and Python 3.10 and above we see one particular error
-                    self.assertEqual(359, results.suites)
-                    self.assertEqual(359, len(results.suite_details))
+                    self.assertEqual(363, results.suites)
+                    self.assertEqual(363, len(results.suite_details))
                     self.assertEqual(1786, len(cases))
                 else:
-                    self.assertEqual(361, results.suites)
-                    self.assertEqual(361, len(results.suite_details))
+                    self.assertEqual(730, results.suites)
+                    self.assertEqual(730, len(results.suite_details))
                     self.assertEqual(1786, len(cases))
                 self.assertEqual('failure', conclusion)
 

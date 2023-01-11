@@ -8,7 +8,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
 from publish.junit import JUnitTreeOrParseError
-from publish.trx import parse_trx_files
+from publish.trx import parse_trx_files, is_trx
 from test_junit import JUnitXmlParseTest
 
 test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'trx'
@@ -20,6 +20,9 @@ class TestTrx(unittest.TestCase, JUnitXmlParseTest):
     @property
     def test(self):
         return self
+
+    def is_supported(self, path: str) -> bool:
+        return is_trx(path)
 
     @staticmethod
     def _test_files_path() -> pathlib.Path:

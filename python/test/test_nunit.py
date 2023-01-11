@@ -8,7 +8,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
 from publish.junit import JUnitTreeOrParseError
-from publish.nunit import parse_nunit_files
+from publish.nunit import parse_nunit_files, is_nunit
 from test_junit import JUnitXmlParseTest
 
 test_files_path = pathlib.Path(__file__).resolve().parent / 'files' / 'nunit'
@@ -20,6 +20,9 @@ class TestNunit(unittest.TestCase, JUnitXmlParseTest):
     @property
     def test(self):
         return self
+
+    def is_supported(self, path: str) -> bool:
+        return is_nunit(path)
 
     @staticmethod
     def _test_files_path() -> pathlib.Path:
