@@ -38,7 +38,7 @@ inputs:
     default: 'false'
     required: false
   files:
-    description: 'Deprecated, use "junit_files" instead.'
+    description: 'File patterns of test result files. Auto-detects actual file format. Use `junit_files`, `nunit_files`, `xunit_files`, or `trx_files` option to specify actual file format. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'
     required: false
   junit_files:
     description: 'File patterns of JUnit XML test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a `!`.'

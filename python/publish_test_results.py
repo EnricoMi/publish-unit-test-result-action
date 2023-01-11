@@ -341,16 +341,12 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
-    # remove when deprecated FILES is removed
-    default_junit_files_glob = get_var('FILES', options)
-    if default_junit_files_glob:
-        gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
-    # replace with error when deprecated FILES is removed
-    elif not any([get_var(f'{flavour}_FILES', options)
-                  for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']]):
-        default_junit_files_glob = '*.xml'
-        gha.warning(f'At least one of the *_FILES options has to be set! '
-                    f'Falling back to deprecated default "{default_junit_files_glob}"')
+    default_files_glob = None
+    flavours = ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']
+    if not any(get_var(option, options) for option in ['FILES'] + [f'{flavour}_FILES' for flavour in flavours]):
+        default_files_glob = '*.xml'
+        gha.warning(f'At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, or TRX_FILES options has to be set! '
+                    f'Falling back to deprecated default "{default_files_glob}"')
 
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
@@ -395,7 +391,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         fail_on_failures=fail_on_failures,
         action_fail=get_bool_var('ACTION_FAIL', options, default=False),
         action_fail_on_inconclusive=get_bool_var('ACTION_FAIL_ON_INCONCLUSIVE', options, default=False),
-        junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,
+        files_glob=get_var('FILES', options) or default_files_glob,
+        junit_files_glob=get_var('JUNIT_FILES', options),
         nunit_files_glob=get_var('NUNIT_FILES', options),
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
@@ -425,7 +422,10 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
-    check_var_condition(none_annotations not in settings.check_run_annotation or len(settings.check_run_annotation) == 1, f"CHECK_RUN_ANNOTATIONS '{none_annotations}' cannot be combined with other annotations: {', '.join(settings.check_run_annotation)}")
+    check_var_condition(
+        none_annotations not in settings.check_run_annotation or len(settings.check_run_annotation) == 1,
+        f"CHECK_RUN_ANNOTATIONS '{none_annotations}' cannot be combined with other annotations: {', '.join(settings.check_run_annotation)}"
+    )
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')
