@@ -946,7 +946,7 @@ class Test(unittest.TestCase):
             # on macOS and Python 3.10 and above we see one particular error
             self.assertEqual(14, len(actual.errors))
             self.assertEqual(726, actual.suites)
-            self.assertEqual(4092, actual.suite_tests)
+            self.assertEqual(4084, actual.suite_tests)
             self.assertEqual(212, actual.suite_skipped)
             self.assertEqual(452, actual.suite_failures)
             self.assertEqual(18, actual.suite_errors)
@@ -981,9 +981,9 @@ class Test(unittest.TestCase):
                 # these occur once, either from FILES and or from *_FILES options
                 "::error::Exception: File is empty.",
                 "::error file=empty.xml::Error processing result file: File is empty.",
-                "::error file=non-junit.xml",
+                "::error file=non-junit.xml::Error processing result file: Unsupported file format: non-junit.xml",
                 "::error file=non-junit.xml::Error processing result file: Invalid format.",
-                "::error file=non-xml.xml",
+                "::error file=non-xml.xml::Error processing result file: Unsupported file format: non-xml.xml",
                 "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
                 "::error::RuntimeError: Unsupported file format: non-junit.xml",
                 '::error::RuntimeError: Unsupported file format: non-xml.xml',
