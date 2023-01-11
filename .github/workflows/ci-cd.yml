@@ -213,7 +213,7 @@ jobs:
         uses: ./
         with:
           check_name: Test Results (Dockerfile)
-          junit_files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.xml"
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -270,17 +270,16 @@ jobs:
         env:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
           INPUT_CHECK_NAME: Test Results (Docker Image)
-          INPUT_JUNIT_FILES: "artifacts/**/*.xml"
+          INPUT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
           INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
-          INPUT_report_suite_logs: "any"
+          INPUT_REPORT_SUTE_LOGS: "any"
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
             --rm \
             -e "INPUT_CHECK_NAME" \
-            -e "INPUT_JUNIT_FILES" \
             -e "INPUT_JSON_FILE" \
             -e "INPUT_JSON_SUITE_DETAILS" \
             -e "INPUT_JSON_TEST_CASE_RESULTS" \
@@ -295,6 +294,7 @@ jobs:
             -e "INPUT_ACTION_FAIL" \
             -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
             -e "INPUT_FILES" \
+            -e "INPUT_JUNIT_FILES" \
             -e "INPUT_NUNIT_FILES" \
             -e "INPUT_XUNIT_FILES" \
             -e "INPUT_TRX_FILES" \
@@ -491,7 +491,7 @@ jobs:
         uses: ./composite
         with:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-          junit_files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -544,7 +544,7 @@ jobs:
         uses: ./composite
         with:
           check_name: Test Results (setup-python)
-          junit_files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.xml"
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -589,6 +589,9 @@ jobs:
         with:
           check_name: Test Results (Test Files)
           fail_on: nothing
+          files: |
+            test-files/**/*.xml
+            test-files/**/*.trx
           junit_files: "test-files/junit-xml/**/*.xml"
           nunit_files: "test-files/nunit/**/*.xml"
           xunit_files: "test-files/xunit/**/*.xml"
@@ -638,7 +641,7 @@ jobs:
         with:
           check_name: Test Results (Test File)
           fail_on: nothing
-          junit_files: "test-files/pytest/junit.gloo.standalone.xml"
+          files: "test-files/pytest/junit.gloo.standalone.xml"
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true

@@ -28,10 +28,9 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
   uses: EnricoMi/publish-unit-test-result-action@v2
   if: always()
   with:
-    junit_files: "test-results/junit/**/*.xml"
-    nunit_files: "test-results/nunit/**/*.xml"
-    xunit_files: "test-results/xunit/**/*.xml"
-    trx_files: "test-results/**/*.trx"
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
 ```
 
 Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
@@ -42,10 +41,9 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
   uses: EnricoMi/publish-unit-test-result-action/composite@v2
   if: always()
   with:
-    junit_files: "test-results/junit/**/*.xml"
-    nunit_files: "test-results/nunit/**/*.xml"
-    xunit_files: "test-results/xunit/**/*.xml"
-    trx_files: "test-results/**/*.trx"
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
 ```
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
@@ -228,18 +226,15 @@ With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Configuration
 
-Files can be selected via the `junit_files`, `nunit_files`, `xunit_files`, and `trx_files` options.
-They support [glob wildcards](https://docs.python.org/3/library/glob.html#glob.glob) like `*`, `**`, `?` and `[]`.
-The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
-
-At least one of `junit_files`, `nunit_files`, `xunit_files`, and `trx_files` options have to be set.
+Files can be selected via the `files` options. It supports [glob wildcards](https://docs.python.org/3/library/glob.html#glob.glob)
+like `*`, `**`, `?` and `[]`. The `**` wildcard matches all files and directories recursively: `./`, `./*/`, `./*/*/`, etc.
 
 You can provide multiple file patterns, one pattern per line. Patterns starting with `!` exclude the matching files.
 There have to be at least one pattern starting without a `!`:
 
 ```yaml
 with:
-  junit_files: |
+  files: |
     *.xml
     !config.xml
 ```
@@ -248,7 +243,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`junit_files`<br/>`nunit_files`<br/>`xunit_files`<br/>`trx_files`|At least one of these `*_files` must be set.|File patterns of JUnit XML, NUnit XML, XUnit XML, and TRX test result files, respectively. Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files.<p/>Supports `*`, `**`, `?`, and `[]`. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
@@ -315,7 +310,7 @@ The `json` output of the action can be accessed through the expression `steps.<i
   id: test-results
   if: always()
   with:
-    junit_files: "test-results/**/*.xml"
+    files: "test-results/**/*.xml"
 
 - name: Conclusion
   run: echo "Conclusion is ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}"
@@ -525,7 +520,7 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          junit_files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.xml"
 ```
 </details>
 
@@ -649,7 +644,7 @@ jobs:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
-          junit_files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.xml"
 ```
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
@@ -672,7 +667,7 @@ steps:
   id: test-results
   if: always()
   with:
-    junit_files: "test-results/**/*.xml"
+    files: "test-results/**/*.xml"
 
 - name: Set badge color
   shell: bash
@@ -780,7 +775,7 @@ publish-test-results:
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v2
       with:
-        junit_files: "artifacts/**/*.xml"
+        files: "artifacts/**/*.xml"
 ```
 </details>
 
