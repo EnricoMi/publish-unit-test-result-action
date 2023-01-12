@@ -63,6 +63,11 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
+def prettify_glob_pattern(pattern: Optional[str]) -> Optional[str]:
+    if pattern is not None:
+        return re.sub('\r?\n\r?', ', ', pattern.strip())
+
+
 def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubAction) -> List[str]:
     if not pattern:
         return []
@@ -70,10 +75,11 @@ def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubA
     files = get_files(pattern)
     file_format = f' {file_format}' if file_format else ''
 
+    prettyfied_pattern = prettify_glob_pattern(pattern)
     if len(files) == 0:
-        gha.warning(f'Could not find any{file_format} files for {pattern}')
+        gha.warning(f'Could not find any{file_format} files for {prettyfied_pattern}')
     else:
-        logger.info(f'Reading{file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.info(f'Reading{file_format} files {prettyfied_pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading{file_format} files {list(files)}')
 
     return files

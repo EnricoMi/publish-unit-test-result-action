@@ -21,7 +21,8 @@ from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestSuite, ParsedUnitTestResults, ParseError
 from publish_test_results import action_fail_required, get_conclusion, get_commit_sha, get_var, \
     check_var, check_var_condition, deprecate_var, deprecate_val, log_parse_errors, \
-    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, main
+    get_settings, get_annotations_config, Settings, get_files, throttle_gh_request_raw, is_float, parse_files, \
+    main, prettify_glob_pattern
 from test_utils import chdir
 
 test_files_path = pathlib.Path(__file__).resolve().parent / 'files'
@@ -901,6 +902,13 @@ class Test(unittest.TestCase):
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
 
+    def test_prettify_glob_pattern(self):
+        self.assertEqual(None, prettify_glob_pattern(None))
+        self.assertEqual('', prettify_glob_pattern(''))
+        self.assertEqual('*.xml', prettify_glob_pattern('*.xml'))
+        self.assertEqual('*.xml, *.trx', prettify_glob_pattern('*.xml\n*.trx'))
+        self.assertEqual('*.xml,     *.trx', prettify_glob_pattern('  *.xml\n    *.trx\n    '))
+
     def test_parse_files(self):
         gha = mock.MagicMock()
         settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'), str(test_files_path / '**' / '*.trx')]),
@@ -915,11 +923,11 @@ class Test(unittest.TestCase):
                 print(call.args[0])
 
             self.assertEqual(11, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f'Reading files {settings.files_glob} (71 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {settings.junit_files_glob} (28 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {settings.nunit_files_glob} (24 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {settings.xunit_files_glob} (8 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {settings.trx_files_glob} (9 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (71 files, ") for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {prettify_glob_pattern(settings.xunit_files_glob)} (8 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {prettify_glob_pattern(settings.trx_files_glob)} (9 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 27 JUnit files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 24 NUnit files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit files (') for call in l.info.call_args_list]))
