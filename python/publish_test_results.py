@@ -109,6 +109,7 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
     nunit_files = []
     xunit_files = []
     trx_files = []
+    mocha_json_files = []
     unknown_files = []
 
     def parse(path: str) -> JUnitTree:
@@ -131,6 +132,11 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
             trx_files.append(path)
             return parse_trx_file(path, large_files)
 
+        from publish.mocha import is_mocha_json, parse_mocha_json_file
+        if is_mocha_json(path):
+            mocha_json_files.append(path)
+            return parse_mocha_json_file(path)
+
         unknown_files.append(path)
         raise RuntimeError(f'Unsupported file format: {path}')
 
@@ -138,10 +144,11 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
         return progress_safe_parse_xml_file(files, parse, progress)
     finally:
         for flavour, files in [
-            ('JUnit', junit_files),
-            ('NUnit', nunit_files),
-            ('XUnit', xunit_files),
+            ('JUnit XML', junit_files),
+            ('NUnit XML', nunit_files),
+            ('XUnit XML', xunit_files),
             ('TRX', trx_files),
+            ('Mocha JSON', mocha_json_files),
             ('unsupported', unknown_files)
         ]:
             if files:
