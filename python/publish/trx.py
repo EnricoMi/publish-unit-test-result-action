@@ -10,11 +10,15 @@ with (pathlib.Path(__file__).resolve().parent / 'xslt' / 'trx-to-junit.xslt').op
 
 
 def parse_trx_files(files: Iterable[str],
+                    large_files: bool = False,
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses trx files."""
     def parse(path: str) -> JUnitTree:
-        parser = etree.XMLParser(huge_tree=True)
-        trx = etree.parse(path, parser=parser)
+        if large_files:
+            parser = etree.XMLParser(huge_tree=True)
+            trx = etree.parse(path, parser=parser)
+        else:
+            trx = etree.parse(path)
         return transform_trx_to_junit(trx)
 
     return progress_safe_parse_xml_file(files, parse, progress)

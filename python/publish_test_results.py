@@ -111,16 +111,16 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
         if junit_files:
-            elems.extend(parse_junit_xml_files(junit_files, settings.ignore_runs, progress))
+            elems.extend(parse_junit_xml_files(junit_files, settings.large_files, settings.ignore_runs, progress))
         if xunit_files:
             from publish.xunit import parse_xunit_files
-            elems.extend(parse_xunit_files(xunit_files, progress))
+            elems.extend(parse_xunit_files(xunit_files, settings.large_files, progress))
         if nunit_files:
             from publish.nunit import parse_nunit_files
-            elems.extend(parse_nunit_files(nunit_files, progress))
+            elems.extend(parse_nunit_files(nunit_files, settings.large_files, progress))
         if trx_files:
             from publish.trx import parse_trx_files
-            elems.extend(parse_trx_files(trx_files, progress))
+            elems.extend(parse_trx_files(trx_files, settings.large_files, progress))
 
     # get the test results
     return process_junit_xml_elems(
@@ -362,6 +362,7 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_name = get_var('CHECK_NAME', options) or 'Test Results'
     annotations = get_annotations_config(options, event)
     suite_logs_mode = get_var('REPORT_SUITE_LOGS', options) or default_report_suite_logs
+    ignore_runs = get_bool_var('IGNORE_RUNS', options, default=False)
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
@@ -410,7 +411,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         report_suite_out_logs=suite_logs_mode in {report_suite_logs, report_suite_out_log},
         report_suite_err_logs=suite_logs_mode in {report_suite_logs, report_suite_err_log},
         dedup_classes_by_file_name=get_bool_var('DEDUPLICATE_CLASSES_BY_FILE_NAME', options, default=False),
-        ignore_runs=get_bool_var('IGNORE_RUNS', options, default=False),
+        large_files=get_bool_var('LARGE_FILES', options, default=ignore_runs),
+        ignore_runs=ignore_runs,
         check_run_annotation=annotations,
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes)

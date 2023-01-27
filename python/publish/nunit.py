@@ -10,11 +10,15 @@ with (pathlib.Path(__file__).resolve().parent / 'xslt' / 'nunit3-to-junit.xslt')
 
 
 def parse_nunit_files(files: Iterable[str],
+                      large_files: bool = False,
                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses nunit files."""
     def parse(path: str) -> JUnitTree:
-        parser = etree.XMLParser(huge_tree=True)
-        nunit = etree.parse(path, parser=parser)
+        if large_files:
+            parser = etree.XMLParser(huge_tree=True)
+            nunit = etree.parse(path, parser=parser)
+        else:
+            nunit = etree.parse(path)
         return transform_nunit_to_junit(nunit)
 
     return progress_safe_parse_xml_file(files, parse, progress)
