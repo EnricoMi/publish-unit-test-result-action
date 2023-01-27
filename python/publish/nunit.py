@@ -13,7 +13,8 @@ def parse_nunit_files(files: Iterable[str],
                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses nunit files."""
     def parse(path: str) -> JUnitTree:
-        nunit = etree.parse(path)
+        parser = etree.XMLParser(huge_tree=True)
+        nunit = etree.parse(path, parser=parser)
         return transform_nunit_to_junit(nunit)
 
     return progress_safe_parse_xml_file(files, parse, progress)

@@ -13,7 +13,8 @@ def parse_trx_files(files: Iterable[str],
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses trx files."""
     def parse(path: str) -> JUnitTree:
-        trx = etree.parse(path)
+        parser = etree.XMLParser(huge_tree=True)
+        trx = etree.parse(path, parser=parser)
         return transform_trx_to_junit(trx)
 
     return progress_safe_parse_xml_file(files, parse, progress)

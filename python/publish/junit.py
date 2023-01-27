@@ -149,8 +149,9 @@ def parse_junit_xml_files(files: Iterable[str],
         if drop_testcases:
             builder = DropTestCaseBuilder()
             parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=True)
-            return etree.parse(path, parser=parser)
-        return etree.parse(path)
+        else:
+            parser = etree.XMLParser(huge_tree=True)
+        return etree.parse(path, parser=parser)
 
     return progress_safe_parse_xml_file(files, parse, progress)
 
