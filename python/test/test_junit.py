@@ -249,7 +249,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:
-        return list(parse_junit_xml_files([filename]))[0][1]
+        return list(parse_junit_xml_files([filename], False, False))[0][1]
 
     def test_is_supported_file(self):
         test_files = self.get_test_files()
@@ -261,7 +261,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
 
     def test_process_parse_junit_xml_files_with_no_files(self):
         self.assertEqual(
-            process_junit_xml_elems(parse_junit_xml_files([])),
+            process_junit_xml_elems(parse_junit_xml_files([], False, False)),
             ParsedUnitTestResults(
                 files=0,
                 errors=[],
@@ -283,7 +283,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
     @unittest.skipIf(Version(junitparser.version) < Version('2.0.0'),
                      'multiple results per test case not supported by junitparser')
     def test_parse_junit_xml_file_with_multiple_results(self):
-        junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')]))
+        junit = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'junit.multiresult.xml')], False, False))
         self.assertEqual(4, len(junit.cases))
         self.assertEqual("error", junit.cases[0].result)
         self.assertEqual("failure", junit.cases[1].result)
@@ -295,7 +295,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 self.assertEqual(
-                    process_junit_xml_elems(parse_junit_xml_files([result_file]), time_factor),
+                    process_junit_xml_elems(parse_junit_xml_files([result_file], False, False), time_factor),
                     ParsedUnitTestResults(
                         files=1,
                         errors=[],

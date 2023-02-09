@@ -22,8 +22,7 @@ def parse_nunit_file(path: str, large_files: bool) -> JUnitTree:
     return transform_nunit_to_junit(nunit)
 
 
-def parse_nunit_files(files: Iterable[str],
-                      large_files: bool = False,
+def parse_nunit_files(files: Iterable[str], large_files: bool,
                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses nunit files."""
     def parse(path: str) -> JUnitTree:

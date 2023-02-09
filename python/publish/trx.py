@@ -22,8 +22,7 @@ def parse_trx_file(path: str, large_files: bool) -> JUnitTree:
     return transform_trx_to_junit(trx)
 
 
-def parse_trx_files(files: Iterable[str],
-                    large_files: bool = False,
+def parse_trx_files(files: Iterable[str], large_files: bool,
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses trx files."""
     def parse(path: str) -> JUnitTree:

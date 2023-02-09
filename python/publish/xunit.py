@@ -22,8 +22,7 @@ def parse_xunit_file(path: str, large_files: bool) -> JUnitTree:
     return transform_xunit_to_junit(xunit)
 
 
-def parse_xunit_files(files: Iterable[str],
-                      large_files: bool = False,
+def parse_xunit_files(files: Iterable[str], large_files: bool,
                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses xunit files."""
     def parse(path: str) -> JUnitTree:

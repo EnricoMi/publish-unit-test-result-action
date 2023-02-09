@@ -155,9 +155,7 @@ def progress_safe_parse_xml_file(files: Iterable[str],
     return [progress((file, safe_parse_xml_file(file, parse))) for file in files]
 
 
-def parse_junit_xml_file(path: str,
-                         large_files: bool = False,
-                         drop_testcases: bool = False) -> JUnitTree:
+def parse_junit_xml_file(path: str, large_files: bool, drop_testcases: bool) -> JUnitTree:
     if drop_testcases:
         builder = DropTestCaseBuilder()
         parser = etree.XMLParser(target=builder, encoding='utf-8', huge_tree=large_files)
@@ -168,9 +166,7 @@ def parse_junit_xml_file(path: str,
     return etree.parse(path)
 
 
-def parse_junit_xml_files(files: Iterable[str],
-                          large_files: bool = False,
-                          drop_testcases: bool = False,
+def parse_junit_xml_files(files: Iterable[str], large_files: bool, drop_testcases: bool,
                           progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     """Parses junit xml files."""
     def parse(path: str) -> JUnitTree:

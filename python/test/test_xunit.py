@@ -35,7 +35,7 @@ class TestXunit(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:
-        return list(parse_xunit_files([filename]))[0][1]
+        return list(parse_xunit_files([filename], False))[0][1]
 
 
 if __name__ == "__main__":

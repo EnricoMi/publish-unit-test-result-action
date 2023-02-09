@@ -103,9 +103,7 @@ def get_number_of_files(files: List[str], label: str = 'file') -> str:
     return number_of_files
 
 
-def parse_xml_files(files: Iterable[str],
-                    large_files: bool = False,
-                    drop_testcases: bool = False,
+def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: bool,
                     progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     junit_files = []
     nunit_files = []

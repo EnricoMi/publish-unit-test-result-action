@@ -34,7 +34,7 @@ class TestTrx(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:
-        return list(parse_trx_files([filename]))[0][1]
+        return list(parse_trx_files([filename], False))[0][1]
 
 
 if __name__ == "__main__":
