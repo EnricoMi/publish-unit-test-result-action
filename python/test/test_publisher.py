@@ -125,6 +125,7 @@ class TestPublisher(unittest.TestCase):
             report_suite_out_logs=False,
             report_suite_err_logs=False,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
+            large_files=False,
             ignore_runs=False,
             check_run_annotation=check_run_annotation,
             seconds_between_github_reads=1.5,

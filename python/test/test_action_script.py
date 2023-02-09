@@ -185,6 +185,7 @@ class Test(unittest.TestCase):
                      report_suite_out_logs=False,
                      report_suite_err_logs=False,
                      dedup_classes_by_file_name=True,
+                     large_files=False,
                      ignore_runs=False,
                      check_run_annotation=default_annotations,
                      seconds_between_github_reads=1.5,
@@ -227,6 +228,7 @@ class Test(unittest.TestCase):
             report_suite_out_logs=report_suite_out_logs,
             report_suite_err_logs=report_suite_err_logs,
             dedup_classes_by_file_name=dedup_classes_by_file_name,
+            large_files=large_files,
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
@@ -457,14 +459,24 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME='foo', expected=self.get_settings(dedup_classes_by_file_name=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(DEDUPLICATE_CLASSES_BY_FILE_NAME=None, expected=self.get_settings(dedup_classes_by_file_name=False))
 
+    def test_get_settings_large_files(self):
+        warning = 'Option large_files has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(LARGE_FILES='false', expected=self.get_settings(large_files=False, ignore_runs=False))
+        self.do_test_get_settings(LARGE_FILES='False', expected=self.get_settings(large_files=False, ignore_runs=False))
+        self.do_test_get_settings(LARGE_FILES='true', expected=self.get_settings(large_files=True, ignore_runs=False))
+        self.do_test_get_settings(LARGE_FILES='True', expected=self.get_settings(large_files=True, ignore_runs=False))
+        self.do_test_get_settings(LARGE_FILES='foo', expected=self.get_settings(large_files=False, ignore_runs=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(LARGE_FILES=None, expected=self.get_settings(large_files=False, ignore_runs=False))
+
     def test_get_settings_ignore_runs(self):
         warning = 'Option ignore_runs has to be boolean, so either "true" or "false": foo'
-        self.do_test_get_settings(IGNORE_RUNS='false', expected=self.get_settings(ignore_runs=False))
-        self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False))
-        self.do_test_get_settings(IGNORE_RUNS='true', expected=self.get_settings(ignore_runs=True))
-        self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True))
-        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False), warning=warning, exception=RuntimeError)
-        self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False))
+        self.do_test_get_settings(IGNORE_RUNS='false', expected=self.get_settings(ignore_runs=False, large_files=False))
+        self.do_test_get_settings(IGNORE_RUNS='False', expected=self.get_settings(ignore_runs=False, large_files=False))
+        self.do_test_get_settings(IGNORE_RUNS='true', expected=self.get_settings(ignore_runs=True, large_files=True))
+        self.do_test_get_settings(IGNORE_RUNS='True', expected=self.get_settings(ignore_runs=True, large_files=True))
+        self.do_test_get_settings(IGNORE_RUNS='true', LARGE_FILES='false', expected=self.get_settings(ignore_runs=True, large_files=False))
+        self.do_test_get_settings(IGNORE_RUNS='foo', expected=self.get_settings(ignore_runs=False, large_files=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(IGNORE_RUNS=None, expected=self.get_settings(ignore_runs=False, large_files=False))
 
     def test_get_settings_check_run_annotations(self):
         self.do_test_get_settings(CHECK_RUN_ANNOTATIONS=None, expected=self.get_settings(check_run_annotation=default_annotations))

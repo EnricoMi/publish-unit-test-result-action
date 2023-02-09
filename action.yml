@@ -66,6 +66,9 @@ inputs:
   deduplicate_classes_by_file_name:
     description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise.'
     required: false
+  large_files:
+    description: 'Support for large files is enabled when set to "true". Defaults to "false", unless ignore_runs is "true".'
+    required: false
   ignore_runs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
     default: 'false'

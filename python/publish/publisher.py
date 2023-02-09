@@ -63,6 +63,7 @@ class Settings:
     report_suite_out_logs: bool
     report_suite_err_logs: bool
     dedup_classes_by_file_name: bool
+    large_files: bool
     ignore_runs: bool
     check_run_annotation: List[str]
     seconds_between_github_reads: float
