@@ -934,8 +934,8 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith(f'Detected 9 TRX files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 2 unsupported files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Unsupported file: ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].endswith(f'python/test/files/junit-xml/non-junit.xml') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].endswith(f'python/test/files/non-xml.xml') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}junit-xml{os.sep}non-junit.xml') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}non-xml.xml') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Finished reading 140 files in ') for call in l.info.call_args_list]))
 
             self.assertEqual(9, len(l.debug.call_args_list))
