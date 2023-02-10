@@ -2057,7 +2057,8 @@ class PublishTest(unittest.TestCase):
                                    str(test_files_path / 'pytest' / 'junit.mpi.standalone.xml'),
                                    str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
                                    str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
-                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')])
+                                   str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')],
+                                  False, False)
         ).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
@@ -2069,7 +2070,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit example.\n'))
 
     def test_file_without_cases(self):
-        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases.xml')])).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases.xml')], False, False)).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2080,7 +2081,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_file_without_cases_but_with_tests(self):
-        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases-but-tests.xml')])).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'no-cases-but-tests.xml')], False, False)).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2091,7 +2092,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_non_parsable_file(self):
-        parsed = process_junit_xml_elems(parse_junit_xml_files(['files/empty.xml'])).with_commit('a commit sha')
+        parsed = process_junit_xml_elems(parse_junit_xml_files(['files/empty.xml'], False, False)).with_commit('a commit sha')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2103,7 +2104,7 @@ class PublishTest(unittest.TestCase):
                               f'Results for commit a commit.\n'))
 
     def test_files_with_testsuite_in_testsuite(self):
-        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'testsuite-in-testsuite.xml')])).with_commit('example')
+        parsed = process_junit_xml_elems(parse_junit_xml_files([str(test_files_path / 'testsuite-in-testsuite.xml')], False, False)).with_commit('example')
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
@@ -2126,7 +2127,7 @@ class PublishTest(unittest.TestCase):
                  str(test_files_path / 'pytest' / 'junit.mpi.static.xml'),
                  str(test_files_path / 'pytest' / 'junit.spark.integration.1.xml'),
                  str(test_files_path / 'pytest' / 'junit.spark.integration.2.xml')],
-                drop_testcases=True
+                False, drop_testcases=True
             )
         ).with_commit('example')
         results = get_test_results(parsed, False)

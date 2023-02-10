@@ -7,7 +7,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
-from typing import List, Optional, Union, Mapping, Tuple, Any
+from typing import List, Optional, Union, Mapping, Tuple, Any, Iterable, Callable
 
 import github
 import humanize
@@ -20,7 +20,8 @@ from publish import available_annotations, default_annotations, none_annotations
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
-from publish.junit import parse_junit_xml_files, process_junit_xml_elems
+from publish.junit import JUnitTree, parse_junit_xml_files, parse_junit_xml_file, process_junit_xml_elems, \
+    ParsedJUnitFile, progress_safe_parse_xml_file, is_junit
 from publish.progress import progress_logger
 from publish.publisher import Publisher, Settings
 from publish.retry import GitHubRetry
@@ -62,17 +63,24 @@ def get_files(multiline_files_globs: str) -> List[str]:
     return list(included - excluded)
 
 
-def expand_glob(pattern: Optional[str], file_format: str, gha: GithubAction) -> List[str]:
+def prettify_glob_pattern(pattern: Optional[str]) -> Optional[str]:
+    if pattern is not None:
+        return re.sub('\r?\n\r?', ', ', pattern.strip())
+
+
+def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubAction) -> List[str]:
     if not pattern:
         return []
 
     files = get_files(pattern)
+    file_format = f' {file_format}' if file_format else ''
 
+    prettyfied_pattern = prettify_glob_pattern(pattern)
     if len(files) == 0:
-        gha.warning(f'Could not find any {file_format} files for {pattern}')
+        gha.warning(f'Could not find any{file_format} files for {prettyfied_pattern}')
     else:
-        logger.info(f'Reading {file_format} files {pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
-        logger.debug(f'reading {file_format} files {list(files)}')
+        logger.info(f'Reading{file_format} files {prettyfied_pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
+        logger.debug(f'reading{file_format} files {list(files)}')
 
     return files
 
@@ -86,15 +94,67 @@ def get_files_size(files: List[str]) -> str:
         return 'unknown size'
 
 
-def get_number_of_files(files: List[str]) -> str:
-    number_of_files = '{number:,} file{s}'.format(
-        number=len(files), s='s' if len(files) > 1 else ''
+def get_number_of_files(files: List[str], label: str = 'file') -> str:
+    number_of_files = '{number:,} {label}{s}'.format(
+        number=len(files),
+        label=label,
+        s='s' if len(files) > 1 else ''
     ).replace(',', punctuation_space)
     return number_of_files
 
 
+def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: bool,
+                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+    junit_files = []
+    nunit_files = []
+    xunit_files = []
+    trx_files = []
+    unknown_files = []
+
+    def parse(path: str) -> JUnitTree:
+        if is_junit(path):
+            junit_files.append(path)
+            return parse_junit_xml_file(path, large_files, drop_testcases)
+
+        from publish.nunit import is_nunit, parse_nunit_file
+        if is_nunit(path):
+            nunit_files.append(path)
+            return parse_nunit_file(path, large_files)
+
+        from publish.xunit import is_xunit, parse_xunit_file
+        if is_xunit(path):
+            xunit_files.append(path)
+            return parse_xunit_file(path, large_files)
+
+        from publish.trx import is_trx, parse_trx_file
+        if is_trx(path):
+            trx_files.append(path)
+            return parse_trx_file(path, large_files)
+
+        unknown_files.append(path)
+        raise RuntimeError(f'Unsupported file format: {path}')
+
+    try:
+        return progress_safe_parse_xml_file(files, parse, progress)
+    finally:
+        for flavour, files in [
+            ('JUnit', junit_files),
+            ('NUnit', nunit_files),
+            ('XUnit', xunit_files),
+            ('TRX', trx_files),
+            ('unsupported', unknown_files)
+        ]:
+            logger.info(f'Detected {get_number_of_files(files, f"{flavour} file")} ({get_files_size(files)})')
+            if flavour == 'unsupported':
+                for file in files:
+                    logger.info(f'Unsupported file: {file}')
+            else:
+                logger.debug(f'detected {flavour} files {list(files)}')
+
+
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
+    files = expand_glob(settings.files_glob, None, gha)
     junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
     nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
     xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
@@ -104,12 +164,14 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
 
     # parse files, log the progress
     # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
-    with progress_logger(items=len(junit_files + nunit_files + xunit_files + trx_files),
+    with progress_logger(items=len(files + junit_files + nunit_files + xunit_files + trx_files),
                          interval_seconds=10,
                          progress_template='Read {progress} files in {time}',
                          finish_template='Finished reading {observations} files in {duration}',
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
+        if files:
+            elems.extend(parse_xml_files(files, settings.large_files, settings.ignore_runs, progress))
         if junit_files:
             elems.extend(parse_junit_xml_files(junit_files, settings.large_files, settings.ignore_runs, progress))
         if xunit_files:
@@ -341,16 +403,12 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
-    # remove when deprecated FILES is removed
-    default_junit_files_glob = get_var('FILES', options)
-    if default_junit_files_glob:
-        gha.warning('Option FILES is deprecated, please use JUNIT_FILES instead!')
-    # replace with error when deprecated FILES is removed
-    elif not any([get_var(f'{flavour}_FILES', options)
-                  for flavour in ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']]):
-        default_junit_files_glob = '*.xml'
-        gha.warning(f'At least one of the *_FILES options has to be set! '
-                    f'Falling back to deprecated default "{default_junit_files_glob}"')
+    default_files_glob = None
+    flavours = ['JUNIT', 'NUNIT', 'XUNIT', 'TRX']
+    if not any(get_var(option, options) for option in ['FILES'] + [f'{flavour}_FILES' for flavour in flavours]):
+        default_files_glob = '*.xml'
+        gha.warning(f'At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, or TRX_FILES options has to be set! '
+                    f'Falling back to deprecated default "{default_files_glob}"')
 
     time_unit = get_var('TIME_UNIT', options) or 'seconds'
     time_factors = {'seconds': 1.0, 'milliseconds': 0.001}
@@ -395,7 +453,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         fail_on_failures=fail_on_failures,
         action_fail=get_bool_var('ACTION_FAIL', options, default=False),
         action_fail_on_inconclusive=get_bool_var('ACTION_FAIL_ON_INCONCLUSIVE', options, default=False),
-        junit_files_glob=get_var('JUNIT_FILES', options) or default_junit_files_glob,
+        files_glob=get_var('FILES', options) or default_files_glob,
+        junit_files_glob=get_var('JUNIT_FILES', options),
         nunit_files_glob=get_var('NUNIT_FILES', options),
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
@@ -425,7 +484,10 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)
     check_var(settings.check_run_annotation, 'CHECK_RUN_ANNOTATIONS', 'Check run annotations', available_annotations)
-    check_var_condition(none_annotations not in settings.check_run_annotation or len(settings.check_run_annotation) == 1, f"CHECK_RUN_ANNOTATIONS '{none_annotations}' cannot be combined with other annotations: {', '.join(settings.check_run_annotation)}")
+    check_var_condition(
+        none_annotations not in settings.check_run_annotation or len(settings.check_run_annotation) == 1,
+        f"CHECK_RUN_ANNOTATIONS '{none_annotations}' cannot be combined with other annotations: {', '.join(settings.check_run_annotation)}"
+    )
 
     check_var_condition(settings.test_changes_limit >= 0, f'TEST_CHANGES_LIMIT must be a positive integer or 0: {settings.test_changes_limit}')
     check_var_condition(settings.api_retries >= 0, f'GITHUB_RETRIES must be a positive integer or 0: {settings.api_retries}')

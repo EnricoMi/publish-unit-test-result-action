@@ -46,7 +46,8 @@ class Settings:
     fail_on_failures: bool
     action_fail: bool
     action_fail_on_inconclusive: bool
-    # one of these *_files_glob must be set
+    # one of these *files_glob must be set
+    files_glob: Optional[str]
     junit_files_glob: Optional[str]
     nunit_files_glob: Optional[str]
     xunit_files_glob: Optional[str]
