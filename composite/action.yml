@@ -180,7 +180,6 @@ runs:
         FAIL_ON: ${{ inputs.fail_on }}
         ACTION_FAIL: ${{ inputs.action_fail }}
         ACTION_FAIL_ON_INCONCLUSIVE: ${{ inputs.action_fail_on_inconclusive }}
-        # deprecated
         FILES: ${{ inputs.files }}
         JUNIT_FILES: ${{ inputs.junit_files }}
         NUNIT_FILES: ${{ inputs.nunit_files }}
