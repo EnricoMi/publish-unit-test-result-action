@@ -922,7 +922,7 @@ class Test(unittest.TestCase):
             for call in l.info.call_args_list:
                 print(call.args[0])
 
-            self.assertEqual(11, len(l.info.call_args_list))
+            self.assertEqual(13, len(l.info.call_args_list))
             self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (71 files, ") for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
@@ -933,9 +933,12 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 9 TRX files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 2 unsupported files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Unsupported file: ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python/test/files/junit-xml/non-junit.xml') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python/test/files/non-xml.xml') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Finished reading 140 files in ') for call in l.info.call_args_list]))
 
-            self.assertEqual(10, len(l.debug.call_args_list))
+            self.assertEqual(9, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading NUnit files [') for call in l.debug.call_args_list]))
@@ -945,7 +948,6 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith('detected NUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected XUnit files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected TRX files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('detected unsupported files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
 
