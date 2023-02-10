@@ -144,12 +144,13 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
             ('TRX', trx_files),
             ('unsupported', unknown_files)
         ]:
-            logger.info(f'Detected {get_number_of_files(files, f"{flavour} file")} ({get_files_size(files)})')
-            if flavour == 'unsupported':
-                for file in files:
-                    logger.info(f'Unsupported file: {file}')
-            else:
-                logger.debug(f'detected {flavour} files {list(files)}')
+            if files:
+                logger.info(f'Detected {get_number_of_files(files, f"{flavour} file")} ({get_files_size(files)})')
+                if flavour == 'unsupported':
+                    for file in files:
+                        logger.info(f'Unsupported file: {file}')
+                else:
+                    logger.debug(f'detected {flavour} files {list(files)}')
 
 
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
