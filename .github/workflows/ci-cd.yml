@@ -76,13 +76,6 @@ jobs:
           - os: windows-latest
             python-version: "3.7"
 
-          - os: macos-latest
-            python-version: "3.6"
-          - os: ubuntu-20.04
-            python-version: "3.6"
-          - os: windows-latest
-            python-version: "3.6"
-
     steps:
       - name: Setup Ubuntu
         if: startsWith(matrix.os, 'ubuntu')

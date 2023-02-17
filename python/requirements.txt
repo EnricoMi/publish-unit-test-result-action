@@ -1,5 +1,4 @@
-# dataclasses does not exist before Python3.7, needed as dependency
-dataclasses;python_version<"3.7"
+# with retryable feature in pygithub, Python<3.7 is not supported anymore
 humanize==3.14.0
 junitparser==2.8.0
   future==0.18.3
