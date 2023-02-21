@@ -47,15 +47,17 @@ class TestElement(Element):
 
 
 class JUnitXmlParseTest:
-    always_unsupported_files = [
-        str(test_path / 'files' / 'not-existing.xml'),
-        str(test_path / 'files' / 'empty.xml'),
-        str(test_path / 'files' / 'non-xml.xml'),
-    ]
-
     @property
     def test(self):
         raise NotImplementedError()
+
+    @staticmethod
+    def unsupported_files() -> List[str]:
+        return [
+            str(test_path / 'files' / 'xml' / 'not-existing.xml'),
+            str(test_path / 'files' / 'xml' / 'empty.xml'),
+            str(test_path / 'files' / 'xml' / 'non-xml.xml'),
+        ]
 
     @abc.abstractmethod
     def is_supported(self, path: str) -> bool:
@@ -121,13 +123,13 @@ class JUnitXmlParseTest:
                         self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2), annotations_expectation_path)
 
     def test_parse_and_process_files(self):
-        for file in self.get_test_files() + self.always_unsupported_files:
+        for file in self.get_test_files() + self.unsupported_files():
             self.do_test_parse_and_process_files(file)
 
     @classmethod
     def update_expectations(cls):
         print('updating expectations')
-        for filename in cls.get_test_files():
+        for filename in cls.get_test_files() + cls.unsupported_files():
             print(f'- updating {filename}')
             actual = cls.parse_file(filename)
             path = pathlib.Path(filename).resolve()
@@ -191,6 +193,7 @@ class JUnitXmlParseTest:
     @staticmethod
     def prettify_exception(exception) -> str:
         exception = exception.__repr__()
+        exception = re.sub(r'\r?\n\r?', r'\\n', exception)
         exception = re.sub(r'\(', ': ', exception, 1)
         exception = re.sub(r'file:.*/', '', exception)
         exception = re.sub(r',?\s*\)\)$', ')', exception)
@@ -198,6 +201,7 @@ class JUnitXmlParseTest:
 
     def test_is_supported_file(self):
         test_files = self.get_test_files()
+        self.test.assertTrue(len(test_files) > 0)
         self.do_test_is_supported_file(test_files, [])
 
     def do_test_is_supported_file(self,
@@ -205,7 +209,7 @@ class JUnitXmlParseTest:
                                   unsupported_files: List[str]):
         all_supported_files = set(test_files).difference(unsupported_files or [])
 
-        all_unsupported_files = self.always_unsupported_files.copy()
+        all_unsupported_files = self.unsupported_files.copy()
         all_unsupported_files.extend(TestJunit.get_test_files())
 
         from test_nunit import TestNunit
@@ -255,7 +259,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         test_files = self.get_test_files()
         non_junit_files = [
             str(test_files_path / 'non-junit.xml'),
-            str(test_files_path / 'non-xml.xml')
+            str(test_path / 'xml' / 'non-xml.xml')
         ]
         self.do_test_is_supported_file(test_files, non_junit_files)
 
