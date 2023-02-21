@@ -911,7 +911,7 @@ class Test(unittest.TestCase):
 
     def test_parse_files(self):
         gha = mock.MagicMock()
-        settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'), str(test_files_path / '**' / '*.trx')]),
+        settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'), str(test_files_path / '**' / '*.trx'), str(test_files_path / '**' / '*.json')]),
                                      junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                                      nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
                                      xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
@@ -922,57 +922,64 @@ class Test(unittest.TestCase):
             for call in l.info.call_args_list:
                 print(call.args[0])
 
-            self.assertEqual(13, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (71 files, ") for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit files {prettify_glob_pattern(settings.xunit_files_glob)} (8 files, ') for call in l.info.call_args_list]))
+            self.assertEqual(16, len(l.info.call_args_list))
+            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (75 files, ") for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit XML files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading NUnit XML files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading XUnit XML files {prettify_glob_pattern(settings.xunit_files_glob)} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {prettify_glob_pattern(settings.trx_files_glob)} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Detected 27 JUnit files (') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Detected 24 NUnit files (') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 27 JUnit XML files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 24 NUnit XML files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 9 TRX files (') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Detected 2 unsupported files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 1 Mocha JSON file (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 4 unsupported files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Unsupported file: ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}xml{os.sep}non-xml.xml') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}junit-xml{os.sep}non-junit.xml') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}non-xml.xml') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 140 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json/non-json.json') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json/malformed-json.json') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 144 files in ') for call in l.info.call_args_list]))
 
-            self.assertEqual(9, len(l.debug.call_args_list))
+            for call in l.debug.call_args_list:
+                print(call.args[0])
+
+            self.assertEqual(10, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('reading JUnit files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('reading NUnit files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('reading XUnit files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading JUnit XML files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading NUnit XML files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('reading XUnit XML files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading TRX files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('detected JUnit files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('detected NUnit files [') for call in l.debug.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith('detected XUnit files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('detected JUnit XML files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('detected NUnit XML files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('detected XUnit XML files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected TRX files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('detected Mocha JSON files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(140, actual.files)
+        self.assertEqual(144, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 and above we see one particular error
-            self.assertEqual(14, len(actual.errors))
-            self.assertEqual(726, actual.suites)
-            self.assertEqual(4084, actual.suite_tests)
-            self.assertEqual(212, actual.suite_skipped)
-            self.assertEqual(448, actual.suite_failures)
-            self.assertEqual(18, actual.suite_errors)
-            self.assertEqual(7944, actual.suite_time)
+            self.assertEqual(17, len(actual.errors))
+            self.assertEqual(727, actual.suites)
+            self.assertEqual(4089, actual.suite_tests)
+            self.assertEqual(213, actual.suite_skipped)
+            self.assertEqual(449, actual.suite_failures)
+            self.assertEqual(19, actual.suite_errors)
+            self.assertEqual(7956, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4060, len(actual.cases))
+            self.assertEqual(4065, len(actual.cases))
         else:
-            self.assertEqual(10, len(actual.errors))
-            self.assertEqual(730, actual.suites)
-            self.assertEqual(4092, actual.suite_tests)
-            self.assertEqual(212, actual.suite_skipped)
-            self.assertEqual(452, actual.suite_failures)
-            self.assertEqual(18, actual.suite_errors)
-            self.assertEqual(7945, actual.suite_time)
+            self.assertEqual(13, len(actual.errors))
+            self.assertEqual(731, actual.suites)
+            self.assertEqual(4097, actual.suite_tests)
+            self.assertEqual(213, actual.suite_skipped)
+            self.assertEqual(453, actual.suite_failures)
+            self.assertEqual(19, actual.suite_errors)
+            self.assertEqual(7957, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4068, len(actual.cases))
+            self.assertEqual(4073, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -990,6 +997,9 @@ class Test(unittest.TestCase):
             ] * 2 + [
                 # these occur once, either from FILES and or from *_FILES options
                 "::error::Exception: File is empty.",
+                '::error::Exception: File is empty.',  # once from xml, once from json
+                '::error::RuntimeError: Unsupported file format: malformed-json.json',
+                '::error::RuntimeError: Unsupported file format: non-json.json',
                 "::error file=empty.xml::Error processing result file: File is empty.",
                 "::error file=non-junit.xml::Error processing result file: Unsupported file format: non-junit.xml",
                 "::error file=non-junit.xml::Error processing result file: Invalid format.",
@@ -997,6 +1007,9 @@ class Test(unittest.TestCase):
                 "::error::junitparser.junitparser.JUnitXmlError: Invalid format.",
                 "::error::RuntimeError: Unsupported file format: non-junit.xml",
                 '::error::RuntimeError: Unsupported file format: non-xml.xml',
+                '::error file=empty.json::Error processing result file: File is empty.',
+                '::error file=malformed-json.json::Error processing result file: Unsupported file format: malformed-json.json',
+                '::error file=non-json.json::Error processing result file: Unsupported file format: non-json.json',
             ]
             if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                 expected.extend([
@@ -1048,9 +1061,9 @@ class Test(unittest.TestCase):
         actual = parse_files(settings, gha)
 
         gha.warning.assert_has_calls([
-            mock.call(f'Could not find any JUnit files for {missing_junit}'),
-            mock.call(f'Could not find any NUnit files for {missing_nunit}'),
-            mock.call(f'Could not find any XUnit files for {missing_xunit}'),
+            mock.call(f'Could not find any JUnit XML files for {missing_junit}'),
+            mock.call(f'Could not find any NUnit XML files for {missing_nunit}'),
+            mock.call(f'Could not find any XUnit XML files for {missing_xunit}'),
             mock.call(f'Could not find any TRX files for {missing_trx}')
         ])
         gha.error.assert_not_called()

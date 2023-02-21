@@ -1,0 +1,1 @@
+ParseError: file='files/json/empty.json', message='File is empty.', line=None, column=None, exception=Exception('File is empty.')

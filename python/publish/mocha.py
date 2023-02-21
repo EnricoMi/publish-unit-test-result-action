@@ -6,12 +6,24 @@ from publish.junit import JUnitTree
 
 
 def is_mocha_json(path: str) -> bool:
-    return path.endswith('.json')
+    if not path.endswith('.json'):
+        return False
+
+    try:
+        with open(path, 'rt') as r:
+            results = json.load(r)
+        return 'stats' in results and isinstance(results.get('stats'), dict) and 'suites' in results.get('stats') and \
+            'tests' in results and isinstance(results.get('tests'), list) and all(isinstance(test, dict) for test in results.get('tests')) and (
+                len(results.get('tests')) == 0 or all(test.get('fullTitle') for test in results.get('tests'))
+            )
+    except BaseException:
+        return False
 
 
 def parse_mocha_json_file(path: str) -> JUnitTree:
     with open(path, 'rt') as r:
         results = json.load(r)
+
     stats = results.get('stats', {})
     skippedTests = {test.get('fullTitle') for test in results.get('pending', [])}
     suite = etree.Element('testsuite', attrib={k: str(v) for k, v in dict(

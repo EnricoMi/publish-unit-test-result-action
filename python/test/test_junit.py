@@ -209,7 +209,7 @@ class JUnitXmlParseTest:
                                   unsupported_files: List[str]):
         all_supported_files = set(test_files).difference(unsupported_files or [])
 
-        all_unsupported_files = self.unsupported_files.copy()
+        all_unsupported_files = self.unsupported_files().copy()
         all_unsupported_files.extend(TestJunit.get_test_files())
 
         from test_nunit import TestNunit

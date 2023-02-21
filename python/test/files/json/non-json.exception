@@ -1,0 +1,1 @@
+ParseError: file='files/non-json.json', message='Expecting value: line 1 column 1 (char 0)', line=None, column=None, exception=JSONDecodeError('Expecting value: line 1 column 1 (char 0)')

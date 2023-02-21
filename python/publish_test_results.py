@@ -163,9 +163,9 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
     files = expand_glob(settings.files_glob, None, gha)
-    junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
-    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
-    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
+    junit_files = expand_glob(settings.junit_files_glob, 'JUnit XML', gha)
+    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit XML', gha)
+    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit XML', gha)
     trx_files = expand_glob(settings.trx_files_glob, 'TRX', gha)
 
     elems = []
