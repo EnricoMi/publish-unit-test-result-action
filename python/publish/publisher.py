@@ -434,8 +434,8 @@ class Publisher:
         if check_run is None:
             return None, None
 
-        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(tests \d+ to \d+\))?$')
-        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(tests \d+ to \d+\))?$')
+        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(test \d+ to \d+\))?$')
+        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(test \d+ to \d+\))?$')
 
         all_tests_message_regexp = re.compile(
             r'^(There is 1 test, see "Raw output" for the name of the test)|'
