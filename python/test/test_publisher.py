@@ -1123,22 +1123,22 @@ class TestPublisher(unittest.TestCase):
         annotation1.raw_details = None
 
         annotation2 = mock.Mock()
-        annotation2.title = '4 tests found (tests 1 to 2)'
+        annotation2.title = '4 tests found (test 1 to 2)'
         annotation2.message = 'There are 4 tests, see "Raw output" for the list of tests 1 to 2.'
         annotation2.raw_details = 'test one\ntest two'
 
         annotation3 = mock.Mock()
-        annotation3.title = '4 tests found (tests 3 to 4)'
+        annotation3.title = '4 tests found (test 3 to 4)'
         annotation3.message = 'There are 4 tests, see "Raw output" for the list of tests 3 to 4.'
         annotation3.raw_details = 'test three\ntest four'
 
         annotation4 = mock.Mock()
-        annotation4.title = '4 skipped tests found (tests 1 to 2)'
+        annotation4.title = '4 skipped tests found (test 1 to 2)'
         annotation4.message = 'There are 4 skipped tests, see "Raw output" for the list of skipped tests 1 to 2.'
         annotation4.raw_details = 'skip one\nskip two'
 
         annotation5 = mock.Mock()
-        annotation5.title = '4 skipped tests found (tests 3 to 4)'
+        annotation5.title = '4 skipped tests found (test 3 to 4)'
         annotation5.message = 'There are 4 skipped tests, see "Raw output" for the list of skipped tests 3 to 4.'
         annotation5.raw_details = 'skip three\nskip four'
 
@@ -1165,6 +1165,25 @@ class TestPublisher(unittest.TestCase):
         check_run = mock.Mock()
         check_run.get_annotations = mock.Mock(return_value=annotations)
         self.assertEqual((None, None), Publisher.get_test_lists_from_check_run(check_run))
+
+    def test_get_test_lists_from_generated_annotations(self):
+        cases = create_unit_test_case_results({
+            (None, 'class', 'test abcd'): {'success': [None]},
+            (None, 'class', 'test efgh'): {'skipped': [None]},
+            (None, 'class', 'test ijkl'): {'skipped': [None]},
+        })
+
+        settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
+        gh = mock.MagicMock()
+        publisher = Publisher(settings, gh, None)
+        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=42)
+
+        check_run = mock.Mock()
+        check_run.get_annotations = mock.Mock(return_value=annotations)
+        self.assertEqual(
+            (['class ‑ test abcd', 'class ‑ test efgh', 'class ‑ test ijkl'], ['class ‑ test efgh', 'class ‑ test ijkl']),
+            Publisher.get_test_lists_from_check_run(check_run)
+        )
 
     def test_publish_check_without_annotations(self):
         self.do_test_publish_check_without_base_stats([], [none_annotations])
