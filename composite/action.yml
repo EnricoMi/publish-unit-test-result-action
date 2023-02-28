@@ -161,7 +161,7 @@ runs:
       run: |
         echo '##[group]Install Python dependencies'
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install wheel
+        python3 -m pip install -U pip wheel
         python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
