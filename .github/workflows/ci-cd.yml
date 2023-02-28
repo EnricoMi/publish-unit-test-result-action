@@ -471,16 +471,6 @@ jobs:
         with:
           path: artifacts
 
-      - name: Cache PIP Packages
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-${{ matrix.python }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
-          restore-keys: |
-            ${{ matrix.os }}-pip-${{ matrix.python }}-
-            ${{ matrix.os }}-pip-
-
       - name: Install package wheel
         if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
         run: python3 -m pip install wheel
