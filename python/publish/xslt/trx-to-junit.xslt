@@ -3,6 +3,7 @@
 <!-- and https://github.com/medlab/xunitparserx/blob/2cc8b68b0c5ce9c60da2934cb2cce10c8330536e/trx-to-junit.xslt -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010" >
   <xsl:output method="xml" indent="yes" />
+  <xsl:key name="unitTests" match="//b:TestDefinitions/b:UnitTest" use="@id"/>
   <xsl:template match="/">
     <testsuites>
       <xsl:variable name="numberOfTests" select="count(//a:UnitTestResult/@testId) + count(//b:UnitTestResult/@testId)"/>
@@ -149,7 +150,7 @@
           </xsl:variable>
           <xsl:variable name="message" select="b:Output/b:ErrorInfo/b:Message"/>
           <xsl:variable name="stacktrace" select="b:Output/b:ErrorInfo/b:StackTrace"/>
-          <xsl:for-each select="//b:UnitTest[@id = $testId]">
+          <xsl:for-each select="key('unitTests', $testId)">
             <xsl:variable name="className">
               <xsl:choose>
                 <xsl:when test="contains(b:TestMethod/@className, ',')">
