@@ -6,7 +6,7 @@ from lxml import etree
 from publish.junit import JUnitTree, ParsedJUnitFile, progress_safe_parse_xml_file, xml_has_root_element
 
 with (pathlib.Path(__file__).resolve().parent / 'xslt' / 'trx-to-junit.xslt').open('r', encoding='utf-8') as r:
-    transform_trx_to_junit = etree.XSLT(etree.parse(r))
+    transform_trx_to_junit = etree.XSLT(etree.parse(r), regexp=False, access_control=etree.XSLTAccessControl.DENY_ALL)
 
 
 def is_trx(path: str) -> bool:

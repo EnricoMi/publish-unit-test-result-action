@@ -6,7 +6,7 @@ from lxml import etree
 from publish.junit import JUnitTree, ParsedJUnitFile, progress_safe_parse_xml_file, xml_has_root_element
 
 with (pathlib.Path(__file__).resolve().parent / 'xslt' / 'nunit3-to-junit.xslt').open('r', encoding='utf-8') as r:
-    transform_nunit_to_junit = etree.XSLT(etree.parse(r))
+    transform_nunit_to_junit = etree.XSLT(etree.parse(r), regexp=False, access_control=etree.XSLTAccessControl.DENY_ALL)
 
 
 def is_nunit(path: str) -> bool:
