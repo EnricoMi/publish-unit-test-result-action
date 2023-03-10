@@ -21,9 +21,9 @@
           <xsl:variable name="totalduration">
             <xsl:choose>
               <xsl:when test="@duration">
-                <xsl:variable name="duration_seconds" select="substring(@duration, 7)"/>
-                <xsl:variable name="duration_minutes" select="substring(@duration, 4,2 )"/>
-                <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
+                <xsl:variable name="duration_seconds" select="number(substring(@duration, 7))"/>
+                <xsl:variable name="duration_minutes" select="number(substring(@duration, 4,2 ))"/>
+                <xsl:variable name="duration_hours" select="number(substring(@duration, 1, 2))"/>
                 <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#######')"/>
               </xsl:when>
               <xsl:when test="@startTime and @endTime">
@@ -114,9 +114,9 @@
           <xsl:variable name="totalduration">
             <xsl:choose>
               <xsl:when test="@duration">
-                <xsl:variable name="duration_seconds" select="substring(@duration, 7)"/>
-                <xsl:variable name="duration_minutes" select="substring(@duration, 4,2 )"/>
-                <xsl:variable name="duration_hours" select="substring(@duration, 1, 2)"/>
+                <xsl:variable name="duration_seconds" select="number(substring(@duration, 7))"/>
+                <xsl:variable name="duration_minutes" select="number(substring(@duration, 4,2 ))"/>
+                <xsl:variable name="duration_hours" select="number(substring(@duration, 1, 2))"/>
                 <xsl:value-of select="format-number($duration_hours*3600 + $duration_minutes*60 + $duration_seconds, '#.#######')"/>
               </xsl:when>
               <xsl:when test="@startTime and @endTime">
@@ -222,12 +222,12 @@
     <xsl:variable name="local-time" select="substring($time, 1, string-length($time) - 6)" />
     <xsl:variable name="offset" select="substring-after($time, $local-time)" />
 
-    <xsl:variable name="year" select="substring($date, 1, 4)" />
-    <xsl:variable name="month" select="substring($date, 6, 2)" />
-    <xsl:variable name="day" select="substring($date, 9, 2)" />
+    <xsl:variable name="year" select="number(substring($date, 1, 4))" />
+    <xsl:variable name="month" select="number(substring($date, 6, 2))" />
+    <xsl:variable name="day" select="number(substring($date, 9, 2))" />
 
-    <xsl:variable name="hour" select="substring($local-time, 1, 2)" />
-    <xsl:variable name="minute" select="substring($local-time, 4, 2)" />
+    <xsl:variable name="hour" select="number(substring($local-time, 1, 2))" />
+    <xsl:variable name="minute" select="number(substring($local-time, 4, 2))" />
     <xsl:variable name="second-and-fraction" select="substring($local-time, 7)" />
     <xsl:variable name="second">
       <xsl:choose>
