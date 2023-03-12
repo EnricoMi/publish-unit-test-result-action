@@ -180,7 +180,7 @@ runs:
       id: cache
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt, 'composite/action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
         restore-keys: |
           enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-
           enricomi-publish-action-${{ runner.os }}-pip-
