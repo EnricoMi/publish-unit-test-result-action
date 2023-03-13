@@ -156,6 +156,7 @@ runs:
           fi
         fi
         echo "version=$(python -V)" >> $GITHUB_OUTPUT
+        echo "date=$(date +%Y%m%d 2> /dev/null || true)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
 
@@ -180,7 +181,7 @@ runs:
       id: cache
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}-${{ steps.python.outputs.date }}
         restore-keys: |
           enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-
           enricomi-publish-action-${{ runner.os }}-pip-
