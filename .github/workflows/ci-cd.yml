@@ -131,6 +131,9 @@ jobs:
 
       - name: Install Python dependencies
         run: |
+          pip freeze | sort
+          pip cache info
+          pip cache list
           python -m pip install --upgrade --force pip wheel
           pip install --force -r python/requirements.txt
           pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
