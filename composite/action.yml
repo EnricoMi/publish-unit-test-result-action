@@ -181,11 +181,11 @@ runs:
       id: cache
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}-${{ steps.python.outputs.date }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}-${{ steps.python.outputs.date }}
         restore-keys: |
-          enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}-
-          enricomi-publish-action-${{ runner.os }}-pip-${{ steps.python.outputs.version }}-
-          enricomi-publish-action-${{ runner.os }}-pip-
+          enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}-
+          enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-
+          enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-
 
     - name: Install Python dependencies
       run: |
