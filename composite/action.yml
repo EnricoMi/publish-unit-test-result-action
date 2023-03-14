@@ -177,18 +177,6 @@ runs:
         echo "action-path=$GITHUB_ACTION_PATH" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Debug
-      with:
-        env_debug: ${{ toJSON(env) }}
-      run: "true"
-      shell: bash
-
-    - name: Debug 2
-      with:
-        expr_debug: ${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}
-      run: "true"
-      shell: bash
-
     - name: Restore PIP packages cache
       id: cache
       uses: actions/cache/restore@v3
