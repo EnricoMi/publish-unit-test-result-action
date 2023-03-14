@@ -157,6 +157,7 @@ runs:
         fi
         echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         echo "$GITHUB_ACTION_PATH"
+        echo "${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}"
         echo '##[endgroup]'
       shell: bash
 
@@ -177,27 +178,13 @@ runs:
         echo "action-path=$GITHUB_ACTION_PATH" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Debug
-      with:
-        env_debug: ${{ toJSON(env) }}
-      run: |
-        true
-      shell: bash
-
-    - name: Debug 2
-      with:
-        expr_debug: ${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}
-      run: |
-        true
-      shell: bash
-
     - name: Restore PIP packages cache
       id: cache
       uses: actions/cache/restore@v3
       continue-on-error: true
       with:
         path: ${{ steps.config.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('../python/requirements.txt', 'action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), 'action.yml') }}
 
     - name: Install Python dependencies
       run: |
