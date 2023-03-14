@@ -177,6 +177,7 @@ runs:
 
     - name: Cache PIP Packages
       uses: actions/cache@v3
+      continue-on-error: true
       id: cache
       with:
         path: ${{ steps.os.outputs.pip-cache }}
