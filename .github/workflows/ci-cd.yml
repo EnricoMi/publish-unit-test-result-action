@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check requirements.txt against requirements-direct.txt
-        run:
+        run: |
           ! (diff -w python/requirements-direct.txt python/requirements.txt | grep -e "^<")
         shell: bash
       - name: Check for dependency updates
