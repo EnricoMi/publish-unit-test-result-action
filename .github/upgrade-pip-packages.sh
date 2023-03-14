@@ -3,6 +3,7 @@ set -euo pipefail
 
 base="$(dirname "$0")"
 
+pip install --upgrade --force pip==22.0.0
 pip install --upgrade --upgrade-strategy eager -r "$base/../python/requirements-direct.txt" -c "$base/../python/constraints.txt"
 
 pip install pipdeptree
