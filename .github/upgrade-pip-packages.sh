@@ -1,3 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
 base="$(dirname "$0")"
 
 pip install --upgrade -r "$base/../python/requirements-direct.txt"
