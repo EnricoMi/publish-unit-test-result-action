@@ -132,6 +132,10 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: List files
+      run: find "$GITHUB_ACTION_PATH"
+      shell: bash
+
     - name: Check for Python3
       id: python
       run: |
@@ -181,7 +185,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('$GITHUB_ACTION_PATH/**/requirements.txt', '$GITHUB_ACTION_PATH/composite/action.yml') }}
 
     - name: Install Python dependencies
       run: |
