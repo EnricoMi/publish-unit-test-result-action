@@ -175,8 +175,9 @@ runs:
         esac
       shell: bash
 
-    - name: Cache PIP Packages
-      uses: actions/cache@v3
+    - name: Restore PIP packages cache
+      id: cache
+      uses: actions/cache/restore@v3
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
@@ -237,6 +238,14 @@ runs:
         # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
+
+    - name: Save PIP packages cache
+      uses: actions/cache/save@v3
+      if: always()
+      continue-on-error: true
+      with:
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
   icon: 'check-circle'
