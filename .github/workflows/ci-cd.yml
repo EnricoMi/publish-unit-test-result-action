@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Check requirements.txt against requirements-direct.txt
         run: |
-          ! (diff -w python/requirements-direct.txt python/requirements.txt | grep -e "^<")
+          diff -w python/requirements-direct.txt python/requirements.txt | (! grep -e "^<")
         shell: bash
       - name: Check for dependency updates
         continue-on-error: true
