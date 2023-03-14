@@ -3,8 +3,7 @@ set -euo pipefail
 
 base="$(dirname "$0")"
 
-pip uninstall -y -r "$base/../python/requirements.txt"
-pip install -r "$base/../python/requirements-direct.txt"
+pip install --upgrade --upgrade-strategy eager -r "$base/../python/requirements-direct.txt"
 
 pip install pipdeptree
 grep -e "^#" -e ";" "$base/../python/requirements-direct.txt" > "$base/../python/requirements.txt"
