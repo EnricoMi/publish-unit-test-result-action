@@ -155,7 +155,7 @@ runs:
             echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
           fi
         fi
-        echo "version=$(python -V)" >> $GITHUB_OUTPUT
+        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         echo "date=$(date +%Y%m%d 2> /dev/null || true)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
