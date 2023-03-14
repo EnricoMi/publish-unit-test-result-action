@@ -14,6 +14,20 @@ on:
 permissions: {}
 
 jobs:
+  dependencies:
+    name: Test python/requirements.txt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check requirements.txt against requirements-direct.txt
+        run:
+          ! (diff -w python/requirements-direct.txt python/requirements.txt | grep -e "^<")
+        shell: bash
+      - name: Check for dependency updates
+        continue-on-error: true
+        run:
+          .github/upgrade-pip-packages.sh
+        shell: bash
+
   test:
     name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
