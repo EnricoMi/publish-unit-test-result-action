@@ -106,18 +106,16 @@ jobs:
         run: |
           case "$OS" in
             ubuntu*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/.cache/pip" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/.cache/pip" >> $GITHUB_OUTPUT
               ;;
             macos*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/Library/Caches/pip" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/Library/Caches/pip" >> $GITHUB_OUTPUT
               ;;
             windows*)
-              echo "path-sep=\\" >>$GITHUB_OUTPUT
-              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >>$GITHUB_OUTPUT
+              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
               ;;
           esac
+          echo "date=$(date +%Y%m%d 2> /dev/null || true)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache PIP Packages
@@ -125,8 +123,9 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}
+          key: ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-${{ steps.os.outputs.date }}
           restore-keys: |
+            ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-
             ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-
             ${{ matrix.os }}-pip-test-
 
@@ -461,24 +460,6 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Detect OS
-        id: os
-        env:
-          OS: ${{ matrix.os }}
-        run: |
-          case "$OS" in
-            ubuntu*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              ;;
-            macos*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              ;;
-            windows*)
-              echo "path-sep=\\" >>$GITHUB_OUTPUT
-              ;;
-          esac
-        shell: bash
-
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -489,7 +470,9 @@ jobs:
         uses: ./composite
         with:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+          files: |
+            artifacts/**/*.xml
+            artifacts\**\*.xml
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
