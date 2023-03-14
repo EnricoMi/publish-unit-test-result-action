@@ -181,9 +181,6 @@ runs:
       with:
         path: ${{ steps.os.outputs.pip-cache }}
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
-        restore-keys: |
-          enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-
-          enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-
 
     - name: Install Python dependencies
       run: |
