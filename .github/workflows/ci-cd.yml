@@ -106,18 +106,16 @@ jobs:
         run: |
           case "$OS" in
             ubuntu*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/.cache/pip" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/.cache/pip" >> $GITHUB_OUTPUT
               ;;
             macos*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/Library/Caches/pip" >>$GITHUB_OUTPUT
+              echo "pip-cache=~/Library/Caches/pip" >> $GITHUB_OUTPUT
               ;;
             windows*)
-              echo "path-sep=\\" >>$GITHUB_OUTPUT
-              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >>$GITHUB_OUTPUT
+              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
               ;;
           esac
+          echo "date=$(date +%Y%m%d 2> /dev/null || true)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache PIP Packages
@@ -125,13 +123,17 @@ jobs:
         id: cache
         with:
           path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}
+          key: ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-${{ steps.os.outputs.date }}
           restore-keys: |
+            ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-
             ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-
             ${{ matrix.os }}-pip-test-
 
       - name: Install Python dependencies
         run: |
+          pip freeze | sort
+          pip cache info
+          pip cache list
           python -m pip install --upgrade --force pip wheel
           pip install --force -r python/requirements.txt
           pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
@@ -461,53 +463,19 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Detect OS
-        id: os
-        env:
-          OS: ${{ matrix.os }}
-        run: |
-          case "$OS" in
-            ubuntu*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/.cache/pip" >>$GITHUB_OUTPUT
-              ;;
-            macos*)
-              echo "path-sep=/" >>$GITHUB_OUTPUT
-              echo "pip-cache=~/Library/Caches/pip" >>$GITHUB_OUTPUT
-              ;;
-            windows*)
-              echo "path-sep=\\" >>$GITHUB_OUTPUT
-              echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >>$GITHUB_OUTPUT
-              ;;
-          esac
-        shell: bash
-
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
           path: artifacts
-
-      - name: Cache PIP Packages
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: ${{ steps.os.outputs.pip-cache }}
-          key: ${{ matrix.os }}-pip-${{ matrix.python }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
-          restore-keys: |
-            ${{ matrix.os }}-pip-${{ matrix.python }}-
-            ${{ matrix.os }}-pip-
-
-      - name: Install package wheel
-        if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: python3 -m pip install wheel
-        shell: bash
 
       - name: Publish Test Results
         id: test-results
         uses: ./composite
         with:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-          files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+          files: |
+            artifacts/**/*.xml
+            artifacts\**\*.xml
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -535,15 +503,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Cache PIP Packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ matrix.os }}-pip-extra-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
-          restore-keys: |
-            ${{ matrix.os }}-pip-extra-
-            ${{ matrix.os }}-pip-
 
       - name: Setup Python
         uses: actions/setup-python@v4

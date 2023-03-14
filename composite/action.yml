@@ -133,6 +133,7 @@ runs:
   using: 'composite'
   steps:
     - name: Check for Python3
+      id: python
       run: |
         echo '##[group]Check for Python3'
         # we check version here just to execute `python3` with an argument
@@ -154,8 +155,32 @@ runs:
             echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
           fi
         fi
+        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
+
+    - name: Detect OS
+      id: os
+      run: |
+        case "$RUNNER_OS" in
+          Linux*)
+            echo "pip-cache=~/.cache/pip" >> $GITHUB_OUTPUT
+            ;;
+          macOS*)
+            echo "pip-cache=~/Library/Caches/pip" >> $GITHUB_OUTPUT
+            ;;
+          Windows*)
+            echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
+            ;;
+        esac
+      shell: bash
+
+    - name: Cache PIP Packages
+      uses: actions/cache@v3
+      continue-on-error: true
+      with:
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
 
     - name: Install Python dependencies
       run: |
