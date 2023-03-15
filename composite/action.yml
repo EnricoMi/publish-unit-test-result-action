@@ -156,8 +156,6 @@ runs:
           fi
         fi
         echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
-        echo "$GITHUB_ACTION_PATH"
-        echo "${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}"
         echo '##[endgroup]'
       shell: bash
 
@@ -175,9 +173,7 @@ runs:
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
             ;;
         esac
-        echo "action-path=$GITHUB_ACTION_PATH" >> $GITHUB_OUTPUT
-        echo "$GITHUB_ACTION_PATH"
-        find "$GITHUB_ACTION_PATH/.."
+        echo "action-path=$(dirname "$GITHUB_ACTION_PATH")" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Restore PIP packages cache
@@ -186,7 +182,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.config.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', steps.config.outputs.action-path), format('{0}/action.yml', steps.config.outputs.action-path)) }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/python/requirements.txt', steps.config.outputs.action-path), format('{0}/composite/action.yml', steps.config.outputs.action-path)) }}
 
     - name: Install Python dependencies
       run: |
