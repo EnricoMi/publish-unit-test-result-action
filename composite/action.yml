@@ -161,38 +161,6 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
-    - name: debug
-      continue-on-error: true
-      with:
-        value: ${{ format('{0}/../python/requirements.txt', 'abc') }}
-      run: |
-        true
-      shell: bash
-
-    - name: debug 2
-      continue-on-error: true
-      with:
-        value: ${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}
-      run: |
-        true
-      shell: bash
-
-    - name: debug 3
-      continue-on-error: true
-      with:
-        value: ${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH)) }}
-      run: |
-        true
-      shell: bash
-
-    - name: debug 4
-      continue-on-error: true
-      with:
-        value: ${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), format('{0}/action.yml', env.GITHUB_ACTION_PATH)) }}
-      run: |
-        true
-      shell: bash
-
     - name: Configure
       id: config
       run: |
@@ -211,12 +179,12 @@ runs:
       shell: bash
 
     - name: Restore PIP packages cache
-      id: cache
       uses: actions/cache/restore@v3
+      id: cache
       continue-on-error: true
       with:
         path: ${{ steps.config.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), format('{0}/action.yml', env.GITHUB_ACTION_PATH)) }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', steps.config.outputs.action-path), format('{0}/action.yml', steps.config.outputs.action-path)) }}
 
     - name: Install Python dependencies
       run: |
