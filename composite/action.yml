@@ -174,6 +174,7 @@ runs:
             ;;
         esac
         echo "action-path=$(cd "$GITHUB_ACTION_PATH"; cd ..; pwd)" >> $GITHUB_OUTPUT
+        find "$GITHUB_ACTION_PATH/.."
         env
       shell: bash
 
