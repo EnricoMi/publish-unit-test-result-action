@@ -176,6 +176,8 @@ runs:
             ;;
         esac
         echo "action-path=$GITHUB_ACTION_PATH" >> $GITHUB_OUTPUT
+        echo "$GITHUB_ACTION_PATH"
+        find "$GITHUB_ACTION_PATH/.."
       shell: bash
 
     - name: Restore PIP packages cache
