@@ -173,7 +173,7 @@ runs:
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
             ;;
         esac
-        echo "action-path=$(dirname "$GITHUB_ACTION_PATH")" >> $GITHUB_OUTPUT
+        echo "action-path=$(cd "$GITHUB_ACTION_PATH"; cd ..; pwd)" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Restore PIP packages cache
