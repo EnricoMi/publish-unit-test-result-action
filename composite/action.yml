@@ -242,7 +242,7 @@ runs:
 
     - name: Save PIP packages cache
       uses: actions/cache/save@v3
-      if: always() && ! steps.cache.outputs.cache-hit
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
         path: ${{ steps.config.outputs.pip-cache }}
