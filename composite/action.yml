@@ -161,6 +161,38 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
+    - name: debug
+      continue-on-error: true
+      with:
+        value: ${{ format('{0}/../python/requirements.txt', 'abc') }}
+      run: |
+        true
+      shell: bash
+
+    - name: debug 2
+      continue-on-error: true
+      with:
+        value: ${{ format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH) }}
+      run: |
+        true
+      shell: bash
+
+    - name: debug 3
+      continue-on-error: true
+      with:
+        value: ${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH)) }}
+      run: |
+        true
+      shell: bash
+
+    - name: debug 4
+      continue-on-error: true
+      with:
+        value: ${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), format('{0}/action.yml', env.GITHUB_ACTION_PATH)) }}
+      run: |
+        true
+      shell: bash
+
     - name: Configure
       id: config
       run: |
@@ -184,7 +216,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.config.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), 'action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/../python/requirements.txt', env.GITHUB_ACTION_PATH), format('{0}/action.yml', env.GITHUB_ACTION_PATH)) }}
 
     - name: Install Python dependencies
       run: |
