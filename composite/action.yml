@@ -178,6 +178,12 @@ runs:
         env
       shell: bash
 
+    - name: Ls hashed files
+      run: |
+        ls -lah "${{ format('{0}/python/requirements.txt', steps.config.outputs.action-path) }}"
+        ls -lah "${{ format('{0}/composite/action.yml', steps.config.outputs.action-path) }}"
+      shell: bash
+
     - name: Restore PIP packages cache
       uses: actions/cache/restore@v3
       id: cache
