@@ -175,12 +175,13 @@ runs:
         esac
       shell: bash
 
-    - name: Cache PIP Packages
-      uses: actions/cache@v3
+    - name: Restore PIP packages cache
+      uses: actions/cache/restore@v3
+      id: cache
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles('**/requirements.txt', 'composite/action.yml') }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-f3f2c295046c91ed612b4efb6c9fb352
 
     - name: Install Python dependencies
       run: |
@@ -237,6 +238,14 @@ runs:
         # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
+
+    - name: Save PIP packages cache
+      uses: actions/cache/save@v3
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
+      continue-on-error: true
+      with:
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
   icon: 'check-circle'
