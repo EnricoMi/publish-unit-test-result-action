@@ -109,6 +109,7 @@ def parse_files_as_xml(files: Iterable[str], large_files: bool, drop_testcases: 
     nunit_files = []
     xunit_files = []
     trx_files = []
+    dart_json_files = []
     mocha_json_files = []
     unknown_files = []
 
@@ -132,6 +133,11 @@ def parse_files_as_xml(files: Iterable[str], large_files: bool, drop_testcases: 
             trx_files.append(path)
             return parse_trx_file(path, large_files)
 
+        from publish.dart import is_dart_json, parse_dart_json_file
+        if is_dart_json(path):
+            dart_json_files.append(path)
+            return parse_dart_json_file(path)
+
         from publish.mocha import is_mocha_json, parse_mocha_json_file
         if is_mocha_json(path):
             mocha_json_files.append(path)
@@ -148,6 +154,7 @@ def parse_files_as_xml(files: Iterable[str], large_files: bool, drop_testcases: 
             ('NUnit XML', nunit_files),
             ('XUnit XML', xunit_files),
             ('TRX', trx_files),
+            ('Dart JSON', dart_json_files),
             ('Mocha JSON', mocha_json_files),
             ('unsupported', unknown_files)
         ]:
