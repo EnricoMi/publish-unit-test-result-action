@@ -182,6 +182,8 @@ runs:
       run: |
         ls -lah "${{ format('{0}/python/requirements.txt', steps.config.outputs.action-path) }}"
         ls -lah "${{ format('{0}/composite/action.yml', steps.config.outputs.action-path) }}"
+        ls -lah '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt' '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml'
+        echo ${{ hashFiles('/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt', '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml') }}
       shell: bash
 
     - name: Restore PIP packages cache
