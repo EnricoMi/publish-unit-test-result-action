@@ -175,6 +175,7 @@ runs:
         esac
         echo "action-path=$(cd "$GITHUB_ACTION_PATH"; cd ..; pwd)" >> $GITHUB_OUTPUT
         find "$GITHUB_ACTION_PATH/.."
+        touch file
         env
       shell: bash
 
@@ -183,7 +184,9 @@ runs:
         ls -lah "${{ format('{0}/python/requirements.txt', steps.config.outputs.action-path) }}"
         ls -lah "${{ format('{0}/composite/action.yml', steps.config.outputs.action-path) }}"
         ls -lah '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt' '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml'
-        echo ${{ hashFiles('/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt', '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml') }}
+        echo "hash: ${{ hashFiles('/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt', '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml') }}"
+        ls -lah file
+        echo "hash: ${{ hashFiles('file') }}"
       shell: bash
 
     - name: Restore PIP packages cache
