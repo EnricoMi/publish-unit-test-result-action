@@ -103,8 +103,8 @@ def get_number_of_files(files: List[str], label: str = 'file') -> str:
     return number_of_files
 
 
-def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: bool,
-                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+def parse_files_as_xml(files: Iterable[str], large_files: bool, drop_testcases: bool,
+                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     junit_files = []
     nunit_files = []
     xunit_files = []
@@ -179,7 +179,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
         if files:
-            elems.extend(parse_xml_files(files, settings.large_files, settings.ignore_runs, progress))
+            elems.extend(parse_files_as_xml(files, settings.large_files, settings.ignore_runs, progress))
         if junit_files:
             elems.extend(parse_junit_xml_files(junit_files, settings.large_files, settings.ignore_runs, progress))
         if xunit_files:
