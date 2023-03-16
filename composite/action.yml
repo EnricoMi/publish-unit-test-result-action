@@ -159,8 +159,8 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
-    - name: Configure
-      id: config
+    - name: Detect OS
+      id: os
       run: |
         case "$RUNNER_OS" in
           Linux*)
@@ -173,20 +173,6 @@ runs:
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
             ;;
         esac
-        echo "action-path=$(cd "$GITHUB_ACTION_PATH"; cd ..; pwd)" >> $GITHUB_OUTPUT
-        find "$GITHUB_ACTION_PATH/.."
-        touch file
-        env
-      shell: bash
-
-    - name: Ls hashed files
-      run: |
-        ls -lah "${{ format('{0}/python/requirements.txt', steps.config.outputs.action-path) }}"
-        ls -lah "${{ format('{0}/composite/action.yml', steps.config.outputs.action-path) }}"
-        ls -lah '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt' '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml'
-        echo "hash: ${{ hashFiles('/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/python/requirements.txt', '/home/runner/work/_actions/EnricoMi/publish-unit-test-result-action/branch-composite-cache-pip-packages-2/composite/action.yml') }}"
-        ls -lah file
-        echo "hash: ${{ hashFiles('file') }}"
       shell: bash
 
     - name: Restore PIP packages cache
@@ -194,8 +180,8 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: ${{ steps.config.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-${{ hashFiles(format('{0}/python/requirements.txt', steps.config.outputs.action-path), format('{0}/composite/action.yml', steps.config.outputs.action-path)) }}
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-f3f2c295046c91ed612b4efb6c9fb352
 
     - name: Install Python dependencies
       run: |
@@ -258,7 +244,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ${{ steps.config.outputs.pip-cache }}
+        path: ${{ steps.os.outputs.pip-cache }}
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
