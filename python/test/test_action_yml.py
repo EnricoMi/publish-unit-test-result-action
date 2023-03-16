@@ -1,5 +1,6 @@
 import hashlib
 import pathlib
+import sys
 import unittest
 
 import yaml
@@ -30,13 +31,15 @@ class TestActionYml(unittest.TestCase):
         self.assertIn(('using', 'composite'), composite_action.get('runs', {}).items())
 
         # check cache key hash is up-to-date in composite action
-        with open(project_root / 'python' / 'requirements.txt', mode='rb') as r:
-            expected_hash = hashlib.md5(r.read()).hexdigest()
-        cache_hash = next(step.get('with', {}).get('key', '').split('-')[-1]
-                          for step in composite_action.get('runs', {}).get('steps', [])
-                          if step.get('uses', '').startswith('actions/cache/restore@'))
-        self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
-                                                        'to update the MD5 hash in composite/action.yaml')
+        # this md5 is linux-based (on Windows, git uses different newlines, which changes the hash)
+        if sys.platform != 'win32':
+            with open(project_root / 'python' / 'requirements.txt', mode='rb') as r:
+                expected_hash = hashlib.md5(r.read()).hexdigest()
+            cache_hash = next(step.get('with', {}).get('key', '').split('-')[-1]
+                              for step in composite_action.get('runs', {}).get('steps', [])
+                              if step.get('uses', '').startswith('actions/cache/restore@'))
+            self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
+                                                            'to update the MD5 hash in composite/action.yaml')
 
     def test_composite_inputs(self):
         with open(project_root / 'composite/action.yml', encoding='utf-8') as r:
