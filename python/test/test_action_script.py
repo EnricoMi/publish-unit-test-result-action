@@ -922,8 +922,8 @@ class Test(unittest.TestCase):
             for call in l.info.call_args_list:
                 print(call.args[0])
 
-            self.assertEqual(16, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (75 files, ") for call in l.info.call_args_list]))
+            self.assertEqual(17, len(l.info.call_args_list))
+            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (76 files, ") for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading JUnit XML files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit XML files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit XML files {prettify_glob_pattern(settings.xunit_files_glob)} (8 files, ') for call in l.info.call_args_list]))
@@ -932,6 +932,7 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith(f'Detected 24 NUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 9 TRX files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 1 Dart JSON file (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 1 Mocha JSON file (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 4 unsupported files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Unsupported file: ') for call in l.info.call_args_list]))
@@ -939,12 +940,12 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}junit-xml{os.sep}non-junit.xml') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json{os.sep}non-json.json') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json{os.sep}malformed-json.json') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 144 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 145 files in ') for call in l.info.call_args_list]))
 
             for call in l.debug.call_args_list:
                 print(call.args[0])
 
-            self.assertEqual(10, len(l.debug.call_args_list))
+            self.assertEqual(11, len(l.debug.call_args_list))
             self.assertTrue(any([call.args[0].startswith('reading files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading JUnit XML files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('reading NUnit XML files [') for call in l.debug.call_args_list]))
@@ -954,32 +955,33 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].startswith('detected NUnit XML files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected XUnit XML files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected TRX files [') for call in l.debug.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith('detected Dart JSON files [') for call in l.debug.call_args_list]))
             self.assertTrue(any([call.args[0].startswith('detected Mocha JSON files [') for call in l.debug.call_args_list]))
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(144, actual.files)
+        self.assertEqual(145, actual.files)
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 and above we see one particular error
             self.assertEqual(17, len(actual.errors))
-            self.assertEqual(727, actual.suites)
-            self.assertEqual(4089, actual.suite_tests)
-            self.assertEqual(213, actual.suite_skipped)
-            self.assertEqual(449, actual.suite_failures)
-            self.assertEqual(19, actual.suite_errors)
+            self.assertEqual(735, actual.suites)
+            self.assertEqual(4109, actual.suite_tests)
+            self.assertEqual(214, actual.suite_skipped)
+            self.assertEqual(450, actual.suite_failures)
+            self.assertEqual(21, actual.suite_errors)
             self.assertEqual(7956, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4065, len(actual.cases))
+            self.assertEqual(4085, len(actual.cases))
         else:
             self.assertEqual(13, len(actual.errors))
-            self.assertEqual(731, actual.suites)
-            self.assertEqual(4097, actual.suite_tests)
-            self.assertEqual(213, actual.suite_skipped)
-            self.assertEqual(453, actual.suite_failures)
-            self.assertEqual(19, actual.suite_errors)
+            self.assertEqual(735, actual.suites)
+            self.assertEqual(4117, actual.suite_tests)
+            self.assertEqual(214, actual.suite_skipped)
+            self.assertEqual(454, actual.suite_failures)
+            self.assertEqual(21, actual.suite_errors)
             self.assertEqual(7957, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4073, len(actual.cases))
+            self.assertEqual(4093, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -1149,7 +1151,8 @@ class Test(unittest.TestCase):
                 GITHUB_REPOSITORY='repo',
                 EVENT_FILE=None,
                 FILES='\n'.join(str(path) for path in [test_files_path / '**' / '*.xml',
-                                                       test_files_path / '**' / '*.trx']),
+                                                       test_files_path / '**' / '*.trx',
+                                                       test_files_path / '**' / '*.json']),
                 JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                 NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
                 XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),
@@ -1167,16 +1170,16 @@ class Test(unittest.TestCase):
 
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
-                self.assertEqual(140, results.files)
+                self.assertEqual(145, results.files)
                 if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
                     # on macOS and Python 3.10 and above we see one particular error
-                    self.assertEqual(726, results.suites)
-                    self.assertEqual(726, len(results.suite_details))
-                    self.assertEqual(1786, len(cases))
+                    self.assertEqual(731, results.suites)
+                    self.assertEqual(731, len(results.suite_details))
+                    self.assertEqual(1811, len(cases))
                 else:
-                    self.assertEqual(730, results.suites)
-                    self.assertEqual(730, len(results.suite_details))
-                    self.assertEqual(1786, len(cases))
+                    self.assertEqual(735, results.suites)
+                    self.assertEqual(735, len(results.suite_details))
+                    self.assertEqual(1811, len(cases))
                 self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check(self):
