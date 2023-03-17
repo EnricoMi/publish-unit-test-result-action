@@ -567,6 +567,7 @@ jobs:
           files: |
             test-files/**/*.xml
             test-files/**/*.trx
+            test-files/**/*.json
           junit_files: "test-files/junit-xml/**/*.xml"
           nunit_files: "test-files/nunit/**/*.xml"
           xunit_files: "test-files/xunit/**/*.xml"
