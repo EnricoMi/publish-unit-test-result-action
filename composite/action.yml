@@ -1,6 +1,6 @@
 name: 'Publish Test Results'
 author: 'EnricoMi'
-description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, C#, Dart, Java, JS, Jest, Kotlin, Mocha, Python, Scala, …'
+description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
 
 inputs:
   github_token:
