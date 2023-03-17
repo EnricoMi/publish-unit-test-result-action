@@ -554,6 +554,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JSON_SUITE_DETAILS='foo', expected=self.get_settings(json_suite_details=False), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JSON_SUITE_DETAILS=None, expected=self.get_settings(json_suite_details=False))
 
+    def test_get_settings_search_pull_requests(self):
+        warning = 'Option search_pull_requests has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS='false', expected=self.get_settings(search_pull_requests=False))
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS='False', expected=self.get_settings(search_pull_requests=False))
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS='true', expected=self.get_settings(search_pull_requests=True))
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS='True', expected=self.get_settings(search_pull_requests=True))
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS='foo', expected=self.get_settings(search_pull_requests=False), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(SEARCH_PULL_REQUESTS=None, expected=self.get_settings(search_pull_requests=False))
+
     def test_get_settings_missing_github_vars(self):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(GITHUB_EVENT_PATH=None)
