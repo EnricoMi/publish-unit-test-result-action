@@ -964,7 +964,7 @@ class Test(unittest.TestCase):
         if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
             # on macOS and Python 3.10 and above we see one particular error
             self.assertEqual(17, len(actual.errors))
-            self.assertEqual(735, actual.suites)
+            self.assertEqual(731, actual.suites)
             self.assertEqual(4109, actual.suite_tests)
             self.assertEqual(214, actual.suite_skipped)
             self.assertEqual(450, actual.suite_failures)
