@@ -14,6 +14,9 @@
 ![NUnit badge](misc/badge-nunit-xml.svg)
 ![XUnit badge](misc/badge-xunit-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
+![Dart badge](https://badgen.net/badge/Dart/JSON/green)
+![Mocha badge](https://badgen.net/badge/Mocha/JSON/green)
+
 
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)
 
