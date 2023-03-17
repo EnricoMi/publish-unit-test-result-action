@@ -839,10 +839,8 @@ class TestPublisher(unittest.TestCase):
                          expected: List[mock.Mock]) -> mock.Mock:
         gh, gha, req, repo, commit = self.create_mocks()
 
-        if settings.search_pull_requests:
-            gh.search_issues = mock.Mock(return_value=pull_requests)
-        else:
-            commit.get_pulls = mock.Mock(return_value=pull_requests)
+        gh.search_issues = mock.Mock(return_value=pull_requests)
+        commit.get_pulls = mock.Mock(return_value=pull_requests)
 
         publisher = Publisher(settings, gh, gha)
 
@@ -850,7 +848,9 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(expected, actual)
         if settings.search_pull_requests:
             gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
+            commit.get_pulls.assert_not_called()
         else:
+            gh.search_issues.assert_not_called()
             commit.get_pulls.assert_called_once_with()
         return gha
 
