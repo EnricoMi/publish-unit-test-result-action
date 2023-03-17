@@ -76,15 +76,9 @@ def parse_dart_json_file(path: str) -> JUnitTree:
             time=(test['end'] - test['start']) / 1000.0 if test.get('start') is not None and test.get('end') is not None else None,
         ).items() if isinstance(v, str) and v or v is not None})
 
-        # TODO: check test['result']
-        # "success" if the test had no errors.
-        # "failure" if the test had a TestFailure but no other errors.
-        # "error"
-        # do not count hidden tests if successful
-        if 'isFailure' in test:
-            type = 'failure' if test.get('isFailure', False) else 'error'
-
-            result = etree.Element(type, attrib={k: v for k, v in dict(
+        test_result = test.get('result', 'error')
+        if test_result != 'success':
+            result = etree.Element('error' if test_result != 'failure' else test_result, attrib={k: v for k, v in dict(
                 message=test.get('error')
             ).items() if v})
             result.text = etree.CDATA('\n'.join(text
@@ -113,7 +107,8 @@ def parse_dart_json_file(path: str) -> JUnitTree:
 
         return testsuite
 
-    visible_tests = [test for test in tests.values() if test.get('hidden') is not True]
+    # do not count hidden tests (unless not successfull)
+    visible_tests = [test for test in tests.values() if test.get('hidden') is not True or test.get('result') != 'success']
     testsuites = etree.Element('testsuites', attrib={k: str(v) for k, v in dict(
         time=(suite_time - suite_start) / 1000.0 if suite_start is not None and suite_time is not None else None,
         tests=str(len(visible_tests)),
