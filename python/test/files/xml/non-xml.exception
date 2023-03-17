@@ -1,0 +1,1 @@
+ParseError: file='files/xml/non-xml.xml', message="Start tag expected, '<' not found, line 1, column 1 (non-xml.xml, line 1)", line=None, column=None, exception=XMLSyntaxError("Start tag expected, '<' not found, line 1, column 1")

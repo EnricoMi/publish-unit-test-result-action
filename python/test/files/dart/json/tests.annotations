@@ -1,0 +1,118 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '2 errors, 1 fail, 1 skipped, 16 pass in 0s',
+      'summary':
+        '20 tests\u2002\u2003\u200316 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/v1.20/README.md#the-symbols "passed tests")\u2003\u2003'
+        '0s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/v1.20/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
+        '4 suites\u2003\u2003\u205f\u20041 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/v1.20/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
+        '1 files\u2004\u2002\u2003\u2003\u205f\u20041 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/v1.20/README.md#the-symbols "failed tests")\u2003\u20032 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/v1.20/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMTQqAIBBGr'
+        'yKuW1REiy4TYkVDpTHqKrp74w+au3nvY97DNzhXwyfWNYwbBzbAQLA4FBa0ImwJabB+6j'
+        'PMxknpP8diDrhTK4pNwFmJFVGjz5BBp3LR31UwitIL/MsF/tekvi6wBOliZhf8/QAMgVR'
+        'H4QAAAA==\n',
+      'annotations': [
+        {
+          'path':
+            'file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+            'src/cli/cli_runner_test.dart',
+          'start_line': 21,
+          'end_line': 21,
+          'annotation_level': 'warning',
+          'message': 'json/tests.json',
+          'title': 'Cli runner should have correct invocation failed',
+          'raw_details':
+            "Expected: 'metrics <command> [arguments] <directories> nope'\n  "
+            "Actual: 'metrics <command> [arguments] <directories>'\n   Which: "
+            "is different. Both strings start the same, but the actual value is "
+            "missing the following trailing characters:  nope\n\n"
+            "package:test_api                        expect\n"
+            "test/src/cli/cli_runner_test.dart 22:7  main.<fn>.<fn>"
+        },
+        {
+          'path':
+            'file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+            'src/cli/utils/detect_sdk_path_test.dart',
+          'start_line': 16,
+          'end_line': 16,
+          'annotation_level': 'failure',
+          'message': 'json/tests.json',
+          'title': 'detectSdkPath should return `null` if running inside VM with error',
+          'raw_details':
+            'Exception: exception\ntest/src/cli/utils/detect_sdk_path_test.dart '
+            '21:7  main.<fn>.<fn>'
+        },
+        {
+          'path':
+            'file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+            'src/cli/utils/detect_sdk_path_test.dart',
+          'start_line': 46,
+          'end_line': 46,
+          'annotation_level': 'failure',
+          'message': 'json/tests.json',
+          'title':
+            'detectSdkPath should return null if sdk path is not found inside '
+            'environment PATH variable with error',
+          'raw_details':
+            "Instance of 'Error'\ntest/src/cli/utils/detect_sdk_path_test.dart "
+            "67:9  main.<fn>.<fn>"
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message':
+            'There is 1 skipped test, see "Raw output" for the name of the '
+            'skipped test.',
+          'title': '1 skipped test found',
+          'raw_details': 'Cli runner should have correct description'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 20 tests, see "Raw output" for the full list of tests.',
+          'title': '20 tests found',
+          'raw_details':
+            'AnalysisOptions readIterableOfString returns iterables with data '
+            'or not\nAnalysisOptions readMap returns map with data or not\n'
+            'AnalysisOptions readMapOfMap returns map with data or not\n'
+            'AnalysisOptions returns correct "folderPath" on posix platforms\n'
+            'CheckUnnecessaryNullableCommand should have correct description\n'
+            'CheckUnnecessaryNullableCommand should have correct invocation\n'
+            'CheckUnnecessaryNullableCommand should have correct name\n'
+            'CheckUnnecessaryNullableCommand should have correct usage\nCli '
+            'runner run with version argument\nCli runner should have correct '
+            'description\nCli runner should have correct invocation\n'
+            'analysisOptionsFromFile constructs AnalysisOptions from extends '
+            'config\nanalysisOptionsFromFile constructs AnalysisOptions from '
+            'invalid file\nanalysisOptionsFromFile constructs AnalysisOptions '
+            'from null\nanalysisOptionsFromFile constructs AnalysisOptions from '
+            'valid file with single import\nanalysisOptionsFromFile constructs '
+            'AnalysisOptions from yaml file\ndetectSdkPath should find sdk path '
+            'inside environment PATH variable\ndetectSdkPath should return '
+            '`null` for non-Windows platforms\ndetectSdkPath should return '
+            '`null` if running inside VM\ndetectSdkPath should return null if '
+            'sdk path is not found inside environment PATH variable'
+        }
+      ]
+    }
+  }
+]

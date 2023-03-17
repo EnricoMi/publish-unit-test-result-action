@@ -1,0 +1,344 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=4,
+  suite_tests=20,
+  suite_skipped=1,
+  suite_failures=1,
+  suite_errors=2,
+  suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='test/src/cli/cli_runner_test.dart',
+      tests=3,
+      skipped=1,
+      failures=1,
+      errors=0,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='test/src/cli/commands/check_unnecessary_nullable_command_test.dart',
+      tests=4,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='test/src/cli/utils/detect_sdk_path_test.dart',
+      tests=4,
+      skipped=0,
+      failures=0,
+      errors=2,
+      stdout=None,
+      stderr=None
+    ),
+    publish.unittestresults.UnitTestSuite(
+      name='test/src/config_builder/models/analysis_options_test.dart',
+      tests=9,
+      skipped=0,
+      failures=0,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/cli_runner_test.dart',
+      line=14,
+      class_name=None,
+      test_name='Cli runner should have correct description',
+      result='skipped',
+      message='Skip: just skipping',
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.005
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/cli_runner_test.dart',
+      line=21,
+      class_name=None,
+      test_name='Cli runner should have correct invocation',
+      result='failure',
+      message="Expected: 'metrics <command> [arguments] <directories> nope'\n  "
+        "Actual: 'metrics <command> [arguments] <directories>'\n   Which: is "
+        "different. Both strings start the same, but the actual value is "
+        "missing the following trailing characters:  nope\n",
+      content="Expected: 'metrics <command> [arguments] <directories> nope'\n  "
+        "Actual: 'metrics <command> [arguments] <directories>'\n   Which: is "
+        "different. Both strings start the same, but the actual value is "
+        "missing the following trailing characters:  nope\n\npackage:test_api "
+        "                       expect\ntest/src/cli/cli_runner_test.dart "
+        "22:7  main.<fn>.<fn>\n",
+      stdout=None,
+      stderr=None,
+      time=0.077
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/cli_runner_test.dart',
+      line=35,
+      class_name=None,
+      test_name='Cli runner run with version argument',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.022
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/commands/check_unnecessary_nullable_command_test.dart',
+      line=45,
+      class_name=None,
+      test_name='CheckUnnecessaryNullableCommand should have correct name',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.023
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/commands/check_unnecessary_nullable_command_test.dart',
+      line=49,
+      class_name=None,
+      test_name='CheckUnnecessaryNullableCommand should have correct description',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/commands/check_unnecessary_nullable_command_test.dart',
+      line=58,
+      class_name=None,
+      test_name='CheckUnnecessaryNullableCommand should have correct invocation',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.011
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/commands/check_unnecessary_nullable_command_test.dart',
+      line=65,
+      class_name=None,
+      test_name='CheckUnnecessaryNullableCommand should have correct usage',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.007
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/utils/detect_sdk_path_test.dart',
+      line=12,
+      class_name=None,
+      test_name='detectSdkPath should return `null` for non-Windows platforms',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.023
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/utils/detect_sdk_path_test.dart',
+      line=16,
+      class_name=None,
+      test_name='detectSdkPath should return `null` if running inside VM',
+      result='error',
+      message='Exception: exception',
+      content='Exception: exception\ntest/src/cli/utils/detect_sdk_path_test.dart '
+        '21:7  main.<fn>.<fn>\n',
+      stdout=None,
+      stderr=None,
+      time=0.012
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/utils/detect_sdk_path_test.dart',
+      line=24,
+      class_name=None,
+      test_name='detectSdkPath should find sdk path inside environment PATH variable',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.021
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/cli/utils/detect_sdk_path_test.dart',
+      line=46,
+      class_name=None,
+      test_name='detectSdkPath should return null if sdk path is not found inside '
+        'environment PATH variable',
+      result='error',
+      message="Instance of 'Error'",
+      content="Instance of 'Error'\ntest/src/cli/utils/detect_sdk_path_test.dart "
+        "67:9  main.<fn>.<fn>\n",
+      stdout=None,
+      stderr=None,
+      time=0.005
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=40,
+      class_name=None,
+      test_name='analysisOptionsFromFile constructs AnalysisOptions from null',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.052
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=46,
+      class_name=None,
+      test_name='analysisOptionsFromFile constructs AnalysisOptions from invalid file',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.001
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=55,
+      class_name=None,
+      test_name='analysisOptionsFromFile constructs AnalysisOptions from yaml file',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.026
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=115,
+      class_name=None,
+      test_name='analysisOptionsFromFile constructs AnalysisOptions from valid file '
+        'with single import',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=130,
+      class_name=None,
+      test_name='analysisOptionsFromFile constructs AnalysisOptions from extends '
+        'config',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.019
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=152,
+      class_name=None,
+      test_name='AnalysisOptions readIterableOfString returns iterables with data or '
+        'not',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.003
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=171,
+      class_name=None,
+      test_name='AnalysisOptions readMap returns map with data or not',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=191,
+      class_name=None,
+      test_name='AnalysisOptions readMapOfMap returns map with data or not',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.002
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='json/tests.json',
+      test_file='file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/'
+        'src/config_builder/models/analysis_options_test.dart',
+      line=255,
+      class_name=None,
+      test_name='AnalysisOptions returns correct "folderPath" on posix platforms',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.001
+    )
+  ]
+)

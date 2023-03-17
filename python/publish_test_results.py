@@ -103,12 +103,14 @@ def get_number_of_files(files: List[str], label: str = 'file') -> str:
     return number_of_files
 
 
-def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: bool,
-                    progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
+def parse_files_as_xml(files: Iterable[str], large_files: bool, drop_testcases: bool,
+                       progress: Callable[[ParsedJUnitFile], ParsedJUnitFile] = lambda x: x) -> Iterable[ParsedJUnitFile]:
     junit_files = []
     nunit_files = []
     xunit_files = []
     trx_files = []
+    dart_json_files = []
+    mocha_json_files = []
     unknown_files = []
 
     def parse(path: str) -> JUnitTree:
@@ -131,6 +133,16 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
             trx_files.append(path)
             return parse_trx_file(path, large_files)
 
+        from publish.dart import is_dart_json, parse_dart_json_file
+        if is_dart_json(path):
+            dart_json_files.append(path)
+            return parse_dart_json_file(path)
+
+        from publish.mocha import is_mocha_json, parse_mocha_json_file
+        if is_mocha_json(path):
+            mocha_json_files.append(path)
+            return parse_mocha_json_file(path)
+
         unknown_files.append(path)
         raise RuntimeError(f'Unsupported file format: {path}')
 
@@ -138,10 +150,12 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
         return progress_safe_parse_xml_file(files, parse, progress)
     finally:
         for flavour, files in [
-            ('JUnit', junit_files),
-            ('NUnit', nunit_files),
-            ('XUnit', xunit_files),
+            ('JUnit XML', junit_files),
+            ('NUnit XML', nunit_files),
+            ('XUnit XML', xunit_files),
             ('TRX', trx_files),
+            ('Dart JSON', dart_json_files),
+            ('Mocha JSON', mocha_json_files),
             ('unsupported', unknown_files)
         ]:
             if files:
@@ -156,9 +170,9 @@ def parse_xml_files(files: Iterable[str], large_files: bool, drop_testcases: boo
 def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsWithCommit:
     # expand file globs
     files = expand_glob(settings.files_glob, None, gha)
-    junit_files = expand_glob(settings.junit_files_glob, 'JUnit', gha)
-    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit', gha)
-    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit', gha)
+    junit_files = expand_glob(settings.junit_files_glob, 'JUnit XML', gha)
+    nunit_files = expand_glob(settings.nunit_files_glob, 'NUnit XML', gha)
+    xunit_files = expand_glob(settings.xunit_files_glob, 'XUnit XML', gha)
     trx_files = expand_glob(settings.trx_files_glob, 'TRX', gha)
 
     elems = []
@@ -172,7 +186,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
                          progress_item_type=Tuple[str, Any],
                          logger=logger) as progress:
         if files:
-            elems.extend(parse_xml_files(files, settings.large_files, settings.ignore_runs, progress))
+            elems.extend(parse_files_as_xml(files, settings.large_files, settings.ignore_runs, progress))
         if junit_files:
             elems.extend(parse_junit_xml_files(junit_files, settings.large_files, settings.ignore_runs, progress))
         if xunit_files:

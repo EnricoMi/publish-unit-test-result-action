@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites time="1201.464" tests="20" failures="1" errors="2" skipped="1">
+  <testsuite name="test/src/cli/cli_runner_test.dart" tests="3" failures="1" errors="0" skipped="1">
+    <testcase name="Cli runner should have correct description" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/cli_runner_test.dart" line="14" time="0.005">
+      <skipped message="Skip: just skipping"/>
+    </testcase>
+    <testcase name="Cli runner should have correct invocation" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/cli_runner_test.dart" line="21" time="0.077">
+      <failure message="Expected: 'metrics &lt;command&gt; [arguments] &lt;directories&gt; nope'&#10;  Actual: 'metrics &lt;command&gt; [arguments] &lt;directories&gt;'&#10;   Which: is different. Both strings start the same, but the actual value is missing the following trailing characters:  nope&#10;"><![CDATA[Expected: 'metrics <command> [arguments] <directories> nope'
+  Actual: 'metrics <command> [arguments] <directories>'
+   Which: is different. Both strings start the same, but the actual value is missing the following trailing characters:  nope
+
+package:test_api                        expect
+test/src/cli/cli_runner_test.dart 22:7  main.<fn>.<fn>
+]]></failure>
+    </testcase>
+    <testcase name="Cli runner run with version argument" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/cli_runner_test.dart" line="35" time="0.022"/>
+  </testsuite>
+  <testsuite name="test/src/cli/commands/check_unnecessary_nullable_command_test.dart" tests="4" failures="0" errors="0" skipped="0">
+    <testcase name="CheckUnnecessaryNullableCommand should have correct name" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/commands/check_unnecessary_nullable_command_test.dart" line="45" time="0.023"/>
+    <testcase name="CheckUnnecessaryNullableCommand should have correct description" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/commands/check_unnecessary_nullable_command_test.dart" line="49" time="0.003"/>
+    <testcase name="CheckUnnecessaryNullableCommand should have correct invocation" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/commands/check_unnecessary_nullable_command_test.dart" line="58" time="0.011"/>
+    <testcase name="CheckUnnecessaryNullableCommand should have correct usage" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/commands/check_unnecessary_nullable_command_test.dart" line="65" time="0.007"/>
+  </testsuite>
+  <testsuite name="test/src/cli/utils/detect_sdk_path_test.dart" tests="4" failures="0" errors="2" skipped="0">
+    <testcase name="detectSdkPath should return `null` for non-Windows platforms" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart" line="12" time="0.023"/>
+    <testcase name="detectSdkPath should return `null` if running inside VM" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart" line="16" time="0.012">
+      <error message="Exception: exception"><![CDATA[Exception: exception
+test/src/cli/utils/detect_sdk_path_test.dart 21:7  main.<fn>.<fn>
+]]></error>
+    </testcase>
+    <testcase name="detectSdkPath should find sdk path inside environment PATH variable" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart" line="24" time="0.021"/>
+    <testcase name="detectSdkPath should return null if sdk path is not found inside environment PATH variable" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart" line="46" time="0.005">
+      <error message="Instance of 'Error'"><![CDATA[Instance of 'Error'
+test/src/cli/utils/detect_sdk_path_test.dart 67:9  main.<fn>.<fn>
+]]></error>
+    </testcase>
+  </testsuite>
+  <testsuite name="test/src/config_builder/models/analysis_options_test.dart" tests="9" failures="0" errors="0" skipped="0">
+    <testcase name="analysisOptionsFromFile constructs AnalysisOptions from null" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="40" time="0.052"/>
+    <testcase name="analysisOptionsFromFile constructs AnalysisOptions from invalid file" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="46" time="0.001"/>
+    <testcase name="analysisOptionsFromFile constructs AnalysisOptions from yaml file" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="55" time="0.026"/>
+    <testcase name="analysisOptionsFromFile constructs AnalysisOptions from valid file with single import" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="115" time="0.003"/>
+    <testcase name="analysisOptionsFromFile constructs AnalysisOptions from extends config" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="130" time="0.019"/>
+    <testcase name="AnalysisOptions readIterableOfString returns iterables with data or not" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="152" time="0.003"/>
+    <testcase name="AnalysisOptions readMap returns map with data or not" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="171" time="0.002"/>
+    <testcase name="AnalysisOptions readMapOfMap returns map with data or not" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="191" time="0.002"/>
+    <testcase name="AnalysisOptions returns correct &quot;folderPath&quot; on posix platforms" file="file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/config_builder/models/analysis_options_test.dart" line="255" time="0.001"/>
+  </testsuite>
+</testsuites>

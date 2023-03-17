@@ -1,0 +1,140 @@
+{
+  "stats": {
+    "suites": 3,
+    "tests": 5,
+    "passes": 2,
+    "pending": 1,
+    "failures": 2,
+    "start": "2023-01-14T21:18:12.420Z",
+    "end": "2023-01-14T21:18:16.042Z",
+    "duration": 12
+  },
+  "tests": [
+    {
+      "title": "should work",
+      "fullTitle": "Context nested should work",
+      "file": "/home/runner/work/mocha/mocha/test/unit/context.spec.js",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "should work",
+      "fullTitle": "Context Siblings sequestered sibling should work",
+      "file": "/home/runner/work/mocha/mocha/test/unit/context.spec.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "should initialize the stats collector",
+      "fullTitle": "Mocha instance method run() should initialize the stats collector",
+      "file": "/home/runner/work/mocha/mocha/test/unit/mocha.spec.js",
+      "currentRetry": 0,
+      "err": {}
+    },
+    {
+      "title": "should update the runner.total with number of matched tests",
+      "fullTitle": "Runner instance method grep() should update the runner.total with number of matched tests",
+      "file": "/home/runner/work/mocha/mocha/test/unit/runner.spec.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "err": {
+        "stack": "Error: Required\n    at Context.<anonymous> (test/unit/runner.spec.js:43:15)\n    at callFn (lib/runnable.js:366:21)\n    at Test.Runnable.run (lib/runnable.js:354:5)\n    at Runner.runTest (lib/runner.js:666:10)\n    at /home/runner/work/mocha/mocha/lib/runner.js:789:12\n    at next (lib/runner.js:581:14)\n    at /home/runner/work/mocha/mocha/lib/runner.js:591:7\n    at next (lib/runner.js:474:14)\n    at Immediate._onImmediate (lib/runner.js:559:5)\n    at processImmediate (internal/timers.js:464:21)",
+        "message": "Required"
+      }
+    },
+    {
+      "title": "should copy the title",
+      "fullTitle": "Test .clone() should copy the title",
+      "file": "/home/runner/work/mocha/mocha/test/unit/test.spec.js",
+      "duration": 4,
+      "currentRetry": 0,
+      "err": {
+        "errorMode": "default",
+        "stack": "UnexpectedError: \n\u001b[31m\u001b[1mexpected\u001b[22m\u001b[39m \u001b[36m'To be cloned'\u001b[39m \u001b[31m\u001b[1mto be\u001b[22m\u001b[39m \u001b[36m'Not to be cloned'\u001b[39m\n\n\u001b[41m\u001b[30mTo\u001b[39m\u001b[49m\u001b[31m be cloned\u001b[39m\n\u001b[42m\u001b[30mNot\u001b[39m\u001b[49m\u001b[32m \u001b[39m\u001b[42m\u001b[30mto \u001b[39m\u001b[49m\u001b[32mbe cloned\u001b[39m\n\n    at Context.<anonymous> (test/unit/test.spec.js:26:7)\n    at callFn (lib/runnable.js:366:21)\n    at Test.Runnable.run (lib/runnable.js:354:5)\n    at Runner.runTest (lib/runner.js:666:10)\n    at /home/runner/work/mocha/mocha/lib/runner.js:789:12\n    at next (lib/runner.js:581:14)\n    at /home/runner/work/mocha/mocha/lib/runner.js:591:7\n    at next (lib/runner.js:474:14)\n    at cbHookRun (lib/runner.js:539:7)\n    at done (lib/runnable.js:310:5)\n    at callFn (lib/runnable.js:389:7)\n    at Hook.Runnable.run (lib/runnable.js:354:5)\n    at next (lib/runner.js:498:10)\n    at Immediate._onImmediate (lib/runner.js:559:5)\n    at processImmediate (internal/timers.js:464:21)\n    set UNEXPECTED_FULL_TRACE=true to see the full stack trace",
+        "parent": {
+          "errorMode": "default",
+          "parent": {
+            "errorMode": "default",
+            "parent": null,
+            "name": "UnexpectedError",
+            "label": "should equal"
+          },
+          "name": "UnexpectedError"
+        },
+        "name": "UnexpectedError",
+        "message": "\n\u001b[31m\u001b[1mexpected\u001b[22m\u001b[39m \u001b[36m'To be cloned'\u001b[39m \u001b[31m\u001b[1mto be\u001b[22m\u001b[39m \u001b[36m'Not to be cloned'\u001b[39m\n\n\u001b[41m\u001b[30mTo\u001b[39m\u001b[49m\u001b[31m be cloned\u001b[39m\n\u001b[42m\u001b[30mNot\u001b[39m\u001b[49m\u001b[32m \u001b[39m\u001b[42m\u001b[30mto \u001b[39m\u001b[49m\u001b[32mbe cloned\u001b[39m\n",
+        "_hasSerializedErrorMessage": true
+      }
+    }
+  ],
+  "pending": [
+    {
+      "title": "should initialize the stats collector",
+      "fullTitle": "Mocha instance method run() should initialize the stats collector",
+      "file": "/home/runner/work/mocha/mocha/test/unit/mocha.spec.js",
+      "currentRetry": 0,
+      "err": {}
+    }
+  ],
+  "failures": [
+    {
+      "title": "should update the runner.total with number of matched tests",
+      "fullTitle": "Runner instance method grep() should update the runner.total with number of matched tests",
+      "file": "/home/runner/work/mocha/mocha/test/unit/runner.spec.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "err": {
+        "stack": "Error: Required\n    at Context.<anonymous> (test/unit/runner.spec.js:43:15)\n    at callFn (lib/runnable.js:366:21)\n    at Test.Runnable.run (lib/runnable.js:354:5)\n    at Runner.runTest (lib/runner.js:666:10)\n    at /home/runner/work/mocha/mocha/lib/runner.js:789:12\n    at next (lib/runner.js:581:14)\n    at /home/runner/work/mocha/mocha/lib/runner.js:591:7\n    at next (lib/runner.js:474:14)\n    at Immediate._onImmediate (lib/runner.js:559:5)\n    at processImmediate (internal/timers.js:464:21)",
+        "message": "Required"
+      }
+    },
+    {
+      "title": "should copy the title",
+      "fullTitle": "Test .clone() should copy the title",
+      "file": "/home/runner/work/mocha/mocha/test/unit/test.spec.js",
+      "duration": 4,
+      "currentRetry": 0,
+      "err": {
+        "errorMode": "default",
+        "stack": "UnexpectedError: \n\u001b[31m\u001b[1mexpected\u001b[22m\u001b[39m \u001b[36m'To be cloned'\u001b[39m \u001b[31m\u001b[1mto be\u001b[22m\u001b[39m \u001b[36m'Not to be cloned'\u001b[39m\n\n\u001b[41m\u001b[30mTo\u001b[39m\u001b[49m\u001b[31m be cloned\u001b[39m\n\u001b[42m\u001b[30mNot\u001b[39m\u001b[49m\u001b[32m \u001b[39m\u001b[42m\u001b[30mto \u001b[39m\u001b[49m\u001b[32mbe cloned\u001b[39m\n\n    at Context.<anonymous> (test/unit/test.spec.js:26:7)\n    at callFn (lib/runnable.js:366:21)\n    at Test.Runnable.run (lib/runnable.js:354:5)\n    at Runner.runTest (lib/runner.js:666:10)\n    at /home/runner/work/mocha/mocha/lib/runner.js:789:12\n    at next (lib/runner.js:581:14)\n    at /home/runner/work/mocha/mocha/lib/runner.js:591:7\n    at next (lib/runner.js:474:14)\n    at cbHookRun (lib/runner.js:539:7)\n    at done (lib/runnable.js:310:5)\n    at callFn (lib/runnable.js:389:7)\n    at Hook.Runnable.run (lib/runnable.js:354:5)\n    at next (lib/runner.js:498:10)\n    at Immediate._onImmediate (lib/runner.js:559:5)\n    at processImmediate (internal/timers.js:464:21)\n    set UNEXPECTED_FULL_TRACE=true to see the full stack trace",
+        "parent": {
+          "errorMode": "default",
+          "parent": {
+            "errorMode": "default",
+            "parent": null,
+            "name": "UnexpectedError",
+            "label": "should equal"
+          },
+          "name": "UnexpectedError"
+        },
+        "name": "UnexpectedError",
+        "message": "\n\u001b[31m\u001b[1mexpected\u001b[22m\u001b[39m \u001b[36m'To be cloned'\u001b[39m \u001b[31m\u001b[1mto be\u001b[22m\u001b[39m \u001b[36m'Not to be cloned'\u001b[39m\n\n\u001b[41m\u001b[30mTo\u001b[39m\u001b[49m\u001b[31m be cloned\u001b[39m\n\u001b[42m\u001b[30mNot\u001b[39m\u001b[49m\u001b[32m \u001b[39m\u001b[42m\u001b[30mto \u001b[39m\u001b[49m\u001b[32mbe cloned\u001b[39m\n",
+        "_hasSerializedErrorMessage": true
+      }
+    }
+  ],
+  "passes": [
+    {
+      "title": "should work",
+      "fullTitle": "Context nested should work",
+      "file": "/home/runner/work/mocha/mocha/test/unit/context.spec.js",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "should work",
+      "fullTitle": "Context Siblings sequestered sibling should work",
+      "file": "/home/runner/work/mocha/mocha/test/unit/context.spec.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ]
+}

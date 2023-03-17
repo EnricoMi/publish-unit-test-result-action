@@ -1,0 +1,121 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=5,
+  suite_skipped=1,
+  suite_failures=1,
+  suite_errors=1,
+  suite_time=12,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name=None,
+      tests=5,
+      skipped=1,
+      failures=1,
+      errors=1,
+      stdout=None,
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='tests.json',
+      test_file='/home/runner/work/mocha/mocha/test/unit/context.spec.js',
+      line=None,
+      class_name=None,
+      test_name='Context nested should work',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=3.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='tests.json',
+      test_file='/home/runner/work/mocha/mocha/test/unit/context.spec.js',
+      line=None,
+      class_name=None,
+      test_name='Context Siblings sequestered sibling should work',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=1.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='tests.json',
+      test_file='/home/runner/work/mocha/mocha/test/unit/mocha.spec.js',
+      line=None,
+      class_name=None,
+      test_name='Mocha instance method run() should initialize the stats collector',
+      result='skipped',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=None
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='tests.json',
+      test_file='/home/runner/work/mocha/mocha/test/unit/runner.spec.js',
+      line=None,
+      class_name=None,
+      test_name='Runner instance method grep() should update the runner.total with '
+        'number of matched tests',
+      result='failure',
+      message='Required',
+      content='Required\nError: Required    at Context.<anonymous> '
+        '(test/unit/runner.spec.js:43:15)    at callFn '
+        '(lib/runnable.js:366:21)    at Test.Runnable.run '
+        '(lib/runnable.js:354:5)    at Runner.runTest (lib/runner.js:666:10)  '
+        '  at /home/runner/work/mocha/mocha/lib/runner.js:789:12    at next '
+        '(lib/runner.js:581:14)    at '
+        '/home/runner/work/mocha/mocha/lib/runner.js:591:7    at next '
+        '(lib/runner.js:474:14)    at Immediate._onImmediate '
+        '(lib/runner.js:559:5)    at processImmediate '
+        '(internal/timers.js:464:21)',
+      stdout=None,
+      stderr=None,
+      time=None
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='tests.json',
+      test_file='/home/runner/work/mocha/mocha/test/unit/test.spec.js',
+      line=None,
+      class_name=None,
+      test_name='Test .clone() should copy the title',
+      result='error',
+      message="[31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto be[22m[39m "
+        "[36m'Not to be cloned'[39m[41m[30mTo[39m[49m[31m be "
+        "cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe "
+        "cloned[39m",
+      content="UnexpectedError\n[31m[1mexpected[22m[39m [36m'To be cloned'[39m "
+        "[31m[1mto be[22m[39m [36m'Not to be "
+        "cloned'[39m[41m[30mTo[39m[49m[31m be "
+        "cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe "
+        "cloned[39m\nUnexpectedError: [31m[1mexpected[22m[39m [36m'To be "
+        "cloned'[39m [31m[1mto be[22m[39m [36m'Not to be "
+        "cloned'[39m[41m[30mTo[39m[49m[31m be "
+        "cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe "
+        "cloned[39m    at Context.<anonymous> (test/unit/test.spec.js:26:7)   "
+        " at callFn (lib/runnable.js:366:21)    at Test.Runnable.run "
+        "(lib/runnable.js:354:5)    at Runner.runTest (lib/runner.js:666:10)  "
+        "  at /home/runner/work/mocha/mocha/lib/runner.js:789:12    at next "
+        "(lib/runner.js:581:14)    at "
+        "/home/runner/work/mocha/mocha/lib/runner.js:591:7    at next "
+        "(lib/runner.js:474:14)    at cbHookRun (lib/runner.js:539:7)    at "
+        "done (lib/runnable.js:310:5)    at callFn (lib/runnable.js:389:7)    "
+        "at Hook.Runnable.run (lib/runnable.js:354:5)    at next "
+        "(lib/runner.js:498:10)    at Immediate._onImmediate "
+        "(lib/runner.js:559:5)    at processImmediate "
+        "(internal/timers.js:464:21)    set UNEXPECTED_FULL_TRACE=true to see "
+        "the full stack trace",
+      stdout=None,
+      stderr=None,
+      time=4.0
+    )
+  ]
+)

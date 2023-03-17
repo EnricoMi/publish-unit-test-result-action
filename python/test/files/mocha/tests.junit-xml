@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite time="12" timestamp="2023-01-14T21:18:12.420Z" tests="5" failures="1" errors="1" skipped="1">
+  <testcase name="Context nested should work" file="/home/runner/work/mocha/mocha/test/unit/context.spec.js" time="3"/>
+  <testcase name="Context Siblings sequestered sibling should work" file="/home/runner/work/mocha/mocha/test/unit/context.spec.js" time="1"/>
+  <testcase name="Mocha instance method run() should initialize the stats collector" file="/home/runner/work/mocha/mocha/test/unit/mocha.spec.js">
+    <skipped/>
+  </testcase>
+  <testcase name="Runner instance method grep() should update the runner.total with number of matched tests" file="/home/runner/work/mocha/mocha/test/unit/runner.spec.js">
+    <failure message="Required"><![CDATA[Required
+Error: Required    at Context.<anonymous> (test/unit/runner.spec.js:43:15)    at callFn (lib/runnable.js:366:21)    at Test.Runnable.run (lib/runnable.js:354:5)    at Runner.runTest (lib/runner.js:666:10)    at /home/runner/work/mocha/mocha/lib/runner.js:789:12    at next (lib/runner.js:581:14)    at /home/runner/work/mocha/mocha/lib/runner.js:591:7    at next (lib/runner.js:474:14)    at Immediate._onImmediate (lib/runner.js:559:5)    at processImmediate (internal/timers.js:464:21)]]></failure>
+  </testcase>
+  <testcase name="Test .clone() should copy the title" file="/home/runner/work/mocha/mocha/test/unit/test.spec.js" time="4">
+    <error message="[31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto be[22m[39m [36m'Not to be cloned'[39m[41m[30mTo[39m[49m[31m be cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe cloned[39m" type="default"><![CDATA[UnexpectedError
+[31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto be[22m[39m [36m'Not to be cloned'[39m[41m[30mTo[39m[49m[31m be cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe cloned[39m
+UnexpectedError: [31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto be[22m[39m [36m'Not to be cloned'[39m[41m[30mTo[39m[49m[31m be cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe cloned[39m    at Context.<anonymous> (test/unit/test.spec.js:26:7)    at callFn (lib/runnable.js:366:21)    at Test.Runnable.run (lib/runnable.js:354:5)    at Runner.runTest (lib/runner.js:666:10)    at /home/runner/work/mocha/mocha/lib/runner.js:789:12    at next (lib/runner.js:581:14)    at /home/runner/work/mocha/mocha/lib/runner.js:591:7    at next (lib/runner.js:474:14)    at cbHookRun (lib/runner.js:539:7)    at done (lib/runnable.js:310:5)    at callFn (lib/runnable.js:389:7)    at Hook.Runnable.run (lib/runnable.js:354:5)    at next (lib/runner.js:498:10)    at Immediate._onImmediate (lib/runner.js:559:5)    at processImmediate (internal/timers.js:464:21)    set UNEXPECTED_FULL_TRACE=true to see the full stack trace]]></error>
+  </testcase>
+</testsuite>
