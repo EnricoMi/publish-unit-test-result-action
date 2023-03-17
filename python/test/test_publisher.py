@@ -90,7 +90,8 @@ class TestPublisher(unittest.TestCase):
                         json_suite_details: bool = False,
                         json_test_case_results: bool = False,
                         pull_request_build: str = pull_request_build_mode_merge,
-                        test_changes_limit: Optional[int] = 5):
+                        test_changes_limit: Optional[int] = 5,
+                        search_pull_requests: bool = False):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -130,7 +131,8 @@ class TestPublisher(unittest.TestCase):
             ignore_runs=False,
             check_run_annotation=check_run_annotation,
             seconds_between_github_reads=1.5,
-            seconds_between_github_writes=2.5
+            seconds_between_github_writes=2.5,
+            search_pull_requests=search_pull_requests
         )
 
     stats = UnitTestRunResults(
@@ -186,6 +188,7 @@ class TestPublisher(unittest.TestCase):
             check_runs = self.create_github_collection(runs)
             commit.get_check_runs = mock.Mock(return_value=check_runs)
         repo.get_commit = mock.Mock(return_value=commit)
+        repo.get_commits = mock.Mock(return_value=self.create_github_collection([commit]))
         repo.owner.login = repo_login
         repo.name = repo_name
         gh.get_repo = mock.Mock(return_value=repo)
@@ -832,30 +835,37 @@ class TestPublisher(unittest.TestCase):
 
     def do_test_get_pulls(self,
                          settings: Settings,
-                         search_issues: mock.Mock,
+                         pull_requests: mock.Mock,
                          expected: List[mock.Mock]) -> mock.Mock:
         gh, gha, req, repo, commit = self.create_mocks()
-        gh.search_issues = mock.Mock(return_value=search_issues)
+
+        if settings.search_pull_requests:
+            gh.search_issues = mock.Mock(return_value=pull_requests)
+        else:
+            commit.get_pulls = mock.Mock(return_value=pull_requests)
+
         publisher = Publisher(settings, gh, gha)
 
         actual = publisher.get_pulls(settings.commit)
-
         self.assertEqual(expected, actual)
-        gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
+        if settings.search_pull_requests:
+            gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
+        else:
+            commit.get_pulls.assert_called_once_with()
         return gha
 
     def test_get_pulls(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, search_issues, [pr])
+        pull_requests = self.create_github_collection([pr])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_no_search_results(self):
         settings = self.create_settings()
-        search_issues = self.create_github_collection([])
-        gha = self.do_test_get_pulls(settings, search_issues, [])
+        pull_requests = self.create_github_collection([])
+        gha = self.do_test_get_pulls(settings, pull_requests, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -863,9 +873,9 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings()
 
         pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([pr])
+        pull_requests = self.create_github_collection([pr])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -874,9 +884,9 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -885,9 +895,9 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr2])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr2])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -896,9 +906,9 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='other head commit', merge_commit_sha='merge two')
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr1])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -907,9 +917,9 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha='other merge commit')
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr1])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -918,9 +928,9 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge two')
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr1, pr2])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -929,17 +939,17 @@ class TestPublisher(unittest.TestCase):
 
         pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
         pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([pr1, pr2])
+        pull_requests = self.create_github_collection([pr1, pr2])
 
-        gha = self.do_test_get_pulls(settings, search_issues, [pr1, pr2])
+        gha = self.do_test_get_pulls(settings, pull_requests, [pr1, pr2])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_forked_repo(self):
         settings = self.create_settings()
         fork = self.create_github_pr('other/fork', head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([fork])
-        self.do_test_get_pulls(settings, search_issues, [])
+        pull_requests = self.create_github_collection([fork])
+        self.do_test_get_pulls(settings, pull_requests, [])
 
     def test_get_pulls_forked_repos_and_own_repo(self):
         settings = self.create_settings()
@@ -947,9 +957,17 @@ class TestPublisher(unittest.TestCase):
         own = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         fork1 = self.create_github_pr('other/fork', head_commit_sha=settings.commit)
         fork2 = self.create_github_pr('{}.fork'.format(settings.repo), head_commit_sha=settings.commit)
-        search_issues = self.create_github_collection([own, fork1, fork2])
+        pull_requests = self.create_github_collection([own, fork1, fork2])
 
-        self.do_test_get_pulls(settings, search_issues, [own])
+        self.do_test_get_pulls(settings, pull_requests, [own])
+
+    def test_get_pulls_via_search(self):
+        settings = self.create_settings(search_pull_requests=True)
+        pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
+        search_issues = self.create_github_collection([pr])
+        gha = self.do_test_get_pulls(settings, search_issues, [pr])
+        gha.warning.assert_not_called()
+        gha.error.assert_not_called()
 
     def do_test_get_check_run_from_list(self, runs: List[github.CheckRun.CheckRun], expected: Optional[github.CheckRun.CheckRun]):
         settings = self.create_settings()

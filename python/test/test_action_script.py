@@ -197,7 +197,8 @@ class Test(unittest.TestCase):
                      json_file=None,
                      json_thousands_separator=punctuation_space,
                      json_suite_details=False,
-                     json_test_case_results=False) -> Settings:
+                     json_test_case_results=False,
+                     search_pull_requests=False) -> Settings:
         return Settings(
             token=token,
             api_url=api_url,
@@ -237,7 +238,8 @@ class Test(unittest.TestCase):
             ignore_runs=ignore_runs,
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
-            seconds_between_github_writes=seconds_between_github_writes
+            seconds_between_github_writes=seconds_between_github_writes,
+            search_pull_requests=search_pull_requests
         )
 
     def test_get_settings(self):

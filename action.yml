@@ -124,6 +124,10 @@ inputs:
     description: 'Write out all individual test case results to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
     default: 'false'
     required: false
+  search_pull_requests:
+    description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
+    default: 'false'
+    required: false
 
 outputs:
   json:

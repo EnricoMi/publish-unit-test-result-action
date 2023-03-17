@@ -333,6 +333,7 @@ jobs:
             -e "INPUT_SECONDS_BETWEEN_GITHUB_READS" \
             -e "INPUT_SECONDS_BETWEEN_GITHUB_WRITES" \
             -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
+            -e "INPUT_SEARCH_PULL_REQUESTS" \
             -e "HOME" \
             -e "GITHUB_JOB" \
             -e "GITHUB_REF" \

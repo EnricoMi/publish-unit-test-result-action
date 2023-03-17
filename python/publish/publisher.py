@@ -69,6 +69,7 @@ class Settings:
     check_run_annotation: List[str]
     seconds_between_github_reads: float
     seconds_between_github_writes: float
+    search_pull_requests: bool
 
 
 @dataclasses.dataclass(frozen=True)
@@ -205,15 +206,28 @@ class Publisher:
         else:
             logger.info('Commenting on pull requests disabled')
 
-    def get_pulls(self, commit: str) -> List[PullRequest]:
-        # totalCount calls the GitHub API just to get the total number
+    def get_all_pulls(self, commit: str) -> List[PullRequest]:
+        # totalCount of PaginatedList calls the GitHub API just to get the total number
         # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
-        issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
-        logger.debug(f'found {len(issues)} pull requests in repo {self._settings.repo} containing commit {commit}')
+        if self._settings.search_pull_requests:
+            issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
+            pull_requests = [issue.as_pull_request() for issue in issues]
+        else:
+            commits = list(self._repo.get_commits(sha=commit))
+            logger.debug(f'found {len(commits)} commits in repo {self._settings.repo} for commit {commit}')
+            pull_requests = [pull_request
+                             for commit in commits
+                             for pull_request in commit.get_pulls()]
+
+        logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
+        return pull_requests
+
+    def get_pulls(self, commit: str) -> List[PullRequest]:
+        # get all pull requests associated with this commit
+        pull_requests = self.get_all_pulls(commit)
 
         if logger.isEnabledFor(logging.DEBUG):
-            for issue in issues:
-                pr = issue.as_pull_request()
+            for pr in pull_requests:
                 logger.debug(pr)
                 logger.debug(pr.raw_data)
                 logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
@@ -222,8 +236,7 @@ class Publisher:
         # so pr.base.repo.full_name must be same as GITHUB_REPOSITORY / self._settings.repo
         # we won't have permission otherwise
         pulls = list([pr
-                      for issue in issues
-                      for pr in [issue.as_pull_request()]
+                      for pr in pull_requests
                       if pr.base.repo.full_name == self._settings.repo])
 
         if len(pulls) == 0:
