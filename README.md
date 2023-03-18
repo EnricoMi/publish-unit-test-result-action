@@ -268,6 +268,7 @@ The list of most notable options:
 |`pull_request_build`|`"merge"`|As part of pull requests, GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to `"commit"`.|
 |`event_file`|`${{env.GITHUB_EVENT_PATH}}`|An alternative event file to use. Useful to replace a `workflow_run` event file with the actual source event file.|
 |`event_name`|`${{env.GITHUB_EVENT_NAME}}`|An alternative event name to use. Useful to replace a `workflow_run` event name with the actual source event name: `${{ github.event.workflow_run.event }}`.|
+|`search_pull_requests`|`false`|Prior to v2.6.0, the action used the `/search/issues` REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to `false`.|
 </details>
 
 <details>
