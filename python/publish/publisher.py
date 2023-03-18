@@ -214,8 +214,7 @@ class Publisher:
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
             try:
-                commit = self._repo.get_commit(commit)
-                pull_requests = list(commit.get_pulls())
+                pull_requests = list(self._repo.get_commit(commit).get_pulls())
             except UnknownObjectException:
                 pull_requests = []
 
