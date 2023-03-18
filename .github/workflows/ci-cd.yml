@@ -430,9 +430,29 @@ jobs:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         # test *-latest and newer (because newer eventually become 'latest' and should be tested to work before that)
         include:
+          - os: macos-latest
+            os-label: macOS
+            python: "3.8"
+          - os: macos-latest
+            os-label: macOS
+            python: "installed"
+          - os: macos-12
+            os-label: macOS 12
+            python: "installed"
+
           - os: ubuntu-latest
             os-label: Linux
             python: "3.8"
+          - os: ubuntu-latest
+            os-label: Linux
+            python: "installed"
+          - os: ubuntu-22.04
+            os-label: Linux 22.04
+            python: "installed"
+
+          - os: windows-latest
+            os-label: Windows
+            python: "installed"
 
     steps:
       - name: Checkout
