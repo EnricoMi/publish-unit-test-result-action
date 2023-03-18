@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from copy import deepcopy
 
-from github import Github, GithubException
+from github import Github, GithubException, UnknownObjectException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
@@ -213,11 +213,11 @@ class Publisher:
             issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
-            commits = list(self._repo.get_commits(sha=commit))
-            logger.debug(f'found {len(commits)} commits in repo {self._settings.repo} for commit {commit}')
-            pull_requests = [pull_request
-                             for commit in commits
-                             for pull_request in commit.get_pulls()]
+            try:
+                commit = self._repo.get_commit(commit)
+                pull_requests = list(commit.get_pulls())
+            except UnknownObjectException:
+                pull_requests = []
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests

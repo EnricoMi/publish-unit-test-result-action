@@ -188,7 +188,6 @@ class TestPublisher(unittest.TestCase):
             check_runs = self.create_github_collection(runs)
             commit.get_check_runs = mock.Mock(return_value=check_runs)
         repo.get_commit = mock.Mock(return_value=commit)
-        repo.get_commits = mock.Mock(return_value=self.create_github_collection([commit]))
         repo.owner.login = repo_login
         repo.name = repo_name
         gh.get_repo = mock.Mock(return_value=repo)
