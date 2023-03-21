@@ -206,23 +206,33 @@ class Publisher:
         else:
             logger.info('Commenting on pull requests disabled')
 
+    def get_pull_from_event(self) -> Optional[PullRequest]:
+        number = self._settings.event.get('pull_request', {}).get('number')
+        repo = self._settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name')
+        if number is None or repo is None or repo != self._settings.repo:
+            return None
+
+        try:
+            return self._repo.get_pull(number)
+        except UnknownObjectException:
+            return None
+
     def get_all_pulls(self, commit: str) -> List[PullRequest]:
-        # totalCount of PaginatedList calls the GitHub API just to get the total number
-        # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
         if self._settings.search_pull_requests:
+            # totalCount of PaginatedList calls the GitHub API just to get the total number
+            # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
             issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
-            try:
-                pull_requests = list(self._repo.get_commit(commit).get_pulls())
-            except UnknownObjectException:
-                pull_requests = []
+            pull_request = self.get_pull_from_event()
+            pull_requests = [pull_request] if pull_request is not None else []
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # get all pull requests associated with this commit
+        # TODO: simplify to event pr only, breaking change for version 3.0
         pull_requests = self.get_all_pulls(commit)
 
         if logger.isEnabledFor(logging.DEBUG):
