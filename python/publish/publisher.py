@@ -218,20 +218,14 @@ class Publisher:
             return None
 
     def get_all_pulls(self, commit: str) -> List[PullRequest]:
-        # totalCount of PaginatedList calls the GitHub API just to get the total number
-        # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
         if self._settings.search_pull_requests:
+            # totalCount of PaginatedList calls the GitHub API just to get the total number
+            # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
             issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
-            try:
-                pull_request = self.get_pull_from_event()
-                if pull_request is None:
-                    pull_requests = list(self._repo.get_commit(commit).get_pulls())
-                else:
-                    pull_requests = [pull_request]
-            except UnknownObjectException:
-                pull_requests = []
+            pull_request = self.get_pull_from_event()
+            pull_requests = [pull_request] if pull_request is not None else []
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests

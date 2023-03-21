@@ -870,25 +870,21 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(expected, actual)
         if settings.search_pull_requests:
             gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
-            commit.get_pulls.assert_not_called()
         else:
             gh.search_issues.assert_not_called()
-            commit.get_pulls.assert_called_once_with()
+            if event_pull_request is not None and \
+                    settings.repo == settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name'):
+                repo.get_pull.assert_called_once_with(event_pull_request.number)
+            else:
+                repo.get_pull.assert_not_called()
+        commit.get_pulls.assert_not_called()
         return gha
 
-    def test_get_pulls(self):
+    def test_get_pulls_without_event(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr])
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
-
-    def test_get_pulls_with_same_event_pr(self):
-        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
-        pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
-        pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, pr, [pr])
+        gha = self.do_test_get_pulls(settings, pull_requests, None, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -897,7 +893,7 @@ class TestPublisher(unittest.TestCase):
         event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [pr, event_pr])
+        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [event_pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -906,7 +902,7 @@ class TestPublisher(unittest.TestCase):
         event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [pr])
+        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -925,97 +921,41 @@ class TestPublisher(unittest.TestCase):
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
-    def test_get_pulls_one_closed_pull(self):
-        settings = self.create_settings()
-
-        pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([pr])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [])
+    def test_get_pulls_closed_pull(self):
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
+        pr = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit, number=1234)
+        pull_requests = self.create_github_collection([])
+        gha = self.do_test_get_pulls(settings, pull_requests, pr, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
-    def test_get_pulls_multiple_closed_pulls(self):
-        settings = self.create_settings()
-
-        pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        pr2 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [])
+    def test_get_pulls_head_commit(self):
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
+        pr = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge', number=1234)
+        pull_requests = self.create_github_collection([])
+        gha = self.do_test_get_pulls(settings, pull_requests, pr, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
-    def test_get_pulls_one_closed_one_open_pulls(self):
-        settings = self.create_settings()
+    def test_get_pulls_merge_commit(self):
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
+        pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit, number=1234)
+        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha='other merge commit', number=1234)
+        pull_requests = self.create_github_collection([])
 
-        pr1 = self.create_github_pr(settings.repo, state='closed', head_commit_sha=settings.commit)
-        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr2])
+        gha = self.do_test_get_pulls(settings, pull_requests, pr1, [pr1])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
-    def test_get_pulls_multiple_open_one_matches_head_commit(self):
-        settings = self.create_settings()
-
-        pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
-        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='other head commit', merge_commit_sha='merge two')
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr1])
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
-
-    def test_get_pulls_multiple_open_one_matches_merge_commit(self):
-        settings = self.create_settings()
-
-        pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
-        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha='other merge commit')
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr1])
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
-
-    def test_get_pulls_multiple_open_both_match_head_commit(self):
-        settings = self.create_settings()
-
-        pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge one')
-        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha=settings.commit, merge_commit_sha='merge two')
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr1, pr2])
-        gha.warning.assert_not_called()
-        gha.error.assert_not_called()
-
-    def test_get_pulls_multiple_open_both_match_merge_commit(self):
-        settings = self.create_settings()
-
-        pr1 = self.create_github_pr(settings.repo, state='open', head_commit_sha='one head commit', merge_commit_sha=settings.commit)
-        pr2 = self.create_github_pr(settings.repo, state='open', head_commit_sha='two head commit', merge_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([pr1, pr2])
-
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr1, pr2])
+        gha = self.do_test_get_pulls(settings, pull_requests, pr2, [])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
     def test_get_pulls_forked_repo(self):
         settings = self.create_settings()
         fork = self.create_github_pr('other/fork', head_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([fork])
-        self.do_test_get_pulls(settings, pull_requests, None, [])
-
-    def test_get_pulls_forked_repos_and_own_repo(self):
-        settings = self.create_settings()
-
-        own = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
-        fork1 = self.create_github_pr('other/fork', head_commit_sha=settings.commit)
-        fork2 = self.create_github_pr('{}.fork'.format(settings.repo), head_commit_sha=settings.commit)
-        pull_requests = self.create_github_collection([own, fork1, fork2])
-
-        self.do_test_get_pulls(settings, pull_requests, None, [own])
+        pull_requests = self.create_github_collection([])
+        self.do_test_get_pulls(settings, pull_requests, fork, [])
 
     def test_get_pulls_via_search(self):
         settings = self.create_settings(search_pull_requests=True)
