@@ -208,7 +208,8 @@ class Publisher:
 
     def get_pull_from_event(self) -> Optional[PullRequest]:
         number = self._settings.event.get('pull_request', {}).get('number')
-        if number is None:
+        repo = self._settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name')
+        if number is None or repo is None or repo != self._settings.repo:
             return None
 
         try:

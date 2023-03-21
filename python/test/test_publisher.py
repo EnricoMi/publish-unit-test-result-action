@@ -845,7 +845,7 @@ class TestPublisher(unittest.TestCase):
         repo.get_pull.assert_not_called()
 
         # test with pull request in event file
-        settings = self.create_settings(event={'pull_request': {'number': 1234}})
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
         publisher = Publisher(settings, gh, gha)
 
         actual = publisher.get_pull_from_event()
@@ -885,7 +885,7 @@ class TestPublisher(unittest.TestCase):
         gha.error.assert_not_called()
 
     def test_get_pulls_with_same_event_pr(self):
-        settings = self.create_settings(event={'pull_request': {'number': 1234}})
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pull_requests = self.create_github_collection([pr])
         gha = self.do_test_get_pulls(settings, pull_requests, pr, [pr])
@@ -893,7 +893,7 @@ class TestPublisher(unittest.TestCase):
         gha.error.assert_not_called()
 
     def test_get_pulls_with_other_event_pr(self):
-        settings = self.create_settings(event={'pull_request': {'number': 1234}})
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
         event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
         pull_requests = self.create_github_collection([pr])
@@ -901,8 +901,17 @@ class TestPublisher(unittest.TestCase):
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
+    def test_get_pulls_with_other_repo_event_pr(self):
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'fork/repo'}}}})
+        event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
+        pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
+        pull_requests = self.create_github_collection([pr])
+        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [pr])
+        gha.warning.assert_not_called()
+        gha.error.assert_not_called()
+
     def test_get_pulls_only_with_event_pr(self):
-        settings = self.create_settings(event={'pull_request': {'number': 1234}})
+        settings = self.create_settings(event={'pull_request': {'number': 1234, 'base': {'repo': {'full_name': 'owner/repo'}}}})
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pull_requests = self.create_github_collection([])
         gha = self.do_test_get_pulls(settings, pull_requests, pr, [pr])
