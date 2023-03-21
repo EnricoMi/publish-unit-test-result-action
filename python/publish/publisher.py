@@ -226,11 +226,10 @@ class Publisher:
         else:
             try:
                 pull_request = self.get_pull_from_event()
-                pull_requests = [pull
-                                 for pull in list(self._repo.get_commit(commit).get_pulls())
-                                 if pull_request is None or pull.number != pull_request.number]
-                if pull_request is not None:
-                    pull_requests.append(pull_request)
+                if pull_request is None:
+                    pull_requests = list(self._repo.get_commit(commit).get_pulls())
+                else:
+                    pull_requests = [pull_request]
             except UnknownObjectException:
                 pull_requests = []
 
