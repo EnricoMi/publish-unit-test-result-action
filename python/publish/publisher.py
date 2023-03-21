@@ -206,6 +206,16 @@ class Publisher:
         else:
             logger.info('Commenting on pull requests disabled')
 
+    def get_pull_from_event(self) -> Optional[PullRequest]:
+        number = self._settings.event.get('pull_request', {}).get('number')
+        if number is None:
+            return None
+
+        try:
+            return self._repo.get_pull(number)
+        except UnknownObjectException:
+            return None
+
     def get_all_pulls(self, commit: str) -> List[PullRequest]:
         # totalCount of PaginatedList calls the GitHub API just to get the total number
         # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
@@ -214,7 +224,12 @@ class Publisher:
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
             try:
-                pull_requests = list(self._repo.get_commit(commit).get_pulls())
+                pull_request = self.get_pull_from_event()
+                pull_requests = [pull
+                                 for pull in list(self._repo.get_commit(commit).get_pulls())
+                                 if pull_request is None or pull.number != pull_request.number]
+                if pull_request is not None:
+                    pull_requests.append(pull_request)
             except UnknownObjectException:
                 pull_requests = []
 
@@ -223,6 +238,7 @@ class Publisher:
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
         # get all pull requests associated with this commit
+        # TODO: simplify to event pr only, breaking change for version 3.0
         pull_requests = self.get_all_pulls(commit)
 
         if logger.isEnabledFor(logging.DEBUG):
