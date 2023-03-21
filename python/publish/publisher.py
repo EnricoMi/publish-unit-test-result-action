@@ -225,15 +225,18 @@ class Publisher:
         else:
             try:
                 pull_request = self.get_pull_from_event()
+                logger.debug(f'event pr: {pull_request}')
                 pull_requests = [pull
                                  for pull in list(self._repo.get_commit(commit).get_pulls())
                                  if pull_request is None or pull.number != pull_request.number]
+                logger.debug(f"commit's prs: {pull_requests}")
                 if pull_request is not None:
                     pull_requests.append(pull_request)
             except UnknownObjectException:
                 pull_requests = []
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
+        logger.debug(f'all prs: {pull_requests}')
         return pull_requests
 
     def get_pulls(self, commit: str) -> List[PullRequest]:
