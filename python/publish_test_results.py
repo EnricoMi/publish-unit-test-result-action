@@ -10,9 +10,9 @@ from glob import glob
 from typing import List, Optional, Union, Mapping, Tuple, Any, Iterable, Callable
 
 import github
+from github.Consts import DEFAULT_BASE_URL
 import humanize
 import psutil
-from urllib3.util.retry import Retry
 
 import publish.github_action
 from publish import available_annotations, default_annotations, none_annotations, \
@@ -416,8 +416,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'rt', encoding='utf-8') as f:
         event = json.load(f)
-    api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
-    graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
+    api_url = options.get('GITHUB_API_URL') or DEFAULT_BASE_URL
+    graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{DEFAULT_BASE_URL}/graphql'
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
