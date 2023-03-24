@@ -76,11 +76,11 @@ jobs:
           - os: windows-latest
             python-version: "3.7"
 
-          - os: macos-latest
+          - os: macos-11
             python-version: "3.6"
           - os: ubuntu-20.04
             python-version: "3.6"
-          - os: windows-latest
+          - os: windows-2019
             python-version: "3.6"
 
     steps:
