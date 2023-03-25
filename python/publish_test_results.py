@@ -227,7 +227,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
                     f'It cannot do anything useful like creating check runs or pull request comments. '
                     f'To run the action on fork repository pull requests, see '
-                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
+                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
     # log the available RAM to help spot OOM issues:

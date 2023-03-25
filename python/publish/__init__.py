@@ -420,7 +420,7 @@ def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
     return '[{label}]({link} "{tooltip}")'.format(
         label=label,
         # bump the version if you change the target of this link (if it did not exist already) or change the section
-        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#the-symbols',
+        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols',
         tooltip=tooltip
     )
 

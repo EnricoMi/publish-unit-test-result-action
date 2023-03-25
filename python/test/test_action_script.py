@@ -1221,7 +1221,7 @@ class Test(unittest.TestCase):
                 mock.call('This action is running on a pull_request event for a fork repository. '
                           'It cannot do anything useful like creating check runs or pull request '
                           'comments. To run the action on fork repository pull requests, see '
-                          'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
+                          'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1'
                           '/README.md#support-fork-repositories-and-dependabot-branches'),
                 mock.call('At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, '
                           'or TRX_FILES options has to be set! '
