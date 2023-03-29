@@ -587,18 +587,18 @@ class Publisher:
 
         if self._settings.comment_mode == comment_mode_changes and \
                 do_changes_require_comment(earlier_stats.is_different if earlier_stats else None,
-                                           stats.has_changes):
+                                           stats.is_delta and stats.has_changes):
             return True
 
         if self._settings.comment_mode == comment_mode_changes_failures and \
                 do_changes_require_comment(earlier_stats.is_different_in_failures if earlier_stats else None,
-                                           stats.has_failure_changes,
+                                           stats.is_delta and stats.has_failure_changes,
                                            'failures'):
             return True
 
         if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors] and \
                 do_changes_require_comment(earlier_stats.is_different_in_errors if earlier_stats else None,
-                                           stats.has_error_changes,
+                                           stats.is_delta and stats.has_error_changes,
                                            'errors'):
             return True
 
