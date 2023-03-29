@@ -355,15 +355,19 @@ class TestPublisher(unittest.TestCase):
                 ) if not test.earlier_is_none else None
                 current = mock.MagicMock(
                     is_delta=test.current_has_changes is not None,
-                    has_changes=test.current_has_changes,
-                    has_failure_changes=test.current_has_failure_changes,
-                    has_error_changes=test.current_has_error_changes,
                     has_failures=test.current_has_failures,
                     has_errors=test.current_has_errors)
                 if current.is_delta:
+                    current.has_changes = test.current_has_changes
+                    current.has_failure_changes = test.current_has_failure_changes
+                    current.has_error_changes = test.current_has_error_changes
                     current.without_delta = mock.Mock(return_value=current)
                 required = Publisher.require_comment(publisher, current, earlier)
                 self.assertEqual(required, expected)
+                # do not access these prperties when current is not a delta stats
+                self.assertTrue(current.is_delta or 'has_changes' not in current._mock_children, 'has_changes')
+                self.assertTrue(current.is_delta or 'has_failure_changes' not in current._mock_children, 'has_failure_changes')
+                self.assertTrue(current.is_delta or 'has_error_changes' not in current._mock_children, 'has_error_changes')
 
     comment_condition_tests = [CommentConditionTest(earlier_is_none,
                                                     earlier_is_different, earlier_is_different_in_failures, earlier_is_different_in_errors,
@@ -372,14 +376,14 @@ class TestPublisher(unittest.TestCase):
                                                     current_has_failures, current_has_errors)
                                for earlier_is_none in [False, True]
                                for earlier_is_different in [False, True]
-                               for earlier_is_different_in_failures in ([False, True] if not earlier_is_different else [True])
-                               for earlier_is_different_in_errors in ([False, True] if not earlier_is_different else [True])
+                               for earlier_is_different_in_failures in ([False, True] if earlier_is_different else [False])
+                               for earlier_is_different_in_errors in ([False, True] if earlier_is_different else [False])
                                for earlier_has_failures in [False, True]
                                for earlier_has_errors in [False, True]
 
                                for current_has_changes in [None, False, True]
-                               for current_has_failure_changes in ([False, True] if not current_has_changes else [True])
-                               for current_has_error_changes in ([False, True] if not current_has_changes else [True])
+                               for current_has_failure_changes in ([False, True] if current_has_changes else [False])
+                               for current_has_error_changes in ([False, True] if current_has_changes else [False])
                                for current_has_failures in [False, True]
                                for current_has_errors in [False, True]]
 
