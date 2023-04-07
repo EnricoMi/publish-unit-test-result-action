@@ -15,7 +15,7 @@ import psutil
 from urllib3.util.retry import Retry
 
 import publish.github_action
-from publish import available_annotations, default_annotations, none_annotations, \
+from publish import __version__, available_annotations, default_annotations, none_annotations, \
     report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
     comment_mode_always, comment_modes, punctuation_space
@@ -223,11 +223,10 @@ def main(settings: Settings, gha: GithubAction) -> None:
     if settings.event_file is None and \
             settings.event_name == 'pull_request' and \
             settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
-        # bump the version if you change the target of this link (if it did not exist already) or change the section
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
                     f'It cannot do anything useful like creating check runs or pull request comments. '
                     f'To run the action on fork repository pull requests, see '
-                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#support-fork-repositories-and-dependabot-branches')
+                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
     # log the available RAM to help spot OOM issues:

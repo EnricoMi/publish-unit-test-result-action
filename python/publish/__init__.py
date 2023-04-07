@@ -10,6 +10,9 @@ from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, It
 from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
+# keep the version in sync with action.yml
+__version__ = 'v2.6.1'
+
 logger = logging.getLogger('publish')
 digest_prefix = '[test-results]:data:'
 digest_mime_type = 'application/gzip'
@@ -419,8 +422,7 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
     return '[{label}]({link} "{tooltip}")'.format(
         label=label,
-        # bump the version if you change the target of this link (if it did not exist already) or change the section
-        link='https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols',
+        link=f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols',
         tooltip=tooltip
     )
 
