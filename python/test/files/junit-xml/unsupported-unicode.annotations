@@ -32,7 +32,7 @@
           'start_line': 4,
           'end_line': 4,
           'annotation_level': 'warning',
-          'message': 'unsupported-unicode.xml\u2003[in 1s]',
+          'message': 'unsupported-unicode.xml\u2003[took 1s]',
           'title': 'test 4 failed',
           'raw_details':
             'Some unsupported unicode characters: '
@@ -43,7 +43,7 @@
           'start_line': 5,
           'end_line': 5,
           'annotation_level': 'warning',
-          'message': 'unsupported-unicode.xml\u2003[in 1s]',
+          'message': 'unsupported-unicode.xml\u2003[took 1s]',
           'title': 'test 5 failed',
           'raw_details':
             'message\nSome unsupported unicode characters: '
@@ -54,7 +54,7 @@
           'start_line': 6,
           'end_line': 6,
           'annotation_level': 'failure',
-          'message': 'unsupported-unicode.xml\u2003[in 1s]',
+          'message': 'unsupported-unicode.xml\u2003[took 1s]',
           'title': 'test 6 with error',
           'raw_details':
             'Some unsupported unicode characters: '
@@ -65,7 +65,7 @@
           'start_line': 7,
           'end_line': 7,
           'annotation_level': 'failure',
-          'message': 'unsupported-unicode.xml\u2003[in 1s]',
+          'message': 'unsupported-unicode.xml\u2003[took 1s]',
           'title': 'test 7 with error',
           'raw_details':
             'message\nSome unsupported unicode characters: '

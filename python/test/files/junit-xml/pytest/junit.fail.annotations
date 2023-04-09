@@ -30,7 +30,7 @@
           'start_line': 819,
           'end_line': 819,
           'annotation_level': 'warning',
-          'message': 'pytest/junit.fail.xml\u2003[in 7s]',
+          'message': 'pytest/junit.fail.xml\u2003[took 7s]',
           'title': 'test_rsh_events (test.test_spark.SparkTests) failed',
           'raw_details':
             'self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n        '

@@ -38,7 +38,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'failure',
-          'message': 'junit.multiresult.xml\u2003[in 0s]',
+          'message': 'junit.multiresult.xml\u2003[took 0s]',
           'title': 'test that errors (test class) with error',
           'raw_details': 'test teardown failure\nstdout'
         },
@@ -47,7 +47,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'junit.multiresult.xml\u2003[in 0s]',
+          'message': 'junit.multiresult.xml\u2003[took 0s]',
           'title': 'test that fails (test class) failed',
           'raw_details': 'test failure\nAssertion failed'
         },

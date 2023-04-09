@@ -29,7 +29,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/timewarpinc.xml\u2003[in 2s]',
+          'message': 'mstest/timewarpinc.xml\u2003[took 2s]',
           'title': 'ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity") failed',
           'raw_details':
             'Zenject.ZenjectException : Zenject Validation Failed!  See errors '

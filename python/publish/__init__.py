@@ -824,7 +824,7 @@ def get_case_annotation(messages: CaseMessages,
         start_column=None,
         end_column=None,
         annotation_level=level,
-        message='\n'.join([file if time is None else f'{file} [in {as_stat_duration(time)}]'
+        message='\n'.join([file if time is None else f'{file} [took {as_stat_duration(time)}]'
                            for file, time in sorted(same_result_files.items())]),
         title=title,
         raw_details='\n'.join(details) if details else None

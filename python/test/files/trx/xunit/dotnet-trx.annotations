@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/dotnet-trx.trx\u2003[in 0s]',
+          'message': 'xunit/dotnet-trx.trx\u2003[took 0s]',
           'title':
             'Should be even number(i: 3) '
             '(DotnetTests.XUnitTests.CalculatorTests) failed',
@@ -46,7 +46,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/dotnet-trx.trx\u2003[in 0s]',
+          'message': 'xunit/dotnet-trx.trx\u2003[took 0s]',
           'title':
             'Exception_In_TargetTest (DotnetTests.XUnitTests.CalculatorTests) '
             'failed',
@@ -65,7 +65,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/dotnet-trx.trx\u2003[in 0s]',
+          'message': 'xunit/dotnet-trx.trx\u2003[took 0s]',
           'title': 'Exception_In_Test (DotnetTests.XUnitTests.CalculatorTests) failed',
           'raw_details':
             'System.Exception : Test   at '
@@ -78,7 +78,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/dotnet-trx.trx\u2003[in 0s]',
+          'message': 'xunit/dotnet-trx.trx\u2003[took 0s]',
           'title': 'Failing_Test (DotnetTests.XUnitTests.CalculatorTests) failed',
           'raw_details':
             'Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2   at '
@@ -91,7 +91,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/dotnet-trx.trx\u2003[in 0s]',
+          'message': 'xunit/dotnet-trx.trx\u2003[took 0s]',
           'title':
             'Is_Even_Number(i: 3) (DotnetTests.XUnitTests.CalculatorTests) '
             'failed',

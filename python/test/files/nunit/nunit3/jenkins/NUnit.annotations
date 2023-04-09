@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit.xml\u2003[in 0s]',
+          'message': 'nunit3/jenkins/NUnit.xml\u2003[took 0s]',
           'title': 'UnitTests.MainClassTest.TestFailure failed',
           'raw_details':
             '  Expected failure\n  Expected: 30\n  But was:  20\n  at '
