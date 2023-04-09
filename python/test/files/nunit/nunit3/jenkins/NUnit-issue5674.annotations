@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue5674.xml',
+          'message': 'nunit3/jenkins/NUnit-issue5674.xml\u2003[in 0s]',
           'title': 'GetBrowsersTest.BrowserNamesTest1.FailTest("IE") failed',
           'raw_details':
             'at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
@@ -43,7 +43,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue5674.xml',
+          'message': 'nunit3/jenkins/NUnit-issue5674.xml\u2003[in 0s]',
           'title': 'GetBrowsersTest.BrowserNamesTest1.FailTest("FireFox") failed',
           'raw_details':
             'at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
@@ -56,7 +56,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue5674.xml',
+          'message': 'nunit3/jenkins/NUnit-issue5674.xml\u2003[in 0s]',
           'title': 'GetBrowsersTest.BrowserNamesTest1.FailTest("Safari") failed',
           'raw_details':
             'at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '

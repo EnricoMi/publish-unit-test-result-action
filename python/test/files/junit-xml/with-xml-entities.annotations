@@ -32,7 +32,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'with-xml-entities.xml',
+          'message': 'with-xml-entities.xml\u2003[in 0s]',
           'title': "Test with 'apostrophe' in the test name failed",
           'raw_details': "A message with 'apostrophes'\nContent with 'apostrophes'"
         },
@@ -41,7 +41,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'failure',
-          'message': 'with-xml-entities.xml',
+          'message': 'with-xml-entities.xml\u2003[in 0s]',
           'title': 'Test with & in the test name with error',
           'raw_details': 'A message with &\nContent with &'
         },

@@ -54,7 +54,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'failure',
-          'message': 'tests.json',
+          'message': 'tests.json\u2003[in 4s]',
           'title': 'Test .clone() should copy the title with error',
           'raw_details':
             "[31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto "

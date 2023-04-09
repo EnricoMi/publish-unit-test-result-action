@@ -29,7 +29,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnitUnicode.xml',
+          'message': 'nunit3/jenkins/NUnitUnicode.xml\u2003[in 0s]',
           'title': 'UnitTests.UnicodeClassTest.TestFailure failed',
           'raw_details':
             '  Expected failure\n  Expected: ü\n  But was:  â\n  at '

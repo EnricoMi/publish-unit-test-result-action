@@ -34,7 +34,7 @@
           'start_line': 21,
           'end_line': 21,
           'annotation_level': 'warning',
-          'message': 'json/tests.json',
+          'message': 'json/tests.json\u2003[in 0s]',
           'title': 'Cli runner should have correct invocation failed',
           'raw_details':
             "Expected: 'metrics <command> [arguments] <directories> nope'\n  "
@@ -51,7 +51,7 @@
           'start_line': 16,
           'end_line': 16,
           'annotation_level': 'failure',
-          'message': 'json/tests.json',
+          'message': 'json/tests.json\u2003[in 0s]',
           'title': 'detectSdkPath should return `null` if running inside VM with error',
           'raw_details':
             'Exception: exception\ntest/src/cli/utils/detect_sdk_path_test.dart '
@@ -64,7 +64,7 @@
           'start_line': 46,
           'end_line': 46,
           'annotation_level': 'failure',
-          'message': 'json/tests.json',
+          'message': 'json/tests.json\u2003[in 0s]',
           'title':
             'detectSdkPath should return null if sdk path is not found inside '
             'environment PATH variable with error',

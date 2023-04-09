@@ -32,7 +32,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-correct.xml',
+          'message': 'nunit3/jenkins/NUnit-correct.xml\u2003[in 0s]',
           'title': 'NUnit.Tests.Assemblies.MockTestFixture.FailingTest failed',
           'raw_details':
             'Intentional failure\n\n                                              '
@@ -46,7 +46,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'failure',
-          'message': 'nunit3/jenkins/NUnit-correct.xml',
+          'message': 'nunit3/jenkins/NUnit-correct.xml\u2003[in 0s]',
           'title': 'NUnit.Tests.Assemblies.MockTestFixture.TestWithException with error',
           'raw_details':
             'System.ApplicationException : Intentional Exception\n\n              '

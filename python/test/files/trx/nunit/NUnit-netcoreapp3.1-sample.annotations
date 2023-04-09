@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx',
+          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx\u2003[in 0s]',
           'title': 'FailTest (SampleProject.NUnit.TestServiceTests) failed',
           'raw_details':
             '  Expected: True\r\n  But was:  False\r\n   at '
@@ -43,7 +43,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx',
+          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx\u2003[in 0s]',
           'title': 'TestThrowingException (SampleProject.NUnit.TestServiceTests) failed',
           'raw_details':
             'System.Exception : Pretty good exception   at '
@@ -59,7 +59,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx',
+          'message': 'nunit/NUnit-netcoreapp3.1-sample.trx\u2003[in 0s]',
           'title': 'TestTheory(False) (SampleProject.NUnit.TestServiceTests) failed',
           'raw_details':
             '  Expected: False\r\n  But was:  True\r\n   at '

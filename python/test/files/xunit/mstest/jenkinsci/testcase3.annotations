@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/jenkinsci/testcase3.xml',
+          'message': 'mstest/jenkinsci/testcase3.xml\u2003[in 14s]',
           'title': 'FailedTest (MyProject.Tests.SampleFact) failed',
           'raw_details':
             'Assert.True() Failure   at MyProject.Tests.SampleFact.FailedTest() '

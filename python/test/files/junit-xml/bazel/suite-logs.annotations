@@ -31,7 +31,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'failure',
-          'message': 'bazel/suite-logs.xml',
+          'message': 'bazel/suite-logs.xml\u2003[in 0s]',
           'title': 'bazel/failing_absl_test with error',
           'raw_details': 'exited with error code 1'
         },

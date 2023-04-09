@@ -34,7 +34,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/fixie.xml',
+          'message': 'mstest/fixie.xml\u2003[in 1s]',
           'title': '1 out of 3 runs failed: ShouldBeString ([genericTestClass])',
           'raw_details':
             'Expected: System.String\nActual:   System.Int32   at '
@@ -46,7 +46,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/fixie.xml',
+          'message': 'mstest/fixie.xml\u2003[in 1s]',
           'title': 'Fail ([testClass]) failed',
           'raw_details':
             "'Fail' failed!   at [testClassForStackTrace].Fail() in "
@@ -57,7 +57,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/fixie.xml',
+          'message': 'mstest/fixie.xml\u2003[in 1s]',
           'title': 'FailByAssertion ([testClass]) failed',
           'raw_details':
             'Expected: 2\nActual:   1   at '

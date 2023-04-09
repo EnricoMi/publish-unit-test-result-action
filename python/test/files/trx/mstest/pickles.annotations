@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/pickles.trx',
+          'message': 'mstest/pickles.trx\u2003[in 0s]',
           'title':
             'FailToAddTwoNumbers (Pickles.TestHarness.MSTest.AdditionFeature) '
             'failed',

@@ -29,7 +29,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue6353.xml',
+          'message': 'nunit3/jenkins/NUnit-issue6353.xml\u2003[in 2s]',
           'title': 'FailedTest failed',
           'raw_details': 'Reason\nHere comes the stack trace'
         },
