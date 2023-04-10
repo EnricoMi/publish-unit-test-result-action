@@ -62,7 +62,8 @@ This behaviour is configurable.*
 
 ## Permissions
 
-Minimal permissions required by this action in **public** GitHub repositories are:
+Minimal [workflow job permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs#example-setting-permissions-for-a-specific-job)
+required by this action in **public** GitHub repositories are:
 
 ```yaml
 permissions:
