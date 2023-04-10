@@ -483,7 +483,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -495,7 +495,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
@@ -519,7 +519,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: artifacts
 
@@ -560,7 +560,7 @@ event_file:
   runs-on: ubuntu-latest
   steps:
   - name: Upload
-    uses: actions/upload-artifact@v2
+    uses: actions/upload-artifact@v3
     with:
       name: Event File
       path: ${{ github.event_path }}
@@ -572,7 +572,7 @@ Adjust the value of `path` to fit your setup:
 ```yaml
 - name: Upload Test Results
   if: always()
-  uses: actions/upload-artifact@v2
+  uses: actions/upload-artifact@v3
   with:
     name: Test Results
     path: |
@@ -756,7 +756,7 @@ build-and-test:
   - …
   - name: Upload Test Results
     if: always()
-    uses: actions/upload-artifact@v2
+    uses: actions/upload-artifact@v3
     with:
       name: Test Results
       path: "test-results/**/*.xml"
@@ -774,7 +774,7 @@ publish-test-results:
 
   steps:
     - name: Download Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: artifacts
 
