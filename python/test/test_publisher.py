@@ -355,15 +355,19 @@ class TestPublisher(unittest.TestCase):
                 ) if not test.earlier_is_none else None
                 current = mock.MagicMock(
                     is_delta=test.current_has_changes is not None,
-                    has_changes=test.current_has_changes,
-                    has_failure_changes=test.current_has_failure_changes,
-                    has_error_changes=test.current_has_error_changes,
                     has_failures=test.current_has_failures,
                     has_errors=test.current_has_errors)
                 if current.is_delta:
+                    current.has_changes = test.current_has_changes
+                    current.has_failure_changes = test.current_has_failure_changes
+                    current.has_error_changes = test.current_has_error_changes
                     current.without_delta = mock.Mock(return_value=current)
                 required = Publisher.require_comment(publisher, current, earlier)
                 self.assertEqual(required, expected)
+                # do not access these prperties when current is not a delta stats
+                self.assertTrue(current.is_delta or 'has_changes' not in current._mock_children, 'has_changes')
+                self.assertTrue(current.is_delta or 'has_failure_changes' not in current._mock_children, 'has_failure_changes')
+                self.assertTrue(current.is_delta or 'has_error_changes' not in current._mock_children, 'has_error_changes')
 
     comment_condition_tests = [CommentConditionTest(earlier_is_none,
                                                     earlier_is_different, earlier_is_different_in_failures, earlier_is_different_in_errors,
@@ -372,14 +376,14 @@ class TestPublisher(unittest.TestCase):
                                                     current_has_failures, current_has_errors)
                                for earlier_is_none in [False, True]
                                for earlier_is_different in [False, True]
-                               for earlier_is_different_in_failures in ([False, True] if not earlier_is_different else [True])
-                               for earlier_is_different_in_errors in ([False, True] if not earlier_is_different else [True])
+                               for earlier_is_different_in_failures in ([False, True] if earlier_is_different else [False])
+                               for earlier_is_different_in_errors in ([False, True] if earlier_is_different else [False])
                                for earlier_has_failures in [False, True]
                                for earlier_has_errors in [False, True]
 
                                for current_has_changes in [None, False, True]
-                               for current_has_failure_changes in ([False, True] if not current_has_changes else [True])
-                               for current_has_error_changes in ([False, True] if not current_has_changes else [True])
+                               for current_has_failure_changes in ([False, True] if current_has_changes else [False])
+                               for current_has_error_changes in ([False, True] if current_has_changes else [False])
                                for current_has_failures in [False, True]
                                for current_has_errors in [False, True]]
 
@@ -870,21 +874,23 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(expected, actual)
         if settings.search_pull_requests:
             gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
+            commit.get_pulls.assert_not_called()
         else:
             gh.search_issues.assert_not_called()
             if event_pull_request is not None and \
                     settings.repo == settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name'):
                 repo.get_pull.assert_called_once_with(event_pull_request.number)
+                commit.get_pulls.assert_not_called()
             else:
                 repo.get_pull.assert_not_called()
-        commit.get_pulls.assert_not_called()
+                commit.get_pulls.assert_called_once_with()
         return gha
 
     def test_get_pulls_without_event(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -902,7 +908,7 @@ class TestPublisher(unittest.TestCase):
         event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 

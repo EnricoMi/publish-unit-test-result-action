@@ -217,6 +217,14 @@ class Publisher:
         except UnknownObjectException:
             return None
 
+    def get_pulls_from_commit(self, commit: str) -> List[PullRequest]:
+        try:
+            # totalCount of PaginatedList calls the GitHub API just to get the total number
+            # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
+            return list(self._repo.get_commit(commit).get_pulls())
+        except UnknownObjectException:
+            return []
+
     def get_all_pulls(self, commit: str) -> List[PullRequest]:
         if self._settings.search_pull_requests:
             # totalCount of PaginatedList calls the GitHub API just to get the total number
@@ -225,7 +233,7 @@ class Publisher:
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
             pull_request = self.get_pull_from_event()
-            pull_requests = [pull_request] if pull_request is not None else []
+            pull_requests = [pull_request] if pull_request is not None else self.get_pulls_from_commit(commit)
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests
@@ -587,18 +595,18 @@ class Publisher:
 
         if self._settings.comment_mode == comment_mode_changes and \
                 do_changes_require_comment(earlier_stats.is_different if earlier_stats else None,
-                                           stats.has_changes):
+                                           stats.is_delta and stats.has_changes):
             return True
 
         if self._settings.comment_mode == comment_mode_changes_failures and \
                 do_changes_require_comment(earlier_stats.is_different_in_failures if earlier_stats else None,
-                                           stats.has_failure_changes,
+                                           stats.is_delta and stats.has_failure_changes,
                                            'failures'):
             return True
 
         if self._settings.comment_mode in [comment_mode_changes_failures, comment_mode_changes_errors] and \
                 do_changes_require_comment(earlier_stats.is_different_in_errors if earlier_stats else None,
-                                           stats.has_error_changes,
+                                           stats.is_delta and stats.has_error_changes,
                                            'errors'):
             return True
 

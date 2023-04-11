@@ -52,13 +52,37 @@ and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `
 
 See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
 
-Also see the [notes on supporting pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
+If you see the `"Resource not accessible by integration"` error, you have to grant additional [permissions](#permissions), or
+[setup the support for pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
 
 ***Note:** This action does not fail if tests failed. The action that executed the tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
+
+## Permissions
+
+Minimal [workflow job permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs#example-setting-permissions-for-a-specific-job)
+required by this action in **public** GitHub repositories are:
+
+```yaml
+permissions:
+  checks: write
+  pull-requests: write
+```
+
+The following permissions are required in **private** GitHub repos:
+
+```yaml
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+```
+
+With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Generating test result files
 
@@ -71,7 +95,7 @@ Check your favorite development and test environment for its JSON, TRX file or J
 |[Jest](https://jestjs.io/docs/configuration#default-reporter)|JavaScript|:heavy_check_mark:| | | | |
 |[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|Java, Scala, Kotlin|:heavy_check_mark:| | | | |
 |[Mocha](https://mochajs.org/#xunit)|JavaScript|:heavy_check_mark:| |[not xunit](https://github.com/mochajs/mocha/issues/4758)| | :heavy_check_mark: |
-|MSTest    |.Net|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:| |
+|[MStest / dotnet](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)|.Net|[:heavy_check_mark:](https://github.com/spekt/junit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/nunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/xunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)| |
 |[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:heavy_check_mark:| | | | |
 |[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:heavy_check_mark:| | | | |
 |Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:heavy_check_mark:| | | | |
@@ -206,28 +230,6 @@ The symbols have the following meaning:
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
 
 ***Note:*** For simplicity, "disabled" tests count towards "skipped" tests.
-
-## Permissions
-
-Minimal permissions required by this action in **public** GitHub repositories are:
-
-```yaml
-permissions:
-  checks: write
-  pull-requests: write
-```
-
-The following permissions are required in **private** GitHub repos:
-
-```yaml
-permissions:
-  contents: read
-  issues: read
-  checks: write
-  pull-requests: write
-```
-
-With `comment_mode: off`, the `pull-requests: write` permission is not needed.
 
 ## Configuration
 
@@ -483,7 +485,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -495,7 +497,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
@@ -519,7 +521,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: artifacts
 
@@ -560,7 +562,7 @@ event_file:
   runs-on: ubuntu-latest
   steps:
   - name: Upload
-    uses: actions/upload-artifact@v2
+    uses: actions/upload-artifact@v3
     with:
       name: Event File
       path: ${{ github.event_path }}
@@ -572,7 +574,7 @@ Adjust the value of `path` to fit your setup:
 ```yaml
 - name: Upload Test Results
   if: always()
-  uses: actions/upload-artifact@v2
+  uses: actions/upload-artifact@v3
   with:
     name: Test Results
     path: |
@@ -655,6 +657,49 @@ jobs:
 
 Note: Running this action on `pull_request_target` events is [dangerous if combined with code checkout and code execution](https://securitylab.github.com/research/github-actions-preventing-pwn-requests).
 This event is therefore not use here intentionally!
+</details>
+
+## Running with multiple event types (pull_request, push, schedule, …)
+
+This action comments on a pull request each time it is executed via any event type.
+When run for more than one event type, runs will overwrite earlier pull request comments.
+
+Note that `pull_request` events may produce different test results than any other event type.
+The `pull_request` event runs the workflow on a merge commit, i.e. the commit merged into the target branch.
+All other event types run on the commit itself.
+
+If you want to distinguish between test results from `pull_request` and `push`, or want to distinguish the original test results
+of the `push` to master from subsequent `schedule` events, you may want to add the following to your workflow.
+
+<details>
+<summary>There are two possible ways to avoid the publish action to overwrite results from other event types:</summary>
+
+### Test results per event type
+
+Add the event name to `check_name` to avoid different event types overwriting each other's results:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+    check_name: "Test Results (${{ github.event.workflow_run.event || github.event_name }})"
+    files: "test-results/**/*.xml"
+```
+
+### Pull request comments only for pull_request events
+
+Disabling the pull request comment mode (`"off"`) for events other than `pull_request` avoids that any other event type overwrites pull request comments:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+    # set comment_mode to "always" for pull_request event, set to "off" for all other event types
+    comment_mode: ${{ (github.event.workflow_run.event == 'pull_request' || github.event_name == 'pull_request') && 'always' || 'off' }}
+    files: "test-results/**/*.xml"
+```
 </details>
 
 ## Create a badge from test results
@@ -756,7 +801,7 @@ build-and-test:
   - …
   - name: Upload Test Results
     if: always()
-    uses: actions/upload-artifact@v2
+    uses: actions/upload-artifact@v3
     with:
       name: Test Results
       path: "test-results/**/*.xml"
@@ -774,7 +819,7 @@ publish-test-results:
 
   steps:
     - name: Download Artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: artifacts
 
