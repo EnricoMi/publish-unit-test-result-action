@@ -217,6 +217,14 @@ class Publisher:
         except UnknownObjectException:
             return None
 
+    def get_pulls_from_commit(self, commit: str) -> List[PullRequest]:
+        try:
+            # totalCount of PaginatedList calls the GitHub API just to get the total number
+            # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
+            return list(self._repo.get_commit(commit).get_pulls())
+        except UnknownObjectException:
+            return []
+
     def get_all_pulls(self, commit: str) -> List[PullRequest]:
         if self._settings.search_pull_requests:
             # totalCount of PaginatedList calls the GitHub API just to get the total number
@@ -225,7 +233,7 @@ class Publisher:
             pull_requests = [issue.as_pull_request() for issue in issues]
         else:
             pull_request = self.get_pull_from_event()
-            pull_requests = [pull_request] if pull_request is not None else []
+            pull_requests = [pull_request] if pull_request is not None else self.get_pulls_from_commit(commit)
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests

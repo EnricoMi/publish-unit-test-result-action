@@ -874,21 +874,23 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(expected, actual)
         if settings.search_pull_requests:
             gh.search_issues.assert_called_once_with('type:pr repo:"{}" {}'.format(settings.repo, settings.commit))
+            commit.get_pulls.assert_not_called()
         else:
             gh.search_issues.assert_not_called()
             if event_pull_request is not None and \
                     settings.repo == settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name'):
                 repo.get_pull.assert_called_once_with(event_pull_request.number)
+                commit.get_pulls.assert_not_called()
             else:
                 repo.get_pull.assert_not_called()
-        commit.get_pulls.assert_not_called()
+                commit.get_pulls.assert_called_once_with()
         return gha
 
     def test_get_pulls_without_event(self):
         settings = self.create_settings()
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, None, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, None, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
@@ -906,7 +908,7 @@ class TestPublisher(unittest.TestCase):
         event_pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=1234)
         pr = self.create_github_pr(settings.repo, head_commit_sha=settings.commit, number=5678)
         pull_requests = self.create_github_collection([pr])
-        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [])
+        gha = self.do_test_get_pulls(settings, pull_requests, event_pr, [pr])
         gha.warning.assert_not_called()
         gha.error.assert_not_called()
 
