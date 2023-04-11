@@ -659,6 +659,49 @@ Note: Running this action on `pull_request_target` events is [dangerous if combi
 This event is therefore not use here intentionally!
 </details>
 
+## Running with multiple event types (pull_request, push, schedule, … events)
+
+This action comments on a pull request each time it is executed via any event type.
+When run for more than one event type, runs will overwrite earlier comments.
+
+Note that `pull_request` events may produce different test results than any other event type.
+The `pull_request` event runs the workflow on a merge commit, i.e. the commit merged into the target branch.
+All other event types run on the commit itself.
+
+If you want to distinguish between test results from `pull_request` and `push`, or want to distinguish the original test results
+of the `push` to master from subsequent `schedule` events, you may want to add the following to your workflow.
+
+<details>
+<summary>If you want to run the workflow on multiple event types, there are two possible ways to avoid the publish action to overwrite
+results from other event types:</summary>
+
+### Test results per event type
+
+Adding the event name to the `check_name` option avoids different event types overwriting each other's results:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+    check_name: "Test Results (${{ github.event.workflow_run.event || github.event_name }})"
+    files: "test-results/**/*.xml"
+```
+
+### Pull request comments only for pull_request events
+
+Disabling the pull request comment mode (`"off"`) for events other than `pull_request` avoids that any other event type overwrites pull request comments:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+    # set comment_mode to "always" for pull_request event, set to "off" for all other event types
+    comment_mode: ${{ (github.event.workflow_run.event == 'pull_request' || github.event_name == 'pull_request') && 'always' || 'off' }}
+    files: "test-results/**/*.xml"
+```
+
 ## Create a badge from test results
 
 Here is an example how to use the [JSON](#json-result) output of this action to create a badge like this:
