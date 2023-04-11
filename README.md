@@ -659,10 +659,10 @@ Note: Running this action on `pull_request_target` events is [dangerous if combi
 This event is therefore not use here intentionally!
 </details>
 
-## Running with multiple event types (pull_request, push, schedule, … events)
+## Running with multiple event types (pull_request, push, schedule, …)
 
 This action comments on a pull request each time it is executed via any event type.
-When run for more than one event type, runs will overwrite earlier comments.
+When run for more than one event type, runs will overwrite earlier pull request comments.
 
 Note that `pull_request` events may produce different test results than any other event type.
 The `pull_request` event runs the workflow on a merge commit, i.e. the commit merged into the target branch.
@@ -672,12 +672,11 @@ If you want to distinguish between test results from `pull_request` and `push`, 
 of the `push` to master from subsequent `schedule` events, you may want to add the following to your workflow.
 
 <details>
-<summary>If you want to run the workflow on multiple event types, there are two possible ways to avoid the publish action to overwrite
-results from other event types:</summary>
+<summary>There are two possible ways to avoid the publish action to overwrite results from other event types:</summary>
 
 ### Test results per event type
 
-Adding the event name to the `check_name` option avoids different event types overwriting each other's results:
+Add the event name to `check_name` to avoid different event types overwriting each other's results:
 
 ```yaml
 - name: Publish Test Results
