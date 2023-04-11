@@ -701,6 +701,7 @@ Disabling the pull request comment mode (`"off"`) for events other than `pull_re
     comment_mode: ${{ (github.event.workflow_run.event == 'pull_request' || github.event_name == 'pull_request') && 'always' || 'off' }}
     files: "test-results/**/*.xml"
 ```
+</details>
 
 ## Create a badge from test results
 
