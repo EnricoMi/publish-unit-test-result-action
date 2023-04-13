@@ -36,6 +36,7 @@ class Settings:
     event: dict
     event_file: Optional[str]
     event_name: str
+    is_fork: bool
     repo: str
     commit: str
     json_file: Optional[str]
@@ -191,7 +192,17 @@ class Publisher:
         logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
-        check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+
+        if self._settings.is_fork:
+            # running on a fork, we cannot publish the check, but we can still read before_check_run
+            check_run = None
+            before_check_run = None
+            if self._settings.compare_earlier:
+                before_commit_sha = self._settings.event.get('before')
+                logger.debug(f'comparing against before={before_commit_sha}')
+                before_check_run = self.get_check_run(before_commit_sha)
+        else:
+            check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
             self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)

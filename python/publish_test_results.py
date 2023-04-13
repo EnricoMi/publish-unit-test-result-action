@@ -18,7 +18,7 @@ import publish.github_action
 from publish import __version__, available_annotations, default_annotations, none_annotations, \
     report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_always, comment_modes, punctuation_space
+    comment_mode_always, comment_mode_off, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import JUnitTree, parse_junit_xml_files, parse_junit_xml_file, process_junit_xml_elems, \
     ParsedJUnitFile, progress_safe_parse_xml_file, is_junit
@@ -218,13 +218,9 @@ def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inco
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
-    # we cannot create a check run or pull request comment when running on pull_request event from a fork
-    # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
-    if settings.event_file is None and \
-            settings.event_name == 'pull_request' and \
-            settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+    if settings.is_fork and not settings.job_summary:
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
-                    f'It cannot do anything useful like creating check runs or pull request comments. '
+                    f'The only useful thing it can do in this situation is creating a job summary, which is disabled in settings. '
                     f'To run the action on fork repository pull requests, see '
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
@@ -412,6 +408,27 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'rt', encoding='utf-8') as f:
         event = json.load(f)
+
+    repo = get_var('GITHUB_REPOSITORY', options)
+    job_summary = get_bool_var('JOB_SUMMARY', options, default=True)
+    comment_mode = get_var('COMMENT_MODE', options) or comment_mode_always
+
+    # we cannot create a check run or pull request comment when running on pull_request event from a fork
+    # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
+    is_fork = False
+    if event_file is None and \
+            event_name == 'pull_request' and \
+            event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo:
+        is_fork = True
+
+        if comment_mode != comment_mode_off:
+            # bump the version if you change the target of this link (if it did not exist already) or change the section
+            gha.info(f'This action is running on a pull_request event for a fork repository. '
+                     f'Pull request comments cannot be created, so disabling this feature. '
+                     f'To fully run the action on fork repository pull requests, see '
+                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
+            comment_mode = comment_mode_off
+
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
@@ -457,7 +474,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         event=event,
         event_file=event_file,
         event_name=event_name,
-        repo=get_var('GITHUB_REPOSITORY', options),
+        is_fork=is_fork,
+        repo=repo,
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         json_file=get_var('JSON_FILE', options),
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
@@ -475,8 +493,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
-        job_summary=get_bool_var('JOB_SUMMARY', options, default=True),
+        comment_mode=comment_mode,
+        job_summary=job_summary,
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),
