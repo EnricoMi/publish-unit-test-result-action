@@ -580,28 +580,26 @@ class Test(unittest.TestCase):
 
     def test_get_settings_fork(self):
         event = {"pull_request": {"head": {"repo": {"full_name": "fork/repo"}}}}
-        gha = mock.MagicMock()
-        self.do_test_get_settings(event=event,
-                                  gha=gha,
-                                  EVENT_NAME='pull_request',
-                                  GITHUB_REPOSITORY='repo',
-                                  COMMENT_MODE=comment_mode_off,
-                                  expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
-                                  warning=[])
-        gha.info.assert_not_called()
+        with mock.patch('publish_test_results.logger') as l:
+            self.do_test_get_settings(event=event,
+                                      EVENT_NAME='pull_request',
+                                      GITHUB_REPOSITORY='repo',
+                                      COMMENT_MODE=comment_mode_off,
+                                      expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
+                                      warning=[])
+            l.info.assert_not_called()
 
-        self.do_test_get_settings(event=event,
-                                  gha=gha,
-                                  EVENT_NAME='pull_request',
-                                  GITHUB_REPOSITORY='repo',
-                                  COMMENT_MODE=comment_mode_always,
-                                  expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
-                                  warning=[])
-        gha.info.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
-                                         'Pull request comments cannot be created, so disabling this feature. '
-                                         'To fully run the action on fork repository pull requests, '
-                                         'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#'
-                                         'support-fork-repositories-and-dependabot-branches')
+            self.do_test_get_settings(event=event,
+                                      EVENT_NAME='pull_request',
+                                      GITHUB_REPOSITORY='repo',
+                                      COMMENT_MODE=comment_mode_always,
+                                      expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
+                                      warning=[])
+            l.info.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
+                                           'Pull request comments cannot be created, so disabling this feature. '
+                                           'To fully run the action on fork repository pull requests, '
+                                           'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#'
+                                           'support-fork-repositories-and-dependabot-branches')
 
     def do_test_get_settings_no_default_files(self,
                                               event: dict = {},

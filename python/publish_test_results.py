@@ -400,7 +400,7 @@ def is_float(text: str) -> bool:
     return re.match('^[+-]?(([0-9]*\\.[0-9]+)|([0-9]+(\\.[0-9]?)?))$', text) is not None
 
 
-def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
+def get_settings(options: dict, gha: GithubAction) -> Settings:
     event_file = get_var('EVENT_FILE', options)
     event = event_file or get_var('GITHUB_EVENT_PATH', options)
     event_name = get_var('EVENT_NAME', options) or get_var('GITHUB_EVENT_NAME', options)
@@ -423,10 +423,10 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
 
         if comment_mode != comment_mode_off:
             # bump the version if you change the target of this link (if it did not exist already) or change the section
-            gha.info(f'This action is running on a pull_request event for a fork repository. '
-                     f'Pull request comments cannot be created, so disabling this feature. '
-                     f'To fully run the action on fork repository pull requests, see '
-                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
+            logger.info('This action is running on a pull_request event for a fork repository. '
+                        'Pull request comments cannot be created, so disabling this feature. '
+                        'To fully run the action on fork repository pull requests, see '
+                        'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
             comment_mode = comment_mode_off
 
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
