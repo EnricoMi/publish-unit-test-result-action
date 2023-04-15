@@ -18,7 +18,7 @@ import publish.github_action
 from publish import __version__, available_annotations, default_annotations, none_annotations, \
     report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
     pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
-    comment_mode_always, comment_mode_off, comment_modes, punctuation_space
+    comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import JUnitTree, parse_junit_xml_files, parse_junit_xml_file, process_junit_xml_elems, \
     ParsedJUnitFile, progress_safe_parse_xml_file, is_junit
