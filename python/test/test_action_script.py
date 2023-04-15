@@ -342,11 +342,11 @@ class Test(unittest.TestCase):
 
     def test_get_settings_commit(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
-        self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request', is_fork=True, comment_mode=comment_mode_off))
-        self.do_test_get_settings(COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request', is_fork=True, comment_mode=comment_mode_off))
-        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request', is_fork=True, comment_mode=comment_mode_off))
-        self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request', is_fork=True, comment_mode=comment_mode_off))
-        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event, event_name='push', is_fork=False, comment_mode=comment_mode_always))
+        self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request', is_fork=True))
+        self.do_test_get_settings(COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request', is_fork=True))
+        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request', is_fork=True))
+        self.do_test_get_settings(COMMIT=None, INPUT_GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha2', event=event, event_name='pull_request', is_fork=True))
+        self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='push', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='default', event=event, event_name='push', is_fork=False))
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMIT=None, GITHUB_EVENT_NAME='pull_request', event={}, GITHUB_SHA='default', expected=None)
         self.assertIn('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', re.exception.args)
@@ -580,26 +580,11 @@ class Test(unittest.TestCase):
 
     def test_get_settings_fork(self):
         event = {"pull_request": {"head": {"repo": {"full_name": "fork/repo"}}}}
-        with mock.patch('publish_test_results.logger') as l:
-            self.do_test_get_settings(event=event,
-                                      EVENT_NAME='pull_request',
-                                      GITHUB_REPOSITORY='repo',
-                                      COMMENT_MODE=comment_mode_off,
-                                      expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
-                                      warning=[])
-            l.info.assert_not_called()
-
-            self.do_test_get_settings(event=event,
-                                      EVENT_NAME='pull_request',
-                                      GITHUB_REPOSITORY='repo',
-                                      COMMENT_MODE=comment_mode_always,
-                                      expected=self.get_settings(is_fork=True, event=event, event_name='pull_request', comment_mode=comment_mode_off),
-                                      warning=[])
-            l.info.assert_called_once_with('This action is running on a pull_request event for a fork repository. '
-                                           'Pull request comments cannot be created, so disabling this feature. '
-                                           'To fully run the action on fork repository pull requests, '
-                                           'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#'
-                                           'support-fork-repositories-and-dependabot-branches')
+        self.do_test_get_settings(event=event,
+                                  EVENT_NAME='pull_request',
+                                  GITHUB_REPOSITORY='repo',
+                                  expected=self.get_settings(is_fork=True, event=event, event_name='pull_request'),
+                                  warning=[])
 
     def do_test_get_settings_no_default_files(self,
                                               event: dict = {},
@@ -1246,7 +1231,7 @@ class Test(unittest.TestCase):
             gha.warning.assert_has_calls([
                 mock.call('This action is running on a pull_request event for a fork repository. '
                           'The only useful thing it can do in this situation is creating a job summary, '
-                          'which is disabled in settings. To run the action on fork repository pull requests, '
+                          'which is disabled in settings. To fully run the action on fork repository pull requests, '
                           f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
                           '/README.md#support-fork-repositories-and-dependabot-branches'),
                 mock.call('At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, '

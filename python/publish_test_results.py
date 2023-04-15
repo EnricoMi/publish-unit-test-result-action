@@ -221,7 +221,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     if settings.is_fork and not settings.job_summary:
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
                     f'The only useful thing it can do in this situation is creating a job summary, which is disabled in settings. '
-                    f'To run the action on fork repository pull requests, see '
+                    f'To fully run the action on fork repository pull requests, see '
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
@@ -420,14 +420,6 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
             event_name == 'pull_request' and \
             event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo:
         is_fork = True
-
-        if comment_mode != comment_mode_off:
-            # bump the version if you change the target of this link (if it did not exist already) or change the section
-            logger.info('This action is running on a pull_request event for a fork repository. '
-                        'Pull request comments cannot be created, so disabling this feature. '
-                        'To fully run the action on fork repository pull requests, see '
-                        'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20/README.md#support-fork-repositories-and-dependabot-branches')
-            comment_mode = comment_mode_off
 
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'

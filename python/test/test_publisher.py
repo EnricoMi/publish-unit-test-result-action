@@ -438,9 +438,18 @@ class TestPublisher(unittest.TestCase):
         )
 
     def test_publish_with_fork(self):
-        settings = self.create_settings(is_fork=True, job_summary=True, comment_mode=comment_mode_off)
+        settings = self.create_settings(is_fork=True, job_summary=True, comment_mode=comment_mode_always)
         bcr = mock.MagicMock()
-        mock_calls = self.call_mocked_publish(settings, prs=[object()], bcr=bcr)
+        with mock.patch('publish.publisher.logger') as l:
+            mock_calls = self.call_mocked_publish(settings, prs=[object()], bcr=bcr)
+            self.assertEqual([
+                mock.call('Publishing success results for commit commit'),
+                mock.call('This action is running on a pull_request event for a fork repository. '
+                          'Pull request comments and check runs cannot be created, so disabling these features. '
+                          'To fully run the action on fork repository pull requests, '
+                          f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
+                          '/README.md#support-fork-repositories-and-dependabot-branches')
+            ], l.info.call_args_list)
 
         self.assertEqual(2, len(mock_calls))
         (method, args, kwargs) = mock_calls[0]
