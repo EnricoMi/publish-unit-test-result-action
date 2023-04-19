@@ -12,7 +12,7 @@ from typing import Optional, Union, List, Type
 import mock
 from packaging.version import Version
 
-from publish import pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
+from publish import __version__, pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
     fail_on_mode_nothing, comment_modes, comment_mode_always,\
     report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
     default_annotations, all_tests_list, skipped_tests_list, none_annotations, \
@@ -1221,7 +1221,7 @@ class Test(unittest.TestCase):
                 mock.call('This action is running on a pull_request event for a fork repository. '
                           'It cannot do anything useful like creating check runs or pull request '
                           'comments. To run the action on fork repository pull requests, see '
-                          'https://github.com/EnricoMi/publish-unit-test-result-action/blob/v1.20'
+                          f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
                           '/README.md#support-fork-repositories-and-dependabot-branches'),
                 mock.call('At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, '
                           'or TRX_FILES options has to be set! '
