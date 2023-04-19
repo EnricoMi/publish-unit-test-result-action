@@ -29,7 +29,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/jenkinsci/testcase6.xml',
+          'message': 'mstest/jenkinsci/testcase6.xml\u2003[took 36s]',
           'title': 'Unknown test failed',
           'raw_details':
             'OK: TestProcess.Execution.ExitCode == 0\r\nFAIL: Output differs '

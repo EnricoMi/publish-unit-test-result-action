@@ -1235,8 +1235,8 @@ class TestPublisher(unittest.TestCase):
         repo.get_commit.assert_not_called()
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
         annotations = error_annotations + [
-            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
-            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'}
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+            {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'}
         ] + (
             [
                  {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'}
@@ -1334,8 +1334,8 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n'.format(errors='{} errors\u2004\u2003'.format(len(errors)) if len(errors) > 0 else ''),
                 'annotations': error_annotations + [
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
                 ]
@@ -1399,8 +1399,8 @@ class TestPublisher(unittest.TestCase):
                            '2P1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THxFS08fz1s0zBZBc2w5zH'
                            'dX73QAAAA==\n',
                 'annotations': [
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
-                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
+                    {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There is 1 skipped test, see "Raw output" for the name of the skipped test.', 'title': '1 skipped test found', 'raw_details': 'class ‑ test3'},
                     {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 3 tests, see "Raw output" for the full list of tests.', 'title': '3 tests found', 'raw_details': 'class ‑ test\nclass ‑ test2\nclass ‑ test3'}
                 ]
@@ -1462,7 +1462,7 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
-                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
                     # we expect the first 50 annotations in the create call
                     for i in range(1, 51)
                 ])
@@ -1495,7 +1495,7 @@ class TestPublisher(unittest.TestCase):
                            '1sIUrxjpD1E+YjA0QXwf0TM7hqlgOC5HMP/dt/RevnK18F3THx'
                            'FS08fz1s0zBZBc2w5zHdX73QAAAA==\n',
                 'annotations': ([
-                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
+                    {'path': 'test file', 'start_line': i, 'end_line': i, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': f'test{i} (class) failed', 'raw_details': f'message{i}\ncontent{i}\nstdout{i}\nstderr{i}'}
                     # for each edit we expect a batch of 50 annotations starting at start
                     for i in range(start, start + 50)
                 ] if start < 151 else [
@@ -1622,10 +1622,10 @@ class TestPublisher(unittest.TestCase):
                                'XFZ96/SlnuamV9a1hYv64QGDSdF7scnZDbAAAA\n',
                     'annotations': [
                         {'path': 'file', 'start_line': 1, 'end_line': 1, 'start_column': 2, 'end_column': 2, 'annotation_level': 'failure', 'message': 'error', 'title': 'Error processing result file', 'raw_details': 'file'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class1) failed', 'raw_details': 'message3\ncontent3\nstdout3\nstderr3'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'failure', 'message': 'result', 'title': 'test1 (class2) with error', 'raw_details': 'message4\ncontent4\nstdout4\nstderr4'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class2) failed', 'raw_details': 'message6\ncontent6\nstdout6\nstderr6'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test4 (class2) failed', 'raw_details': 'message7\ncontent7\nstdout7\nstderr7'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 3s]', 'title': 'test3 (class1) failed', 'raw_details': 'message3\ncontent3\nstdout3\nstderr3'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'failure', 'message': 'result [took 4s]', 'title': 'test1 (class2) with error', 'raw_details': 'message4\ncontent4\nstdout4\nstderr4'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 6s]', 'title': 'test3 (class2) failed', 'raw_details': 'message6\ncontent6\nstdout6\nstderr6'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 7s]', 'title': 'test4 (class2) failed', 'raw_details': 'message7\ncontent7\nstdout7\nstderr7'},
                         {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', 'title': '2 skipped tests found', 'raw_details': 'class1 ‑ test2\nclass2 ‑ test2'},
                         {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 7 tests, see "Raw output" for the full list of tests.', 'title': '7 tests found', 'raw_details': 'class1 ‑ test1\nclass1 ‑ test2\nclass1 ‑ test3\nclass2 ‑ test1\nclass2 ‑ test2\nclass2 ‑ test3\nclass2 ‑ test4'}
                     ]
@@ -1660,10 +1660,10 @@ class TestPublisher(unittest.TestCase):
                     '"tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
                     '"annotations": ['
                     '{"path": "file", "start_line": 1, "end_line": 1, "start_column": 2, "end_column": 2, "annotation_level": "failure", "message": "error", "title": "Error processing result file", "raw_details": "file"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "failure", "message": "result", "title": "test1 (class2) with error", "raw_details": "message4\\ncontent4\\nstdout4\\nstderr4"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class2) failed", "raw_details": "message6\\ncontent6\\nstdout6\\nstderr6"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test4 (class2) failed", "raw_details": "message7\\ncontent7\\nstdout7\\nstderr7"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 3s]", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "failure", "message": "result [took 4s]", "title": "test1 (class2) with error", "raw_details": "message4\\ncontent4\\nstdout4\\nstderr4"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 6s]", "title": "test3 (class2) failed", "raw_details": "message6\\ncontent6\\nstdout6\\nstderr6"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 7s]", "title": "test4 (class2) failed", "raw_details": "message7\\ncontent7\\nstdout7\\nstderr7"}, '
                     '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 2 skipped tests, see \\"Raw output\\" for the full list of skipped tests.", "title": "2 skipped tests found", "raw_details": "class1 ‑ test2\\nclass2 ‑ test2"}, '
                     '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 7 tests, see \\"Raw output\\" for the full list of tests.", "title": "7 tests found", "raw_details": "class1 ‑ test1\\nclass1 ‑ test2\\nclass1 ‑ test3\\nclass2 ‑ test1\\nclass2 ‑ test2\\nclass2 ‑ test3\\nclass2 ‑ test4"}'
                     '], '
@@ -1745,10 +1745,10 @@ class TestPublisher(unittest.TestCase):
                                'XFZ96/SlnuamV9a1hYv64QGDSdF7scnZDbAAAA\n',
                     'annotations': [
                         {'path': 'file', 'start_line': 1, 'end_line': 1, 'start_column': 2, 'end_column': 2, 'annotation_level': 'failure', 'message': 'error', 'title': 'Error processing result file', 'raw_details': 'file'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class1) failed', 'raw_details': 'message3\ncontent3\nstdout3\nstderr3'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'failure', 'message': 'result', 'title': 'test1 (class2) with error', 'raw_details': 'message4\ncontent4\nstdout4\nstderr4'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test3 (class2) failed', 'raw_details': 'message6\ncontent6\nstdout6\nstderr6'},
-                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result', 'title': 'test4 (class2) failed', 'raw_details': 'message7\ncontent7\nstdout7\nstderr7'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 3s]', 'title': 'test3 (class1) failed', 'raw_details': 'message3\ncontent3\nstdout3\nstderr3'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'failure', 'message': 'result [took 4s]', 'title': 'test1 (class2) with error', 'raw_details': 'message4\ncontent4\nstdout4\nstderr4'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 6s]', 'title': 'test3 (class2) failed', 'raw_details': 'message6\ncontent6\nstdout6\nstderr6'},
+                        {'path': 'test', 'start_line': 123, 'end_line': 123, 'annotation_level': 'warning', 'message': 'result [took 7s]', 'title': 'test4 (class2) failed', 'raw_details': 'message7\ncontent7\nstdout7\nstderr7'},
                         {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', 'title': '2 skipped tests found', 'raw_details': 'class1 ‑ test2\nclass2 ‑ test2'},
                         {'path': '.github', 'start_line': 0, 'end_line': 0, 'annotation_level': 'notice', 'message': 'There are 7 tests, see "Raw output" for the full list of tests.', 'title': '7 tests found', 'raw_details': 'class1 ‑ test1\nclass1 ‑ test2\nclass1 ‑ test3\nclass2 ‑ test1\nclass2 ‑ test2\nclass2 ‑ test3\nclass2 ‑ test4'}
                     ]
@@ -1766,6 +1766,7 @@ class TestPublisher(unittest.TestCase):
             # assert the json file
             with open(filepath, encoding='utf-8') as r:
                 actual = r.read()
+                self.maxDiff = None
                 self.assertEqual(
                     '{'
                     '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
@@ -1779,10 +1780,10 @@ class TestPublisher(unittest.TestCase):
                     '"stats": {"files": 1, "errors": [{"file": "file", "message": "error", "line": 1, "column": 2}], "suites": 2, "duration": 7, "tests": 7, "tests_succ": 1, "tests_skip": 2, "tests_fail": 3, "tests_error": 1, "runs": 3, "runs_succ": -12, "runs_skip": 4, "runs_fail": 5, "runs_error": 6, "commit": "commit"}, '
                     '"annotations": ['
                     '{"path": "file", "start_line": 1, "end_line": 1, "start_column": 2, "end_column": 2, "annotation_level": "failure", "message": "error", "title": "Error processing result file", "raw_details": "file"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "failure", "message": "result", "title": "test1 (class2) with error", "raw_details": "message4\\ncontent4\\nstdout4\\nstderr4"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test3 (class2) failed", "raw_details": "message6\\ncontent6\\nstdout6\\nstderr6"}, '
-                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result", "title": "test4 (class2) failed", "raw_details": "message7\\ncontent7\\nstdout7\\nstderr7"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 3s]", "title": "test3 (class1) failed", "raw_details": "message3\\ncontent3\\nstdout3\\nstderr3"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "failure", "message": "result [took 4s]", "title": "test1 (class2) with error", "raw_details": "message4\\ncontent4\\nstdout4\\nstderr4"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 6s]", "title": "test3 (class2) failed", "raw_details": "message6\\ncontent6\\nstdout6\\nstderr6"}, '
+                    '{"path": "test", "start_line": 123, "end_line": 123, "annotation_level": "warning", "message": "result [took 7s]", "title": "test4 (class2) failed", "raw_details": "message7\\ncontent7\\nstdout7\\nstderr7"}, '
                     '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 2 skipped tests, see \\"Raw output\\" for the full list of skipped tests.", "title": "2 skipped tests found", "raw_details": "class1 ‑ test2\\nclass2 ‑ test2"}, '
                     '{"path": ".github", "start_line": 0, "end_line": 0, "annotation_level": "notice", "message": "There are 7 tests, see \\"Raw output\\" for the full list of tests.", "title": "7 tests found", "raw_details": "class1 ‑ test1\\nclass1 ‑ test2\\nclass1 ‑ test3\\nclass2 ‑ test1\\nclass2 ‑ test2\\nclass2 ‑ test3\\nclass2 ‑ test4"}'
                     '], '

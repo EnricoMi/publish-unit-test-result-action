@@ -36,7 +36,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'BakeDrawings failed',
           'raw_details':
             'System.InvalidOperationException : Assert.Equals should not be '
@@ -50,7 +50,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'SilentRun failed',
           'raw_details':
             'System.NullReferenceException : Object reference not set to an '
@@ -62,7 +62,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'DiscardDrawingTests failed',
           'raw_details':
             "System.IO.DirectoryNotFoundException : Could not find a part of "
@@ -83,7 +83,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'LoadDrawingsEventFlagTests failed',
           'raw_details':
             '  Expected: 3\n  But was:  0\n   at '
@@ -94,7 +94,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'ResetProjectEventFlagTests failed',
           'raw_details':
             'System.NullReferenceException : Object reference not set to an '
@@ -106,7 +106,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'SetupLayersEventFlagTests failed',
           'raw_details':
             "om.Exceptions.DocumentException : Document should be initlised, "
@@ -118,7 +118,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'SetupPipeEventFlagTests failed',
           'raw_details':
             'System.NullReferenceException : Object reference not set to an '
@@ -130,7 +130,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'DrawingConstants failed',
           'raw_details':
             'System.NullReferenceException : Object reference not set to an '
@@ -142,7 +142,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'FileConstants failed',
           'raw_details':
             'System.NullReferenceException : Object reference not set to an '
@@ -154,7 +154,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/clicketyclackety.xml',
+          'message': 'mstest/clicketyclackety.xml\u2003[took 0s]',
           'title': 'PluginConstants failed',
           'raw_details':
             "System.MissingMethodException : Method not found: 'System.Object "

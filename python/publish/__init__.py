@@ -323,7 +323,7 @@ def as_stat_number(number: Optional[Union[int, Numeric]],
         return 'N/A'
 
 
-def as_stat_duration(duration: Optional[Union[int, Numeric]], label=None) -> str:
+def as_stat_duration(duration: Optional[Union[float, int, Numeric]], label=None) -> str:
     if duration is None:
         if label:
             return f'N/A {label}'
@@ -780,12 +780,12 @@ def get_case_annotation(messages: CaseMessages,
                      for s in messages[key]
                      for m in messages[key][s]
                      for case in messages[key][s][m]])
-    same_result_files = [case.result_file
+    same_result_files = {case.result_file: case.time
                          for case in (messages[key][state][message] if report_individual_runs else
                                       [c
                                        for m in messages[key][state]
                                        for c in messages[key][state][m]])
-                         if case.result_file]
+                         if case.result_file}
     test_file = case.test_file
     line = case.line or 0
     test_name = case.test_name if case.test_name else 'Unknown test'
@@ -824,7 +824,8 @@ def get_case_annotation(messages: CaseMessages,
         start_column=None,
         end_column=None,
         annotation_level=level,
-        message='\n'.join(sorted(same_result_files)),
+        message='\n'.join([file if time is None else f'{file} [took {as_stat_duration(time)}]'
+                           for file, time in sorted(same_result_files.items())]),
         title=title,
         raw_details='\n'.join(details) if details else None
     )

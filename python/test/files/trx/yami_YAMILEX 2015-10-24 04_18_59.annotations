@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'yami_YAMILEX 2015-10-24 04_18_59.trx',
+          'message': 'yami_YAMILEX 2015-10-24 04_18_59.trx\u2003[took 19s]',
           'title': 'EST_INTER_TEMPTest (Prueba_Sistema.SIARAlgorithmTest) failed',
           'raw_details':
             'El método de prueba '
@@ -52,7 +52,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'yami_YAMILEX 2015-10-24 04_18_59.trx',
+          'message': 'yami_YAMILEX 2015-10-24 04_18_59.trx\u2003[took 2s]',
           'title': 'EST_LAMB_TEMPTest (Prueba_Sistema.SIARAlgorithmTest) failed',
           'raw_details':
             'El método de prueba '

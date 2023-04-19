@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
           'title': 'TestWithParameters("Ä") failed',
           'raw_details':
             '  Expected: greater than 2\n  But was:  1\n   bei '
@@ -44,7 +44,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
           'title': 'TestWithParameters("Ö") failed',
           'raw_details':
             '  Expected: greater than 2\n  But was:  1\n   bei '
@@ -58,7 +58,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'nunit3/jenkins/NUnit-issue50162.xml',
+          'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
           'title': 'FailThisTest failed',
           'raw_details':
             'Oh no the test failed!\n   bei '

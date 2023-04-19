@@ -380,8 +380,8 @@ class Publisher:
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
         output_annotations = get_suite_annotations(stats.suite_details, self._settings.report_suite_out_logs, self._settings.report_suite_err_logs)
-        file_list_annotations = self.get_test_list_annotations(cases)
-        all_annotations = error_annotations + case_annotations + output_annotations + file_list_annotations
+        test_list_annotations = self.get_test_list_annotations(cases)
+        all_annotations = error_annotations + case_annotations + output_annotations + test_list_annotations
 
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)

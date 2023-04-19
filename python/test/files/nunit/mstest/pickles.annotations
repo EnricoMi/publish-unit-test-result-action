@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'mstest/pickles.xml',
+          'message': 'mstest/pickles.xml\u2003[took 0s]',
           'title': 'Pickles.TestHarness.AdditionFeature.FailToAddTwoNumbers failed',
           'raw_details':
             '\n                        at '

@@ -30,7 +30,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/xUnit-net461-sample.trx',
+          'message': 'xunit/xUnit-net461-sample.trx\u2003[took 0s]',
           'title':
             'TestTheory(expected: False) (SampleProject.xUnit.TestServiceTests) '
             'failed',
@@ -46,7 +46,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/xUnit-net461-sample.trx',
+          'message': 'xunit/xUnit-net461-sample.trx\u2003[took 0s]',
           'title': 'FailTest (SampleProject.xUnit.TestServiceTests) failed',
           'raw_details':
             'Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
@@ -59,7 +59,7 @@
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
-          'message': 'xunit/xUnit-net461-sample.trx',
+          'message': 'xunit/xUnit-net461-sample.trx\u2003[took 0s]',
           'title': 'TestThrowingException (SampleProject.xUnit.TestServiceTests) failed',
           'raw_details':
             'System.Exception : Pretty good exception   at '
