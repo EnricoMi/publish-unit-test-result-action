@@ -5,10 +5,23 @@ import unittest
 
 import yaml
 
+sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
+
+from publish import __version__
+
 project_root = pathlib.Path(__file__).resolve().parent.parent.parent
 
 
 class TestActionYml(unittest.TestCase):
+
+    def test_action_version(self):
+        with open(project_root / 'action.yml', encoding='utf-8') as r:
+            dockerfile_action = yaml.safe_load(r)
+
+        image = dockerfile_action.get('runs', {}).get('image', '')
+        self.assertTrue(image.startswith('docker://'), image)
+        version = image.split(':')[-1]
+        self.assertEqual(__version__, version, 'version in action.yml must match __version__ in python/publish/__init__.py')
 
     def test_composite_action(self):
         with open(project_root / 'action.yml', encoding='utf-8') as r:

@@ -18,7 +18,7 @@ from packaging.version import Version
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
-from publish import available_annotations, none_annotations
+from publish import __version__, available_annotations, none_annotations
 from publish.junit import is_junit, parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
     get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
@@ -120,7 +120,7 @@ class JUnitXmlParseTest:
 
                         annotations_expectation_path = path.parent / (path.stem + '.annotations')
                         actual_annotations = self.get_check_runs(actual_results)
-                        self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2), annotations_expectation_path)
+                        self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2).replace(__version__, 'VERSION'), annotations_expectation_path)
 
     def test_parse_and_process_files(self):
         for file in self.get_test_files() + self.unsupported_files():
@@ -147,7 +147,7 @@ class JUnitXmlParseTest:
                     w.write(pp.pformat(results, indent=2))
                 with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
                     check_runs = cls.get_check_runs(results)
-                    w.write(pp.pformat(check_runs, indent=2))
+                    w.write(pp.pformat(check_runs, indent=2).replace(__version__, 'VERSION'))
 
     @classmethod
     def get_check_runs(cls, parsed):
