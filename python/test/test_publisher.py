@@ -85,6 +85,7 @@ class TestPublisher(unittest.TestCase):
                         check_run_annotation=default_annotations,
                         event: Optional[dict] = {'before': 'before'},
                         event_name: str = 'event name',
+                        is_fork: bool = False,
                         json_file: Optional[str] = None,
                         json_thousands_separator: str = punctuation_space,
                         json_suite_details: bool = False,
@@ -100,6 +101,7 @@ class TestPublisher(unittest.TestCase):
             event=event,
             event_file=None,
             event_name=event_name,
+            is_fork=is_fork,
             repo='owner/repo',
             commit='commit',
             json_file=json_file,
@@ -283,7 +285,8 @@ class TestPublisher(unittest.TestCase):
                             stats: UnitTestRunResults = stats,
                             cases: UnitTestCaseResults = cases,
                             prs: List[object] = [],
-                            cr: object = None):
+                            cr: object = None,
+                            bcr: object = None):
         # UnitTestCaseResults is mutable, always copy it
         cases = create_unit_test_case_results(cases)
 
@@ -292,6 +295,7 @@ class TestPublisher(unittest.TestCase):
         publisher._settings = settings
         publisher.get_pulls = mock.Mock(return_value=prs)
         publisher.publish_check = mock.Mock(return_value=(cr, None))
+        publisher.get_check_run = mock.Mock(return_value=bcr)
         Publisher.publish(publisher, stats, cases, 'success')
 
         # return calls to mocked instance, except call to _logger
@@ -432,6 +436,31 @@ class TestPublisher(unittest.TestCase):
             comment_mode_errors,
             lambda test: not test.earlier_is_none and test.earlier_has_errors or test.current_has_errors
         )
+
+    def test_publish_with_fork(self):
+        settings = self.create_settings(is_fork=True, job_summary=True, comment_mode=comment_mode_always)
+        bcr = mock.MagicMock()
+        with mock.patch('publish.publisher.logger') as l:
+            mock_calls = self.call_mocked_publish(settings, prs=[object()], bcr=bcr)
+            self.assertEqual([
+                mock.call('Publishing success results for commit commit'),
+                mock.call('This action is running on a pull_request event for a fork repository. '
+                          'Pull request comments and check runs cannot be created, so disabling these features. '
+                          'To fully run the action on fork repository pull requests, '
+                          f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
+                          '/README.md#support-fork-repositories-and-dependabot-branches')
+            ], l.info.call_args_list)
+
+        self.assertEqual(2, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual(('before', ), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, None, bcr), args)
+        self.assertEqual({}, kwargs)
 
     def test_publish_without_comment(self):
         settings = self.create_settings(comment_mode=comment_mode_off)

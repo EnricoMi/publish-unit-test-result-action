@@ -218,14 +218,10 @@ def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inco
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
-    # we cannot create a check run or pull request comment when running on pull_request event from a fork
-    # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
-    if settings.event_file is None and \
-            settings.event_name == 'pull_request' and \
-            settings.event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != settings.repo:
+    if settings.is_fork and not settings.job_summary:
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
-                    f'It cannot do anything useful like creating check runs or pull request comments. '
-                    f'To run the action on fork repository pull requests, see '
+                    f'The only useful thing it can do in this situation is creating a job summary, which is disabled in settings. '
+                    f'To fully run the action on fork repository pull requests, see '
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
@@ -404,7 +400,7 @@ def is_float(text: str) -> bool:
     return re.match('^[+-]?(([0-9]*\\.[0-9]+)|([0-9]+(\\.[0-9]?)?))$', text) is not None
 
 
-def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
+def get_settings(options: dict, gha: GithubAction) -> Settings:
     event_file = get_var('EVENT_FILE', options)
     event = event_file or get_var('GITHUB_EVENT_PATH', options)
     event_name = get_var('EVENT_NAME', options) or get_var('GITHUB_EVENT_NAME', options)
@@ -412,6 +408,17 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
     check_var(event_name, 'GITHUB_EVENT_NAME', 'GitHub event name')
     with open(event, 'rt', encoding='utf-8') as f:
         event = json.load(f)
+
+    repo = get_var('GITHUB_REPOSITORY', options)
+    job_summary = get_bool_var('JOB_SUMMARY', options, default=True)
+    comment_mode = get_var('COMMENT_MODE', options) or comment_mode_always
+
+    # we cannot create a check run or pull request comment when running on pull_request event from a fork
+    # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
+    is_fork = event_file is None and \
+              event_name == 'pull_request' and \
+              event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo
+
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
@@ -457,7 +464,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         event=event,
         event_file=event_file,
         event_name=event_name,
-        repo=get_var('GITHUB_REPOSITORY', options),
+        is_fork=is_fork,
+        repo=repo,
         commit=get_var('COMMIT', options) or get_commit_sha(event, event_name, options),
         json_file=get_var('JSON_FILE', options),
         json_thousands_separator=get_var('JSON_THOUSANDS_SEPARATOR', options) or punctuation_space,
@@ -475,8 +483,8 @@ def get_settings(options: dict, gha: Optional[GithubAction] = None) -> Settings:
         time_factor=time_factor,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
-        comment_mode=get_var('COMMENT_MODE', options) or comment_mode_always,
-        job_summary=get_bool_var('JOB_SUMMARY', options, default=True),
+        comment_mode=comment_mode,
+        job_summary=job_summary,
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
         test_changes_limit=int(test_changes_limit),

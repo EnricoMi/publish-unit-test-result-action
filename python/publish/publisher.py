@@ -13,7 +13,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 from github.IssueComment import IssueComment
 
-from publish import comment_mode_off, digest_prefix, restrict_unicode_list, \
+from publish import __version__, comment_mode_off, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
@@ -36,6 +36,7 @@ class Settings:
     event: dict
     event_file: Optional[str]
     event_name: str
+    is_fork: bool
     repo: str
     commit: str
     json_file: Optional[str]
@@ -191,20 +192,36 @@ class Publisher:
         logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
-        check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+
+        if self._settings.is_fork:
+            # running on a fork, we cannot publish the check, but we can still read before_check_run
+            # bump the version if you change the target of this link (if it did not exist already) or change the section
+            logger.info('This action is running on a pull_request event for a fork repository. '
+                        'Pull request comments and check runs cannot be created, so disabling these features. '
+                        'To fully run the action on fork repository pull requests, see '
+                        f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
+            check_run = None
+            before_check_run = None
+            if self._settings.compare_earlier:
+                before_commit_sha = self._settings.event.get('before')
+                logger.debug(f'comparing against before={before_commit_sha}')
+                before_check_run = self.get_check_run(before_commit_sha)
+        else:
+            check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
             self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
 
-        if self._settings.comment_mode != comment_mode_off:
-            pulls = self.get_pulls(self._settings.commit)
-            if pulls:
-                for pull in pulls:
-                    self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+        if not self._settings.is_fork:
+            if self._settings.comment_mode != comment_mode_off:
+                pulls = self.get_pulls(self._settings.commit)
+                if pulls:
+                    for pull in pulls:
+                        self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+                else:
+                    logger.info(f'There is no pull request for commit {self._settings.commit}')
             else:
-                logger.info(f'There is no pull request for commit {self._settings.commit}')
-        else:
-            logger.info('Commenting on pull requests disabled')
+                logger.info('Commenting on pull requests disabled')
 
     def get_pull_from_event(self) -> Optional[PullRequest]:
         number = self._settings.event.get('pull_request', {}).get('number')
