@@ -415,11 +415,9 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
 
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
-    is_fork = False
-    if event_file is None and \
-            event_name == 'pull_request' and \
-            event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo:
-        is_fork = True
+    is_fork = event_file is None and \
+              event_name == 'pull_request' and \
+              event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo
 
     api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
