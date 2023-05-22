@@ -49,12 +49,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Find workflows
+      - name: Fetch workflows
         id: workflows
-        uses: ./misc/action/find-workflows
-        with:
-          url: ${{ github.api_url }}
-          query: publish-unit-test-result-action
+        uses: ./misc/action/fetch-workflows
 
       - name: Create badge
         uses: emibcn/badge-action@4209421db54c8764d8932070ffd0f81715a629bf

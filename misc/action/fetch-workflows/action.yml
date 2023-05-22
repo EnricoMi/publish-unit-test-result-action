@@ -1,0 +1,27 @@
+name: 'Fetch workflows'
+author: 'EnricoMi'
+description: 'A GitHub Action to find workflows matching a query'
+
+outputs:
+  total_workflows:
+    description: 'Total number of workflows using this action'
+    value: ${{ steps.workflows.outputs.total }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Fetch workflows
+      id: workflows
+      shell: bash
+      run: |
+        for i in {1..60}
+        do
+          workflows=$(curl https://github.com/EnricoMi/publish-unit-test-result-action | grep "Used by" | sed -e "s/.*title=//" -e 's/[",]//g' | cut -d " " -f 1)
+          if [ "$workflows" -gt 0 ]; then break; fi
+          echo attempt $i failed
+          sleep 60
+        done
+
+branding:
+  icon: 'download-cloud'
+  color: 'green'
