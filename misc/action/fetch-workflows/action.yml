@@ -16,7 +16,7 @@ runs:
       run: |
         for i in {1..60}
         do
-          workflows=$(curl https://github.com/EnricoMi/publish-unit-test-result-action | grep "Used by" | sed -e "s/.*title=//" -e 's/[",]//g' | cut -d " " -f 1)
+          workflows=$(curl https://github.com/EnricoMi/publish-unit-test-result-action | (grep "Used by" || true) | sed -e "s/.*title=//" -e 's/[",]//g' | cut -d " " -f 1)
           if [ "$workflows" -gt 0 ]
           then
             echo "total=$workflows" >> $GITHUB_OUTPUT
