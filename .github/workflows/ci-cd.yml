@@ -132,15 +132,16 @@ jobs:
 
       - name: Install Python dependencies
         run: |
+          python3 -V
           python3 -m pip freeze | sort
-          python3 -m pip cache info
-          python3 -m pip cache list
+          python3 -m pip cache info || true
+          python3 -m pip cache list || true
           python3 -m pip install --upgrade --force pip wheel
           python3 -m pip install --force -r python/requirements.txt
           python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
           python3 -m pip freeze | sort
-          python3 -m pip cache info
-          python3 -m pip cache list
+          python3 -m pip cache info || true
+          python3 -m pip cache list || true
         shell: bash
 
       - name: Update expectation files
