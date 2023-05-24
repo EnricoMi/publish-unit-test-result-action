@@ -46,7 +46,7 @@ jobs:
           - windows-2019
           - windows-2022
           - windows-latest
-        python-version: ["3.8"]
+        python-version: ["3.8", "installed"]
 
         include:
           - os: macos-latest
@@ -92,6 +92,7 @@ jobs:
         shell: bash
 
       - name: Setup Python
+        if: matrix.python-version != 'installed'
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
