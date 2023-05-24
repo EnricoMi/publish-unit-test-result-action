@@ -132,15 +132,15 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip freeze | sort
-          pip cache info
-          pip cache list
-          python -m pip install --upgrade --force pip wheel
-          pip install --force -r python/requirements.txt
-          pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
-          pip freeze | sort
-          pip cache info
-          pip cache list
+          python3 -m pip freeze | sort
+          python3 -m pip cache info
+          python3 -m pip cache list
+          python3 -m pip install --upgrade --force pip wheel
+          python3 -m pip install --force -r python/requirements.txt
+          python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+          python3 -m pip freeze | sort
+          python3 -m pip cache info
+          python3 -m pip cache list
         shell: bash
 
       - name: Update expectation files
@@ -168,7 +168,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
         shell: bash
 
       - name: PyTest (EST)
@@ -178,7 +178,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
         shell: bash
 
       - name: PyTest (CET)
@@ -188,7 +188,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
         shell: bash
 
       - name: Upload Test Results
