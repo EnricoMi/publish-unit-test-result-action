@@ -46,7 +46,7 @@ jobs:
           - windows-2019
           - windows-2022
           - windows-latest
-        python-version: ["3.8"]
+        python-version: ["3.8", "installed"]
 
         include:
           - os: macos-latest
@@ -92,6 +92,7 @@ jobs:
         shell: bash
 
       - name: Setup Python
+        if: matrix.python-version != 'installed'
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -131,15 +132,16 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip freeze | sort
-          pip cache info
-          pip cache list
-          python -m pip install --upgrade --force pip wheel
-          pip install --force -r python/requirements.txt
-          pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
-          pip freeze | sort
-          pip cache info
-          pip cache list
+          python3 -V
+          python3 -m pip freeze | sort
+          python3 -m pip cache info || true
+          python3 -m pip cache list || true
+          python3 -m pip install --upgrade --force pip wheel
+          python3 -m pip install --force -r python/requirements.txt
+          python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+          python3 -m pip freeze | sort
+          python3 -m pip cache info || true
+          python3 -m pip cache list || true
         shell: bash
 
       - name: Update expectation files
@@ -167,7 +169,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
         shell: bash
 
       - name: PyTest (EST)
@@ -177,7 +179,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
         shell: bash
 
       - name: PyTest (CET)
@@ -187,7 +189,7 @@ jobs:
           PYTHONPATH: ..
         run: |
           cd python/test
-          python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
+          python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
         shell: bash
 
       - name: Upload Test Results
@@ -436,8 +438,8 @@ jobs:
           - os: macos-latest
             os-label: macOS
             python: "installed"
-          - os: macos-12
-            os-label: macOS 12
+          - os: macos-11
+            os-label: macOS 11
             python: "installed"
 
           - os: ubuntu-latest
@@ -446,12 +448,15 @@ jobs:
           - os: ubuntu-latest
             os-label: Linux
             python: "installed"
-          - os: ubuntu-22.04
-            os-label: Linux 22.04
+          - os: ubuntu-20.04
+            os-label: Linux 20.04
             python: "installed"
 
           - os: windows-latest
             os-label: Windows
+            python: "installed"
+          - os: windows-2019
+            os-label: Windows 2019
             python: "installed"
 
     steps:
@@ -477,50 +482,6 @@ jobs:
           files: |
             artifacts/**/*.xml
             artifacts\**\*.xml
-          json_file: "tests.json"
-          json_suite_details: true
-          json_test_case_results: true
-          report_suite_logs: "any"
-
-      - name: JSON output
-        uses: ./misc/action/json-output
-        with:
-          json: '${{ steps.test-results.outputs.json }}'
-          json_file: 'tests.json'
-
-  publish-composite-extra:
-    name: Publish Test Results (setup-python)
-    needs: test
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-    runs-on: ubuntu-latest
-    permissions:
-      checks: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: artifacts
-
-      - name: Publish Test Results
-        id: test-results
-        uses: ./composite
-        with:
-          check_name: Test Results (setup-python)
-          files: "artifacts/**/*.xml"
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -670,7 +631,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-composite-extra, publish-test-file, publish-test-files, config-deploy]
+    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-test-file, publish-test-files, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
