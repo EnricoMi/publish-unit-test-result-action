@@ -76,12 +76,6 @@ jobs:
           - os: windows-latest
             python-version: "3.7"
 
-          - os: macos-11
-            python-version: "3.6"
-          - os: ubuntu-20.04
-            python-version: "3.6"
-          - os: windows-2019
-            python-version: "3.6"
 
     steps:
       - name: Setup Ubuntu
@@ -272,7 +266,7 @@ jobs:
 
       - name: Build Docker image
         id: build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           load: true
           push: false
@@ -666,7 +660,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           tags: ${{ steps.docker-meta.outputs.tags }}
           labels: ${{ steps.docker-meta.outputs.labels }}

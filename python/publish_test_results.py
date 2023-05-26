@@ -419,8 +419,8 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
               event_name == 'pull_request' and \
               event.get('pull_request', {}).get('head', {}).get('repo', {}).get('full_name') != repo
 
-    api_url = options.get('GITHUB_API_URL') or github.MainClass.DEFAULT_BASE_URL
-    graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.MainClass.DEFAULT_BASE_URL}/graphql'
+    api_url = options.get('GITHUB_API_URL') or github.Consts.DEFAULT_BASE_URL
+    graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.Consts.DEFAULT_BASE_URL}/graphql'
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
