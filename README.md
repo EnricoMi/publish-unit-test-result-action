@@ -151,6 +151,7 @@ Test results are published on GitHub at various (configurable) places:
 
 - as [a comment](#pull-request-comment) in related pull requests
 - as [a check](#commit-and-pull-request-checks) in the checks section of a commit and related pull requests
+- as [annotations](#commit-and-pull-request-annotations) in the checks section and changed files section of a commit and related pull requests
 - as [a job summary](#github-actions-job-summary) of the GitHub Actions workflow
 - as [a check summary](#github-actions-check-summary-of-a-commit) in the GitHub Actions section of the commit
 
@@ -194,6 +195,18 @@ Pull request checks:
 
 ![pull request checks example](misc/github-pull-request-checks.png)
 
+### Commit and pull request annotations
+
+Each failing test produces an annotation with failure details in the checks section of a commit:
+
+![annotations example check](misc/github-checks-annotation.png)
+
+and the changed files section of related pull requests:
+
+![annotations example changed files](misc/github-pull-request-changes-annotation.png)
+
+***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
+
 ### GitHub Actions job summary
 
 The results are added to the job summary page of the workflow that runs this action:
@@ -209,12 +222,6 @@ In presence of failures or errors, the job summary links to the respective [chec
 Test results are published in the GitHub Actions check summary of the respective commit:
 
 ![checks comment example](misc/github-checks-comment.png)
-
-Each failing test will produce an annotation with failure details:
-
-![annotations example](misc/github-checks-annotation.png)
-
-***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
 ## The symbols
 [comment]: <> (This heading is linked to from method get_link_and_tooltip_label_md)
