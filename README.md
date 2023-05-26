@@ -57,6 +57,9 @@ If you see the `"Resource not accessible by integration"` error, you have to gra
 
 The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
 
+When run multiple times in one workflow, the [option](#configuration) `check_name` has to be set to a unique value for each instance.
+Otherwise, the multiple runs overwrite each other's results.
+
 ***Note:** This action does not fail if tests failed. The action that executed the tests should
 fail on test failure. The published results however indicate failure if tests fail or errors occur.
 This behaviour is configurable.*
@@ -258,7 +261,7 @@ The list of most notable options:
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
 |`files`|_no default_|File patterns of test result files. Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
-|`check_name`|`"Test Results"`|An alternative name for the check result.|
+|`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
 |`large_files`|`false` unless<br/>`ignore_runs` is `true`|Support for large files is enabled when set to `true`. Defaults to `false`, unless ignore_runs is `true`.|
