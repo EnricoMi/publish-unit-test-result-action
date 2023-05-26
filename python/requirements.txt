@@ -16,4 +16,4 @@ PyGithub==1.56
     certifi==2022.12.7
     charset-normalizer==2.0.12
     idna==3.4
-    urllib3==1.26.13
+    urllib3==1.26.16
