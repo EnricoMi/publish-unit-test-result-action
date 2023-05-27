@@ -38,7 +38,7 @@ inputs:
     default: 'false'
     required: false
   actor_name:
-    description: 'The name of the actor that is used for the check run. Defaults: 'github-actions''
+    description: 'The name of the actor that is used for the check run. Defaults: "github-actions"'
     default: 'github-actions'
     required: false
   files:
