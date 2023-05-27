@@ -37,6 +37,10 @@ inputs:
     description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
     default: 'false'
     required: false
+  actor_name:
+    description: 'The name of the actor that is used for the check run. Defaults: 'github-actions''
+    default: 'github-actions'
+    required: false
   files:
     description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a "!".'
     required: false
