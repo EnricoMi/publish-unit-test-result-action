@@ -1,2 +1,2 @@
 # latest version for PyJWT on Windows and macOS and Python 3.6
-PyJWT==2.4.0
+PyJWT==2.7.0
