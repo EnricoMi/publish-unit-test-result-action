@@ -274,6 +274,7 @@ The list of most notable options:
 |:-----|:-----:|:----------|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
+|`github_actor`|`github-actions`|Used to find older comment to update. Note: this does not change the bot name while commenting. If you use any other GH app, you need provide that app name here. Otherwise all your run will create a new comment.|
 |`github_retries`|`10`|Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.|
 |`seconds_between_github_reads`|`0.25`|Sets the number of seconds the action waits between concurrent read requests to the GitHub API.|
 |`seconds_between_github_writes`|`2.0`|Sets the number of seconds the action waits between concurrent write requests to the GitHub API.|
@@ -291,7 +292,6 @@ The list of most notable options:
 |`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
 |`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
-|`actor_name`|`github-actions`|Used to find older comment to update. Note: this does not change the bot name while commenting. If you use any other GH app, you need provide that app name here. Otherwise all your run will create a new comment.|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
 |`report_suite_logs`|`none`|In addition to reporting regular test logs, also report test suite logs. These are logs provided on suite level, not individual test level. Set to `info` for normal output, `error` for error output, `any` for both, or `none` for no suite logs at all. Defaults to `none`.|

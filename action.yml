@@ -7,6 +7,10 @@ inputs:
     description: 'GitHub API Access Token.'
     default: ${{ github.token }}
     required: false
+  github_actor:
+    description: 'The name of the actor that runs this action. Defaults to "github-actions"'
+    default: 'github-actions'
+    required: false
   github_retries:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
     default: '10'
@@ -36,10 +40,6 @@ inputs:
   action_fail_on_inconclusive:
     description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
     default: 'false'
-    required: false
-  actor_name:
-    description: 'The name of the actor that is used for the check run. Defaults: "github-actions"'
-    default: 'github-actions'
     required: false
   files:
     description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a "!".'
