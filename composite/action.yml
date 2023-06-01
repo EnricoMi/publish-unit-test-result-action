@@ -208,6 +208,7 @@ runs:
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_ACTOR: ${{ inputs.github_actor }}
         GITHUB_RETRIES: ${{ inputs.github_retries }}
         COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}
