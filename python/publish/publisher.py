@@ -30,6 +30,7 @@ from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, Uni
 @dataclass(frozen=True)
 class Settings:
     token: str
+    actor: str
     api_url: str
     graphql_url: str
     api_retries: int
@@ -734,7 +735,7 @@ class Publisher:
 
     def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
         return list([comment for comment in comments
-                     if comment.get('author', {}).get('login') == 'github-actions'
+                     if comment.get('author', {}).get('login') == self._settings.actor
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
                      and comment.get('body', '').startswith(f'## {self._settings.comment_title}\n')
                      and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])

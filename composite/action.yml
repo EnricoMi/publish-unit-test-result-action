@@ -7,6 +7,10 @@ inputs:
     description: 'GitHub API Access Token.'
     default: ${{ github.token }}
     required: false
+  github_actor:
+    description: 'The name of the actor that runs this action. Defaults to "github-actions"'
+    default: 'github-actions'
+    required: false
   github_retries:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
     default: '10'
@@ -204,6 +208,7 @@ runs:
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_ACTOR: ${{ inputs.github_actor }}
         GITHUB_RETRIES: ${{ inputs.github_retries }}
         COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}

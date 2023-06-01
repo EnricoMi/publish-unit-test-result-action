@@ -274,6 +274,7 @@ The list of most notable options:
 |:-----|:-----:|:----------|
 |`commit`|`${{env.GITHUB_SHA}}`|An alternative commit SHA to which test results are published. The `push` and `pull_request`events are handled, but for other [workflow events](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#push) `GITHUB_SHA` may refer to different kinds of commits. See [GitHub Workflow documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows) for details.|
 |`github_token`|`${{github.token}}`|An alternative GitHub token, other than the default provided by GitHub Actions runner.|
+|`github_actor`|`github-actions`|Used to find older comment to update. Note: this does not change the bot name while commenting. If you use any other GH app, you need provide that app name here. Otherwise all your run will create a new comment.|
 |`github_retries`|`10`|Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.|
 |`seconds_between_github_reads`|`0.25`|Sets the number of seconds the action waits between concurrent read requests to the GitHub API.|
 |`seconds_between_github_writes`|`2.0`|Sets the number of seconds the action waits between concurrent write requests to the GitHub API.|
