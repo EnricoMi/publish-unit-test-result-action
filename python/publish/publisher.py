@@ -734,8 +734,10 @@ class Publisher:
             .get('nodes')
 
     def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
+        comment_body_start = f'## {self._settings.comment_title}\n'
+        comment_body_indicators = ['\nresults for commit ', '\nResults for commit ']
         return list([comment for comment in comments
                      if comment.get('author', {}).get('login') == self._settings.actor
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
-                     and comment.get('body', '').startswith(f'## {self._settings.comment_title}\n')
-                     and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])
+                     and comment.get('body', '').startswith(comment_body_start)
+                     and any(indicator in comment.get('body', '') for indicator in comment_body_indicators)])

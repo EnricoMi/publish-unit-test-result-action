@@ -442,7 +442,6 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
     annotations = get_annotations_config(options, event)
     suite_logs_mode = get_var('REPORT_SUITE_LOGS', options) or default_report_suite_logs
     ignore_runs = get_bool_var('IGNORE_RUNS', options, default=False)
-    actor = get_var('GITHUB_ACTOR', options) or 'github-actions'
 
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
@@ -459,7 +458,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
 
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
-        actor=actor,
+        actor=get_var('GITHUB_TOKEN_ACTOR', options) or 'github-actions',
         api_url=api_url,
         graphql_url=graphql_url,
         api_retries=int(retries),
