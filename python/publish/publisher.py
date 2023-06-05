@@ -734,6 +734,10 @@ class Publisher:
             .get('nodes')
 
     def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
+        logger.info(f'filtering for actor {self._settings.actor}')
+        for comment in comments:
+            logger.info(comment.get('author', {}).get('login') + ': ' + str(comment))
+
         return list([comment for comment in comments
                      if comment.get('author', {}).get('login') == self._settings.actor
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
