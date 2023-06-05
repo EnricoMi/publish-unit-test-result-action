@@ -738,8 +738,12 @@ class Publisher:
         for comment in comments:
             logger.info(comment.get('author', {}).get('login') + ': ' + str(comment))
 
-        return list([comment for comment in comments
-                     if comment.get('author', {}).get('login') == self._settings.actor
-                     and (is_minimized is None or comment.get('isMinimized') == is_minimized)
-                     and comment.get('body', '').startswith(f'## {self._settings.comment_title}\n')
-                     and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])
+        result = list([comment for comment in comments
+                       if comment.get('author', {}).get('login') == self._settings.actor
+                       and (is_minimized is None or comment.get('isMinimized') == is_minimized)
+                       and comment.get('body', '').startswith(f'## {self._settings.comment_title}\n')
+                       and ('\nresults for commit ' in comment.get('body') or '\nResults for commit ' in comment.get('body'))])
+        logger.info(f'found {len(result)} comments')
+        for comment in result:
+            logger.info(f'result: ' + str(comment))
+        return result
