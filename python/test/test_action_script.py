@@ -267,6 +267,11 @@ class Test(unittest.TestCase):
 
             self.do_test_get_settings(EVENT_FILE=filepath, expected=self.get_settings(event=event, event_file=filepath))
 
+    def test_get_settings_github_token(self):
+        self.do_test_get_settings(GITHUB_TOKEN='token-one', expected=self.get_settings(token='token-one'))
+        self.do_test_get_settings(GITHUB_TOKEN='token-two', expected=self.get_settings(token='token-two'))
+        # see test_get_settings_missing_github_vars
+
     def test_get_settings_github_actor(self):
         self.do_test_get_settings(GITHUB_ACTOR='other-actor', expected=self.get_settings(actor='other-actor'))
         self.do_test_get_settings(GITHUB_ACTOR=None, expected=self.get_settings(actor='github-actions'))
