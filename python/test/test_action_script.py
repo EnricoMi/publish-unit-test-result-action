@@ -272,9 +272,9 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(GITHUB_TOKEN='token-two', expected=self.get_settings(token='token-two'))
         # see test_get_settings_missing_github_vars
 
-    def test_get_settings_github_actor(self):
-        self.do_test_get_settings(GITHUB_ACTOR='other-actor', expected=self.get_settings(actor='other-actor'))
-        self.do_test_get_settings(GITHUB_ACTOR=None, expected=self.get_settings(actor='github-actions'))
+    def test_get_settings_github_token_actor(self):
+        self.do_test_get_settings(GITHUB_TOKEN_ACTOR='other-actor', expected=self.get_settings(actor='other-actor'))
+        self.do_test_get_settings(GITHUB_TOKEN_ACTOR=None, expected=self.get_settings(actor='github-actions'))
 
     def test_get_settings_github_api_url(self):
         self.do_test_get_settings(GITHUB_API_URL='https://api.github.onpremise.com', expected=self.get_settings(api_url='https://api.github.onpremise.com'))
@@ -632,7 +632,7 @@ class Test(unittest.TestCase):
                 TEST_CHANGES_LIMIT='10',  # not an int
                 CHECK_NAME='check name',  # defaults to 'Test Results'
                 GITHUB_TOKEN='token',
-                GITHUB_ACTOR='actor',
+                GITHUB_TOKEN_ACTOR='actor',
                 GITHUB_REPOSITORY='repo',
                 COMMIT='commit',  # defaults to get_commit_sha(event, event_name)
                 FILES='all-files',
