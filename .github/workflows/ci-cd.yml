@@ -124,12 +124,6 @@ jobs:
             ${{ matrix.os }}-pip-test-${{ matrix.python-version }}-
             ${{ matrix.os }}-pip-test-
 
-      - name: Fix lxml installation for macos-latest
-        if: matrix.os == 'macos-latest' && matrix.python-version == '3.11'
-        run: |
-          sed -i'.bak' -e "s%lxml==4.9.2%https://github.com/lxml/lxml/releases/download/lxml-4.9.2/lxml-4.9.2-cp311-cp311-macosx_10_15_universal2.whl%" python/requirements.txt
-          git diff
-
       - name: Install Python dependencies
         run: |
           python3 -V
