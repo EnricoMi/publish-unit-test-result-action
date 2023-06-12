@@ -2510,29 +2510,18 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(None, result)
 
-    def do_test_get_pull_request_comments(self, order_updated: bool):
+    def test_get_pull_request_comments(self):
         settings = self.create_settings()
         comments = [mock.Mock()]
 
         gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
-        req.requestJsonAndCheck = mock.Mock(
-            return_value=({}, {'data': {'repository': {'pullRequest': {'comments': {'nodes': ['node']}}}}})
-        )
         pr = self.create_github_pr(settings.repo, number=1234)
-        pr.get_comments = mock.Mock(return_value=comments)
+        pr.get_issue_comments = mock.Mock(return_value=comments)
         publisher = Publisher(settings, gh, gha)
 
-        response = publisher.get_pull_request_comments(pr, order_by_updated=order_updated)
+        response = publisher.get_pull_request_comments(pr)
         self.assertEqual(comments, response)
-        return pr
-
-    def test_get_pull_request_comments(self):
-        pr = self.do_test_get_pull_request_comments(order_updated=False)
-        pr.get_comments.assert_called_once_with()
-
-    def test_get_pull_request_comments_order_updated(self):
-        pr = self.do_test_get_pull_request_comments(order_updated=True)
-        pr.get_comments.assert_called_once_with(sort='updated_at', direction='asc')
+        pr.get_issue_comments.assert_called_once_with()
 
     comments = [
         comment({

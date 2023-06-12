@@ -11,7 +11,6 @@ from github import Github, GithubException, UnknownObjectException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
-from github.PullRequestComment import PullRequestComment
 from github.IssueComment import IssueComment
 
 from publish import __version__, comment_mode_off, digest_prefix, restrict_unicode_list, \
@@ -655,9 +654,9 @@ class Publisher:
 
         return False
 
-    def get_latest_comment(self, pull: PullRequest) -> Optional[PullRequestComment]:
+    def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull, order_by_updated=True)
+        comments = self.get_pull_request_comments(pull)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
@@ -667,9 +666,9 @@ class Publisher:
             return None
 
         # return latest action comment
-        return comments[-1]
+        return sorted(comments, key=lambda comment: comment.updated_at, reverse=True)[-1]
 
-    def reuse_comment(self, comment: PullRequestComment, body: str):
+    def reuse_comment(self, comment: IssueComment, body: str):
         if ':recycle:' not in body:
             body = f'{body}\n:recycle: This comment has been updated with latest results.'
 
@@ -703,17 +702,14 @@ class Publisher:
 
         return None
 
-    def get_pull_request_comments(self, pull: PullRequest, order_by_updated: bool) -> List[PullRequestComment]:
-        if order_by_updated:
-            comments = list(pull.get_comments(sort="updated_at", direction="asc"))
-        else:
-            comments = list(pull.get_comments())
+    def get_pull_request_comments(self, pull: PullRequest) -> List[IssueComment]:
+        comments = list(pull.get_issue_comments())
         logger.debug(f'Found {len(comments)} comments for pull request {pull.number}')
         for comment in comments:
             logger.debug(f'comment: {comment}')
         return comments
 
-    def get_action_comments(self, comments: List[PullRequestComment]):
+    def get_action_comments(self, comments: List[IssueComment]):
         comment_body_start = f'## {self._settings.comment_title}\n'
         comment_body_indicators = ['\nresults for commit ', '\nResults for commit ']
         for comment in comments:
