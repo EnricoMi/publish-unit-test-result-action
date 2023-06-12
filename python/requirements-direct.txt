@@ -2,6 +2,6 @@ humanize==3.14.0
 junitparser==3.1.0
 lxml==4.9.1
 psutil==5.9.5
-PyGithub==1.58.2
+PyGithub @ git+https://github.com/pygithub/pygithub.git@daf62bd4610ba4c43ae8ced66ced3ff722c30cf0
 requests==2.31.0
 urllib3==1.26.16

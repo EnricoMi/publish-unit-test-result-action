@@ -7,7 +7,7 @@ pip install --upgrade --force pip==22.0.0
 pip install --upgrade --upgrade-strategy eager -r "$base/../python/requirements-direct.txt" -c "$base/../python/constraints.txt"
 
 pip install pipdeptree
-pipdeptree --packages="$(sed -e "s/;.*//" -e "s/=.*//g" "$base/../python/requirements-direct.txt" | paste -s -d ,)" --freeze > "$base/../python/requirements.txt"
+pipdeptree --packages="$(sed -e "s/\s*;.*//" -e "s/\s*@.*//" -e "s/=.*//g" "$base/../python/requirements-direct.txt" | paste -s -d ,)" --freeze > "$base/../python/requirements.txt"
 
 git diff "$base/../python/requirements.txt"
 
