@@ -705,13 +705,20 @@ class Publisher:
 
     def get_pull_request_comments(self, pull: PullRequest, order_by_updated: bool) -> List[PullRequestComment]:
         if order_by_updated:
-            return list(pull.get_comments(sort="updated_at", direction="asc"))
+            comments = list(pull.get_comments(sort="updated_at", direction="asc"))
         else:
-            return list(pull.get_comments())
+            comments = list(pull.get_comments())
+        logger.debug(f'Found {len(comments)} comments for pull request {pull.number}')
+        for comment in comments:
+            logger.debug(f'comment: {comment}')
+        return comments
 
     def get_action_comments(self, comments: List[PullRequestComment]):
         comment_body_start = f'## {self._settings.comment_title}\n'
         comment_body_indicators = ['\nresults for commit ', '\nResults for commit ']
+        for comment in comments:
+            logger.debug(f'login={comment.user.login}')
+            logger.debug(f'body={comment.body}')
         return list([comment for comment in comments
                      if comment.user.login == self._settings.actor
                      and comment.body.startswith(comment_body_start)
