@@ -41,13 +41,24 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
     return 'success'
 
 
-def get_github(auth: github.Auth, url: str, retries: int, backoff_factor: float, gha: GithubAction) -> github.Github:
+def get_github(auth: github.Auth,
+               url: str,
+               retries: int,
+               backoff_factor: float,
+               seconds_between_requests: Optional[float],
+               seconds_between_writes: Optional[float],
+               gha: GithubAction) -> github.Github:
     retry = GitHubRetry(gha=gha,
                         total=retries,
                         backoff_factor=backoff_factor,
                         allowed_methods=Retry.DEFAULT_ALLOWED_METHODS.union({'GET', 'POST'}),
                         status_forcelist=list(range(500, 600)))
-    return github.Github(auth=auth, base_url=url, per_page=100, retry=retry)
+    return github.Github(auth=auth,
+                         base_url=url,
+                         per_page=100,
+                         retry=retry,
+                         seconds_between_requests=seconds_between_requests,
+                         seconds_between_writes=seconds_between_writes)
 
 
 def get_files(multiline_files_globs: str) -> List[str]:
@@ -246,13 +257,13 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
-    auth = github.Auth.Token(settings.token)
-    gh = get_github(auth=auth, url=settings.api_url, retries=settings.api_retries, backoff_factor=backoff_factor, gha=gha)
-    gh._Github__requester._Requester__requestRaw = throttle_gh_request_raw(
-        settings.seconds_between_github_reads,
-        settings.seconds_between_github_writes,
-        gh._Github__requester._Requester__requestRaw
-    )
+    gh = get_github(auth = github.Auth.Token(settings.token),
+                    url=settings.api_url,
+                    retries=settings.api_retries,
+                    backoff_factor=backoff_factor,
+                    seconds_between_requests=settings.seconds_between_github_reads,
+                    seconds_between_writes=settings.seconds_between_github_writes,
+                    gha=gha)
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
@@ -260,32 +271,6 @@ def main(settings: Settings, gha: GithubAction) -> None:
         gha.error(f'Configuration requires this action to fail (action_fail={settings.action_fail}, '
                   f'action_fail_on_inconclusive={settings.action_fail_on_inconclusive}).')
         sys.exit(1)
-
-
-def throttle_gh_request_raw(seconds_between_requests: float, seconds_between_writes: float, gh_request_raw):
-    last_requests = defaultdict(lambda: 0.0)
-
-    def throttled_gh_request_raw(cnx, verb, url, requestHeaders, input):
-        requests = last_requests.values()
-        writes = [l for v, l in last_requests.items() if v != 'GET']
-        last_request = max(requests) if requests else 0
-        last_write = max(writes) if writes else 0
-        next_request = last_request + seconds_between_requests
-        next_write = last_write + seconds_between_writes
-
-        next = next_request if verb == 'GET' else max(next_request, next_write)
-        defer = max(next - datetime.utcnow().timestamp(), 0)
-        if defer > 0:
-            logger.debug(f'sleeping {defer}s before next GitHub request')
-            time.sleep(defer)
-
-        logger.debug(f'GitHub request: {verb} {url}')
-        try:
-            return gh_request_raw(cnx, verb, url, requestHeaders, input)
-        finally:
-            last_requests[verb] = datetime.utcnow().timestamp()
-
-    return throttled_gh_request_raw
 
 
 def get_commit_sha(event: dict, event_name: str, options: dict):

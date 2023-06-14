@@ -22,7 +22,7 @@ class TestGitHub(unittest.TestCase):
     base_url = f'http://localhost:12380/api'
     gha: Union[GithubAction, mock.Mock] = mock.MagicMock()
     auth = github.Auth.Token('login or token')
-    gh = get_github(auth, base_url, retries=1, backoff_factor=0.1, gha=gha)
+    gh = get_github(auth, base_url, retries=1, backoff_factor=0.1, seconds_between_requests=None, seconds_between_writes=None, gha=gha)
 
     @classmethod
     def start_api(cls, app: Flask) -> Process:
@@ -144,13 +144,13 @@ class TestGitHub(unittest.TestCase):
 
             with mock.patch('publish.retry.GitHubRetry._utc_now', return_value=datetime.datetime.utcfromtimestamp(1644768000)), \
                  mock.patch('time.sleep') as sleep:
-                    with self.assertRaises(requests.exceptions.RetryError) as context:
-                        self.gh.get_repo('owner/repo')
-                    self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
-                    self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
-                    self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
-                                                                       mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
-                    self.assertEqual(sleep.call_args_list, [mock.call(30.0 + 1)])  # we sleep one extra second
+                with self.assertRaises(requests.exceptions.RetryError) as context:
+                    self.gh.get_repo('owner/repo')
+                self.assertIn(f"Max retries exceeded with url: /api/repos/owner/repo", context.exception.args[0].args[0])
+                self.assertIn(f"Caused by ResponseError('too many 403 error responses'", context.exception.args[0].args[0])
+                self.assertEqual(self.gha.warning.call_args_list, [mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'),
+                                                                   mock.call('Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')])
+                self.assertEqual(sleep.call_args_list, [mock.call(30.0 + 1)])  # we sleep one extra second
 
     def test_github_get_retry_403_with_retry_message_and_invalid_reset_time(self):
         # reset time is expected to be int, what happens if it is not?
