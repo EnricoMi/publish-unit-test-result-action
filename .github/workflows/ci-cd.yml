@@ -39,6 +39,7 @@ jobs:
         os:
           - macos-11
           - macos-12
+          - macos-13
           - macos-latest
           - ubuntu-20.04
           - ubuntu-22.04
@@ -435,6 +436,9 @@ jobs:
             python: "installed"
           - os: macos-11
             os-label: macOS 11
+            python: "installed"
+          - os: macos-13
+            os-label: macOS 13
             python: "installed"
 
           - os: ubuntu-latest
