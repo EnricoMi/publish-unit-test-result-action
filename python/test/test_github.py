@@ -217,11 +217,9 @@ class TestGitHub(unittest.TestCase):
                             self.gh.get_repo('owner/repo')
                         self.assertEqual(403, context.exception.args[0])
                         self.assertEqual(content.encode('utf-8'), context.exception.args[1])
-                        self.assertEqual(len(log.call_args_list), 2)
-                        self.assertEqual(log.call_args_list[0], mock.call(logging.INFO, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN'))
-                        self.assertEqual(log.call_args_list[1].args, (logging.WARNING, 'Failed to inspect response message'))
-                        self.assertIn('exc_info', log.call_args_list[1].kwargs)
-                        self.assertIsInstance(log.call_args_list[1].kwargs['exc_info'], JSONDecodeError)
+                        self.assertIsInstance(context.exception.__cause__, RuntimeError)
+                        self.assertEqual(('Failed to inspect response message', ), context.exception.__cause__.args)
+                        log.assert_called_once_with(logging.INFO, 'Request GET /api/repos/owner/repo failed with 403: FORBIDDEN')
 
     def test_github_get_no_retry(self):
         # 403 does not get retried without special header field or body message
@@ -365,11 +363,9 @@ class TestGitHub(unittest.TestCase):
                                                       output={})
                             self.assertEqual(403, context.exception.args[0])
                             self.assertEqual(content.encode('utf-8'), context.exception.args[1])
-                            self.assertEqual(len(log.call_args_list), 2)
-                            self.assertEqual(log.call_args_list[0], mock.call(logging.INFO, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN'))
-                            self.assertEqual(log.call_args_list[1].args, (logging.WARNING, 'Failed to inspect response message'))
-                            self.assertIn('exc_info', log.call_args_list[1].kwargs)
-                            self.assertIsInstance(log.call_args_list[1].kwargs['exc_info'], JSONDecodeError)
+                            self.assertIsInstance(context.exception.__cause__, RuntimeError)
+                            self.assertEqual(('Failed to inspect response message', ), context.exception.__cause__.args)
+                            log.assert_called_once_with(logging.INFO, 'Request POST /api/repos/owner/repo/check-runs failed with 403: FORBIDDEN')
 
     def test_github_post_no_retry(self):
         # 403 does not get retried without special header field or body message
