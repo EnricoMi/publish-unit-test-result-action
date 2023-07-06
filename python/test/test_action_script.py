@@ -196,6 +196,7 @@ class Test(unittest.TestCase):
                      check_run_annotation=default_annotations,
                      seconds_between_github_reads=1.5,
                      seconds_between_github_writes=2.5,
+                     secondary_rate_limit_wait_seconds=6.0,
                      json_file=None,
                      json_thousands_separator=punctuation_space,
                      json_suite_details=False,
@@ -243,6 +244,7 @@ class Test(unittest.TestCase):
             check_run_annotation=check_run_annotation.copy(),
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes,
+            secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
             search_pull_requests=search_pull_requests
         )
 
@@ -520,19 +522,28 @@ class Test(unittest.TestCase):
         self.assertEqual("Some values in 'all tests, skipped tests, more' are not supported for variable CHECK_RUN_ANNOTATIONS, allowed: all tests, skipped tests, none", str(re.exception))
 
     def test_get_settings_seconds_between_github_reads(self):
-        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
+        self.do_test_get_settings_seconds('SECONDS_BETWEEN_GITHUB_READS', 'seconds_between_github_reads', 1.0)
 
     def test_get_settings_seconds_between_github_writes(self):
-        self.do_test_get_settings_seconds_between_github_requests('SECONDS_BETWEEN_GITHUB_WRITES', 'seconds_between_github_writes', 2.0)
+        self.do_test_get_settings_seconds('SECONDS_BETWEEN_GITHUB_WRITES', 'seconds_between_github_writes', 2.0)
 
-    def do_test_get_settings_seconds_between_github_requests(self, env_var_name: str, settings_var_name: str, default: float):
+    def test_get_settings_secondary_rate_limit_wait_seconds(self):
+        self.do_test_get_settings_seconds('SECONDARY_RATE_LIMIT_WAIT_SECONDS', 'secondary_rate_limit_wait_seconds', 60)
+
+    def do_test_get_settings_seconds(self, env_var_name: str, settings_var_name: str, default: float):
         self.do_test_get_settings(**{env_var_name: '0.001', 'expected': self.get_settings(**{settings_var_name: 0.001})})
         self.do_test_get_settings(**{env_var_name: '1', 'expected': self.get_settings(**{settings_var_name: 1.0})})
         self.do_test_get_settings(**{env_var_name: '1.0', 'expected': self.get_settings(**{settings_var_name: 1.0})})
         self.do_test_get_settings(**{env_var_name: '2.5', 'expected': self.get_settings(**{settings_var_name: 2.5})})
         self.do_test_get_settings(**{env_var_name: None, 'expected': self.get_settings(**{settings_var_name: default})})
 
-        for val in ['0', '0.0', '-1', 'none', '12e']:
+        for val in ['none', '12e']:
+            with self.subTest(reads=val):
+                with self.assertRaises(RuntimeError) as re:
+                    self.do_test_get_settings(**{env_var_name: val, 'expected': None})
+                self.assertIn(f'{env_var_name} must be an integer or float number: {val}', re.exception.args)
+
+        for val in ['0', '0.0', '-1']:
             with self.subTest(reads=val):
                 with self.assertRaises(RuntimeError) as re:
                     self.do_test_get_settings(**{env_var_name: val, 'expected': None})
@@ -647,7 +658,8 @@ class Test(unittest.TestCase):
                 DEDUPLICATE_CLASSES_BY_FILE_NAME='true',  # false unless 'true'
                 # annotations config tested in test_get_annotations_config*
                 SECONDS_BETWEEN_GITHUB_READS='1.5',
-                SECONDS_BETWEEN_GITHUB_WRITES='2.5'
+                SECONDS_BETWEEN_GITHUB_WRITES='2.5',
+                SECONDARY_RATE_LIMIT_WAIT_SECONDS='6.0',
             )
 
             # provide event via GITHUB_EVENT_PATH when there is no EVENT_FILE given

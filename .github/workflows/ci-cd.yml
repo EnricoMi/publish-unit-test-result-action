@@ -329,6 +329,7 @@ jobs:
             -e "INPUT_CHECK_RUN_ANNOTATIONS_BRANCH" \
             -e "INPUT_SECONDS_BETWEEN_GITHUB_READS" \
             -e "INPUT_SECONDS_BETWEEN_GITHUB_WRITES" \
+            -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
             -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
             -e "INPUT_SEARCH_PULL_REQUESTS" \
             -e "HOME" \
