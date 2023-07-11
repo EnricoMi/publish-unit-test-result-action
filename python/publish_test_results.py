@@ -49,7 +49,7 @@ def get_github(auth: github.Auth,
                                secondary_rate_wait=secondary_rate_wait)
     return github.Github(auth=auth,
                          base_url=url,
-                         per_page=100,
+                         per_page=10,
                          retry=retry,
                          seconds_between_requests=seconds_between_requests,
                          seconds_between_writes=seconds_between_writes)
