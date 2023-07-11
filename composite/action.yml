@@ -189,7 +189,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-b8e8abb8483d74cfe629dd253143f067
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-3f60675086aa2a456939092a53738e43
 
     - name: Install Python dependencies
       run: |

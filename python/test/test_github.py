@@ -21,7 +21,8 @@ class TestGitHub(unittest.TestCase):
 
     base_url = f'http://localhost:12380/api'
     gha: Union[GithubAction, mock.Mock] = mock.MagicMock()
-    gh = get_github('login or token', base_url, retries=1, backoff_factor=0.1, gha=gha)
+    auth = github.Auth.Token('login or token')
+    gh = get_github(auth, base_url, retries=1, backoff_factor=0.1, gha=gha)
 
     @classmethod
     def start_api(cls, app: Flask) -> Process:
