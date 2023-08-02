@@ -770,7 +770,8 @@ def get_case_annotation(messages: CaseMessages,
                         key: Tuple[Optional[str], Optional[str], Optional[str]],
                         state: str,
                         message: Optional[str],
-                        report_individual_runs: bool) -> Annotation:
+                        report_individual_runs: bool,
+                        test_file_path_prefix: str) -> Annotation:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
                      [case
@@ -786,7 +787,7 @@ def get_case_annotation(messages: CaseMessages,
                                        for m in messages[key][state]
                                        for c in messages[key][state][m]])
                          if case.result_file}
-    test_file = case.test_file
+    test_file = case.test_file.replace(test_file_path_prefix, "", 1)
     line = case.line or 0
     test_name = case.test_name if case.test_name else 'Unknown test'
     class_name = case.class_name
@@ -832,10 +833,11 @@ def get_case_annotation(messages: CaseMessages,
 
 
 def get_case_annotations(case_results: UnitTestCaseResults,
-                         report_individual_runs: bool) -> List[Annotation]:
+                         report_individual_runs: bool,
+                         test_file_path_prefix: str) -> List[Annotation]:
     messages = get_case_messages(case_results)
     return [
-        get_case_annotation(messages, key, state, message, report_individual_runs)
+        get_case_annotation(messages, key, state, message, report_individual_runs, test_file_path_prefix)
         for key in messages
         for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else
@@ -843,9 +845,9 @@ def get_case_annotations(case_results: UnitTestCaseResults,
     ]
 
 
-def get_error_annotation(error: ParseError) -> Annotation:
+def get_error_annotation(error: ParseError, test_path_file_prefix: str) -> Annotation:
     return Annotation(
-        path=error.file,
+        path=error.file.replace(test_path_file_prefix, '', 1),
         start_line=error.line or 0,
         end_line=error.line or 0,
         start_column=error.column,
@@ -857,8 +859,8 @@ def get_error_annotation(error: ParseError) -> Annotation:
     )
 
 
-def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
-    return [get_error_annotation(error) for error in parse_errors]
+def get_error_annotations(parse_errors: List[ParseError], test_path_file_prefix: str) -> List[Annotation]:
+    return [get_error_annotation(error, test_path_file_prefix) for error in parse_errors]
 
 
 def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
