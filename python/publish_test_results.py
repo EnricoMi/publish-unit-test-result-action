@@ -438,6 +438,8 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
     check_var_condition(is_float(seconds_between_github_writes), f'SECONDS_BETWEEN_GITHUB_WRITES must be an integer or float number: {seconds_between_github_writes}')
     check_var_condition(is_float(secondary_rate_limit_wait_seconds), f'SECONDARY_RATE_LIMIT_WAIT_SECONDS must be an integer or float number: {secondary_rate_limit_wait_seconds}')
 
+    test_file_path_prefix = get_var('TEST_FILE_PATH_PREFIX', options) or ''
+
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
         actor=get_var('GITHUB_TOKEN_ACTOR', options) or 'github-actions',
@@ -481,7 +483,8 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes),
         secondary_rate_limit_wait_seconds=float(secondary_rate_limit_wait_seconds),
-        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False)
+        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False),
+        test_file_path_prefix=test_file_path_prefix
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')

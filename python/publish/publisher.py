@@ -73,6 +73,7 @@ class Settings:
     seconds_between_github_writes: float
     secondary_rate_limit_wait_seconds: float
     search_pull_requests: bool
+    test_file_path_prefix: str
 
 
 @dataclasses.dataclass(frozen=True)
@@ -396,8 +397,8 @@ class Publisher:
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         logger.debug(f'stats with delta: {stats_with_delta}')
 
-        error_annotations = get_error_annotations(stats.errors)
-        case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)
+        error_annotations = get_error_annotations(stats.errors, self._settings.test_file_path_prefix)
+        case_annotations = get_case_annotations(cases, self._settings.report_individual_runs, self._settings.test_file_path_prefix)
         output_annotations = get_suite_annotations(stats.suite_details, self._settings.report_suite_out_logs, self._settings.report_suite_err_logs)
         test_list_annotations = self.get_test_list_annotations(cases)
         all_annotations = error_annotations + case_annotations + output_annotations + test_list_annotations
