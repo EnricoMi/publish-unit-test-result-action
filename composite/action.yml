@@ -113,6 +113,9 @@ inputs:
     description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
     default: '2.0'
     required: false
+  secondary_rate_limit_wait_seconds:
+    description: 'Sets the number of seconds to wait before retrying secondary rate limit errors. If not set, the default defined in the PyGithub library is used (currently 60 seconds).'
+    required: false
   json_file:
     description: 'Results are written to this JSON file.'
     required: false
@@ -189,7 +192,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-542a202a7ae1c4ee3d09d3537bd16ad0
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-d81e5b217e041ea3f958821f6daca2f5
 
     - name: Install Python dependencies
       run: |
@@ -237,6 +240,7 @@ runs:
         CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
         SECONDS_BETWEEN_GITHUB_READS: ${{ inputs.seconds_between_github_reads }}
         SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
+        SECONDARY_RATE_LIMIT_WAIT_SECONDS: ${{ inputs.secondary_rate_limit_wait_seconds }}
         JSON_FILE: ${{ inputs.json_file }}
         JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
         JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
