@@ -251,7 +251,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
-    gh = get_github(auth = github.Auth.Token(settings.token),
+    gh = get_github(auth=github.Auth.Token(settings.token),
                     url=settings.api_url,
                     retries=settings.api_retries,
                     backoff_factor=backoff_factor,
