@@ -137,7 +137,8 @@ class TestPublisher(unittest.TestCase):
             seconds_between_github_reads=1.5,
             seconds_between_github_writes=2.5,
             secondary_rate_limit_wait_seconds=6.0,
-            search_pull_requests=search_pull_requests
+            search_pull_requests=search_pull_requests,
+            test_file_path_prefix=''
         )
 
     stats = UnitTestRunResults(
@@ -1265,7 +1266,7 @@ class TestPublisher(unittest.TestCase):
             check_run, before_check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_not_called()
-        error_annotations = [get_error_annotation(error).to_dict() for error in errors]
+        error_annotations = [get_error_annotation(error, '').to_dict() for error in errors]
         annotations = error_annotations + [
             {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'warning', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs failed: test (class)', 'raw_details': 'message\ncontent\nstdout\nstderr'},
             {'path': 'test file', 'start_line': 0, 'end_line': 0, 'annotation_level': 'failure', 'message': 'result file [took 1s]', 'title': '1 out of 2 runs with error: test2 (class)', 'raw_details': 'error message\nerror content\nerror stdout\nerror stderr'}
@@ -1345,7 +1346,7 @@ class TestPublisher(unittest.TestCase):
             check_run, before_check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
 
         repo.get_commit.assert_called_once_with(earlier_commit)
-        error_annotations = [get_error_annotation(error).to_dict() for error in errors]
+        error_annotations = [get_error_annotation(error, '').to_dict() for error in errors]
         create_check_run_kwargs = dict(
             name=settings.check_name,
             head_sha=settings.commit,

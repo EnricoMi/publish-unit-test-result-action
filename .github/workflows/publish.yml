@@ -129,6 +129,7 @@ jobs:
             -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
             -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
             -e "INPUT_SEARCH_PULL_REQUESTS" \
+            -e "INPUT_TEST_FILE_PATH_PREFIX" \
             -e "HOME" \
             -e "GITHUB_JOB" \
             -e "GITHUB_REF" \

@@ -201,7 +201,8 @@ class Test(unittest.TestCase):
                      json_thousands_separator=punctuation_space,
                      json_suite_details=False,
                      json_test_case_results=False,
-                     search_pull_requests=False) -> Settings:
+                     search_pull_requests=False,
+                     test_file_path_prefix='') -> Settings:
         return Settings(
             token=token,
             actor=actor,
@@ -245,7 +246,9 @@ class Test(unittest.TestCase):
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes,
             secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
-            search_pull_requests=search_pull_requests
+            search_pull_requests=search_pull_requests,
+            test_file_path_prefix=test_file_path_prefix,
+
         )
 
     def test_get_settings(self):
