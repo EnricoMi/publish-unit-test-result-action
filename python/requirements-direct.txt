@@ -4,4 +4,4 @@ lxml==4.9.1
 psutil==5.9.5
 PyGithub==2.0.1rc0
 requests==2.31.0
-urllib3==1.26.16
+urllib3==2.0.4
