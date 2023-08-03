@@ -107,11 +107,11 @@ inputs:
     required: false
   seconds_between_github_reads:
     description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
-    default: '0.001'
+    default: '0.25'
     required: false
   seconds_between_github_writes:
     description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
-    default: '0.001'
+    default: '2.0'
     required: false
   secondary_rate_limit_wait_seconds:
     description: 'Sets the number of seconds to wait before retrying secondary rate limit errors. If not set, the default defined in the PyGithub library is used (currently 60 seconds).'
