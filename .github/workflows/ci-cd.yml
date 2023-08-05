@@ -288,7 +288,7 @@ jobs:
           INPUT_JSON_FILE: "tests.json"
           INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
-          INPUT_REPORT_SUTE_LOGS: "any"
+          INPUT_REPORT_SUITE_LOGS: "any"
         run: |
           docker run \
             --workdir $GITHUB_WORKSPACE \
