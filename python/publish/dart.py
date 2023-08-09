@@ -107,7 +107,7 @@ def parse_dart_json_file(path: str) -> JUnitTree:
 
         return testsuite
 
-    # do not count hidden tests (unless not successfull)
+    # do not count hidden tests (unless not successful)
     visible_tests = [test for test in tests.values() if test.get('hidden') is not True or test.get('result') != 'success']
     testsuites = etree.Element('testsuites', attrib={k: str(v) for k, v in dict(
         time=(suite_time - suite_start) / 1000.0 if suite_start is not None and suite_time is not None else None,
