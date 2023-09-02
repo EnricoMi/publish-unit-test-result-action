@@ -482,6 +482,7 @@ jobs:
           json_suite_details: true
           json_test_case_results: true
           report_suite_logs: "any"
+          log_level: DEBUG
 
       - name: JSON output
         uses: ./misc/action/json-output

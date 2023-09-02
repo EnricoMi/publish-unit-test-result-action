@@ -7,11 +7,12 @@ import tempfile
 import unittest
 from collections.abc import Collection
 from datetime import datetime, timezone
-from typing import Optional, List, Mapping, Union, Any, Callable
+from typing import Optional, List, Mapping, Union, Any, Callable, Dict
 
 import github.CheckRun
 import mock
 from github import Github, GithubException
+from github.PullRequestComment import PullRequestComment
 
 from publish import __version__, comment_mode_off, comment_mode_always, \
     comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
@@ -48,6 +49,10 @@ class CommentConditionTest:
     current_has_error_changes: bool
     current_has_failures: bool
     current_has_errors: bool
+
+
+def comment(data: Dict[str, Any]) -> PullRequestComment:
+    return PullRequestComment(None, {}, data, False)
 
 
 class TestPublisher(unittest.TestCase):
@@ -2506,120 +2511,73 @@ class TestPublisher(unittest.TestCase):
 
         self.assertEqual(None, result)
 
-    def do_test_get_pull_request_comments(self, order_updated: bool):
+    def test_get_pull_request_comments(self):
         settings = self.create_settings()
+        comments = [mock.Mock()]
 
         gh, gha, req, repo, commit = self.create_mocks(repo_name=settings.repo, repo_login='login')
-        req.requestJsonAndCheck = mock.Mock(
-            return_value=({}, {'data': {'repository': {'pullRequest': {'comments': {'nodes': ['node']}}}}})
-        )
         pr = self.create_github_pr(settings.repo, number=1234)
+        pr.get_issue_comments = mock.Mock(return_value=comments)
         publisher = Publisher(settings, gh, gha)
 
-        response = publisher.get_pull_request_comments(pr, order_by_updated=order_updated)
-        self.assertEqual(['node'], response)
-        return req
-
-    def test_get_pull_request_comments(self):
-        req = self.do_test_get_pull_request_comments(order_updated=False)
-        req.requestJsonAndCheck.assert_called_once_with(
-            'POST', 'https://the-github-graphql-url',
-            input={
-                'query': 'query ListComments {'
-                         '  repository(owner:"login", name:"owner/repo") {'
-                         '    pullRequest(number: 1234) {'
-                         '      comments(last: 100) {'
-                         '        nodes {'
-                         '          id, databaseId, author { login }, body, isMinimized'
-                         '        }'
-                         '      }'
-                         '    }'
-                         '  }'
-                         '}'
-            }
-        )
-
-    def test_get_pull_request_comments_order_updated(self):
-        req = self.do_test_get_pull_request_comments(order_updated=True)
-        req.requestJsonAndCheck.assert_called_once_with(
-            'POST', 'https://the-github-graphql-url',
-            input={
-                'query': 'query ListComments {'
-                         '  repository(owner:"login", name:"owner/repo") {'
-                         '    pullRequest(number: 1234) {'
-                         '      comments(last: 100, orderBy: { direction: ASC, field: UPDATED_AT }) {'
-                         '        nodes {'
-                         '          id, databaseId, author { login }, body, isMinimized'
-                         '        }'
-                         '      }'
-                         '    }'
-                         '  }'
-                         '}'
-            }
-        )
+        response = publisher.get_pull_request_comments(pr)
+        self.assertEqual(comments, response)
+        pr.get_issue_comments.assert_called_once_with()
 
     comments = [
-        {
-            'id': 'comment one',
-            'author': {'login': 'github-actions'},
+        comment({
+            'id': 1,
+            'user': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment two',
-            'author': {'login': 'someone else'},
+        }),
+        comment({
+            'id': 2,
+            'user': {'login': 'someone else'},
             'body': '## Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment three',
-            'author': {'login': 'github-actions'},
+        }),
+        comment({
+            'id': 3,
+            'user': {'login': 'github-actions'},
             'body': '## Wrong Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment four',
-            'author': {'login': 'github-actions'},
+        }),
+        comment({
+            'id': 4,
+            'user': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'more body\n'
                     'no Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': False
-        },
-        {
-            'id': 'comment five',
-            'author': {'login': 'github-actions'},
+        }),
+        comment({
+            'id': 5,
+            'user': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': True
-        },
-        {
-            'id': 'comment six',
-            'author': {'login': 'github-actions'},
+        }),
+        comment({
+            'id': 6,
+            'user': {'login': 'github-actions'},
             'body': 'comment',
-            'isMinimized': True
-        },
+        }),
         # earlier version of comments with lower case result and comparison
-        {
-            'id': 'comment seven',
-            'author': {'login': 'github-actions'},
+        comment({
+            'id': 7,
+            'user': {'login': 'github-actions'},
             'body': '## Comment Title\n'
                     'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
-            'isMinimized': False
-        },
+        }),
         # comment of different actor
-        {
-            'id': 'comment eight',
-            'author': {'login': 'other-actor'},
+        comment({
+            'id': 8,
+            'user': {'login': 'other-actor'},
             'body': '## Comment Title\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
-            'isMinimized': False
-        },
+        }),
     ]
 
     def test_get_action_comments(self):
@@ -2629,8 +2587,8 @@ class TestPublisher(unittest.TestCase):
 
         expected = [comment
                     for comment in self.comments
-                    if comment.get('id') in ['comment one', 'comment five', 'comment seven']]
-        actual = publisher.get_action_comments(self.comments, is_minimized=None)
+                    if comment.id in {1, 5, 7}]
+        actual = publisher.get_action_comments(self.comments)
         self.assertEqual(3, len(expected))
         self.assertEqual(expected, actual)
 
@@ -2641,19 +2599,7 @@ class TestPublisher(unittest.TestCase):
 
         expected = [comment
                     for comment in self.comments
-                    if comment.get('id') == 'comment eight']
-        actual = publisher.get_action_comments(self.comments, is_minimized=None)
+                    if comment.id == 8]
+        actual = publisher.get_action_comments(self.comments)
         self.assertEqual(1, len(expected))
-        self.assertEqual(expected, actual)
-
-    def test_get_action_comments_not_minimized(self):
-        settings = self.create_settings(actor='github-actions')
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        expected = [comment
-                    for comment in self.comments
-                    if comment.get('id') in ['comment one', 'comment seven']]
-        actual = publisher.get_action_comments(self.comments, is_minimized=False)
-        self.assertEqual(2, len(expected))
         self.assertEqual(expected, actual)

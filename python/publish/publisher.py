@@ -4,7 +4,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass
-from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union, Callable
+from typing import List, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from copy import deepcopy
 
 from github import Github, GithubException, UnknownObjectException
@@ -657,7 +657,7 @@ class Publisher:
 
     def get_latest_comment(self, pull: PullRequest) -> Optional[IssueComment]:
         # get comments of this pull request
-        comments = self.get_pull_request_comments(pull, order_by_updated=True)
+        comments = self.get_pull_request_comments(pull)
 
         # get all comments that come from this action and are not hidden
         comments = self.get_action_comments(comments)
@@ -666,9 +666,8 @@ class Publisher:
         if len(comments) == 0:
             return None
 
-        # fetch latest action comment
-        comment_id = comments[-1].get("databaseId")
-        return pull.get_issue_comment(comment_id)
+        # return latest action comment
+        return sorted(comments, key=lambda comment: comment.updated_at, reverse=True)[-1]
 
     def reuse_comment(self, comment: IssueComment, body: str):
         if ':recycle:' not in body:
@@ -704,41 +703,20 @@ class Publisher:
 
         return None
 
-    def get_pull_request_comments(self, pull: PullRequest, order_by_updated: bool) -> List[Mapping[str, Any]]:
-        order = ''
-        if order_by_updated:
-            order = ', orderBy: { direction: ASC, field: UPDATED_AT }'
+    def get_pull_request_comments(self, pull: PullRequest) -> List[IssueComment]:
+        comments = list(pull.get_issue_comments())
+        logger.debug(f'Found {len(comments)} comments for pull request {pull.number}')
+        for comment in comments:
+            logger.debug(f'comment: {comment}')
+        return comments
 
-        query = dict(
-            query=r'query ListComments {'
-                  r'  repository(owner:"' + self._repo.owner.login + r'", name:"' + self._repo.name + r'") {'
-                  r'    pullRequest(number: ' + str(pull.number) + r') {'
-                  f'      comments(last: 100{order}) {{'
-                  r'        nodes {'
-                  r'          id, databaseId, author { login }, body, isMinimized'
-                  r'        }'
-                  r'      }'
-                  r'    }'
-                  r'  }'
-                  r'}'
-        )
-
-        headers, data = self._req.requestJsonAndCheck(
-            "POST", self._settings.graphql_url, input=query
-        )
-
-        return data \
-            .get('data', {}) \
-            .get('repository', {}) \
-            .get('pullRequest', {}) \
-            .get('comments', {}) \
-            .get('nodes')
-
-    def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
+    def get_action_comments(self, comments: List[IssueComment]):
         comment_body_start = f'## {self._settings.comment_title}\n'
         comment_body_indicators = ['\nresults for commit ', '\nResults for commit ']
+        for comment in comments:
+            logger.debug(f'login={comment.user.login}')
+            logger.debug(f'body={comment.body}')
         return list([comment for comment in comments
-                     if comment.get('author', {}).get('login') == self._settings.actor
-                     and (is_minimized is None or comment.get('isMinimized') == is_minimized)
-                     and comment.get('body', '').startswith(comment_body_start)
-                     and any(indicator in comment.get('body', '') for indicator in comment_body_indicators)])
+                     if comment.user.login == self._settings.actor
+                     and comment.body.startswith(comment_body_start)
+                     and any(indicator in comment.body for indicator in comment_body_indicators)])
