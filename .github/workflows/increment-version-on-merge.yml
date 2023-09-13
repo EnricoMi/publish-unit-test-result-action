@@ -1,0 +1,60 @@
+name: Increment Version on Merge
+on:
+  # https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+  # - GitHub’s standard pull_request workflow trigger prevents write permissions and secrets
+  #   access to the target repository from public forks.  PRs from a branch in the same repo
+  #   and forks of internal/private repos are not limited the same way for this trigger.
+  # - The pull_request_target trigger allows the workflow to relax some restrictions to a
+  #   target repository so PRs from forks have write permission to the target repo and have
+  #   secrets access (which we need in order to push a new tag in this workflow).
+  # - For this workflow, the elevated permissions should not be a problem because:
+  #    - Our im-open repositories do not contain secrets, they are dumb actions
+  #    - Require approval for all outside collaborators' is set at the org level so someone
+  #      with Write access has a chance to review code before allowing any workflow runs
+  #    - This workflow with elevated Write permissions will only run once the code has been
+  #      reviewed, approved by a CODEOWNER and merged
+  pull_request_target:
+    types: [closed]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/CODEOWNERS'
+      - '.github/workflows/**'
+
+jobs:
+  increment-version:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Generally speaking, when the PR contents are treated as passive data, i.e. not in a
+      # position  of influence over the build/testing process, it is safe to checkout the code
+      # on a pull_request_target.  But we need to be extra careful not to trigger any script
+      # that may operate on PR controlled contents like in the case of npm install.
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          fetch-depth: 0
+
+      # See https://github.com/im-open/git-version-lite for more details around how to increment
+      # major/minor/patch through commit messages
+      - name: Increment the version
+        uses: im-open/git-version-lite@v2
+        id: version
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          default-release-type: major
+
+      - name: Create version tag, create or update major, and minor tags
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag ${{ steps.version.outputs.NEXT_VERSION }} ${{ github.sha }}
+          git tag -f ${{ steps.version.outputs.NEXT_MAJOR_VERSION }} ${{ github.sha }}
+          git tag -f ${{ steps.version.outputs.NEXT_MINOR_VERSION }} ${{ github.sha }}
+          git push origin ${{ steps.version.outputs.NEXT_VERSION }}
+          git push origin ${{ steps.version.outputs.NEXT_MAJOR_VERSION }} -f
+          git push origin ${{ steps.version.outputs.NEXT_MINOR_VERSION }} -f
