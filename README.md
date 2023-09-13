@@ -833,3 +833,7 @@ publish-test-results:
 ```
 </details>
 
+## Credits
+
+The initial GitHub action has been created by [EnricoMi](https://github.com/EnricoMi) at
+[EnricoMi/publish-unit-test-result-action](https://github.com/EnricoMi/publish-unit-test-result-action).
