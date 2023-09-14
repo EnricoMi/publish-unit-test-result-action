@@ -27,7 +27,7 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
 
 ```yaml
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action@v2
+  uses: im-open/publish-unit-test-result-action@v1.0.0
   if: always()
   with:
     files: |
@@ -326,7 +326,7 @@ The `json` output of the action can be accessed through the expression `steps.<i
 
 ```yaml
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action@v2
+  uses: im-open/publish-unit-test-result-action@v1.0.0
   id: test-results
   if: always()
   with:
@@ -340,7 +340,7 @@ Here is an example JSON:
 ```json
 {
   "title": "4 parse errors, 4 errors, 23 fail, 18 skipped, 227 pass in 39m 12s",
-  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
+  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
   "conclusion": "success",
   "stats": {
     "files": 24,
@@ -538,7 +538,7 @@ jobs:
           path: artifacts
 
       - name: Publish Test Results
-        uses: im-open/publish-unit-test-result-action@v2
+        uses: im-open/publish-unit-test-result-action@v1.0.0
         with:
           files: "artifacts/**/*.xml"
 ```
@@ -650,7 +650,7 @@ jobs:
             path: artifacts
 
       - name: Publish Test Results
-        uses: im-open/publish-unit-test-result-action@v2
+        uses: im-open/publish-unit-test-result-action@v1.0.0
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/Event File/event.json
@@ -683,7 +683,7 @@ Add the event name to `check_name` to avoid different event types overwriting ea
 
 ```yaml
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action@v2
+  uses: im-open/publish-unit-test-result-action@v1.0.0
   if: always()
   with:
     check_name: "Test Results (${{ github.event.workflow_run.event || github.event_name }})"
@@ -696,7 +696,7 @@ Disabling the pull request comment mode (`"off"`) for events other than `pull_re
 
 ```yaml
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action@v2
+  uses: im-open/publish-unit-test-result-action@v1.0.0
   if: always()
   with:
     # set comment_mode to "always" for pull_request event, set to "off" for all other event types
@@ -717,7 +717,7 @@ Here is an example how to use the [JSON](#json-result) output of this action to 
 steps:
 - …
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action@v2
+  uses: im-open/publish-unit-test-result-action@v1.0.0
   id: test-results
   if: always()
   with:
