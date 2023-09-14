@@ -240,8 +240,14 @@ def main(settings: Settings, gha: GithubAction) -> None:
     parsed = parse_files(settings, gha)
     log_parse_errors(parsed.errors, gha)
 
+    logger.info(f'Parsed output: {parsed}')
+
     # process the parsed results
     results = get_test_results(parsed, settings.dedup_classes_by_file_name)
+
+    logger.info(f'Results output: {results}')
+
+    logger.info(f'Will be making TCM POST API Calls here')
 
     # turn them into stats
     stats = get_stats(results)
