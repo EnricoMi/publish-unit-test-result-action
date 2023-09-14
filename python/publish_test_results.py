@@ -221,6 +221,73 @@ def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inco
     return action_fail and conclusion == 'failure' or \
            action_fail_on_inconclusive and conclusion == 'inconclusive'
 
+def publishtotcm(results) -> None:
+    cookies = {
+        "VstsSession": "%7B%22PersistentSessionId%22%3A%221cc9d29d-bd96-4495-9d14-e71170033690%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D",
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        # 'Cookie': 'VstsSession=%7B%22PersistentSessionId%22%3A%221cc9d29d-bd96-4495-9d14-e71170033690%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D',
+    }
+    
+    params = {
+        "api-version": "7.0",
+    }
+    
+    json_data = {
+        "name": "NewTestRun1",
+        "isAutomated": True,
+    }
+    
+    response = requests.post(
+        "https://dev.azure.com/triptijain/Hackathon_demo/_apis/test/runs",
+        params=params,
+        cookies=cookies,
+        headers=headers,
+        json=json_data,
+    )
+    
+      logger.info(f'POST API call returned: {response}')
+
+def publishtotcm_2(results) -> None:
+    cookies2 = {
+        "VstsSession": "%7B%22PersistentSessionId%22%3A%22091aced1-29d4-4b83-bc99-c6e255744e9f%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D",
+    }
+
+    headers2 = {
+        "Content-Type": "application/json",
+        # 'Cookie': 'VstsSession=%7B%22PersistentSessionId%22%3A%22091aced1-29d4-4b83-bc99-c6e255744e9f%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D',
+    }
+    
+    params2 = {
+        "api-version": "6.0",
+    }
+    
+    json_data2 = [
+        {
+            "testCaseTitle": "TestDivisionByZero",
+            "automatedTestName": "Calculator.CalculatorTests.TestDivisionByZero",
+            "priority": 1,
+            "outcome": "Passed",
+        },
+        {
+            "testCaseTitle": "TestSubtraction",
+            "automatedTestName": "Calculator.CalculatorTests.TestSubtraction",
+            "priority": 1,
+            "outcome": "Passed",
+        },
+    ]
+    
+    response2 = requests.post(
+        "https://dev.azure.com/triptijain/Hackathon_demo/_apis/test/Runs/75/results",
+        params=params2,
+        cookies=cookies2,
+        headers=headers2,
+        json=json_data2,
+    )
+    
+      logger.info(f'POST API call returned Part 2: {response2}')
 
 def main(settings: Settings, gha: GithubAction) -> None:
     if settings.is_fork and not settings.job_summary:
@@ -249,6 +316,8 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     logger.info(f'Will be making TCM POST API Calls here')
 
+    run = publishtotcm(results)
+    
     # turn them into stats
     stats = get_stats(results)
 
