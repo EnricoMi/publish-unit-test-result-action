@@ -19,8 +19,8 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
 from publish import __version__, available_annotations, none_annotations
-from publish.junit import is_junit, parse_junit_xml_files, process_junit_xml_elems, get_results, get_result, get_content, \
-    get_message, Disabled, JUnitTreeOrParseError, ParseError
+from publish.junit import is_junit, parse_junit_xml_files, adjust_prefix, process_junit_xml_elems, get_results, \
+    get_result, get_content,  get_message, Disabled, JUnitTreeOrParseError, ParseError
 from publish.unittestresults import ParsedUnitTestResults, UnitTestCase
 from publish_test_results import get_test_results, get_stats, get_conclusion
 from publish.publisher import Publisher
@@ -96,6 +96,21 @@ class JUnitXmlParseTest:
             return cls.shorten_filename(filename, test_path)
         else:
             return filename
+
+    def test_adjust_prefix(self):
+        self.assertEqual(adjust_prefix("file", "+"), "file")
+        self.assertEqual(adjust_prefix("file", "+."), ".file")
+        self.assertEqual(adjust_prefix("file", "+./"), "./file")
+        self.assertEqual(adjust_prefix("file", "+path/"), "path/file")
+
+        self.assertEqual(adjust_prefix("file", "-"), "file")
+        self.assertEqual(adjust_prefix(".file", "-."), "file")
+        self.assertEqual(adjust_prefix("./file", "-./"), "file")
+        self.assertEqual(adjust_prefix("path/file", "-path/"), "file")
+        self.assertEqual(adjust_prefix("file", "-"), "file")
+        self.assertEqual(adjust_prefix("file", "-."), "file")
+        self.assertEqual(adjust_prefix("file", "-./"), "file")
+        self.assertEqual(adjust_prefix("file", "-path/"), "file")
 
     def do_test_parse_and_process_files(self, filename: str):
         for locale in [None, 'en_US.UTF-8', 'de_DE.UTF-8']:
@@ -299,7 +314,7 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
         for time_factor in [1.0, 10.0, 60.0, 0.1, 0.001]:
             with self.subTest(time_factor=time_factor):
                 self.assertEqual(
-                    process_junit_xml_elems(parse_junit_xml_files([result_file], False, False), time_factor),
+                    process_junit_xml_elems(parse_junit_xml_files([result_file], False, False), time_factor=time_factor),
                     ParsedUnitTestResults(
                         files=1,
                         errors=[],
@@ -376,6 +391,32 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 stderr=None,
                                 time=0.001 * time_factor
                             )
+                        ]
+                    ))
+
+    def test_process_parse_junit_xml_files_with_test_file_prefix(self):
+        result_file = str(test_files_path / 'pytest' / 'junit.fail.xml')
+        for prefix in ["+python/", "-test/", "-src"]:
+            with self.subTest(prefix=prefix):
+                test_file = adjust_prefix('test/test_spark.py', prefix)
+                self.assertEqual(
+                    process_junit_xml_elems(parse_junit_xml_files([result_file], False, False), test_file_prefix=prefix),
+                    ParsedUnitTestResults(
+                        files=1,
+                        errors=[],
+                        suites=1,
+                        suite_tests=5,
+                        suite_skipped=1,
+                        suite_failures=1,
+                        suite_errors=0,
+                        suite_time=2,
+                        suite_details=[],
+                        cases=[
+                            UnitTestCase(result_file='/home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/pytest/junit.fail.xml', test_file=test_file, line=1412, class_name='test.test_spark.SparkTests', test_name='test_check_shape_compatibility', result='success', message=None, content=None, stdout=None, stderr=None, time=6.435),
+                            UnitTestCase(result_file='/home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/pytest/junit.fail.xml', test_file=test_file, line=1641, class_name='test.test_spark.SparkTests', test_name='test_get_available_devices', result='skipped', message='get_available_devices only supported in Spark 3.0 and above', content='/horovod/test/test_spark.py:1642: get_available_devices only\n                supported in Spark 3.0 and above\n            ', stdout=None, stderr=None, time=0.001),
+                            UnitTestCase(result_file='/home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/pytest/junit.fail.xml', test_file=test_file, line=1102, class_name='test.test_spark.SparkTests', test_name='test_get_col_info', result='success', message=None, content=None, stdout=None, stderr=None, time=6.417),
+                            UnitTestCase(result_file='/home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/pytest/junit.fail.xml', test_file=test_file, line=819, class_name='test.test_spark.SparkTests', test_name='test_rsh_events', result='failure', message='self = <test_spark.SparkTests testMethod=test_rsh_events>      def test_rsh_events(self): >       self.do_test_rsh_events(3)  test_spark.py:821:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  test_spark.py:836: in do_test_rsh_events     self.do_test_rsh(command, 143, events=events) test_spark.py:852: in do_test_rsh     self.assertEqual(expected_result, res) E   AssertionError: 143 != 0', content='self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n                def test_rsh_events(self):\n                > self.do_test_rsh_events(3)\n\n                test_spark.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test_spark.py:836: in do_test_rsh_events\n                self.do_test_rsh(command, 143, events=events)\n                test_spark.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            ', stdout=None, stderr=None, time=7.541),
+                            UnitTestCase(result_file='/home/enrico/Work/git/publish-unit-test-result-action/python/test/files/junit-xml/pytest/junit.fail.xml', test_file=test_file, line=813, class_name='test.test_spark.SparkTests', test_name='test_rsh_with_non_zero_exit_code', result='success', message=None, content=None, stdout=None, stderr=None, time=1.514)
                         ]
                     ))
 

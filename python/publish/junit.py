@@ -175,7 +175,24 @@ def parse_junit_xml_files(files: Iterable[str], large_files: bool, drop_testcase
     return progress_safe_parse_xml_file(files, parse, progress)
 
 
-def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float = 1.0, add_suite_details: bool = False) -> ParsedUnitTestResults:
+def adjust_prefix(file: Optional[str], prefix: Optional[str]) -> Optional[str]:
+    if prefix is None or file is None:
+        return file
+
+    # prefix starts either with '+' or '-'
+    if prefix.startswith('+'):
+        # add prefix
+        return "".join([prefix[1:], file])
+
+    # remove prefix
+    return file[len(prefix)-1:] if file.startswith(prefix[1:]) else file
+
+
+def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
+                            *,
+                            time_factor: float = 1.0,
+                            test_file_prefix: Optional[str] = None,
+                            add_suite_details: bool = False) -> ParsedUnitTestResults:
     def create_junitxml(filepath: str, tree: JUnitTree) -> JUnitXmlOrParseError:
         try:
             instance = JUnitXml.fromroot(tree.getroot())
@@ -265,7 +282,7 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile], time_factor: float
     cases = [
         UnitTestCase(
             result_file=result_file,
-            test_file=case._elem.get('file'),
+            test_file=adjust_prefix(case._elem.get('file'), test_file_prefix),
             line=int_opt(case._elem.get('line')),
             class_name=case.classname,
             test_name=case.name,

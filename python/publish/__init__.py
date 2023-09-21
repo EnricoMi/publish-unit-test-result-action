@@ -770,8 +770,7 @@ def get_case_annotation(messages: CaseMessages,
                         key: Tuple[Optional[str], Optional[str], Optional[str]],
                         state: str,
                         message: Optional[str],
-                        report_individual_runs: bool,
-                        test_file_prefix: str) -> Annotation:
+                        report_individual_runs: bool) -> Annotation:
     case = messages[key][state][message][0]
     same_cases = len(messages[key][state][message] if report_individual_runs else
                      [case
@@ -787,8 +786,7 @@ def get_case_annotation(messages: CaseMessages,
                                        for m in messages[key][state]
                                        for c in messages[key][state][m]])
                          if case.result_file}
-    test_file = case.test_file[len(test_file_prefix):] \
-        if test_file_prefix and case.test_file.startswith(test_file_prefix) else case.test_file
+    test_file = case.test_file
     line = case.line or 0
     test_name = case.test_name if case.test_name else 'Unknown test'
     class_name = case.class_name
@@ -834,11 +832,10 @@ def get_case_annotation(messages: CaseMessages,
 
 
 def get_case_annotations(case_results: UnitTestCaseResults,
-                         report_individual_runs: bool,
-                         test_file_prefix: str) -> List[Annotation]:
+                         report_individual_runs: bool) -> List[Annotation]:
     messages = get_case_messages(case_results)
     return [
-        get_case_annotation(messages, key, state, message, report_individual_runs, test_file_prefix)
+        get_case_annotation(messages, key, state, message, report_individual_runs)
         for key in messages
         for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else

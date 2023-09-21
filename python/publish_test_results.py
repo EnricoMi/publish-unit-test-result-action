@@ -208,6 +208,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
+        test_file_prefix=settings.test_file_prefix,
         add_suite_details=settings.report_suite_out_logs or settings.report_suite_err_logs or settings.json_suite_details
     ).with_commit(settings.commit)
 
