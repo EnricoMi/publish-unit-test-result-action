@@ -12,7 +12,7 @@ class TestActionYml(unittest.TestCase):
         with open(project_root / 'action.yml', encoding='utf-8') as r:
             action = yaml.safe_load(r)
 
-        with open(project_root / '.github/workflows/ci-cd.yml', encoding='utf-8') as r:
+        with open(project_root / '.github/workflows/publish.yml', encoding='utf-8') as r:
             cicd = yaml.safe_load(r)
 
         docker_image_steps = cicd.get('jobs', []).get('publish-docker-image', {}).get('steps', [])
