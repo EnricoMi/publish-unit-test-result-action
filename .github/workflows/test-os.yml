@@ -13,12 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ${{ fromJson(inputs.os) }}
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3", "installed"]
-
         include:
           - os: ${{ fromJson(inputs.os)[0] }}
             python-version: "3.7"
+        os: ${{ fromJson(inputs.os) }}
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3", "installed"]
 
     steps:
       - name: Checkout
