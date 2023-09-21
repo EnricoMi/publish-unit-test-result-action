@@ -90,7 +90,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test-mac, test-lnx, test-win, publish, config-deploy]
+    needs: [publish, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
