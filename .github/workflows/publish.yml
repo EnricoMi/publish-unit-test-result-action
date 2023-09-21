@@ -6,7 +6,6 @@ on:
 jobs:
   publish-dockerfile:
     name: Publish Test Results (Dockerfile)
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -51,7 +50,6 @@ jobs:
 
   publish-docker-image:
     name: Publish Test Results (Docker Image)
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -219,7 +217,6 @@ jobs:
 
   publish-composite:
     name: Publish Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -301,7 +298,6 @@ jobs:
   publish-test-files:
     name: Publish Test Files
     # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
@@ -354,7 +350,6 @@ jobs:
   publish-test-file:
     name: Publish Test File
     # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
-    needs: test
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       always() &&
