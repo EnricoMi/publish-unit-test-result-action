@@ -44,11 +44,12 @@ jobs:
 
   publish:
     name: "Publish"
+    needs: [test-mac, test-lnx, test-win]
     uses: "./.github/workflows/publish.yml"
 
   config-deploy:
     name: Configure Deployment
-    needs: test
+    needs: [test-mac, test-lnx, test-win]
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
@@ -85,7 +86,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [test, publish-dockerfile, publish-docker-image, publish-composite, publish-test-file, publish-test-files, config-deploy]
+    needs: [test-mac, test-lnx, test-win, publish, config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
