@@ -51,6 +51,11 @@ jobs:
   publish:
     name: "Publish"
     needs: [test-mac, test-lnx, test-win]
+    # we run the action from this branch whenever we can (when it runs in our repo's context)
+    if: >
+      always() &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     uses: "./.github/workflows/publish.yml"
     permissions:
       checks: write

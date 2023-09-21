@@ -6,11 +6,6 @@ on:
 jobs:
   publish-dockerfile:
     name: Publish Test Results (Dockerfile)
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -50,11 +45,6 @@ jobs:
 
   publish-docker-image:
     name: Publish Test Results (Docker Image)
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -217,11 +207,6 @@ jobs:
 
   publish-composite:
     name: Publish Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ${{ matrix.os }}
     permissions:
       checks: write
@@ -297,12 +282,6 @@ jobs:
 
   publish-test-files:
     name: Publish Test Files
-    # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -349,12 +328,6 @@ jobs:
 
   publish-test-file:
     name: Publish Test File
-    # does not really depend on 'tests' but can be executed together with other publish tasks just for good taste
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      always() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
     runs-on: ubuntu-latest
     permissions:
       checks: write
