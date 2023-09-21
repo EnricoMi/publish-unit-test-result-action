@@ -135,8 +135,8 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
-  test_file_path_prefix:
-    description: 'The prefix that test file paths have in your results, for example "./" or "/opt/actions-runner"'
+  test_file_prefix:
+    description: 'The prefix to add (if starting with "+") or remove (if starting with "-") from test file paths, to make them relative to your git repository root, for example "+src/" or "-/opt/actions-runner"'
     default: ''
     required: false
 outputs:

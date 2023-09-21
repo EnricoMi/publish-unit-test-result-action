@@ -202,7 +202,7 @@ class Test(unittest.TestCase):
                      json_suite_details=False,
                      json_test_case_results=False,
                      search_pull_requests=False,
-                     test_file_path_prefix='') -> Settings:
+                     test_file_prefix='') -> Settings:
         return Settings(
             token=token,
             actor=actor,
@@ -247,7 +247,7 @@ class Test(unittest.TestCase):
             seconds_between_github_writes=seconds_between_github_writes,
             secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
             search_pull_requests=search_pull_requests,
-            test_file_path_prefix=test_file_path_prefix,
+            test_file_prefix=test_file_prefix,
 
         )
 

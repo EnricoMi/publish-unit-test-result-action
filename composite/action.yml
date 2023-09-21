@@ -135,9 +135,9 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
-  test_file_path_prefix:
-    description: 'The prefix that test file paths have in your results, for example "./" or "/opt/actions-runner"'
-    default: ""
+  test_file_prefix:
+    description: 'The prefix to add (if starting with "+") or remove (if starting with "-") from test file paths, to make them relative to your git repository root, for example "+src/" or "-/opt/actions-runner"'
+    default: ''
     required: false
 
 outputs:
@@ -252,7 +252,7 @@ runs:
         JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
-        TEST_FILE_PATH_PREFIX: ${{ inputs.test_file_path_prefix }}
+        TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
         # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
         # not documented
