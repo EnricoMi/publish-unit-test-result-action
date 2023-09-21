@@ -26,6 +26,7 @@ jobs:
       - name: OS
         run: |
           python -c "import sys; print(sys.platform)"
+          python -c "import platform; print(platform.mac_ver())"
 
       - name: Test
         uses: ./.github/actions/test
