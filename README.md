@@ -208,6 +208,9 @@ and the changed files section of related pull requests:
 
 ![annotations example changed files](misc/github-pull-request-changes-annotation.png)
 
+***Note:** Annotations for test files are only supported when test file paths in test result files are relative to the repository root.
+Use option `test_file_prefix` to add a prefix to, or remove a prefix from these file paths. See [Configuration](#configuration) section for details.*
+
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
 ### GitHub Actions job summary
