@@ -180,6 +180,7 @@ class Test(unittest.TestCase):
                      xunit_files_glob='xunit-files',
                      trx_files_glob='trx-files',
                      time_factor=1.0,
+                     test_file_prefix=None,
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_always,
@@ -201,8 +202,7 @@ class Test(unittest.TestCase):
                      json_thousands_separator=punctuation_space,
                      json_suite_details=False,
                      json_test_case_results=False,
-                     search_pull_requests=False,
-                     test_file_prefix='') -> Settings:
+                     search_pull_requests=False) -> Settings:
         return Settings(
             token=token,
             actor=actor,
@@ -229,6 +229,7 @@ class Test(unittest.TestCase):
             xunit_files_glob=xunit_files_glob,
             trx_files_glob=trx_files_glob,
             time_factor=time_factor,
+            test_file_prefix=test_file_prefix,
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
@@ -247,8 +248,6 @@ class Test(unittest.TestCase):
             seconds_between_github_writes=seconds_between_github_writes,
             secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
             search_pull_requests=search_pull_requests,
-            test_file_prefix=test_file_prefix,
-
         )
 
     def test_get_settings(self):

@@ -111,6 +111,7 @@ jobs:
             -e "INPUT_XUNIT_FILES" \
             -e "INPUT_TRX_FILES" \
             -e "INPUT_TIME_UNIT" \
+            -e "INPUT_TEST_FILE_PREFIX" \
             -e "INPUT_REPORT_INDIVIDUAL_RUNS" \
             -e "INPUT_REPORT_SUITE_LOGS" \
             -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
@@ -129,7 +130,6 @@ jobs:
             -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
             -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
             -e "INPUT_SEARCH_PULL_REQUESTS" \
-            -e "INPUT_TEST_FILE_PREFIX" \
             -e "HOME" \
             -e "GITHUB_JOB" \
             -e "GITHUB_REF" \

@@ -464,6 +464,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
         time_factor=time_factor,
+        test_file_prefix=get_var('TEST_FILE_PREFIX', options) or None,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=comment_mode,
@@ -482,7 +483,6 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         seconds_between_github_writes=float(seconds_between_github_writes),
         secondary_rate_limit_wait_seconds=float(secondary_rate_limit_wait_seconds),
         search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False),
-        test_file_prefix=get_var('TEST_FILE_PREFIX', options) or ''
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')

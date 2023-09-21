@@ -120,6 +120,7 @@ class TestPublisher(unittest.TestCase):
             xunit_files_glob=None,
             trx_files_glob=None,
             time_factor=1.0,
+            test_file_prefix=None,
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
@@ -138,7 +139,6 @@ class TestPublisher(unittest.TestCase):
             seconds_between_github_writes=2.5,
             secondary_rate_limit_wait_seconds=6.0,
             search_pull_requests=search_pull_requests,
-            test_file_prefix=''
         )
 
     stats = UnitTestRunResults(

@@ -54,6 +54,7 @@ class Settings:
     nunit_files_glob: Optional[str]
     xunit_files_glob: Optional[str]
     trx_files_glob: Optional[str]
+    test_file_prefix: Optional[str]
     time_factor: float
     check_name: str
     comment_title: str
@@ -73,7 +74,6 @@ class Settings:
     seconds_between_github_writes: float
     secondary_rate_limit_wait_seconds: float
     search_pull_requests: bool
-    test_file_prefix: str
 
 
 @dataclasses.dataclass(frozen=True)
