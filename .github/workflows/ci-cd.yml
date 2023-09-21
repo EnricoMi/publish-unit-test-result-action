@@ -32,15 +32,21 @@ jobs:
 
   test-mac:
     name: "Test macOS"
-    uses: "./.github/workflows/test-mac.yml"
+    uses: "./.github/workflows/test-os.yml"
+    with:
+      os: [macos-11, macos-12, macos-13]
 
   test-lnx:
     name: "Test Ubuntu"
-    uses: "./.github/workflows/test-lnx.yml"
+    uses: "./.github/workflows/test-os.yml"
+    with:
+      os: [ubuntu-20.04, ubuntu-22.04]
 
   test-win:
     name: "Test Windows"
-    uses: "./.github/workflows/test-win.yml"
+    uses: "./.github/workflows/test-os.yml"
+    with:
+      os: [windows-2019, windows-2022]
 
   publish:
     name: "Publish"

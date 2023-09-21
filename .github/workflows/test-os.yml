@@ -1,8 +1,11 @@
-name: Test macOS
+name: Test OS
 
 on:
   workflow_call:
-
+    inputs:
+      os:
+        required: true
+        type: string
 jobs:
   test:
     name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
@@ -10,18 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - macos-11
-          - macos-12
-          - macos-13
+        os: ${{ fromJson(inputs.os) }}
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "installed"]
 
         include:
-          - os: macos-latest
-            python-version: "3.7"
-          - os: ubuntu-latest
-            python-version: "3.7"
-          - os: windows-latest
+          - os: ${{ fromJson(inputs.os)[0] }}
             python-version: "3.7"
 
     steps:
