@@ -46,6 +46,10 @@ jobs:
     name: "Publish"
     needs: [test-mac, test-lnx, test-win]
     uses: "./.github/workflows/publish.yml"
+    permissions:
+      checks: write
+      pull-requests: write
+      security-events: write
 
   config-deploy:
     name: Configure Deployment
