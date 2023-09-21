@@ -1006,8 +1006,8 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(145, actual.files)
-        if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-            # on macOS and Python 3.10 and above we see one particular error
+        if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+            # on macOS and below Python 3.9 we see one particular error
             self.assertEqual(17, len(actual.errors))
             self.assertEqual(731, actual.suites)
             self.assertEqual(4109, actual.suite_tests)
@@ -1058,7 +1058,7 @@ class Test(unittest.TestCase):
                 '::error file=malformed-json.json::Error processing result file: Unsupported file format: malformed-json.json',
                 '::error file=non-json.json::Error processing result file: Unsupported file format: non-json.json',
             ]
-            if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
+            if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
                 expected.extend([
                     '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
                     '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
@@ -1088,8 +1088,8 @@ class Test(unittest.TestCase):
                                              **options)
                 actual = parse_files(settings, gha)
 
-                if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-                    # on macOS and Python 3.10 and above we see one particular error
+                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+                    # on macOS and Python below 3.9 we see one particular error
                     self.assertEqual(363, len(actual.suite_details))
                 else:
                     self.assertEqual(365, len(actual.suite_details))
@@ -1171,8 +1171,8 @@ class Test(unittest.TestCase):
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
                 self.assertEqual(145, results.files)
-                if Version(sys.version.split(' ')[0]) >= Version('3.10.0') and sys.platform.startswith('darwin'):
-                    # on macOS and Python 3.10 and above we see one particular error
+                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+                    # on macOS and below Python 3.9 we see one particular error
                     self.assertEqual(731, results.suites)
                     self.assertEqual(731, len(results.suite_details))
                     self.assertEqual(1811, len(cases))
