@@ -23,6 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: OS
+        run: |
+          python -c "import sys; print(sys.platform)"
+
       - name: Test
         uses: ./.github/actions/test
         with:
