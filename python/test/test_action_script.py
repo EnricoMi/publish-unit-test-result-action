@@ -1,8 +1,8 @@
 import io
 import json
-import logging
 import os
 import pathlib
+import platform
 import re
 import sys
 import tempfile
@@ -13,8 +13,8 @@ import mock
 from packaging.version import Version
 
 from publish import __version__, pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_always, comment_mode_off, \
-    report_suite_out_log, report_suite_err_log, report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
+    fail_on_mode_nothing, comment_modes, comment_mode_always, report_suite_out_log, report_suite_err_log, \
+    report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
     default_annotations, all_tests_list, skipped_tests_list, none_annotations, \
     pull_request_build_modes, punctuation_space
 from publish.github_action import GithubAction
@@ -1006,7 +1006,8 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(145, actual.files)
-        if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+        if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
+                (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
             # on macOS and below Python 3.9 we see one particular error
             self.assertEqual(17, len(actual.errors))
             self.assertEqual(731, actual.suites)
@@ -1058,7 +1059,8 @@ class Test(unittest.TestCase):
                 '::error file=malformed-json.json::Error processing result file: Unsupported file format: malformed-json.json',
                 '::error file=non-json.json::Error processing result file: Unsupported file format: non-json.json',
             ]
-            if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+            if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
+                    (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
                 expected.extend([
                     '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
                     '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
@@ -1088,8 +1090,9 @@ class Test(unittest.TestCase):
                                              **options)
                 actual = parse_files(settings, gha)
 
-                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
-                    # on macOS and Python below 3.9 we see one particular error
+                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
+                        (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
+                    # on macOS (below macOS 13) and Python below 3.9 we see one particular error
                     self.assertEqual(363, len(actual.suite_details))
                 else:
                     self.assertEqual(365, len(actual.suite_details))
@@ -1171,7 +1174,8 @@ class Test(unittest.TestCase):
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
                 self.assertEqual(145, results.files)
-                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin'):
+                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
+                        (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
                     # on macOS and below Python 3.9 we see one particular error
                     self.assertEqual(731, results.suites)
                     self.assertEqual(731, len(results.suite_details))
