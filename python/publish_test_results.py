@@ -489,6 +489,10 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
+    check_var_condition(
+        settings.test_file_prefix is None or any([settings.test_file_prefix.startswith(sign) for sign in ['-', '+']]),
+        f"TEST_FILE_PREFIX is optional, but when given, it must start with '-' or '+': {settings.test_file_prefix}"
+    )
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)

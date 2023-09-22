@@ -355,6 +355,16 @@ class Test(unittest.TestCase):
         self.assertIn('TIME_UNIT minutes is not supported. It is optional, '
                       'but when given must be one of these values: seconds, milliseconds', re.exception.args)
 
+    def test_get_settings_test_file_prefix(self):
+        self.do_test_get_settings(TEST_FILE_PREFIX=None, expected=self.get_settings(test_file_prefix=None))
+        self.do_test_get_settings(TEST_FILE_PREFIX='', expected=self.get_settings(test_file_prefix=None))
+        self.do_test_get_settings(TEST_FILE_PREFIX='+src/', expected=self.get_settings(test_file_prefix='+src/'))
+        self.do_test_get_settings(TEST_FILE_PREFIX='-./', expected=self.get_settings(test_file_prefix='-./'))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(TEST_FILE_PREFIX='path/', expected=None)
+        self.assertIn("TEST_FILE_PREFIX is optional, but when given, it must start with '-' or '+': path/", re.exception.args)
+
     def test_get_settings_commit(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
         self.do_test_get_settings(INPUT_COMMIT='sha', GITHUB_EVENT_NAME='pull_request', event=event, GITHUB_SHA='default', expected=self.get_settings(commit='sha', event=event, event_name='pull_request', is_fork=True))
