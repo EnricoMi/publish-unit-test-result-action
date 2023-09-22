@@ -60,9 +60,9 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 When run multiple times in one workflow, the [option](#configuration) `check_name` has to be set to a unique value for each instance.
 Otherwise, the multiple runs overwrite each other's results.
 
-***Note:** This action does not fail if tests failed. The action that executed the tests should
-fail on test failure. The published results however indicate failure if tests fail or errors occur.
-This behaviour is configurable.*
+***Note:** By default, this action does not fail if tests failed. This can be [configured](#configuration) via `action_fail`.
+The action that executed the tests should fail on test failure. The published results however indicate failure if tests fail or errors occur,
+which can be [configured](#configuration) via `fail_on`.*
 
 ## Permissions
 
@@ -128,7 +128,7 @@ See workaround for `check_name`.
 
 ### Modes `create new` and `update last` removed for option `comment_mode`
 The action always updates an earlier pull request comment, which is the exact behaviour of mode `update last`.
-The configuration options `create new` and `update last` are therefore removed.
+The [configuration](#configuration) options `create new` and `update last` are therefore removed.
 
 **Impact:**
 An existing pull request comment is always updated.
@@ -150,7 +150,7 @@ Set `comment_mode` to `always` (the default) or `off`.
 
 ## Publishing test results
 
-Test results are published on GitHub at various (configurable) places:
+Test results are published on GitHub at various ([configurable](#configuration)) places:
 
 - as [a comment](#pull-request-comment) in related pull requests
 - as [a check](#commit-and-pull-request-checks) in the checks section of a commit and related pull requests
@@ -401,7 +401,7 @@ is not easily available, e.g. when [creating a badge from test results](#create-
 <details>
 <summary>Access JSON via file</summary>
 
-The optional `json_file` allows to configure a file where extended JSON information are to be written.
+The optional `json_file` allows to [configure](#configuration) a file where extended JSON information are to be written.
 Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information
 than just the number of errors and annotations, respectively.
 
