@@ -208,6 +208,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
+        test_file_prefix=settings.test_file_prefix,
         add_suite_details=settings.report_suite_out_logs or settings.report_suite_err_logs or settings.json_suite_details
     ).with_commit(settings.commit)
 
@@ -464,6 +465,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
         time_factor=time_factor,
+        test_file_prefix=get_var('TEST_FILE_PREFIX', options) or None,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=comment_mode,
@@ -481,12 +483,16 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes),
         secondary_rate_limit_wait_seconds=float(secondary_rate_limit_wait_seconds),
-        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False)
+        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False),
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
+    check_var_condition(
+        settings.test_file_prefix is None or any([settings.test_file_prefix.startswith(sign) for sign in ['-', '+']]),
+        f"TEST_FILE_PREFIX is optional, but when given, it must start with '-' or '+': {settings.test_file_prefix}"
+    )
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)

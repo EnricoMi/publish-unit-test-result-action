@@ -208,6 +208,9 @@ and the changed files section of related pull requests:
 
 ![annotations example changed files](misc/github-pull-request-changes-annotation.png)
 
+***Note:** Annotations for test files are only supported when test file paths in test result files are relative to the repository root.
+Use option `test_file_prefix` to add a prefix to, or remove a prefix from these file paths. See [Configuration](#configuration) section for details.*
+
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
 ### GitHub Actions job summary
@@ -290,8 +293,9 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
-|`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
+|`time_unit`|`seconds`|Time values in the test result files have this unit. Supports `seconds` and `milliseconds`.|
+|`test_file_prefix`|`none`|Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".|
+|`job_summary`|`true`|Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|

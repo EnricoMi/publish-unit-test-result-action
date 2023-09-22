@@ -60,6 +60,9 @@ inputs:
     description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
     required: false
+  test_file_prefix:
+    description: 'Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".'
+    required: false
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
     required: false
@@ -135,6 +138,7 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
+
 outputs:
   json:
     description: "Test results as JSON"
@@ -226,6 +230,7 @@ runs:
         XUNIT_FILES: ${{ inputs.xunit_files }}
         TRX_FILES: ${{ inputs.trx_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
+        TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}

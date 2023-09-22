@@ -54,6 +54,7 @@ class Settings:
     nunit_files_glob: Optional[str]
     xunit_files_glob: Optional[str]
     trx_files_glob: Optional[str]
+    test_file_prefix: Optional[str]
     time_factor: float
     check_name: str
     comment_title: str

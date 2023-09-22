@@ -180,6 +180,7 @@ class Test(unittest.TestCase):
                      xunit_files_glob='xunit-files',
                      trx_files_glob='trx-files',
                      time_factor=1.0,
+                     test_file_prefix=None,
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_always,
@@ -228,6 +229,7 @@ class Test(unittest.TestCase):
             xunit_files_glob=xunit_files_glob,
             trx_files_glob=trx_files_glob,
             time_factor=time_factor,
+            test_file_prefix=test_file_prefix,
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
@@ -245,7 +247,7 @@ class Test(unittest.TestCase):
             seconds_between_github_reads=seconds_between_github_reads,
             seconds_between_github_writes=seconds_between_github_writes,
             secondary_rate_limit_wait_seconds=secondary_rate_limit_wait_seconds,
-            search_pull_requests=search_pull_requests
+            search_pull_requests=search_pull_requests,
         )
 
     def test_get_settings(self):
@@ -352,6 +354,16 @@ class Test(unittest.TestCase):
             self.do_test_get_settings(TIME_UNIT='minutes', expected=None)
         self.assertIn('TIME_UNIT minutes is not supported. It is optional, '
                       'but when given must be one of these values: seconds, milliseconds', re.exception.args)
+
+    def test_get_settings_test_file_prefix(self):
+        self.do_test_get_settings(TEST_FILE_PREFIX=None, expected=self.get_settings(test_file_prefix=None))
+        self.do_test_get_settings(TEST_FILE_PREFIX='', expected=self.get_settings(test_file_prefix=None))
+        self.do_test_get_settings(TEST_FILE_PREFIX='+src/', expected=self.get_settings(test_file_prefix='+src/'))
+        self.do_test_get_settings(TEST_FILE_PREFIX='-./', expected=self.get_settings(test_file_prefix='-./'))
+
+        with self.assertRaises(RuntimeError) as re:
+            self.do_test_get_settings(TEST_FILE_PREFIX='path/', expected=None)
+        self.assertIn("TEST_FILE_PREFIX is optional, but when given, it must start with '-' or '+': path/", re.exception.args)
 
     def test_get_settings_commit(self):
         event = {'pull_request': {'head': {'sha': 'sha2'}}}
