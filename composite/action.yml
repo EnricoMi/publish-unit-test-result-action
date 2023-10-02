@@ -211,7 +211,7 @@ runs:
           Linux*|macOS*)
             source venv/bin/activate;;
           Windows*)
-            venv\Scripts\activate;;
+            source venv\\Scripts\\activate;;
         esac
         echo '##[endgroup]'
       shell: bash
@@ -226,7 +226,7 @@ runs:
             Linux*|macOS*)
               source venv/bin/activate;;
             Windows*)
-              venv\Scripts\activate;;
+              source venv\\Scripts\\activate;;
           esac
         fi
 
@@ -245,7 +245,7 @@ runs:
           Linux*|macOS*)
             source venv/bin/activate;;
           Windows*)
-            venv\Scripts\activate;;
+            source venv\\Scripts\\activate;;
         esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
