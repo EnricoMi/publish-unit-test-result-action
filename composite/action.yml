@@ -199,9 +199,11 @@ runs:
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-6ca4d32816ff499719c9ab474caf6c68
 
     - name: Create virtualenv
+      id: venv
+      continue-on-error: true
       run: |
         echo '##[group]Create virtualenv'
-        # make sure wheel is installed, which improves installing our dependencies
+        # install virtualenv, if it is not yet installed
         python3 -m pip install virtualenv
         python3 -m virtualenv venv
         echo '##[endgroup]'
@@ -210,16 +212,16 @@ runs:
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        # activate virtualenv
-        case "$RUNNER_OS" in
-          Linux*)
-          macOS*)
-            source venv/bin/activate
-            ;;
-          Windows*)
-            venv\Scripts\activate
-            ;;
-        esac
+        if [ "${{ steps.venv.outcome }}" == "success" ]
+        then
+          # activate virtualenv
+          case "$RUNNER_OS" in
+            Linux*|macOS*)
+              source venv/bin/activate;;
+            Windows*)
+              venv\Scripts\activate;;
+          esac
+        fi
 
         # make sure wheel is installed, which improves installing our dependencies
         python3 -m pip install wheel
@@ -233,13 +235,10 @@ runs:
         echo '##[group]Publish Test Results'
         # activate virtualenv
         case "$RUNNER_OS" in
-          Linux*)
-          macOS*)
-            source venv/bin/activate
-            ;;
+          Linux*|macOS*)
+            source venv/bin/activate;;
           Windows*)
-            venv\Scripts\activate
-            ;;
+            venv\Scripts\activate;;
         esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
