@@ -14,6 +14,6 @@ PyGithub==2.0.1rc0
     six==1.16.0
   requests==2.31.0
     certifi==2023.7.22
-    charset-normalizer==3.2.0
+    charset-normalizer==3.3.0
     idna==3.4
     urllib3==1.26.16
