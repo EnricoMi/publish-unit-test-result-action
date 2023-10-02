@@ -147,17 +147,135 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Run on Linux
-      if: startsWith(env.RUNNER_OS, 'Linux')
-      uses: $GITHUB_ACTION_PATH/linux
+    - name: Check for Python3
+      id: python
+      run: |
+        echo '##[group]Check for Python3'
+        # we check version here just to execute `python3` with an argument
+        # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
+        # command `which python3` finds that, but `python3 -V` does not return the version on stdout
+        if ! which python3 || [[ $(python3 -V) != *"python 3."* && $(python3 -V) != *"Python 3."* ]]
+        then
+          if ! which python || [[ $(python -V) != *"python 3."* && $(python -V) != *"Python 3."* ]]
+          then
+            echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
+            exit 1
+          fi
 
-    - name: Run on macOS
-      if: startsWith(env.RUNNER_OS, 'macOS')
-      uses: $GITHUB_ACTION_PATH/linux
+          interpreter="$(which python)"
+          if [[ ! -e "${interpreter}3" ]]
+          then
+            mkdir -p "$RUNNER_TEMP/bin/"
+            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
+            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
+          fi
+        fi
+        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
+        echo '##[endgroup]'
+      shell: bash
 
-    - name: Run on Windows
-      if: startsWith(env.RUNNER_OS, 'Windows')
-      uses: $GITHUB_ACTION_PATH/linux
+    - name: Detect OS
+      id: os
+      run: |
+        echo "pip-cache=~/Library/Caches/pip" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Restore PIP packages cache
+      uses: actions/cache/restore@v3
+      id: cache
+      continue-on-error: true
+      with:
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-6ca4d32816ff499719c9ab474caf6c68
+
+    - name: Create virtualenv
+      id: venv
+      continue-on-error: true
+      run: |
+        echo '##[group]Create virtualenv'
+        # install virtualenv, if it is not yet installed
+        python3 -m pip install virtualenv
+        python3 -m virtualenv venv
+        # test activating virtualenv
+        source venv/bin/activate
+        echo '##[endgroup]'
+      shell: bash
+
+    - name: Install Python dependencies
+      run: |
+        echo '##[group]Install Python dependencies'
+        if [ "${{ steps.venv.outcome }}" == "success" ]
+        then
+          # activate virtualenv
+          source venv/bin/activate
+        fi
+
+        # make sure wheel is installed, which improves installing our dependencies
+        python3 -m pip install wheel
+        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        echo '##[endgroup]'
+      shell: bash
+
+    - name: Publish Test Results
+      id: test-results
+      run: |
+        echo '##[group]Publish Test Results'
+        # activate virtualenv
+        source venv/bin/activate
+        python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
+        echo '##[endgroup]'
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
+        GITHUB_RETRIES: ${{ inputs.github_retries }}
+        COMMIT: ${{ inputs.commit }}
+        CHECK_NAME: ${{ inputs.check_name }}
+        COMMENT_TITLE: ${{ inputs.comment_title }}
+        COMMENT_MODE: ${{ inputs.comment_mode }}
+        FAIL_ON: ${{ inputs.fail_on }}
+        ACTION_FAIL: ${{ inputs.action_fail }}
+        ACTION_FAIL_ON_INCONCLUSIVE: ${{ inputs.action_fail_on_inconclusive }}
+        FILES: ${{ inputs.files }}
+        JUNIT_FILES: ${{ inputs.junit_files }}
+        NUNIT_FILES: ${{ inputs.nunit_files }}
+        XUNIT_FILES: ${{ inputs.xunit_files }}
+        TRX_FILES: ${{ inputs.trx_files }}
+        TIME_UNIT: ${{ inputs.time_unit }}
+        TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
+        REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
+        REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
+        DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
+        LARGE_FILES: ${{ inputs.large_files }}
+        IGNORE_RUNS: ${{ inputs.ignore_runs }}
+        COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
+        PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
+        EVENT_FILE: ${{ inputs.event_file }}
+        EVENT_NAME: ${{ inputs.event_name }}
+        TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}
+        CHECK_RUN_ANNOTATIONS: ${{ inputs.check_run_annotations }}
+        CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
+        SECONDS_BETWEEN_GITHUB_READS: ${{ inputs.seconds_between_github_reads }}
+        SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
+        SECONDARY_RATE_LIMIT_WAIT_SECONDS: ${{ inputs.secondary_rate_limit_wait_seconds }}
+        JSON_FILE: ${{ inputs.json_file }}
+        JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
+        JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
+        JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
+        JOB_SUMMARY: ${{ inputs.job_summary }}
+        SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
+        # not documented
+        ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+        # not documented
+        LOG_LEVEL: ${{ inputs.log_level }}
+      shell: bash
+
+    - name: Save PIP packages cache
+      uses: actions/cache/save@v3
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
+      continue-on-error: true
+      with:
+        path: ${{ steps.os.outputs.pip-cache }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
   icon: 'check-circle'
