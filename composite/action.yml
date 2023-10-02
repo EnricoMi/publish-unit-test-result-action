@@ -198,9 +198,29 @@ runs:
         path: ${{ steps.os.outputs.pip-cache }}
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-6ca4d32816ff499719c9ab474caf6c68
 
+    - name: Create virtualenv
+      run: |
+        echo '##[group]Create virtualenv'
+        # make sure wheel is installed, which improves installing our dependencies
+        python3 -m pip install virtualenv
+        python3 -m virtualenv venv
+        echo '##[endgroup]'
+      shell: bash
+
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
+        # activate virtualenv
+        case "$RUNNER_OS" in
+          Linux*)
+          macOS*)
+            source venv/bin/activate
+            ;;
+          Windows*)
+            venv\Scripts\activate
+            ;;
+        esac
+
         # make sure wheel is installed, which improves installing our dependencies
         python3 -m pip install wheel
         python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
@@ -211,6 +231,16 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
+        # activate virtualenv
+        case "$RUNNER_OS" in
+          Linux*)
+          macOS*)
+            source venv/bin/activate
+            ;;
+          Windows*)
+            venv\Scripts\activate
+            ;;
+        esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
