@@ -213,6 +213,7 @@ runs:
           Windows*)
             source venv\\Scripts\\activate;;
         esac
+        which python3
         echo '##[endgroup]'
       shell: bash
 
@@ -229,6 +230,7 @@ runs:
               source venv\\Scripts\\activate;;
           esac
         fi
+        which python3
 
         # make sure wheel is installed, which improves installing our dependencies
         python3 -m pip install --user wheel
