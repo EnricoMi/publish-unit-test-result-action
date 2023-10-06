@@ -263,8 +263,6 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
         gha.error(f'This action finished successfully, but test results have status {conclusion}.')
-        gha.error(f'Configuration requires this action to fail (action_fail={settings.action_fail}, '
-                  f'action_fail_on_inconclusive={settings.action_fail_on_inconclusive}).')
         sys.exit(1)
 
 
