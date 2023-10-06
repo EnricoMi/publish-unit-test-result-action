@@ -140,6 +140,7 @@ jobs:
         with:
           tags: ${{ steps.docker-meta.outputs.tags }}
           labels: ${{ steps.docker-meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
           pull: true
           # deploy image actions from commits pushed to master and
           # deploy Dockerfile actions from pushed version tags (no major versions)
