@@ -6,6 +6,7 @@
 [![GitHub Workflows badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/workflows.svg)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
 [![Docker pulls badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/downloads.svg)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
 
+![Arm badge](misc/badge-arm.svg)
 ![Ubuntu badge](misc/badge-ubuntu.svg)
 ![macOS badge](misc/badge-macos.svg)
 ![Windows badge](misc/badge-windows.svg)
@@ -13,9 +14,7 @@
 ![NUnit badge](misc/badge-nunit-xml.svg)
 ![XUnit badge](misc/badge-xunit-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
-![Dart badge](misc/badge-dart.svg)
-![Mocha badge](misc/badge-mocha.svg)
-
+![JS badge](misc/badge-js.svg)
 
 [![Test Results](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/tests.svg)
 
@@ -23,7 +22,8 @@ This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, VS) and XML (JUnit, NUnit, XUnit) file formats](#generating-test-result-files),
 and runs on Linux, macOS and Windows.
 
-You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
+You can add this action to your GitHub workflow for ![Ubuntu Linux](misc/badge-ubuntu.svg) (e.g. `runs-on: ubuntu-latest`)
+or ![ARM Linux](misc/badge-arm.svg) (self-hosted ARM) runners:
 
 ```yaml
 - name: Publish Test Results
@@ -36,8 +36,8 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
       test-results/**/*.json
 ```
 
-Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
-and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `runs-on: windows-latest`) runners:
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
+and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
 
 ```yaml
 - name: Publish Test Results
