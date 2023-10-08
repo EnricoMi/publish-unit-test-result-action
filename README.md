@@ -10,9 +10,7 @@
 ![Ubuntu badge](misc/badge-ubuntu.svg)
 ![macOS badge](misc/badge-macos.svg)
 ![Windows badge](misc/badge-windows.svg)
-![JUnit badge](misc/badge-junit-xml.svg)
-![NUnit badge](misc/badge-nunit-xml.svg)
-![XUnit badge](misc/badge-xunit-xml.svg)
+![XML badge](misc/badge-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
 ![JS badge](misc/badge-js.svg)
 
@@ -23,7 +21,7 @@ publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, V
 and runs on Linux, macOS and Windows.
 
 You can add this action to your GitHub workflow for ![Ubuntu Linux](misc/badge-ubuntu.svg) (e.g. `runs-on: ubuntu-latest`)
-or ![ARM Linux](misc/badge-arm.svg) (self-hosted ARM) runners:
+or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 ```yaml
 - name: Publish Test Results
