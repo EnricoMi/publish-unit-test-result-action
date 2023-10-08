@@ -186,6 +186,7 @@ runs:
             ;;
           Windows*)
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
+            echo "pip-options=--user" >> $GITHUB_OUTPUT
             ;;
         esac
       shell: bash
@@ -201,10 +202,12 @@ runs:
     - name: Create virtualenv
       id: venv
       continue-on-error: true
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
         # install virtualenv, if it is not yet installed
-        python3 -m pip install --user virtualenv
+        python3 -m pip install $PIP_OPTIONS virtualenv
         python3 -m virtualenv venv
         # test activating virtualenv
         case "$RUNNER_OS" in
@@ -218,6 +221,8 @@ runs:
       shell: bash
 
     - name: Install Python dependencies
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Install Python dependencies'
         if [ "${{ steps.venv.outcome }}" == "success" ]
@@ -233,8 +238,8 @@ runs:
         which python3
 
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install --user wheel
-        python3 -m pip install --user -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install $PIP_OPTIONS wheel
+        python3 -m pip install $PIP_OPTIONS -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
