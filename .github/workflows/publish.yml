@@ -67,27 +67,34 @@ jobs:
         with:
           load: true
           push: false
+          platforms: linux/amd64,linux/arm64
           tags: enricomi/publish-unit-test-result-action:latest
           outputs: type=docker
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: arm64
 
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
           path: artifacts
 
-      - name: Publish Test Results
-        id: test-results
+      - name: Publish Test Results (AMD 64)
+        id: test-results-amd-64
         if: always()
         env:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
-          INPUT_CHECK_NAME: Test Results (Docker Image)
+          INPUT_CHECK_NAME: Test Results (Docker Image amd64)
           INPUT_FILES: "artifacts/**/*.xml"
           INPUT_JSON_FILE: "tests.json"
           INPUT_JSON_SUITE_DETAILS: true
           INPUT_JSON_TEST_CASE_RESULTS: true
           INPUT_REPORT_SUITE_LOGS: "any"
         run: |
-          docker run \
+          docker run --platform linux/amd64 \
             --workdir $GITHUB_WORKSPACE \
             --rm \
             -e "INPUT_CHECK_NAME" \
@@ -182,10 +189,123 @@ jobs:
             enricomi/publish-unit-test-result-action:latest
         shell: bash
 
-      - name: JSON output
+      - name: Publish Test Results (ARM 64)
+        id: test-results-arm-64
+        if: always()
+        env:
+          INPUT_GITHUB_TOKEN: ${{ github.token }}
+          INPUT_CHECK_NAME: Test Results (Docker Image arm64)
+          INPUT_FILES: "artifacts/**/*.xml"
+          INPUT_JSON_FILE: "tests.json"
+          INPUT_JSON_SUITE_DETAILS: true
+          INPUT_JSON_TEST_CASE_RESULTS: true
+          INPUT_REPORT_SUITE_LOGS: "any"
+        run: |
+          docker run --platform linux/arm64 \
+            --workdir $GITHUB_WORKSPACE \
+            --rm \
+            -e "INPUT_CHECK_NAME" \
+            -e "INPUT_JSON_FILE" \
+            -e "INPUT_JSON_SUITE_DETAILS" \
+            -e "INPUT_JSON_TEST_CASE_RESULTS" \
+            -e "INPUT_LOG_LEVEL" \
+            -e "INPUT_ROOT_LOG_LEVEL" \
+            -e "INPUT_GITHUB_TOKEN" \
+            -e "INPUT_GITHUB_TOKEN_ACTOR" \
+            -e "INPUT_GITHUB_RETRIES" \
+            -e "INPUT_COMMIT" \
+            -e "INPUT_COMMENT_TITLE" \
+            -e "INPUT_COMMENT_MODE" \
+            -e "INPUT_FAIL_ON" \
+            -e "INPUT_ACTION_FAIL" \
+            -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
+            -e "INPUT_FILES" \
+            -e "INPUT_JUNIT_FILES" \
+            -e "INPUT_NUNIT_FILES" \
+            -e "INPUT_XUNIT_FILES" \
+            -e "INPUT_TRX_FILES" \
+            -e "INPUT_TIME_UNIT" \
+            -e "INPUT_TEST_FILE_PREFIX" \
+            -e "INPUT_REPORT_INDIVIDUAL_RUNS" \
+            -e "INPUT_REPORT_SUITE_LOGS" \
+            -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
+            -e "INPUT_LARGE_FILES" \
+            -e "INPUT_IGNORE_RUNS" \
+            -e "INPUT_JOB_SUMMARY" \
+            -e "INPUT_COMPARE_TO_EARLIER_COMMIT" \
+            -e "INPUT_PULL_REQUEST_BUILD" \
+            -e "INPUT_EVENT_FILE" \
+            -e "INPUT_EVENT_NAME" \
+            -e "INPUT_TEST_CHANGES_LIMIT" \
+            -e "INPUT_CHECK_RUN_ANNOTATIONS" \
+            -e "INPUT_CHECK_RUN_ANNOTATIONS_BRANCH" \
+            -e "INPUT_SECONDS_BETWEEN_GITHUB_READS" \
+            -e "INPUT_SECONDS_BETWEEN_GITHUB_WRITES" \
+            -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
+            -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
+            -e "INPUT_SEARCH_PULL_REQUESTS" \
+            -e "HOME" \
+            -e "GITHUB_JOB" \
+            -e "GITHUB_REF" \
+            -e "GITHUB_SHA" \
+            -e "GITHUB_REPOSITORY" \
+            -e "GITHUB_REPOSITORY_OWNER" \
+            -e "GITHUB_RUN_ID" \
+            -e "GITHUB_RUN_NUMBER" \
+            -e "GITHUB_RETENTION_DAYS" \
+            -e "GITHUB_RUN_ATTEMPT" \
+            -e "GITHUB_ACTOR" \
+            -e "GITHUB_TRIGGERING_ACTOR" \
+            -e "GITHUB_WORKFLOW" \
+            -e "GITHUB_HEAD_REF" \
+            -e "GITHUB_BASE_REF" \
+            -e "GITHUB_EVENT_NAME" \
+            -e "GITHUB_SERVER_URL" \
+            -e "GITHUB_API_URL" \
+            -e "GITHUB_GRAPHQL_URL" \
+            -e "GITHUB_REF_NAME" \
+            -e "GITHUB_REF_PROTECTED" \
+            -e "GITHUB_REF_TYPE" \
+            -e "GITHUB_WORKSPACE" \
+            -e "GITHUB_ACTION" \
+            -e "GITHUB_EVENT_PATH" \
+            -e "GITHUB_ACTION_REPOSITORY" \
+            -e "GITHUB_ACTION_REF" \
+            -e "GITHUB_PATH" \
+            -e "GITHUB_ENV" \
+            -e "GITHUB_STEP_SUMMARY" \
+            -e "GITHUB_STATE" \
+            -e "GITHUB_OUTPUT" \
+            -e "RUNNER_OS" \
+            -e "RUNNER_ARCH" \
+            -e "RUNNER_NAME" \
+            -e "RUNNER_TOOL_CACHE" \
+            -e "RUNNER_TEMP" \
+            -e "RUNNER_WORKSPACE" \
+            -e "ACTIONS_RUNTIME_URL" \
+            -e "ACTIONS_RUNTIME_TOKEN" \
+            -e "ACTIONS_CACHE_URL" \
+            -e GITHUB_ACTIONS=true \
+            -e CI=true \
+            -v "$RUNNER_TEMP":"$RUNNER_TEMP" \
+            -v "/var/run/docker.sock":"/var/run/docker.sock" \
+            -v "/home/runner/work/_temp/_github_home":"/github/home" \
+            -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
+            -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
+            -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
+            enricomi/publish-unit-test-result-action:latest
+        shell: bash
+
+      - name: JSON output (AMD 64)
         uses: ./misc/action/json-output
         with:
-          json: '${{ steps.test-results.outputs.json }}'
+          json: '${{ steps.test-results-amd-64.outputs.json }}'
+          json_file: 'tests.json'
+
+      - name: JSON output (AMR 64)
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results-arm-64.outputs.json }}'
           json_file: 'tests.json'
 
       - name: Scan for vulnerabilities
