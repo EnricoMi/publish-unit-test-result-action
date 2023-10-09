@@ -1,20 +1,20 @@
-<svg width="58.2" height="20" viewBox="0 0 582 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TRX: OK">
-  <title>TRX: OK</title>
-  <linearGradient id="a" x2="0" y2="100%">
+<svg width="65" height="20" viewBox="0 0 650 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label=".Net: TRX">
+  <title>.Net: TRX</title>
+  <linearGradient id="JNojx" x2="0" y2="100%">
     <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <mask id="m"><rect width="582" height="200" rx="30" fill="#FFF"/></mask>
-  <g mask="url(#m)">
-    <rect width="319" height="200" fill="#555"/>
-    <rect width="263" height="200" fill="#3C1" x="319"/>
-    <rect width="582" height="200" fill="url(#a)"/>
+  <mask id="alBtL"><rect width="650" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#alBtL)">
+    <rect width="331" height="200" fill="#555"/>
+    <rect width="319" height="200" fill="#3C1" x="331"/>
+    <rect width="650" height="200" fill="url(#JNojx)"/>
   </g>
   <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
-    <text x="60" y="148" textLength="219" fill="#000" opacity="0.25">TRX</text>
-    <text x="50" y="138" textLength="219">TRX</text>
-    <text x="374" y="148" textLength="163" fill="#000" opacity="0.25">OK</text>
-    <text x="364" y="138" textLength="163">OK</text>
+    <text x="60" y="148" textLength="231" fill="#000" opacity="0.25">.Net</text>
+    <text x="50" y="138" textLength="231">.Net</text>
+    <text x="386" y="148" textLength="219" fill="#000" opacity="0.25">TRX</text>
+    <text x="376" y="138" textLength="219">TRX</text>
   </g>
   
 </svg>
