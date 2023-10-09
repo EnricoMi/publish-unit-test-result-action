@@ -20,7 +20,7 @@ This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, VS) and XML (JUnit, NUnit, XUnit) file formats](#generating-test-result-files),
 and runs on Linux, macOS and Windows.
 
-You can add this action to your GitHub workflow for ![Ubuntu Linux](misc/badge-ubuntu.svg) (e.g. `runs-on: ubuntu-latest`)
+You can use this action with ![Ubuntu Linux](misc/badge-ubuntu.svg) runners (e.g. `runs-on: ubuntu-latest`)
 or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 ```yaml
