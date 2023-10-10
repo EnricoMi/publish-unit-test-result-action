@@ -208,13 +208,13 @@ runs:
         echo '##[group]Create virtualenv'
         # install virtualenv, if it is not yet installed
         python3 -m pip install $PIP_OPTIONS virtualenv
-        python3 -m virtualenv venv
+        python3 -m virtualenv enricomi-publish-action-venv
         # test activating virtualenv
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source venv/bin/activate;;
+            source enricomi-publish-action-venv/bin/activate;;
           Windows*)
-            source venv\\Scripts\\activate;;
+            source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
         which python3
         echo '##[endgroup]'
@@ -230,9 +230,9 @@ runs:
           # activate virtualenv
           case "$RUNNER_OS" in
             Linux*|macOS*)
-              source venv/bin/activate;;
+              source enricomi-publish-action-venv/bin/activate;;
             Windows*)
-              source venv\\Scripts\\activate;;
+              source enricomi-publish-action-venv\\Scripts\\activate;;
           esac
         fi
         which python3
@@ -250,9 +250,9 @@ runs:
         # activate virtualenv
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source venv/bin/activate;;
+            source enricomi-publish-action-venv/bin/activate;;
           Windows*)
-            source venv\\Scripts\\activate;;
+            source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
