@@ -45,7 +45,7 @@ jobs:
 
   publish-docker-image:
     name: Publish Test Results (Docker Image ${{ matrix.arch }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.on }}
     permissions:
       checks: write
       pull-requests: write
@@ -54,12 +54,21 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm64]
+        on: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - on: ubuntu-latest
+            os: linux
+          - on: macos-latest
+            os: linux
+          - on: windows-latest
+            os: windows
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Set up QEMU
+        if: matrix.os == 'linux'
         uses: docker/setup-qemu-action@v3
         with:
           image: tonistiigi/binfmt:latest
@@ -74,7 +83,7 @@ jobs:
         with:
           load: true
           push: false
-          platforms: linux/${{ matrix.arch }}
+          platforms: ${{ matrix.os }}/${{ matrix.arch }}
           tags: enricomi/publish-unit-test-result-action:latest
           outputs: type=docker
 
