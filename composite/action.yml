@@ -186,6 +186,7 @@ runs:
             ;;
           Windows*)
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
+            echo "pip-options=--user" >> $GITHUB_OUTPUT
             ;;
         esac
       shell: bash
@@ -198,12 +199,47 @@ runs:
         path: ${{ steps.os.outputs.pip-cache }}
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-df386fe4e04a72c96e140f0566a5c849
 
+    - name: Create virtualenv
+      id: venv
+      continue-on-error: true
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
+      run: |
+        echo '##[group]Create virtualenv'
+        # install virtualenv, if it is not yet installed
+        python3 -m pip install $PIP_OPTIONS virtualenv
+        python3 -m virtualenv enricomi-publish-action-venv
+        # test activating virtualenv
+        case "$RUNNER_OS" in
+          Linux*|macOS*)
+            source enricomi-publish-action-venv/bin/activate;;
+          Windows*)
+            source enricomi-publish-action-venv\\Scripts\\activate;;
+        esac
+        which python3
+        echo '##[endgroup]'
+      shell: bash
+
     - name: Install Python dependencies
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Install Python dependencies'
+        if [ "${{ steps.venv.outcome }}" == "success" ]
+        then
+          # activate virtualenv
+          case "$RUNNER_OS" in
+            Linux*|macOS*)
+              source enricomi-publish-action-venv/bin/activate;;
+            Windows*)
+              source enricomi-publish-action-venv\\Scripts\\activate;;
+          esac
+        fi
+        which python3
+
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install wheel
-        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install $PIP_OPTIONS wheel
+        python3 -m pip install $PIP_OPTIONS -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -211,6 +247,13 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
+        # activate virtualenv
+        case "$RUNNER_OS" in
+          Linux*|macOS*)
+            source enricomi-publish-action-venv/bin/activate;;
+          Windows*)
+            source enricomi-publish-action-venv\\Scripts\\activate;;
+        esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
