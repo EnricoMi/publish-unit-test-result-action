@@ -34,7 +34,7 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
       test-results/**/*.json
 ```
 
-See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative paths to your test result files.
+See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
 Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
 and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
