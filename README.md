@@ -34,8 +34,17 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
       test-results/**/*.json
 ```
 
+Note that above action can only read test files from relative paths like `test-results/**/*.xml` but not `/tmp/test-results/**/*.xml`.
+Either use the composite action (see below), or copy the files to a relative path first:
+```yaml
+- name: Copy Test Results
+  run: |
+    cp -Lpr /tmp/test-results test-results
+  shell: bash
+```
+
 Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
-and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners (and Linux runners if you really need to):
 
 ```yaml
 - name: Publish Test Results
@@ -261,7 +270,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|_no default_|File patterns of test result files. Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the composite action also works with absolute paths. Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
