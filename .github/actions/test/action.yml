@@ -82,8 +82,12 @@ runs:
   
         if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
         then
-          (git diff --name-only && git ls-files -o  --exclude-standard) | xargs -d "\n" zip changed-expectations.zip
-          exit 1
+          # we only upload the changed files if we can find zip
+          if which zip
+          then
+            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs -d "\n" zip changed-expectations.zip
+            exit 1
+          fi
         fi
       shell: bash
     - name: Upload changed expectation files
