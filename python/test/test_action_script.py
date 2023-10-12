@@ -795,7 +795,7 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('file1.txt')
+                files, _ = get_files('file1.txt')
                 self.assertEqual(['file1.txt'], sorted(files))
 
     def test_get_files_multi(self):
@@ -808,7 +808,7 @@ class Test(unittest.TestCase):
                             with open(filename, mode='w'):
                                 pass
 
-                        files = get_files(f'file1.txt{sep}file2.txt')
+                        files, _ = get_files(f'file1.txt{sep}file2.txt')
                         self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
 
     def test_get_files_single_wildcard(self):
@@ -821,7 +821,7 @@ class Test(unittest.TestCase):
                             with open(filename, mode='w'):
                                 pass
 
-                        files = get_files(wildcard)
+                        files, _ = get_files(wildcard)
                         self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
 
     def test_get_files_multi_wildcard(self):
@@ -834,8 +834,9 @@ class Test(unittest.TestCase):
                             with open(filename, mode='w'):
                                 pass
 
-                        files = get_files(f'*1.txt{sep}*3.bin')
+                        files, absolute = get_files(f'*1.txt{sep}*3.bin')
                         self.assertEqual(['file1.txt', 'file3.bin'], sorted(files))
+                        self.assertFalse(absolute)
 
     def test_get_files_subdir_and_wildcard(self):
         filenames = [os.path.join('sub', 'file1.txt'),
@@ -851,7 +852,7 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('sub/*.txt')
+                files, _ = get_files('sub/*.txt')
                 self.assertEqual([os.path.join('sub', 'file1.txt'),
                                   os.path.join('sub', 'file2.txt')], sorted(files))
 
@@ -876,7 +877,7 @@ class Test(unittest.TestCase):
                             with open(filename, mode='w'):
                                 pass
 
-                        files = get_files(pattern)
+                        files, _ = get_files(pattern)
                         self.assertEqual(sorted(expected), sorted(files))
 
     def test_get_files_symlinks(self):
@@ -895,7 +896,7 @@ class Test(unittest.TestCase):
                                 pass
                         os.symlink(os.path.join(path, 'sub2'), os.path.join(path, 'sub1', 'sub2'), target_is_directory=True)
 
-                        files = get_files(pattern)
+                        files, _ = get_files(pattern)
                         self.assertEqual(sorted(expected), sorted(files))
 
     def test_get_files_character_range(self):
@@ -906,7 +907,7 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('file[0-2].*')
+                files, _ = get_files('file[0-2].*')
                 self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
 
     def test_get_files_multi_match(self):
@@ -917,7 +918,7 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('*.txt\nfile*.txt\nfile2.*')
+                files, _ = get_files('*.txt\nfile*.txt\nfile2.*')
                 self.assertEqual(['file1.txt', 'file2.txt'], sorted(files))
 
     def test_get_files_absolute_path_and_wildcard(self):
@@ -928,8 +929,9 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files(os.path.join(path, '*'))
+                files, absolute = get_files(os.path.join(path, '*'))
                 self.assertEqual([os.path.join(path, file) for file in filenames], sorted(files))
+                self.assertTrue(absolute)
 
     def test_get_files_exclude_only(self):
         filenames = ['file1.txt', 'file2.txt', 'file3.bin']
@@ -939,7 +941,7 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('!file*.txt')
+                files, _ = get_files('!file*.txt')
                 self.assertEqual([], sorted(files))
 
     def test_get_files_include_and_exclude(self):
@@ -950,12 +952,12 @@ class Test(unittest.TestCase):
                     with open(filename, mode='w'):
                         pass
 
-                files = get_files('*.txt\n!file1.txt')
+                files, _ = get_files('*.txt\n!file1.txt')
                 self.assertEqual(['file2.txt'], sorted(files))
 
     def test_get_files_with_mock(self):
         with mock.patch('publish_test_results.glob') as m:
-            files = get_files('*.txt\n!file1.txt')
+            files, _ = get_files('*.txt\n!file1.txt')
             self.assertEqual([], files)
             self.assertEqual([mock.call('*.txt', recursive=True), mock.call('file1.txt', recursive=True)], m.call_args_list)
 
@@ -1124,9 +1126,17 @@ class Test(unittest.TestCase):
 
         gha.warning.assert_has_calls([
             mock.call(f'Could not find any JUnit XML files for {missing_junit}'),
+            mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
+            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
             mock.call(f'Could not find any NUnit XML files for {missing_nunit}'),
+            mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
+            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
             mock.call(f'Could not find any XUnit XML files for {missing_xunit}'),
-            mock.call(f'Could not find any TRX files for {missing_trx}')
+            mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
+            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
+            mock.call(f'Could not find any TRX files for {missing_trx}'),
+            mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
+            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
         ])
         gha.error.assert_not_called()
 
