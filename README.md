@@ -780,9 +780,19 @@ you have to copy files to a relative path first, and then use the relative path:
 
 ```yaml
 - name: Copy Test Results
+  if: always()
   run: |
     cp -Lpr /tmp/test-results test-results
   shell: bash
+
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+     files: |
+        test-results/**/*.xml
+        test-results/**/*.trx
+        test-results/**/*.json
 ```
 
 Using the non-composite variant of this action is recommended as it starts up much quicker.
