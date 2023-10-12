@@ -4,6 +4,7 @@ import os
 import re
 import sys
 from glob import glob
+from pathlib import Path
 from typing import List, Optional, Union, Mapping, Tuple, Any, Iterable, Callable
 
 import github
@@ -65,7 +66,7 @@ def get_files(multiline_files_globs: str) -> Tuple[List[str], bool]:
                 for files_glob in multiline_files_globs
                 if files_glob.startswith('!')
                 for file in glob(files_glob[1:], recursive=True)}
-    has_absolute = any({pattern.startswith('/') or pattern.startswith('\\')
+    has_absolute = any({Path(pattern).is_absolute()
                         for files_glob in multiline_files_globs
                         for pattern in [files_glob[1:] if files_glob.startswith('!') else files_glob]})
     return list(included - excluded), has_absolute
