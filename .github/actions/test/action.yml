@@ -82,7 +82,7 @@ runs:
   
         if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
         then
-          zip changes.zip $(git diff --name-only) $(git ls-files -o  --exclude-standard)
+          (git diff --name-only && git ls-files -o  --exclude-standard) | xargs -d "\n" zip changed-expectations.zip
           exit 1
         fi
       shell: bash
