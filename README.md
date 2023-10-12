@@ -776,7 +776,7 @@ but most absolute paths (e.g. `/tmp/test-results/**/*.xml`) require to use the c
 of this action (`uses: EnricoMi/publish-unit-test-result-action/composite@v2`).
 
 If you have to use absolute paths with the non-composite variant of this action (`uses: EnricoMi/publish-unit-test-result-action@v2`),
-you have to copy files to a relative path first:
+you have to copy files to a relative path first, and then use the relative path:
 
 ```yaml
 - name: Copy Test Results
