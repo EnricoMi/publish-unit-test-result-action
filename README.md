@@ -34,7 +34,7 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
       test-results/**/*.json
 ```
 
-***Note:**: Above action can only read test result files from relative paths like `test-results/**/*.xml` but not `/tmp/test-results/**/*.xml`.
+***Note:**: Above action can only read test result files from relative paths (`test-results/**/*.xml`), but not absolute paths (`/tmp/test-results/**/*.xml`).
 Either use the composite action (see below), or copy files to a relative path first:*
 ```yaml
 - name: Copy Test Results
