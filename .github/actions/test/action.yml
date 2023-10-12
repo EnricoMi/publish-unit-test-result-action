@@ -92,6 +92,7 @@ runs:
       with:
         name: Changed expectations
         path: changed-expectations.zip
+        if-no-files-found: error
   
     - name: PyTest
       env:
