@@ -34,6 +34,8 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
       test-results/**/*.json
 ```
 
+See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
+
 Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
 and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
 
@@ -261,7 +263,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|_no default_|File patterns of test result files. Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the composite action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
@@ -766,6 +768,34 @@ Set the `gistURL` to the Gist that you want to write the badge file to, in the f
 
 You can then use the badge via this URL: https://gist.githubusercontent.com/{user}/{id}/raw/badge.svg
 </details>
+
+## Running with absolute paths
+
+It is known that this action works best with relative paths (e.g. `test-results/**/*.xml`),
+but most absolute paths (e.g. `/tmp/test-results/**/*.xml`) require to use the composite variant
+of this action (`uses: EnricoMi/publish-unit-test-result-action/composite@v2`).
+
+If you have to use absolute paths with the non-composite variant of this action (`uses: EnricoMi/publish-unit-test-result-action@v2`),
+you have to copy files to a relative path first, and then use the relative path:
+
+```yaml
+- name: Copy Test Results
+  if: always()
+  run: |
+    cp -Lpr /tmp/test-results test-results
+  shell: bash
+
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action@v2
+  if: always()
+  with:
+     files: |
+        test-results/**/*.xml
+        test-results/**/*.trx
+        test-results/**/*.json
+```
+
+Using the non-composite variant of this action is recommended as it starts up much quicker.
 
 ## Running as a composite action
 
