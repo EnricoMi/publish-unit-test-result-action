@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check requirements.txt against requirements-direct.txt
         run: |
           (diff -w python/requirements-direct.txt python/requirements.txt || true) | (! grep -e "^<")
@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract action image and version
         # we deploy from a specific commit on master (the one that mentions a new version the first time)

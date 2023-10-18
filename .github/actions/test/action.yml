@@ -27,7 +27,7 @@ runs:
         python-version: ${{ inputs.python-version }}
   
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
   
     - name: Detect OS
       id: os
