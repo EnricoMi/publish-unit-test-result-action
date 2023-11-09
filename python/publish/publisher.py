@@ -13,7 +13,7 @@ from github.CheckRunAnnotation import CheckRunAnnotation
 from github.PullRequest import PullRequest
 from github.IssueComment import IssueComment
 
-from publish import __version__, comment_mode_off, digest_prefix, restrict_unicode_list, \
+from publish import __version__, get_json_path, comment_mode_off, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
@@ -206,7 +206,7 @@ class Publisher:
             check_run = None
             before_check_run = None
             if self._settings.compare_earlier:
-                before_commit_sha = self._settings.event.get('before')
+                before_commit_sha = get_json_path(self._settings.event, 'before')
                 logger.debug(f'comparing against before={before_commit_sha}')
                 before_check_run = self.get_check_run(before_commit_sha)
         else:
@@ -227,8 +227,8 @@ class Publisher:
                 logger.info('Commenting on pull requests disabled')
 
     def get_pull_from_event(self) -> Optional[PullRequest]:
-        number = self._settings.event.get('pull_request', {}).get('number')
-        repo = self._settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name')
+        number = get_json_path(self._settings.event, 'pull_request.number')
+        repo = get_json_path(self._settings.event, 'pull_request.base.repo.full_name')
         if number is None or repo is None or repo != self._settings.repo:
             return None
 
@@ -390,7 +390,7 @@ class Publisher:
         before_stats = None
         before_check_run = None
         if self._settings.compare_earlier:
-            before_commit_sha = self._settings.event.get('before')
+            before_commit_sha = get_json_path(self._settings.event, 'before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_check_run = self.get_check_run(before_commit_sha)
             before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
@@ -686,7 +686,7 @@ class Publisher:
             if self._settings.event:
                 # for pull request events we take the other parent of the merge commit (base)
                 if self._settings.event_name == 'pull_request':
-                    return self._settings.event.get('pull_request', {}).get('base', {}).get('sha')
+                    return get_json_path(self._settings.event, 'pull_request.base.sha')
                 # for workflow run events we should take the same as for pull request events,
                 # but we have no way to figure out the actual merge commit and its parents
                 # we do not take the base sha from pull_request as it is not immutable
@@ -728,18 +728,13 @@ class Publisher:
             "POST", self._settings.graphql_url, input=query
         )
 
-        return data \
-            .get('data', {}) \
-            .get('repository', {}) \
-            .get('pullRequest', {}) \
-            .get('comments', {}) \
-            .get('nodes')
+        return get_json_path(data, 'data.repository.pullRequest.comments.nodes')
 
     def get_action_comments(self, comments: List[Mapping[str, Any]], is_minimized: Optional[bool] = False):
         comment_body_start = f'## {self._settings.comment_title}\n'
         comment_body_indicators = ['\nresults for commit ', '\nResults for commit ']
         return list([comment for comment in comments
-                     if comment.get('author', {}).get('login') == self._settings.actor
+                     if get_json_path(comment, 'author.login') == self._settings.actor
                      and (is_minimized is None or comment.get('isMinimized') == is_minimized)
                      and comment.get('body', '').startswith(comment_body_start)
                      and any(indicator in comment.get('body', '') for indicator in comment_body_indicators)])
