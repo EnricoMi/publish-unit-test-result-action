@@ -5,7 +5,7 @@ from collections import defaultdict
 import mock
 
 from publish import __version__, Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
-    get_error_annotation, get_digest_from_stats, \
+    get_json_path, get_error_annotation, get_digest_from_stats, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
     duration_label_md, SomeTestChanges, abbreviate, abbreviate_bytes, get_test_name, get_formatted_digits, \
     get_magnitude, get_delta, as_short_commit, as_delta, as_stat_number, as_stat_duration, get_stats_from_digest, \
@@ -28,6 +28,22 @@ errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"
 class PublishTest(unittest.TestCase):
     old_locale = None
     details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
+
+    def test_get_json_path(self):
+        detail = {'a': 'A', 'b': 'B', 'c': ['d'], 'e': {}, 'f': None}
+        json = {'id': 1, 'name': 'Name', 'detail': detail}
+
+        self.assertEqual(None, get_json_path(json, 'not there'))
+        self.assertEqual(1, get_json_path(json, 'id'))
+        self.assertEqual('Name', get_json_path(json, 'name'))
+        self.assertEqual(detail, get_json_path(json, 'detail'))
+        self.assertEqual('A', get_json_path(json, 'detail.a'))
+        self.assertEqual(None, get_json_path(json, 'detail.a.g'))
+        self.assertEqual(['d'], get_json_path(json, 'detail.c'))
+        self.assertEqual({}, get_json_path(json, 'detail.e'))
+        self.assertEqual(None, get_json_path(json, 'detail.e.g'))
+        self.assertEqual(None, get_json_path(json, 'detail.f'))
+        self.assertEqual(None, get_json_path(json, 'detail.f.g'))
 
     def test_test_changes(self):
         changes = SomeTestChanges(['removed-test', 'removed-skip', 'remain-test', 'remain-skip', 'skip', 'unskip'],

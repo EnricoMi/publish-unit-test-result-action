@@ -13,7 +13,7 @@ import github.CheckRun
 import mock
 from github import Github, GithubException
 
-from publish import __version__, comment_mode_off, comment_mode_always, \
+from publish import __version__, get_json_path, comment_mode_off, comment_mode_always, \
     comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
     comment_mode_failures, comment_mode_errors, Annotation, default_annotations, \
     get_error_annotation, digest_header, get_digest_from_stats, \
@@ -888,6 +888,22 @@ class TestPublisher(unittest.TestCase):
         actual = publisher.get_pull_from_event()
         self.assertIs(actual, pr)
         repo.get_pull.assert_called_once_with(1234)
+        repo.get_pull.reset_mock()
+
+        # test with none in pull request
+        for event in [
+            {},
+            {'pull_request': None},
+            {'pull_request': {'number': 1234, 'base': None}},
+            {'pull_request': {'number': 1234, 'base': {'repo': None}}},
+            {'pull_request': {'number': 1234, 'base': {'repo': {}}}},
+        ]:
+            settings = self.create_settings(event=event)
+            publisher = Publisher(settings, gh, gha)
+
+            actual = publisher.get_pull_from_event()
+            self.assertIsNone(actual)
+            repo.get_pull.assert_not_called()
 
     def do_test_get_pulls(self,
                           settings: Settings,
@@ -911,7 +927,7 @@ class TestPublisher(unittest.TestCase):
         else:
             gh.search_issues.assert_not_called()
             if event_pull_request is not None and \
-                    settings.repo == settings.event.get('pull_request', {}).get('base', {}).get('repo', {}).get('full_name'):
+                    settings.repo == get_json_path(settings.event, 'pull_request.base.repo.full_name'):
                 repo.get_pull.assert_called_once_with(event_pull_request.number)
                 commit.get_pulls.assert_not_called()
             else:
@@ -2620,6 +2636,15 @@ class TestPublisher(unittest.TestCase):
             'body': '## Comment Title\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
+        },
+        # malformed comments
+        {
+            'id': 'comment nine',
+            'author': None,
+        },
+        {
+            'id': 'comment ten',
+            'author': {},
         },
     ]
 

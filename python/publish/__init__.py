@@ -5,7 +5,7 @@ import logging
 import re
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable
+from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable, Dict
 
 from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
@@ -149,6 +149,24 @@ class SomeTestChanges:
         if removed is None or skipped_before is None:
             return None
         return skipped_before.intersection(removed)
+
+
+def get_json_path(json: Dict[str, Any], path: Union[str, List[str]]) -> Any:
+    if isinstance(path, str):
+        path = path.split('.')
+
+    if path[0] not in json:
+        return None
+
+    elem = json[path[0]]
+
+    if len(path) > 1:
+        if isinstance(elem, dict):
+            return get_json_path(elem, path[1:])
+        else:
+            return None
+    else:
+        return elem
 
 
 def utf8_character_length(c: int) -> int:
