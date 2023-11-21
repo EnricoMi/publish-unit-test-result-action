@@ -84,6 +84,10 @@ inputs:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
     default: 'true'
     required: false
+  publish_check:
+    description: 'Set to "true", the results are published as a check run, not may not be associated with the workflow which initiated it.'
+    default: 'true'
+    required: false
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits.'
     default: 'true'

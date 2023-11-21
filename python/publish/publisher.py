@@ -60,6 +60,7 @@ class Settings:
     comment_title: str
     comment_mode: str
     job_summary: bool
+    publish_check: bool
     compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
@@ -196,13 +197,14 @@ class Publisher:
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
 
-        if self._settings.is_fork:
-            # running on a fork, we cannot publish the check, but we can still read before_check_run
-            # bump the version if you change the target of this link (if it did not exist already) or change the section
-            logger.info('This action is running on a pull_request event for a fork repository. '
-                        'Pull request comments and check runs cannot be created, so disabling these features. '
-                        'To fully run the action on fork repository pull requests, see '
-                        f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
+        if not self._settings.publish_check or self._settings.is_fork:
+            if self._settings.publish_check and self._settings.is_fork:
+                # running on a fork, we cannot publish the check, but we can still read before_check_run
+                # bump the version if you change the target of this link (if it did not exist already) or change the section
+                logger.info('This action is running on a pull_request event for a fork repository. '
+                            'Pull request comments and check runs cannot be created, so disabling these features. '
+                            'To fully run the action on fork repository pull requests, see '
+                            f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
             check_run = None
             before_check_run = None
             if self._settings.compare_earlier:

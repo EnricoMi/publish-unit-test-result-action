@@ -84,6 +84,10 @@ inputs:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
     default: 'true'
     required: false
+  publish_check:
+    description: 'Set to "true", the results are published as a check run, not may not be associated with the workflow which initiated it.'
+    default: 'true'
+    required: false
   compare_to_earlier_commit:
     description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits.'
     default: 'true'
@@ -294,6 +298,7 @@ runs:
         JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
         JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
+        PUBLISH_CHECK: ${{ inputs.publish_check }}
         SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
         # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
