@@ -2,7 +2,7 @@ name: Badges
 
 on:
   schedule:
-    - cron: '52 07 * * *'
+    - cron: '24 03 * * 3'
   workflow_dispatch:
 
 permissions: {}
@@ -33,7 +33,7 @@ jobs:
           path: downloads.svg
 
       - name: Create JSON
-        run:
+        run: |
           echo '{"subject": "Docker pulls", "status": "${{ steps.downloads.outputs.total_downloads }} (${{ steps.downloads.outputs.recent_downloads_per_day }}/day)", "color": "blue"}' > downloads.json
 
       - name: Upload badge to Gist
@@ -73,7 +73,7 @@ jobs:
           path: workflows.svg
 
       - name: Create JSON
-        run:
+        run: |
           echo '{"subject": "GitHub Workflows", "status": "${{ steps.workflows.outputs.total_workflows }}", "color": "blue"}' > workflows.json
 
       - name: Upload badge to Gist
