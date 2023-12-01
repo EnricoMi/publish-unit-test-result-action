@@ -3,8 +3,8 @@
 [![CI/CD](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/EnricoMi/publish-unit-test-result-action/actions/workflows/ci-cd.yml)
 [![GitHub release badge](https://badgen.net/github/release/EnricoMi/publish-unit-test-result-action/stable)](https://github.com/EnricoMi/publish-unit-test-result-action/releases/latest)
 [![GitHub license badge](misc/badge-license.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![GitHub Workflows badge](https://badgen.net/https/gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/0838ccc17c78fe920b83e6f096847e23b85ff9c3/workflows.json)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
-[![Docker pulls badge](https://badgen.net/https/gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/0838ccc17c78fe920b83e6f096847e23b85ff9c3/downloads.json)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
+[![GitHub Workflows badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/workflows.svg)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
+[![Docker pulls badge](https://gist.github.com/EnricoMi/612cb538c14731f1a8fefe504f519395/raw/downloads.svg)](https://github.com/users/EnricoMi/packages/container/package/publish-unit-test-result-action)
 
 ![Arm badge](misc/badge-arm.svg)
 ![Ubuntu badge](misc/badge-ubuntu.svg)
