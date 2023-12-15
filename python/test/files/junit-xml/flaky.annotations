@@ -1,0 +1,79 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 errors, 1 fail, 2 pass in 0s',
+      'summary':
+        '1 files\u2004\u20031 suites\u2004\u2003\u20020s '
+        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
+        'tion/blob/VERSION/README.md#the-symbols "duration of all tests")\n4 '
+        'tests\u20032 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/VERSION/README.md#the-symbols "passed tests")\u2003'
+        '0 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/VERSION/README.md#the-symbols "skipped / disabled tests")\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/VERSION/README.md#the-symbols "failed tests")\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/VERSION/README.md#the-symbols "test errors")\n2 runs\u2006\u2003'
+        '0 '
+        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
+        'sult-action/blob/VERSION/README.md#the-symbols "passed tests")\u2003'
+        '0 '
+        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
+        'lob/VERSION/README.md#the-symbols "skipped / disabled tests")\u20031 '
+        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
+        'b/VERSION/README.md#the-symbols "failed tests")\u20031 '
+        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
+        'blob/VERSION/README.md#the-symbols "test errors")\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MQQ6AIAwEv'
+        '0I4e1Djyc8QghobBUwLJ+PfrYjIbWe3nVMusM8kR9E1QlKEUGCKqAN4x9gy8hCeafiyom'
+        'gMF/1fbHDU12rRsGfbW8yIHnOD0VF+f+Knawv/tsSVLHHtMt5aCAw5CVq1vG6wyJ3P3QA'
+        'AAA==\n',
+      'annotations': [
+        {
+          'path': 'example.ExampleTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'failure',
+          'message': 'flaky.xml\u2003[took 0s]',
+          'title': 'throwsAlways (example.ExampleTests) with error',
+          'raw_details':
+            'Always throws exception\njava.lang.RuntimeException: Always throws '
+            'exception\n\tat '
+            'example.ExampleTests.throwsAlways(ExampleTests.java:26)'
+        },
+        {
+          'path': 'example.ExampleTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'flaky.xml\u2003[took 0s]',
+          'title': 'failsAssertionAlways (example.ExampleTests) failed',
+          'raw_details':
+            'Always fails assertion ==> expected: <1> but was: <2>\n'
+            'org.opentest4j.AssertionFailedError: Always fails assertion ==> '
+            'expected: <1> but was: <2>\n\tat '
+            'example.ExampleTests.failsAssertionAlways(ExampleTests.java:40)'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 4 tests, see "Raw output" for the full list of tests.',
+          'title': '4 tests found',
+          'raw_details':
+            'example.ExampleTests ‑ failsAssertionAlways\nexample.ExampleTests '
+            '‑ failsAssertionOnlyFirstAttempt\nexample.ExampleTests ‑ '
+            'throwsAlways\nexample.ExampleTests ‑ throwsOnlyFirstAttempt'
+        }
+      ]
+    }
+  }
+]
