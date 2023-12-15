@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import mock
 
-from publish import __version__, Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
+from publish import Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
     get_json_path, get_error_annotation, get_digest_from_stats, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
     duration_label_md, SomeTestChanges, abbreviate, abbreviate_bytes, get_test_name, get_formatted_digits, \
@@ -555,11 +555,11 @@ class PublishTest(unittest.TestCase):
 
     def test_label_md(self):
         self.assertEqual(all_tests_label_md, 'tests')
-        self.assertEqual(passed_tests_label_md, f'[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "passed tests")')
-        self.assertEqual(skipped_tests_label_md, f'[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "skipped / disabled tests")')
-        self.assertEqual(failed_tests_label_md, f'[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "failed tests")')
-        self.assertEqual(test_errors_label_md, f'[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "test errors")')
-        self.assertEqual(duration_label_md, f'[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")')
+        self.assertEqual(passed_tests_label_md, f':heavy_check_mark:')
+        self.assertEqual(skipped_tests_label_md, f':zzz:')
+        self.assertEqual(failed_tests_label_md, f':x:')
+        self.assertEqual(test_errors_label_md, f':fire:')
+        self.assertEqual(duration_label_md, f':stopwatch:')
 
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
@@ -816,7 +816,7 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
-        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")\n'
+        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s :stopwatch:\n'
              f'2 suites  6 {skipped_tests_label_md}\n'
              f'1 files    7 {failed_tests_label_md}  8 {test_errors_label_md}\n'
              f'\n'
@@ -2090,7 +2090,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s :stopwatch:\n'
                               f'1 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
@@ -2101,7 +2101,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'6 {all_tests_label_md}   3 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")\n'
+        self.assertEqual(md, (f'6 {all_tests_label_md}   3 {passed_tests_label_md}  0s :stopwatch:\n'
                               f'1 suites  2 {skipped_tests_label_md}\n'
                               f'1 files    1 {failed_tests_label_md}\n'
                               f'\n'
@@ -2112,7 +2112,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s :stopwatch:\n'
                               f'0 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'1 errors\n'
@@ -2124,7 +2124,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols "duration of all tests")\n'
+        self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s :stopwatch:\n'
                               f'4 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
