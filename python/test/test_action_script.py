@@ -1024,14 +1024,14 @@ class Test(unittest.TestCase):
                 (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
             # on macOS and below Python 3.9 we see one particular error
             self.assertEqual(17, len(actual.errors))
-            self.assertEqual(731, actual.suites)
-            self.assertEqual(4109, actual.suite_tests)
+            self.assertEqual(733, actual.suites)
+            self.assertEqual(4113, actual.suite_tests)
             self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(450, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
+            self.assertEqual(452, actual.suite_failures)
+            self.assertEqual(23, actual.suite_errors)
             self.assertEqual(7956, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4085, len(actual.cases))
+            self.assertEqual(4093, len(actual.cases))
         else:
             self.assertEqual(13, len(actual.errors))
             self.assertEqual(737, actual.suites)
@@ -1107,9 +1107,9 @@ class Test(unittest.TestCase):
                 if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
                         (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
                     # on macOS (below macOS 13) and Python below 3.9 we see one particular error
-                    self.assertEqual(363, len(actual.suite_details))
+                    self.assertEqual(364, len(actual.suite_details))
                 else:
-                    self.assertEqual(365, len(actual.suite_details))
+                    self.assertEqual(366, len(actual.suite_details))
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
