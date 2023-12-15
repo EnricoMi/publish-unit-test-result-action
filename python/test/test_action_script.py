@@ -982,12 +982,12 @@ class Test(unittest.TestCase):
                 print(call.args[0])
 
             self.assertEqual(17, len(l.info.call_args_list))
-            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (76 files, ") for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit XML files {prettify_glob_pattern(settings.junit_files_glob)} (28 files, ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f"Reading files {prettify_glob_pattern(settings.files_glob)} (77 files, ") for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Reading JUnit XML files {prettify_glob_pattern(settings.junit_files_glob)} (29 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading NUnit XML files {prettify_glob_pattern(settings.nunit_files_glob)} (24 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading XUnit XML files {prettify_glob_pattern(settings.xunit_files_glob)} (8 files, ') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Reading TRX files {prettify_glob_pattern(settings.trx_files_glob)} (9 files, ') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Detected 27 JUnit XML files (') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Detected 28 JUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 24 NUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 8 XUnit XML files (') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].startswith(f'Detected 9 TRX files (') for call in l.info.call_args_list]))
@@ -999,7 +999,7 @@ class Test(unittest.TestCase):
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}junit-xml{os.sep}non-junit.xml') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json{os.sep}non-json.json') for call in l.info.call_args_list]))
             self.assertTrue(any([call.args[0].endswith(f'python{os.sep}test{os.sep}files{os.sep}json{os.sep}malformed-json.json') for call in l.info.call_args_list]))
-            self.assertTrue(any([call.args[0].startswith(f'Finished reading 145 files in ') for call in l.info.call_args_list]))
+            self.assertTrue(any([call.args[0].startswith(f'Finished reading 147 files in ') for call in l.info.call_args_list]))
 
             for call in l.debug.call_args_list:
                 print(call.args[0])
@@ -1019,7 +1019,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual([], gha.method_calls)
 
-        self.assertEqual(145, actual.files)
+        self.assertEqual(147, actual.files)
         if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
                 (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
             # on macOS and below Python 3.9 we see one particular error
@@ -1034,14 +1034,14 @@ class Test(unittest.TestCase):
             self.assertEqual(4085, len(actual.cases))
         else:
             self.assertEqual(13, len(actual.errors))
-            self.assertEqual(735, actual.suites)
-            self.assertEqual(4117, actual.suite_tests)
+            self.assertEqual(737, actual.suites)
+            self.assertEqual(4121, actual.suite_tests)
             self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(454, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
+            self.assertEqual(456, actual.suite_failures)
+            self.assertEqual(23, actual.suite_errors)
             self.assertEqual(7957, actual.suite_time)
             self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4093, len(actual.cases))
+            self.assertEqual(4101, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -1195,17 +1195,17 @@ class Test(unittest.TestCase):
 
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
-                self.assertEqual(145, results.files)
+                self.assertEqual(147, results.files)
                 if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
                         (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
                     # on macOS and below Python 3.9 we see one particular error
-                    self.assertEqual(731, results.suites)
-                    self.assertEqual(731, len(results.suite_details))
-                    self.assertEqual(1811, len(cases))
+                    self.assertEqual(733, results.suites)
+                    self.assertEqual(733, len(results.suite_details))
+                    self.assertEqual(1815, len(cases))
                 else:
-                    self.assertEqual(735, results.suites)
-                    self.assertEqual(735, len(results.suite_details))
-                    self.assertEqual(1811, len(cases))
+                    self.assertEqual(737, results.suites)
+                    self.assertEqual(737, len(results.suite_details))
+                    self.assertEqual(1815, len(cases))
                 self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check_wo_summary(self):
