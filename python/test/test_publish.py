@@ -555,7 +555,7 @@ class PublishTest(unittest.TestCase):
 
     def test_label_md(self):
         self.assertEqual(all_tests_label_md, 'tests')
-        self.assertEqual(passed_tests_label_md, f':heavy_check_mark:')
+        self.assertEqual(passed_tests_label_md, f':white_check_mark:')
         self.assertEqual(skipped_tests_label_md, f':zzz:')
         self.assertEqual(failed_tests_label_md, f':x:')
         self.assertEqual(test_errors_label_md, f':fire:')

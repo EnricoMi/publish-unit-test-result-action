@@ -9,8 +9,8 @@
       'summary':
         '\u205f\u2004\u205f\u20041 files\u2004\u2003155 suites\u2004\u2003\u2002'
         '14m 11s :stopwatch:\n146 tests\u2003\u205f\u2004\u205f\u20046 '
-        ':heavy_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
-        '6 :heavy_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
+        ':white_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
+        '6 :white_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
         'commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NSw6AIAwFr'
         '0JYu9BEjPEyhqDExg+mwMp4dysfZdeZ175eXMM2Wz6wpmLcenARhCCcPEoH5iDRizen0I'
@@ -1918,8 +1918,8 @@
       'summary':
         '\u205f\u2004\u205f\u20041 files\u2004\u2003155 suites\u2004\u2003\u2002'
         '14m 11s :stopwatch:\n146 tests\u2003\u205f\u2004\u205f\u20046 '
-        ':heavy_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
-        '6 :heavy_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
+        ':white_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
+        '6 :white_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
         'commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NSw6AIAwFr'
         '0JYu9BEjPEyhqDExg+mwMp4dysfZdeZ175eXMM2Wz6wpmLcenARhCCcPEoH5iDRizen0I'
@@ -3641,8 +3641,8 @@
       'summary':
         '\u205f\u2004\u205f\u20041 files\u2004\u2003155 suites\u2004\u2003\u2002'
         '14m 11s :stopwatch:\n146 tests\u2003\u205f\u2004\u205f\u20046 '
-        ':heavy_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
-        '6 :heavy_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
+        ':white_check_mark:\u20030 :zzz:\u2003140 :x:\n150 runs\u2006\u2003\u205f\u2004\u205f\u2004'
+        '6 :white_check_mark:\u20030 :zzz:\u2003144 :x:\n\nResults for commit '
         'commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NSw6AIAwFr'
         '0JYu9BEjPEyhqDExg+mwMp4dysfZdeZ175eXMM2Wz6wpmLcenARhCCcPEoH5iDRizen0I'

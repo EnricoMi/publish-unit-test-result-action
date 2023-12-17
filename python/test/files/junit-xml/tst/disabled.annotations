@@ -8,9 +8,9 @@
       'title': '1 errors, 19 fail, 5 skipped, 6 pass in 0s',
       'summary':
         '\u205f\u20041 files\u2004\u2003\u205f\u20042 suites\u2004\u2003\u2002'
-        '0s :stopwatch:\n31 tests\u2003\u205f\u20046 :heavy_check_mark:\u2003'
+        '0s :stopwatch:\n31 tests\u2003\u205f\u20046 :white_check_mark:\u2003'
         '5 :zzz:\u200319 :x:\u20031 :fire:\n31 runs\u2006\u200311 '
-        ':heavy_check_mark:\u20030 :zzz:\u200319 :x:\u20031 :fire:\n\nResults '
+        ':white_check_mark:\u20030 :zzz:\u200319 :x:\u20031 :fire:\n\nResults '
         'for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NQQqAIBBFr'
         'yKuW2RRUJcJsaIhyxh1Fd29sdLczXsf3px8Bj1Z3jNRMG49uAcqgtGjdGB2wpKQBhemWk'

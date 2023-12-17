@@ -7,7 +7,7 @@
     'output': {
       'title': 'All 33 tests pass, 2 skipped in 2m 45s',
       'summary':
-        '35 tests\u2002\u2003\u200333 :heavy_check_mark:\u2003\u20032m 45s '
+        '35 tests\u2002\u2003\u200333 :white_check_mark:\u2003\u20032m 45s '
         ':stopwatch:\n\u205f\u20041 suites\u2003\u2003\u205f\u20042 :zzz:\n\u205f\u2004'
         '1 files\u2004\u2002\u2003\u2003\u205f\u20040 :x:\n\nResults for '
         'commit commit s.\n\n'

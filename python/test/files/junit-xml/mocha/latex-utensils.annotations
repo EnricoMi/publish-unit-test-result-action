@@ -9,8 +9,8 @@
       'summary':
         '\u205f\u2004\u205f\u20041 files\u2004\u2003\u205f\u2004\u205f\u20041 '
         'suites\u2004\u2003\u20020s :stopwatch:\n101 tests\u2003101 '
-        ':heavy_check_mark:\u20030 :zzz:\u20030 :x:\n109 runs\u2006\u2003109 '
-        ':heavy_check_mark:\u20030 :zzz:\u20030 :x:\n\nResults for commit '
+        ':white_check_mark:\u20030 :zzz:\u20030 :x:\n109 runs\u2006\u2003109 '
+        ':white_check_mark:\u20030 :zzz:\u20030 :x:\n\nResults for commit '
         'commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MMQ6AIBAEv'
         '0KoLaDUzxCCEC8imAMq498liIJ2N7O5OagBqwOdCB8IDQniC3NCGcG7jCxjHmKZGH9IhK'

@@ -8,8 +8,8 @@
       'title': 'All 1 tests pass, 1 skipped in 6s',
       'summary':
         '1 files\u2004\u20032 suites\u2004\u2003\u20026s :stopwatch:\n2 tests\u2003'
-        '1 :heavy_check_mark:\u20031 :zzz:\u20030 :x:\n2 runs\u2006\u20032 '
-        ':heavy_check_mark:\u20030 :zzz:\u20030 :x:\n\nResults for commit '
+        '1 :white_check_mark:\u20031 :zzz:\u20030 :x:\n2 runs\u2006\u20032 '
+        ':white_check_mark:\u20030 :zzz:\u20030 :x:\n\nResults for commit '
         'commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMMQ6AIBAEv'
         '0KoLdTCws8YghAvIpgDKuPfPREUu505mINrMMrzkXUN4z5CSNATzBFFAGcJB0I6hHJKe/'

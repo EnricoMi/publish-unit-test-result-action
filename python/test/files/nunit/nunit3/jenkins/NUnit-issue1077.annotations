@@ -7,7 +7,7 @@
     'output': {
       'title': 'All 6 tests pass in 35s',
       'summary':
-        '6 tests\u2002\u2003\u20036 :heavy_check_mark:\u2003\u200335s '
+        '6 tests\u2002\u2003\u20036 :white_check_mark:\u2003\u200335s '
         ':stopwatch:\n1 suites\u2003\u20030 :zzz:\n1 files\u2004\u2002\u2003\u2003'
         '0 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMwQqAIBAFf'

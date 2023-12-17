@@ -94,14 +94,14 @@ Check your favorite development and test environment for its JSON, TRX file or J
 
 |Test Environment |Language| JUnit<br/>XML | NUnit<br/>XML | XUnit<br/>XML | TRX<br/>file | JSON<br/>file |
 |-----------------|:------:|:---------:|:---------:|:---------:|:---:|:---:|
-|[Dart](https://github.com/dart-lang/test/blob/master/pkgs/test/doc/json_reporter.md)|Dart, Flutter| | | | | :heavy_check_mark: |
-|[Jest](https://jestjs.io/docs/configuration#default-reporter)|JavaScript|:heavy_check_mark:| | | | |
-|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|Java, Scala, Kotlin|:heavy_check_mark:| | | | |
-|[Mocha](https://mochajs.org/#xunit)|JavaScript|:heavy_check_mark:| |[not xunit](https://github.com/mochajs/mocha/issues/4758)| | :heavy_check_mark: |
-|[MStest / dotnet](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)|.Net|[:heavy_check_mark:](https://github.com/spekt/junit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/nunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/xunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)| |
-|[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:heavy_check_mark:| | | | |
-|[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:heavy_check_mark:| | | | |
-|Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:heavy_check_mark:| | | | |
+|[Dart](https://github.com/dart-lang/test/blob/master/pkgs/test/doc/json_reporter.md)|Dart, Flutter| | | | |:white_check_mark:|
+|[Jest](https://jestjs.io/docs/configuration#default-reporter)|JavaScript|:white_check_mark:| | | | |
+|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|Java, Scala, Kotlin|:white_check_mark:| | | | |
+|[Mocha](https://mochajs.org/#xunit)|JavaScript|:white_check_mark:| |[not xunit](https://github.com/mochajs/mocha/issues/4758)| |:white_check_mark:|
+|[MStest / dotnet](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)|.Net|[:white_check_mark:](https://github.com/spekt/junit.testlogger#usage)|[:white_check_mark:](https://github.com/spekt/nunit.testlogger#usage)|[:white_check_mark:](https://github.com/spekt/xunit.testlogger#usage)|[:white_check_mark:](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)| |
+|[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:white_check_mark:| | | | |
+|[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:white_check_mark:| | | | |
+|Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:white_check_mark:| | | | |
 
 ## What is new in version 2
 
@@ -344,7 +344,7 @@ Here is an example JSON:
 ```json
 {
   "title": "4 parse errors, 4 errors, 23 fail, 18 skipped, 227 pass in 39m 12s",
-  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
+  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:white_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:white_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
   "conclusion": "success",
   "stats": {
     "files": 24,
