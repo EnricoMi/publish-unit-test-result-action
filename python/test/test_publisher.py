@@ -493,6 +493,16 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
+    def test_publish_without_job_summary_and_comment_on_fork(self):
+        settings = self.create_settings(is_fork=True, comment_mode=comment_mode_off, job_summary=False)
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
+
+        self.assertEqual(1, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual(('before', ), args)
+        self.assertEqual({}, kwargs)
+
     def test_publish_without_publish_check_job_summary_and_comment(self):
         settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False, publish_check=False)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
