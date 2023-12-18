@@ -467,6 +467,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
 
+    def test_get_settings_publish_check(self):
+        warning = 'Option publish_check has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(PUBLISH_CHECK='false', expected=self.get_settings(publish_check=False))
+        self.do_test_get_settings(PUBLISH_CHECK='False', expected=self.get_settings(publish_check=False))
+        self.do_test_get_settings(PUBLISH_CHECK='true', expected=self.get_settings(publish_check=True))
+        self.do_test_get_settings(PUBLISH_CHECK='True', expected=self.get_settings(publish_check=True))
+        self.do_test_get_settings(PUBLISH_CHECK='foo', expected=self.get_settings(publish_check=True), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(PUBLISH_CHECK=None, expected=self.get_settings(publish_check=True))
+
     def test_get_settings_report_individual_runs(self):
         warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(REPORT_INDIVIDUAL_RUNS='false', expected=self.get_settings(report_individual_runs=False))
