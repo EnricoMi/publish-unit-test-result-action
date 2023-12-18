@@ -7,10 +7,9 @@
     'output': {
       'title': 'All 22 tests pass in 4m 24s',
       'summary':
-        '22 tests\u2002\u2003\u200322 :heavy_check_mark:\u2003\u20034m 24s '
-        ':stopwatch:\n13 suites\u2003\u2003\u205f\u20040 :zzz:\n\u205f\u20041 '
-        'files\u2004\u2002\u2003\u2003\u205f\u20040 :x:\n\nResults for commit '
-        'commit s.\n\n'
+        '22 tests\u2002\u2003\u200322 :white_check_mark:\u2003\u20034m 24s '
+        ':stopwatch:\n13 suites\u2003\u2003\u20070 :zzz:\n\u20071 files\u2004\u2002\u2003\u2003\u2007'
+        '0 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MOw6AIBAFr'
         '0KoLRSNhZcxBDVuFDELVMa7uwh+uzfzktn4AHNvecOKjHHrwUUoiTqP0oFZiEVdkaDPhV'
         'eIC1rrlfqZCVYy+S0GCfNH9IgGk0G/3MWwP8Eont7Jr9zJ75oyWoMjSIvZUfL9APCIHb/'

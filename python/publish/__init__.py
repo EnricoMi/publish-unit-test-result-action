@@ -18,7 +18,7 @@ digest_prefix = '[test-results]:data:'
 digest_mime_type = 'application/gzip'
 digest_encoding = 'base64'
 digest_header = f'{digest_prefix}{digest_mime_type};{digest_encoding},'
-digit_space = '  '
+digit_space = ' '
 punctuation_space = ' '
 
 comment_mode_off = 'off'
@@ -446,7 +446,7 @@ def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
 
 
 all_tests_label_md = 'tests'
-passed_tests_label_md = ':heavy_check_mark:'
+passed_tests_label_md = ':white_check_mark:'
 skipped_tests_label_md = ':zzz:'
 failed_tests_label_md = ':x:'
 test_errors_label_md = ':fire:'
@@ -637,7 +637,7 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
         runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.runs_error) else ''
     runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
-        runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
+        runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, passed_tests_label_md),
         runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
         runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md),

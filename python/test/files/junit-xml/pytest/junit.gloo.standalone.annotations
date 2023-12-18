@@ -7,10 +7,9 @@
     'output': {
       'title': 'All 80 tests pass, 17 skipped in 3m 25s',
       'summary':
-        '97 tests\u2002\u2003\u200380 :heavy_check_mark:\u2003\u20033m 25s '
-        ':stopwatch:\n\u205f\u20041 suites\u2003\u200317 :zzz:\n\u205f\u20041 '
-        'files\u2004\u2002\u2003\u2003\u205f\u20040 :x:\n\nResults for commit '
-        'commit s.\n\n'
+        '97 tests\u2002\u2003\u200380 :white_check_mark:\u2003\u20033m 25s '
+        ':stopwatch:\n\u20071 suites\u2003\u200317 :zzz:\n\u20071 files\u2004\u2002\u2003\u2003\u2007'
+        '0 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMTQqAIBBGr'
         'yKuW1QQ/VwmxIqGSmPUVXT3xrK03bz3De/gE6yj4R0rMsaNA/vB4FBY0IqwzCsSNFk/tv'
         'ULvXFSkmnyaBbYfSD+TAJWMvFlRNQYDDr1Jf39Kz4iCd4i6d2c5qTeNrAE4WJmFvy8ADN'

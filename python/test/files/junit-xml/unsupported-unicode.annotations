@@ -7,7 +7,7 @@
     'output': {
       'title': '2 errors, 2 fail, 2 skipped, 1 pass in 8s',
       'summary':
-        '7 tests\u2002\u2003\u20031 :heavy_check_mark:\u2003\u20038s '
+        '7 tests\u2002\u2003\u20031 :white_check_mark:\u2003\u20038s '
         ':stopwatch:\n1 suites\u2003\u20032 :zzz:\n1 files\u2004\u2002\u2003\u2003'
         '2 :x:\u2003\u20032 :fire:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMMQ6AIAxFr'

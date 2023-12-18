@@ -19,7 +19,7 @@ from publish import __version__, get_json_path, comment_mode_off, comment_mode_a
     get_error_annotation, digest_header, get_digest_from_stats, \
     all_tests_list, skipped_tests_list, none_annotations, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
-    duration_label_md, pull_request_build_mode_merge, punctuation_space, \
+    duration_label_md, digit_space, pull_request_build_mode_merge, punctuation_space, \
     get_long_summary_with_digest_md
 from publish.github_action import GithubAction
 from publish.publisher import Publisher, Settings, PublishData
@@ -670,15 +670,15 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('create_issue_comment', method)
         self.assertEqual(('## title\n'
-                          '\u205f\u20041 files\u2004 ±\u205f\u20040\u2002\u2003'
+                          f'{digit_space}1 files\u2004 ±{digit_space}0\u2002\u2003'
                           '2 suites\u2004 +1\u2002\u2003\u2002'
                           f'3s :stopwatch: +2s\n'
                           '22 tests +19\u2002\u2003'
-                          f'4 :heavy_check_mark: +3\u2002\u2003'
-                          f'5 :zzz: +3\u2002\u2003\u205f\u2004'
-                          f'6 :x: +\u205f\u20046\u2002\u2003\u205f\u2004'
-                          f'7 :fire: +\u205f\u20047\u2002\n'
-                          f'38 runs\u2006 +35\u2002\u20038 :heavy_check_mark: +7\u2002\u2003'
+                          f'4 :white_check_mark: +3\u2002\u2003'
+                          f'5 :zzz: +3\u2002\u2003{digit_space}'
+                          f'6 :x: +{digit_space}6\u2002\u2003{digit_space}'
+                          f'7 :fire: +{digit_space}7\u2002\n'
+                          f'38 runs\u200a +35\u2002\u20038 :white_check_mark: +7\u2002\u2003'
                           f'9 :zzz: +7\u2002\u2003'
                           f'10 :x: +10\u2002\u2003'
                           f'11 :fire: +11\u2002\n'
@@ -1304,9 +1304,9 @@ class TestPublisher(unittest.TestCase):
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
-                'summary': f'\u205f\u20041 files\u2004\u2003{{errors}}2 suites\u2004\u2003\u20023s {duration_label_md}\n'
-                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
-                           f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
+                'summary': f'{digit_space}1 files\u2004\u2003{{errors}}2 suites\u2004\u2003\u20023s {duration_label_md}\n'
+                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003{digit_space}6 {failed_tests_label_md}\u2003{digit_space}7 {test_errors_label_md}\n'
+                           f'38 runs\u200a\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
                            '\n'
                            'Results for commit commit.\n'
                            '\n'
@@ -1334,7 +1334,7 @@ class TestPublisher(unittest.TestCase):
             'json',
             '{'
             f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
-            f'"summary": "  1 files  {summary_errors}2 suites   3s :stopwatch:\\n22 tests 4 :heavy_check_mark: 5 :zzz:   6 :x:   7 :fire:\\n38 runs  8 :heavy_check_mark: 9 :zzz: 10 :x: 11 :fire:\\n\\nResults for commit commit.\\n", '
+            f'"summary": "{digit_space}1 files  {summary_errors}2 suites   3s :stopwatch:\\n22 tests 4 :white_check_mark: 5 :zzz: {digit_space}6 :x: {digit_space}7 :fire:\\n38 runs  8 :white_check_mark: 9 :zzz: 10 :x: 11 :fire:\\n\\nResults for commit commit.\\n", '
             '"conclusion": "conclusion", '
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
             f'"annotations": {len(annotations)}, '
@@ -1371,9 +1371,9 @@ class TestPublisher(unittest.TestCase):
             output={
                 'title': '{}7 errors, 6 fail, 5 skipped, 4 pass in 3s'
                     .format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
-                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u2003{{errors}}2 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+                'summary': f'{digit_space}1 files\u2004 ±0\u2002\u2003{{errors}}2 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003{digit_space}6 {failed_tests_label_md} +4\u2002\u2003{digit_space}7 {test_errors_label_md} +{digit_space}4\u2002\n'
+                           f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
                            '\n'
                            'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                            '\n'
@@ -1406,7 +1406,7 @@ class TestPublisher(unittest.TestCase):
             'json',
             '{'
             f'"title": "{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 3s", '
-            f'"summary": "  1 files  ±0  {summary_errors}2 suites  ±0   3s :stopwatch: ±0s\\n22 tests +1  4 :heavy_check_mark:  -   8  5 :zzz: +1    6 :x: +4    7 :fire: +  4 \\n38 runs  +1  8 :heavy_check_mark:  - 17  9 :zzz: +2  10 :x: +6  11 :fire: +10 \\n\\nResults for commit commit. ± Comparison against earlier commit past.\\n", '
+            f'"summary": "{digit_space}1 files  ±0  {summary_errors}2 suites  ±0   3s :stopwatch: ±0s\\n22 tests +1  4 :white_check_mark:  - {digit_space}8  5 :zzz: +1  {digit_space}6 :x: +4  {digit_space}7 :fire: +{digit_space}4 \\n38 runs  +1  8 :white_check_mark:  - 17  9 :zzz: +2  10 :x: +6  11 :fire: +10 \\n\\nResults for commit commit. ± Comparison against earlier commit past.\\n", '
             '"conclusion": "conclusion", '
             '"stats": {"files": 1, ' + f'"errors": {len(errors)}, ' + '"suites": 2, "duration": 3, "tests": 22, "tests_succ": 4, "tests_skip": 5, "tests_fail": 6, "tests_error": 7, "runs": 38, "runs_succ": 8, "runs_skip": 9, "runs_fail": 10, "runs_error": 11, "commit": "commit"}, '
             '"stats_with_delta": {"files": {"number": 1, "delta": 0}, ' + f'"errors": {len(errors)}, ' + '"suites": {"number": 2, "delta": 0}, "duration": {"duration": 3, "delta": 0}, "tests": {"number": 22, "delta": 1}, "tests_succ": {"number": 4, "delta": -8}, "tests_skip": {"number": 5, "delta": 1}, "tests_fail": {"number": 6, "delta": 4}, "tests_error": {"number": 7, "delta": 4}, "runs": {"number": 38, "delta": 1}, "runs_succ": {"number": 8, "delta": -17}, "runs_skip": {"number": 9, "delta": 2}, "runs_fail": {"number": 10, "delta": 6}, "runs_error": {"number": 11, "delta": 10}, "commit": "commit", "reference_type": "earlier", "reference_commit": "past"}, '
@@ -1437,9 +1437,9 @@ class TestPublisher(unittest.TestCase):
             conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
-                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
-                           f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
+                'summary': f'{digit_space}1 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+                           f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003{digit_space}6 {failed_tests_label_md}\u2003{digit_space}7 {test_errors_label_md}\n'
+                           f'38 runs\u200a\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
                            '\n'
                            'Results for commit commit.\n'
                            '\n'
@@ -1499,9 +1499,9 @@ class TestPublisher(unittest.TestCase):
             conclusion='conclusion',
             output={
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+                'summary': f'{digit_space}1 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003{digit_space}6 {failed_tests_label_md} +4\u2002\u2003{digit_space}7 {test_errors_label_md} +{digit_space}4\u2002\n'
+                           f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
                            '\n'
                            'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                            '\n'
@@ -1532,9 +1532,9 @@ class TestPublisher(unittest.TestCase):
         outputs = [
             {
                 'title': '7 errors, 6 fail, 5 skipped, 4 pass in 3s',
-                'summary': f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-                           f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+                'summary': f'{digit_space}1 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+                           f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003{digit_space}6 {failed_tests_label_md} +4\u2002\u2003{digit_space}7 {test_errors_label_md} +{digit_space}4\u2002\n'
+                           f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
                            '\n'
                            'Results for commit commit.\u2003± Comparison against earlier commit past.\n'
                            '\n'
@@ -1660,9 +1660,9 @@ class TestPublisher(unittest.TestCase):
                 conclusion='conclusion',
                 output={
                     'title': '1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s',
-                    'summary': f'1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\n'
-                               f'7 tests\u2003\u205f\u20041 :heavy_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\n'
-                               f'3 runs\u2006\u2003-12 :heavy_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\n'
+                    'summary': f'1 files\u2004\u2003{digit_space}1 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\n'
+                               f'7 tests\u2003{digit_space}1 :white_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\n'
+                               f'3 runs\u200a\u2003-12 :white_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\n'
                                '\n'
                                'Results for commit commit.\n'
                                '\n'
@@ -1696,9 +1696,9 @@ class TestPublisher(unittest.TestCase):
                     '{'
                     '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
                     '"summary": "'
-                    f'1 files    1 errors  2 suites   7s :stopwatch:\\n'
-                    f'7 tests   1 :heavy_check_mark: 2 :zzz: 3 :x: 1 :fire:\\n'
-                    f'3 runs  -12 :heavy_check_mark: 4 :zzz: 5 :x: 6 :fire:\\n'
+                    f'1 files  {digit_space}1 errors  2 suites   7s :stopwatch:\\n'
+                    f'7 tests {digit_space}1 :white_check_mark: 2 :zzz: 3 :x: 1 :fire:\\n'
+                    f'3 runs  -12 :white_check_mark: 4 :zzz: 5 :x: 6 :fire:\\n'
                     '\\n'
                     'Results for commit commit.\\n", '
                     '"conclusion": "conclusion", '
@@ -1732,9 +1732,9 @@ class TestPublisher(unittest.TestCase):
                 '{'
                 '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
                 '"summary": "'
-                f'1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\\n'
-                f'7 tests\u2003\u205f\u20041 :heavy_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\\n'
-                f'3 runs\u2006\u2003-12 :heavy_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\\n'
+                f'1 files\u2004\u2003{digit_space}1 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\\n'
+                f'7 tests\u2003{digit_space}1 :white_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\\n'
+                f'3 runs\u200a\u2003-12 :white_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\\n'
                 '\\n'
                 'Results for commit commit.\\n", '
                 '"conclusion": "conclusion", '
@@ -1783,9 +1783,9 @@ class TestPublisher(unittest.TestCase):
                 conclusion='conclusion',
                 output={
                     'title': '1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s',
-                    'summary': f'1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\n'
-                               f'7 tests\u2003\u205f\u20041 :heavy_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\n'
-                               f'3 runs\u2006\u2003-12 :heavy_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\n'
+                    'summary': f'1 files\u2004\u2003{digit_space}1 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\n'
+                               f'7 tests\u2003{digit_space}1 :white_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\n'
+                               f'3 runs\u200a\u2003-12 :white_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\n'
                                '\n'
                                'Results for commit commit.\n'
                                '\n'
@@ -1820,9 +1820,9 @@ class TestPublisher(unittest.TestCase):
                     '{'
                     '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
                     '"summary": "'
-                    f'1 files    1 errors  2 suites   7s :stopwatch:\\n'
-                    f'7 tests   1 :heavy_check_mark: 2 :zzz: 3 :x: 1 :fire:\\n'
-                    f'3 runs  -12 :heavy_check_mark: 4 :zzz: 5 :x: 6 :fire:\\n'
+                    f'1 files  {digit_space}1 errors  2 suites   7s :stopwatch:\\n'
+                    f'7 tests {digit_space}1 :white_check_mark: 2 :zzz: 3 :x: 1 :fire:\\n'
+                    f'3 runs  -12 :white_check_mark: 4 :zzz: 5 :x: 6 :fire:\\n'
                     '\\n'
                     'Results for commit commit.\\n", '
                     '"conclusion": "conclusion", '
@@ -1906,9 +1906,9 @@ class TestPublisher(unittest.TestCase):
                 '{'
                 '"title": "1 parse errors, 1 errors, 3 fail, 2 skipped, 1 pass in 7s", '
                 '"summary": "'
-                f'1 files\u2004\u2003\u205f\u20041 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\\n'
-                f'7 tests\u2003\u205f\u20041 :heavy_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\\n'
-                f'3 runs\u2006\u2003-12 :heavy_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\\n'
+                f'1 files\u2004\u2003{digit_space}1 errors\u2004\u20032 suites\u2004\u2003\u20027s :stopwatch:\\n'
+                f'7 tests\u2003{digit_space}1 :white_check_mark:\u20032 :zzz:\u20033 :x:\u20031 :fire:\\n'
+                f'3 runs\u200a\u2003-12 :white_check_mark:\u20034 :zzz:\u20035 :x:\u20036 :fire:\\n'
                 '\\n'
                 'Results for commit commit.\\n", '
                 '"conclusion": "conclusion", '
@@ -2250,9 +2250,9 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('add_to_job_summary', method)
         self.assertEqual(('## title\n'
-                          f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
-                          f'22 tests\u20034 :heavy_check_mark:\u20035 :zzz:\u2003\u205f\u20046 :x:\u2003\u205f\u20047 :fire:\n'
-                          f'38 runs\u2006\u20038 :heavy_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
+                          f'{digit_space}1 files\u2004\u20032 suites\u2004\u2003\u20023s :stopwatch:\n'
+                          f'22 tests\u20034 :white_check_mark:\u20035 :zzz:\u2003{digit_space}6 :x:\u2003{digit_space}7 :fire:\n'
+                          f'38 runs\u200a\u20038 :white_check_mark:\u20039 :zzz:\u200310 :x:\u200311 :fire:\n'
                           '\n'
                           'For more details on these failures and errors, see [this check](http://check-run.url).\n'
                           '\n'
@@ -2281,9 +2281,9 @@ class TestPublisher(unittest.TestCase):
         (method, args, kwargs) = mock_calls[0]
         self.assertEqual('add_to_job_summary', method)
         self.assertEqual(('## title\n'
-                          f'\u205f\u20041 files\u2004 \u2006-\u200a1\u2002\u20032 suites\u2004 \u2006-\u200a1\u2002\u2003\u20023s :stopwatch: -1s\n'
-                          f'22 tests +2\u2002\u20034 :heavy_check_mark: \u2006-\u200a1\u2002\u20035 :zzz: +1\u2002\u2003\u205f\u20046 :x: +1\u2002\u2003\u205f\u20047 :fire: +1\u2002\n'
-                          f'38 runs\u2006 +1\u2002\u20038 :heavy_check_mark: \u2006-\u200a2\u2002\u20039 :zzz: ±0\u2002\u200310 :x: +2\u2002\u200311 :fire: +4\u2002\n'
+                          f'{digit_space}1 files\u2004 \u2006-\u200a1\u2002\u20032 suites\u2004 \u2006-\u200a1\u2002\u2003\u20023s :stopwatch: -1s\n'
+                          f'22 tests +2\u2002\u20034 :white_check_mark: \u2006-\u200a1\u2002\u20035 :zzz: +1\u2002\u2003{digit_space}6 :x: +1\u2002\u2003{digit_space}7 :fire: +1\u2002\n'
+                          f'38 runs\u200a +1\u2002\u20038 :white_check_mark: \u2006-\u200a2\u2002\u20039 :zzz: ±0\u2002\u200310 :x: +2\u2002\u200311 :fire: +4\u2002\n'
                           '\n'
                           'For more details on these failures and errors, see [this check](http://check-run.url).\n'
                           '\n'
@@ -2306,9 +2306,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+            f'{digit_space}1 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003{digit_space}6 {failed_tests_label_md} +4\u2002\u2003{digit_space}7 {test_errors_label_md} +{digit_space}4\u2002\n'
+            f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
             '\n'
@@ -2349,9 +2349,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
-            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
-            f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
+            f'{digit_space}1 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003{digit_space}6 {failed_tests_label_md}\u2003{digit_space}7 {test_errors_label_md}\n'
+            f'38 runs\u200a\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -2374,9 +2374,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            f'\u205f\u20041 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
-            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003\u205f\u20046 {failed_tests_label_md}\u2003\u205f\u20047 {test_errors_label_md}\n'
-            f'38 runs\u2006\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
+            f'{digit_space}1 files\u2004\u20032 suites\u2004\u2003\u20023s {duration_label_md}\n'
+            f'22 {all_tests_label_md}\u20034 {passed_tests_label_md}\u20035 {skipped_tests_label_md}\u2003{digit_space}6 {failed_tests_label_md}\u2003{digit_space}7 {test_errors_label_md}\n'
+            f'38 runs\u200a\u20038 {passed_tests_label_md}\u20039 {skipped_tests_label_md}\u200310 {failed_tests_label_md}\u200311 {test_errors_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -2400,9 +2400,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003\u205f\u20046 {failed_tests_label_md} +4\u2002\u2003\u205f\u20047 {test_errors_label_md} +\u205f\u20044\u2002\n'
-            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
+            f'{digit_space}1 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u2003{digit_space}6 {failed_tests_label_md} +4\u2002\u2003{digit_space}7 {test_errors_label_md} +{digit_space}4\u2002\n'
+            f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u200310 {failed_tests_label_md} +6\u2002\u200311 {test_errors_label_md} +10\u2002\n'
             '\n'
             'For more details on these failures and errors, see [this check](http://check-run.url).\n'
             '\n'
@@ -2432,9 +2432,9 @@ class TestPublisher(unittest.TestCase):
 
         pr.create_issue_comment.assert_called_once_with(
             '## Comment Title\n'
-            f'\u205f\u20041 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
-            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a\u205f\u20048\u2002\u20035 {skipped_tests_label_md} +1\u2002\u20030 {failed_tests_label_md} \u2006-\u200a2\u2002\n'
-            f'38 runs\u2006 +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u20030 {failed_tests_label_md} \u2006-\u200a4\u2002\n'
+            f'{digit_space}1 files\u2004 ±0\u2002\u20032 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'22 {all_tests_label_md} +1\u2002\u20034 {passed_tests_label_md} \u2006-\u200a{digit_space}8\u2002\u20035 {skipped_tests_label_md} +1\u2002\u20030 {failed_tests_label_md} \u2006-\u200a2\u2002\n'
+            f'38 runs\u200a +1\u2002\u20038 {passed_tests_label_md} \u2006-\u200a17\u2002\u20039 {skipped_tests_label_md} +2\u2002\u20030 {failed_tests_label_md} \u2006-\u200a4\u2002\n'
             '\n'
             'Results for commit commit.\u2003± Comparison against base commit base.\n'
             '\n'
