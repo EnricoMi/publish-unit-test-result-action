@@ -125,8 +125,8 @@ jobs:
             -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
             -e "INPUT_LARGE_FILES" \
             -e "INPUT_IGNORE_RUNS" \
+            -e "INPUT_CHECK_RUN" \
             -e "INPUT_JOB_SUMMARY" \
-            -e "INPUT_PUBLISH_CHECK" \
             -e "INPUT_COMPARE_TO_EARLIER_COMMIT" \
             -e "INPUT_PULL_REQUEST_BUILD" \
             -e "INPUT_EVENT_FILE" \

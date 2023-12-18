@@ -184,8 +184,8 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_always,
+                     check_run=True,
                      job_summary=True,
-                     publish_check=True,
                      compare_earlier=True,
                      test_changes_limit=10,
                      pull_request_build=pull_request_build_mode_merge,
@@ -234,8 +234,8 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
+            check_run=check_run,
             job_summary=job_summary,
-            publish_check=publish_check,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -458,6 +458,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
 
+    def test_get_settings_check_run(self):
+        warning = 'Option check_run has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(CHECK_RUN='false', expected=self.get_settings(check_run=False))
+        self.do_test_get_settings(CHECK_RUN='False', expected=self.get_settings(check_run=False))
+        self.do_test_get_settings(CHECK_RUN='true', expected=self.get_settings(check_run=True))
+        self.do_test_get_settings(CHECK_RUN='True', expected=self.get_settings(check_run=True))
+        self.do_test_get_settings(CHECK_RUN='foo', expected=self.get_settings(check_run=True), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(CHECK_RUN=None, expected=self.get_settings(check_run=True))
+
     def test_get_settings_job_summary(self):
         warning = 'Option job_summary has to be boolean, so either "true" or "false": foo'
         self.do_test_get_settings(JOB_SUMMARY='false', expected=self.get_settings(job_summary=False))
@@ -466,15 +475,6 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(JOB_SUMMARY='True', expected=self.get_settings(job_summary=True))
         self.do_test_get_settings(JOB_SUMMARY='foo', expected=self.get_settings(job_summary=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(JOB_SUMMARY=None, expected=self.get_settings(job_summary=True))
-
-    def test_get_settings_publish_check(self):
-        warning = 'Option publish_check has to be boolean, so either "true" or "false": foo'
-        self.do_test_get_settings(PUBLISH_CHECK='false', expected=self.get_settings(publish_check=False))
-        self.do_test_get_settings(PUBLISH_CHECK='False', expected=self.get_settings(publish_check=False))
-        self.do_test_get_settings(PUBLISH_CHECK='true', expected=self.get_settings(publish_check=True))
-        self.do_test_get_settings(PUBLISH_CHECK='True', expected=self.get_settings(publish_check=True))
-        self.do_test_get_settings(PUBLISH_CHECK='foo', expected=self.get_settings(publish_check=True), warning=warning, exception=RuntimeError)
-        self.do_test_get_settings(PUBLISH_CHECK=None, expected=self.get_settings(publish_check=True))
 
     def test_get_settings_report_individual_runs(self):
         warning = 'Option report_individual_runs has to be boolean, so either "true" or "false": foo'

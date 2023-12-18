@@ -59,8 +59,8 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
+    check_run: bool
     job_summary: bool
-    publish_check: bool
     compare_earlier: bool
     pull_request_build: str
     test_changes_limit: int
@@ -199,7 +199,7 @@ class Publisher:
 
         check_run = None
         before_check_run = None
-        if self._settings.publish_check:
+        if self._settings.check_run:
             if self._settings.is_fork:
                 # running on a fork, we cannot publish the check, but we can still read before_check_run
                 # bump the version if you change the target of this link (if it did not exist already) or change the section

@@ -79,8 +79,8 @@ class TestPublisher(unittest.TestCase):
     @staticmethod
     def create_settings(actor='actor',
                         comment_mode=comment_mode_always,
+                        check_run=True,
                         job_summary=True,
-                        publish_check=True,
                         compare_earlier=True,
                         report_individual_runs=False,
                         dedup_classes_by_file_name=False,
@@ -125,8 +125,8 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
+            check_run=check_run,
             job_summary=job_summary,
-            publish_check=publish_check,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
             test_changes_limit=test_changes_limit,
@@ -503,8 +503,8 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(('before', ), args)
         self.assertEqual({}, kwargs)
 
-    def test_publish_without_publish_check_job_summary_and_comment(self):
-        settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False, publish_check=False)
+    def test_publish_without_check_run_job_summary_and_comment(self):
+        settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False, check_run=False)
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(0, len(mock_calls))
