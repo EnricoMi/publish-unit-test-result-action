@@ -227,7 +227,7 @@ def log_parse_errors(errors: List[ParseError], gha: GithubAction):
 
 def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inconclusive: bool) -> bool:
     return action_fail and conclusion == 'failure' or \
-           action_fail_on_inconclusive and conclusion == 'inconclusive'
+           action_fail_on_inconclusive and conclusion == 'neutral'
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
@@ -269,7 +269,8 @@ def main(settings: Settings, gha: GithubAction) -> None:
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
-        gha.error(f'This action finished successfully, but test results have status {conclusion}.')
+        status = f"{conclusion} / inconclusive" if conclusion == "neutral" else conclusion
+        gha.error(f'This action finished successfully, but test results have status {status}.')
         sys.exit(1)
 
 
