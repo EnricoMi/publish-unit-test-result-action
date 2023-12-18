@@ -1300,12 +1300,12 @@ class Test(unittest.TestCase):
 
     def test_action_fail(self):
         for action_fail, action_fail_on_inconclusive, expecteds in [
-            (False, False, [False] * 3),
-            (False, True, [True, False, False]),
-            (True, False, [False, False, True]),
-            (True, True, [True, False, True]),
+            (False, False, [False] * 4),
+            (False, True, [True, False, False, False]),
+            (True, False, [False, False, True, False]),
+            (True, True, [True, False, True, False]),
         ]:
-            for expected, conclusion in zip(expecteds, ['inconclusive', 'success', 'failure']):
+            for expected, conclusion in zip(expecteds, ['neutral', 'success', 'failure', 'unknown']):
                 with self.subTest(action_fail=action_fail, action_fail_on_inconclusive=action_fail_on_inconclusive, conclusion=conclusion):
                     actual = action_fail_required(conclusion, action_fail, action_fail_on_inconclusive)
                     self.assertEqual(expected, actual)

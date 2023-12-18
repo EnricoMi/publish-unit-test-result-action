@@ -227,7 +227,7 @@ def log_parse_errors(errors: List[ParseError], gha: GithubAction):
 
 def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inconclusive: bool) -> bool:
     return action_fail and conclusion == 'failure' or \
-           action_fail_on_inconclusive and conclusion == 'inconclusive'
+           action_fail_on_inconclusive and conclusion == 'neutral'
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
