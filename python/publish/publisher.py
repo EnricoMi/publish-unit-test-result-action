@@ -197,22 +197,22 @@ class Publisher:
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
 
-        if not self._settings.publish_check or self._settings.is_fork:
-            if self._settings.publish_check and self._settings.is_fork:
+        check_run = None
+        before_check_run = None
+        if self._settings.publish_check:
+            if self._settings.is_fork:
                 # running on a fork, we cannot publish the check, but we can still read before_check_run
                 # bump the version if you change the target of this link (if it did not exist already) or change the section
                 logger.info('This action is running on a pull_request event for a fork repository. '
                             'Pull request comments and check runs cannot be created, so disabling these features. '
                             'To fully run the action on fork repository pull requests, see '
                             f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
-            check_run = None
-            before_check_run = None
-            if self._settings.compare_earlier:
-                before_commit_sha = get_json_path(self._settings.event, 'before')
-                logger.debug(f'comparing against before={before_commit_sha}')
-                before_check_run = self.get_check_run(before_commit_sha)
-        else:
-            check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+                if self._settings.compare_earlier:
+                    before_commit_sha = get_json_path(self._settings.event, 'before')
+                    logger.debug(f'comparing against before={before_commit_sha}')
+                    before_check_run = self.get_check_run(before_commit_sha)
+            else:
+                check_run, before_check_run = self.publish_check(stats, cases, conclusion)
 
         if self._settings.job_summary:
             self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
@@ -470,7 +470,7 @@ class Publisher:
     def publish_job_summary(self,
                             title: str,
                             stats: UnitTestRunResults,
-                            check_run: CheckRun,
+                            check_run: Optional[CheckRun],
                             before_check_run: Optional[CheckRun]):
         before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats

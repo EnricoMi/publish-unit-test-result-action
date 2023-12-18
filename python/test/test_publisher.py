@@ -493,6 +493,12 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
 
+    def test_publish_without_publish_check_job_summary_and_comment(self):
+        settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False, publish_check=False)
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
+
+        self.assertEqual(0, len(mock_calls))
+
     def test_publish_with_comment_without_pr(self):
         settings = self.create_settings()
         mock_calls = self.call_mocked_publish(settings, prs=[])
