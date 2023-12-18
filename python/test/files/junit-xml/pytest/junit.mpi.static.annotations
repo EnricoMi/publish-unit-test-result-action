@@ -8,9 +8,8 @@
       'title': 'All 24 tests pass in 2m 4s',
       'summary':
         '24 tests\u2002\u2003\u200324 :white_check_mark:\u2003\u20032m 4s '
-        ':stopwatch:\n\u205f\u20041 suites\u2003\u2003\u205f\u20040 :zzz:\n\u205f\u2004'
-        '1 files\u2004\u2002\u2003\u2003\u205f\u20040 :x:\n\nResults for '
-        'commit commit s.\n\n'
+        ':stopwatch:\n\u20071 suites\u2003\u2003\u20070 :zzz:\n\u20071 files\u2004\u2002'
+        '\u2003\u2003\u20070 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MOwqAMBAFr'
         'xK2tlCx8jISYsTFT2STVOLd3ajkY/dmHswJE67aQi+aSoD16CKMnqRDswdsOxZ8uXAmGK'
         'xX6mcWPNjUUUwS10JoIkOfIb/HYthF8BWp93CWezivKbNt6Bi+Jews4boBWo1x8eMAAAA'

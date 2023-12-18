@@ -7,7 +7,7 @@ import mock
 from publish import Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDeltaResults, CaseMessages, \
     get_json_path, get_error_annotation, get_digest_from_stats, \
     all_tests_label_md, skipped_tests_label_md, failed_tests_label_md, passed_tests_label_md, test_errors_label_md, \
-    duration_label_md, SomeTestChanges, abbreviate, abbreviate_bytes, get_test_name, get_formatted_digits, \
+    duration_label_md, SomeTestChanges, abbreviate, abbreviate_bytes, get_test_name, get_formatted_digits, digit_space, \
     get_magnitude, get_delta, as_short_commit, as_delta, as_stat_number, as_stat_duration, get_stats_from_digest, \
     digest_string, ungest_string, get_details_line_md, get_commit_line_md, restrict_unicode, \
     get_short_summary, get_short_summary_md, get_long_summary_md, get_long_summary_with_runs_md, \
@@ -420,42 +420,42 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_delta(+1, 1), '+1')
         self.assertEqual(as_delta(-2, 1), ' - 2')
 
-        self.assertEqual(as_delta(0, 2), '±  0')
-        self.assertEqual(as_delta(+1, 2), '+  1')
-        self.assertEqual(as_delta(-2, 2), ' -   2')
+        self.assertEqual(as_delta(0, 2), f'±{digit_space}0')
+        self.assertEqual(as_delta(+1, 2), f'+{digit_space}1')
+        self.assertEqual(as_delta(-2, 2), f' - {digit_space}2')
 
-        self.assertEqual(as_delta(1, 5), '+       1')
-        self.assertEqual(as_delta(12, 5), '+     12')
-        self.assertEqual(as_delta(123, 5), '+   123')
+        self.assertEqual(as_delta(1, 5), f'+{digit_space} {digit_space}{digit_space}1')
+        self.assertEqual(as_delta(12, 5), f'+{digit_space} {digit_space}12')
+        self.assertEqual(as_delta(123, 5), f'+{digit_space} 123')
         self.assertEqual(as_delta(1234, 5), '+1 234')
-        self.assertEqual(as_delta(1234, 6), '+  1 234')
-        self.assertEqual(as_delta(123, 6), '+     123')
+        self.assertEqual(as_delta(1234, 6), f'+{digit_space}1 234')
+        self.assertEqual(as_delta(123, 6), f'+{digit_space}{digit_space} 123')
 
         with temp_locale('en_US'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
-            self.assertEqual(as_delta(1234, 6), '+  1 234')
-            self.assertEqual(as_delta(123, 6), '+     123')
+            self.assertEqual(as_delta(1234, 6), f'+{digit_space}1 234')
+            self.assertEqual(as_delta(123, 6), f'+{digit_space}{digit_space} 123')
         with temp_locale('de_DE'):
             self.assertEqual(as_delta(1234, 5), '+1 234')
-            self.assertEqual(as_delta(1234, 6), '+  1 234')
-            self.assertEqual(as_delta(123, 6), '+     123')
+            self.assertEqual(as_delta(1234, 6), f'+{digit_space}1 234')
+            self.assertEqual(as_delta(123, 6), f'+{digit_space}{digit_space} 123')
 
     def test_as_stat_number(self):
         label = 'unit'
         self.assertEqual(as_stat_number(None, 1, 0, label), 'N/A unit')
 
         self.assertEqual(as_stat_number(1, 1, 0, label), '1 unit')
-        self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
-        self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+        self.assertEqual(as_stat_number(123, 6, 0, label), f'{digit_space}{digit_space} 123 unit')
+        self.assertEqual(as_stat_number(1234, 6, 0, label), f'{digit_space}1 234 unit')
         self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
         with temp_locale('en_US'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
-            self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), f'{digit_space}{digit_space} 123 unit')
+            self.assertEqual(as_stat_number(1234, 6, 0, label), f'{digit_space}1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
         with temp_locale('de_DE'):
-            self.assertEqual(as_stat_number(123, 6, 0, label), '     123 unit')
-            self.assertEqual(as_stat_number(1234, 6, 0, label), '  1 234 unit')
+            self.assertEqual(as_stat_number(123, 6, 0, label), f'{digit_space}{digit_space} 123 unit')
+            self.assertEqual(as_stat_number(1234, 6, 0, label), f'{digit_space}1 234 unit')
             self.assertEqual(as_stat_number(12345, 6, 0, label), '12 345 unit')
 
         self.assertEqual(as_stat_number(dict(number=1), 1, 0, label), '1 unit')
@@ -463,16 +463,16 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(as_stat_number(dict(number=1, delta=-1), 1, 1, label), '1 unit  - 1 ')
         self.assertEqual(as_stat_number(dict(number=2, delta=+0), 1, 1, label), '2 unit ±0 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 1, label), '3 unit +1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 2, label), '3 unit +  1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 2, 2, label), '  3 unit +  1 ')
-        self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 1, 2, label), f'3 unit +{digit_space}1 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1), 2, 2, label), f'{digit_space}3 unit +{digit_space}1 ')
+        self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), f'3 unit +{digit_space}1 234 ')
         self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
         with temp_locale('en_US'):
-            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), f'3 unit +{digit_space}1 234 ')
             self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
         with temp_locale('de_DE'):
-            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), '3 unit +  1 234 ')
-            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), '3 unit +12 345 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+1234), 1, 6, label), f'3 unit +{digit_space}1 234 ')
+            self.assertEqual(as_stat_number(dict(number=3, delta=+12345), 1, 6, label), f'3 unit +12 345 ')
 
         self.assertEqual(as_stat_number(dict(delta=-1), 3, 1, label), 'N/A unit  - 1 ')
 
@@ -673,9 +673,9 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
             commit='commit'
-        )), (f'1 files    2 suites   3s {duration_label_md}\n'
-             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
-             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
+        )), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+             f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md}\n'
+             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
              f'\n'
              f'Results for commit commit.\n'))
 
@@ -685,9 +685,9 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
             commit='commit'
-        )), (f'1 files    2 suites   3s {duration_label_md}\n'
-             f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
-             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
+        )), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+             f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md} {digit_space}8 {test_errors_label_md}\n'
+             f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
              f'\n'
              f'Results for commit commit.\n'))
 
@@ -697,9 +697,9 @@ class PublishTest(unittest.TestCase):
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
-        )), (f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
-             f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
-             f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
+        )), (f'1 files  +{digit_space}2  {digit_space}2 suites   - 3   3s {duration_label_md} +4s\n'
+             f'4 {all_tests_label_md}  - {digit_space}5  {digit_space}5 {passed_tests_label_md} +{digit_space}6  {digit_space}6 {skipped_tests_label_md}  - {digit_space}7  {digit_space}7 {failed_tests_label_md} +{digit_space}8  {digit_space}8 {test_errors_label_md}  - {digit_space}9 \n'
+             f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
              f'\n'
              f'Results for commit 12345678. ± Comparison against type commit 01234567.\n'))
 
@@ -712,9 +712,9 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), (f'1 files    2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
-            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
+        ), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md}\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
             f'\n'
             f'For more details on these failures, see [this check](https://details.url/).\n'
             f'\n'
@@ -730,9 +730,9 @@ class PublishTest(unittest.TestCase):
                 commit='commit'
             ),
             'https://details.url/'
-        ), (f'1 files    2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        ), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             f'\n'
             f'Results for commit commit.\n')
         )
@@ -750,9 +750,9 @@ class PublishTest(unittest.TestCase):
                 ['test1', 'test2', 'test3', 'test4', 'test5'], ['test5', 'test6'],
                 ['test2'], ['test5', 'test6']
             ),
-        ), (f'1 files    2 suites   3s {duration_label_md}\n'
-            f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        ), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+            f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+            f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
             '\n'
             'Results for commit commit.\n'
             '\n'
@@ -1013,9 +1013,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files    2 suites   3s {duration_label_md}\n'
-                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}\n'
-                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
+        self.assertEqual(actual, f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -1037,9 +1037,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files    2 suites   3s {duration_label_md}\n'
-                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
-                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
+        self.assertEqual(actual, f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md} {digit_space}8 {test_errors_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -1061,9 +1061,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files    1 errors    2 suites   3s {duration_label_md}\n'
-                                 f'4 {all_tests_label_md}   5 {passed_tests_label_md}   6 {skipped_tests_label_md}   7 {failed_tests_label_md}   8 {test_errors_label_md}\n'
-                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
+        self.assertEqual(actual, f'1 files  {digit_space}1 errors  {digit_space}2 suites   3s {duration_label_md}\n'
+                                 f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md} {digit_space}8 {test_errors_label_md}\n'
+                                 f'9 runs  10 {passed_tests_label_md} 11 {skipped_tests_label_md} 12 {failed_tests_label_md} 13 {test_errors_label_md}\n'
                                  '\n'
                                  'Results for commit commit.\n'
                                  '\n'
@@ -1090,9 +1090,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files  +  2    2 suites   - 3   3s {duration_label_md} +4s\n'
-                                 f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
-                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
+        self.assertEqual(actual, f'1 files  +{digit_space}2  {digit_space}2 suites   - 3   3s {duration_label_md} +4s\n'
+                                 f'4 {all_tests_label_md}  - {digit_space}5  {digit_space}5 {passed_tests_label_md} +{digit_space}6  {digit_space}6 {skipped_tests_label_md}  - {digit_space}7  {digit_space}7 {failed_tests_label_md} +{digit_space}8  {digit_space}8 {test_errors_label_md}  - {digit_space}9 \n'
+                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
                                  '\n'
                                  'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
                                  '\n'
@@ -1119,9 +1119,9 @@ class PublishTest(unittest.TestCase):
                 )
             )
 
-        self.assertEqual(actual, f'1 files  +  2    1 errors    2 suites   - 3   3s {duration_label_md} +4s\n'
-                                 f'4 {all_tests_label_md}  -   5    5 {passed_tests_label_md} +  6    6 {skipped_tests_label_md}  -   7    7 {failed_tests_label_md} +  8    8 {test_errors_label_md}  -   9 \n'
-                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
+        self.assertEqual(actual, f'1 files  +{digit_space}2  {digit_space}1 errors  {digit_space}2 suites   - 3   3s {duration_label_md} +4s\n'
+                                 f'4 {all_tests_label_md}  - {digit_space}5  {digit_space}5 {passed_tests_label_md} +{digit_space}6  {digit_space}6 {skipped_tests_label_md}  - {digit_space}7  {digit_space}7 {failed_tests_label_md} +{digit_space}8  {digit_space}8 {test_errors_label_md}  - {digit_space}9 \n'
+                                 f'9 runs  +10  10 {passed_tests_label_md}  - 11  11 {skipped_tests_label_md} +12  12 {failed_tests_label_md}  - 13  13 {test_errors_label_md} +14 \n'
                                  '\n'
                                  'Results for commit 12345678. ± Comparison against type commit 01234567.\n'
                                  '\n'
@@ -2079,9 +2079,9 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'  10 files    10 suites   39m 1s {duration_label_md}\n'
-                              f'217 {all_tests_label_md} 208 {passed_tests_label_md}   9 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
-                              f'373 runs  333 {passed_tests_label_md} 40 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+        self.assertEqual(md, (f'{digit_space}10 files  {digit_space}10 suites   39m 1s {duration_label_md}\n'
+                              f'217 {all_tests_label_md} 208 {passed_tests_label_md} {digit_space}9 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
+                              f'373 runs  333 {passed_tests_label_md} 40 {skipped_tests_label_md} 0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
 
@@ -2150,8 +2150,8 @@ class PublishTest(unittest.TestCase):
         stats = get_stats(results)
         md = get_long_summary_md(stats)
         self.assertEqual(md, (f'373 {all_tests_label_md}   333 {passed_tests_label_md}  39m 1s {duration_label_md}\n'
-                              f'  10 suites    40 {skipped_tests_label_md}\n'
-                              f'  10 files        0 {failed_tests_label_md}\n'
+                              f'{digit_space}10 suites  {digit_space}40 {skipped_tests_label_md}\n'
+                              f'{digit_space}10 files    {digit_space}{digit_space}0 {failed_tests_label_md}\n'
                               f'\n'
                               f'Results for commit example.\n'))
 

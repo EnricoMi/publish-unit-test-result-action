@@ -7,9 +7,9 @@
     'output': {
       'title': 'All 183 tests pass in 0s',
       'summary':
-        '\u205f\u2004\u205f\u20041 files\u2004\u2003102 suites\u2004\u2003\u2002'
-        '0s :stopwatch:\n183 tests\u2003183 :white_check_mark:\u20030 :zzz:\u2003'
-        '0 :x:\n218 runs\u2006\u2003218 :white_check_mark:\u20030 :zzz:\u2003'
+        '\u2007\u20071 files\u2004\u2003102 suites\u2004\u2003\u20020s '
+        ':stopwatch:\n183 tests\u2003183 :white_check_mark:\u20030 :zzz:\u2003'
+        '0 :x:\n218 runs\u200a\u2003218 :white_check_mark:\u20030 :zzz:\u2003'
         '0 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSw6AIAwFr'
         '0JYu/CzMV7GEITY+MGUsjLe3YoY0V1nXjq7tDAbLztRFUL6AHRDWTMOARWBW1mUjDxRHN'
