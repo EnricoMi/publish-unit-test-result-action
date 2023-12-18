@@ -269,7 +269,8 @@ def main(settings: Settings, gha: GithubAction) -> None:
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
-        gha.error(f'This action finished successfully, but test results have status {conclusion}.')
+        status = f"{conclusion} / inconclusive" if conclusion == "neutral" else conclusion
+        gha.error(f'This action finished successfully, but test results have status {status}.')
         sys.exit(1)
 
 
