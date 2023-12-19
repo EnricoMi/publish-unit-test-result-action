@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -66,11 +66,11 @@ jobs:
           platforms: ${{ matrix.arch }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
         id: build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           load: true
           push: false
@@ -79,7 +79,7 @@ jobs:
           outputs: type=docker
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -204,13 +204,13 @@ jobs:
           dockerfile: ./Dockerfile
           annotations: true
       - name: Upload SARIF artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: SARIF
           path: ${{ steps.scan.outputs.sarif }}
       - name: Upload SARIF file
         if: always() && steps.scan.outputs.sarif != ''
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
@@ -261,12 +261,12 @@ jobs:
 
       - name: Setup Python
         if: matrix.python != 'installed'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
