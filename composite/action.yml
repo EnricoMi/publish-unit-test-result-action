@@ -80,6 +80,10 @@ inputs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
     default: 'false'
     required: false
+  check_run:
+    description: 'Set to "true", the results are published as a check run, but it may not be associated with the workflow that ran this action.'
+    default: 'true'
+    required: false
   job_summary:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
     default: 'true'
@@ -293,6 +297,7 @@ runs:
         JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
         JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
         JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
+        CHECK_RUN: ${{ inputs.check_run }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
         # not documented

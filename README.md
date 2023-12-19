@@ -185,6 +185,8 @@ Those are highlighted in pull request comments to easily spot unintended test re
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 
+Comments can be disabled with `comment_mode: off`.
+
 ### Commit and pull request checks
 
 The checks section of a commit and related pull requests list a short summary (here `1 fail, 1 skipped, …`),
@@ -197,6 +199,8 @@ Commit checks:
 Pull request checks:
 
 ![pull request checks example](misc/github-pull-request-checks.png)
+
+Check runs can be disabled with `check_run: false`.
 
 ### Commit and pull request annotations
 
@@ -213,6 +217,8 @@ Use option `test_file_prefix` to add a prefix to, or remove a prefix from these 
 
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
 
+Check run annotations can be disabled with `ignore_runs: true`.
+
 ### GitHub Actions job summary
 
 The results are added to the job summary page of the workflow that runs this action:
@@ -223,11 +229,15 @@ In presence of failures or errors, the job summary links to the respective [chec
 
 ***Note:** Job summary requires [GitHub Actions runner v2.288.0](https://github.com/actions/runner/releases/tag/v2.288.0) or above.*
 
+Job summaries can be disabled with `job_summary: false`.
+
 ### GitHub Actions check summary of a commit
 
 Test results are published in the GitHub Actions check summary of the respective commit:
 
 ![checks comment example](misc/github-checks-comment.png)
+
+Check runs can be disabled with `check_run: false`.
 
 ## The symbols
 [comment]: <> (This heading is linked to from method get_link_and_tooltip_label_md)
@@ -295,6 +305,7 @@ The list of most notable options:
 |:-----|:-----:|:----------|
 |`time_unit`|`seconds`|Time values in the test result files have this unit. Supports `seconds` and `milliseconds`.|
 |`test_file_prefix`|`none`|Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".|
+|`check_run`|`true`|Set to `true`, the results are published as a check run, but it may not be associated with the workflow that ran this action.|
 |`job_summary`|`true`|Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of `0`.|

@@ -184,6 +184,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_always,
+                     check_run=True,
                      job_summary=True,
                      compare_earlier=True,
                      test_changes_limit=10,
@@ -233,6 +234,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
+            check_run=check_run,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -455,6 +457,15 @@ class Test(unittest.TestCase):
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='True', expected=self.get_settings(compare_earlier=True))
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT='foo', expected=self.get_settings(compare_earlier=True), warning=warning, exception=RuntimeError)
         self.do_test_get_settings(COMPARE_TO_EARLIER_COMMIT=None, expected=self.get_settings(compare_earlier=True))
+
+    def test_get_settings_check_run(self):
+        warning = 'Option check_run has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(CHECK_RUN='false', expected=self.get_settings(check_run=False))
+        self.do_test_get_settings(CHECK_RUN='False', expected=self.get_settings(check_run=False))
+        self.do_test_get_settings(CHECK_RUN='true', expected=self.get_settings(check_run=True))
+        self.do_test_get_settings(CHECK_RUN='True', expected=self.get_settings(check_run=True))
+        self.do_test_get_settings(CHECK_RUN='foo', expected=self.get_settings(check_run=True), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(CHECK_RUN=None, expected=self.get_settings(check_run=True))
 
     def test_get_settings_job_summary(self):
         warning = 'Option job_summary has to be boolean, so either "true" or "false": foo'

@@ -79,6 +79,7 @@ class TestPublisher(unittest.TestCase):
     @staticmethod
     def create_settings(actor='actor',
                         comment_mode=comment_mode_always,
+                        check_run=True,
                         job_summary=True,
                         compare_earlier=True,
                         report_individual_runs=False,
@@ -124,6 +125,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
+            check_run=check_run,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
             pull_request_build=pull_request_build,
@@ -490,6 +492,22 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual('publish_check', method)
         self.assertEqual((self.stats, self.cases, 'success'), args)
         self.assertEqual({}, kwargs)
+
+    def test_publish_without_job_summary_and_comment_on_fork(self):
+        settings = self.create_settings(is_fork=True, comment_mode=comment_mode_off, job_summary=False)
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
+
+        self.assertEqual(1, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('get_check_run', method)
+        self.assertEqual(('before', ), args)
+        self.assertEqual({}, kwargs)
+
+    def test_publish_without_check_run_job_summary_and_comment(self):
+        settings = self.create_settings(comment_mode=comment_mode_off, job_summary=False, check_run=False)
+        mock_calls = self.call_mocked_publish(settings, prs=[object()])
+
+        self.assertEqual(0, len(mock_calls))
 
     def test_publish_with_comment_without_pr(self):
         settings = self.create_settings()
