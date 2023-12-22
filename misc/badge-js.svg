@@ -1,0 +1,20 @@
+<svg width="146.9" height="20" viewBox="0 0 1469 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JS / Dart / Mocha: JSON">
+  <title>JS / Dart / Mocha: JSON</title>
+  <linearGradient id="VyGlo" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="vnHIX"><rect width="1469" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#vnHIX)">
+    <rect width="1075" height="200" fill="#555"/>
+    <rect width="394" height="200" fill="#3C1" x="1075"/>
+    <rect width="1469" height="200" fill="url(#VyGlo)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="60" y="148" textLength="975" fill="#000" opacity="0.25">JS / Dart / Mocha</text>
+    <text x="50" y="138" textLength="975">JS / Dart / Mocha</text>
+    <text x="1130" y="148" textLength="294" fill="#000" opacity="0.25">JSON</text>
+    <text x="1120" y="138" textLength="294">JSON</text>
+  </g>
+  
+</svg>

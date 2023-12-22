@@ -1,0 +1,20 @@
+<svg width="52.6" height="20" viewBox="0 0 526 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="ARM">
+  <title>ARM</title>
+  <linearGradient id="fPwpa" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="GPTHh"><rect width="526" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#GPTHh)">
+    <rect width="182" height="200" fill="#555"/>
+    <rect width="344" height="200" fill="#08C" x="182"/>
+    <rect width="526" height="200" fill="url(#fPwpa)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="142" y="148" textLength="0" fill="#000" opacity="0.25"></text>
+    <text x="132" y="138" textLength="0"></text>
+    <text x="237" y="148" textLength="244" fill="#000" opacity="0.25">ARM</text>
+    <text x="227" y="138" textLength="244">ARM</text>
+  </g>
+  <image x="40" y="35" width="100" height="130" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiNmZmYiIHZpZXdCb3g9IjAgMCA4OTYgMTAyNCI+PHBhdGggZD0iTTgzMSAxMjdINjNhNjQgNjQgMCAwMC02NCA2NHY2NDBhNjQgNjQgMCAwMDY0IDY0aDc2OGE2NCA2NCAwIDAwNjQtNjRWMTkxYTY0IDY0IDAgMDAtNjQtNjR6TTEyNyA1NzVsMTI4LTEyOC0xMjgtMTI4IDY0LTY0IDE5MiAxOTItMTkyIDE5Mi02NC02NHptNTEyIDY0SDM4M3YtNjRoMjU2djY0eiIvPjwvc3ZnPgo="/>
+</svg>

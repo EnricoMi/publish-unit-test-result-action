@@ -42,7 +42,7 @@ inputs:
     default: 'false'
     required: false
   files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a "!".'
+    description: 'File patterns of test result files. Relative paths are known to work best, while the composite action also works with absolute paths. Supports "*", "**", "?", and "[]" character ranges. Use multiline string for multiple patterns. Patterns starting with "!" exclude the matching files. There have to be at least one pattern starting without a "!".'
     required: false
   junit_files:
     description: 'Deprecated, use "files" option instead.'
@@ -60,6 +60,9 @@ inputs:
     description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
     required: false
+  test_file_prefix:
+    description: 'Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".'
+    required: false
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
     required: false
@@ -76,6 +79,10 @@ inputs:
   ignore_runs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
     default: 'false'
+    required: false
+  check_run:
+    description: 'Set to "true", the results are published as a check run, but it may not be associated with the workflow that ran this action.'
+    default: 'true'
     required: false
   job_summary:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
@@ -135,14 +142,13 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
-
 outputs:
   json:
     description: "Test results as JSON"
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.9.0'
+  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.12.0'
 
 branding:
   icon: 'check-circle'

@@ -4,6 +4,7 @@ import os
 import re
 import sys
 from glob import glob
+from pathlib import Path
 from typing import List, Optional, Union, Mapping, Tuple, Any, Iterable, Callable
 
 import github
@@ -55,7 +56,7 @@ def get_github(auth: github.Auth,
                          seconds_between_writes=seconds_between_writes)
 
 
-def get_files(multiline_files_globs: str) -> List[str]:
+def get_files(multiline_files_globs: str) -> Tuple[List[str], bool]:
     multiline_files_globs = re.split('\r?\n\r?', multiline_files_globs)
     included = {str(file)
                 for files_glob in multiline_files_globs
@@ -65,7 +66,10 @@ def get_files(multiline_files_globs: str) -> List[str]:
                 for files_glob in multiline_files_globs
                 if files_glob.startswith('!')
                 for file in glob(files_glob[1:], recursive=True)}
-    return list(included - excluded)
+    has_absolute = any({Path(pattern).is_absolute()
+                        for files_glob in multiline_files_globs
+                        for pattern in [files_glob[1:] if files_glob.startswith('!') else files_glob]})
+    return list(included - excluded), has_absolute
 
 
 def prettify_glob_pattern(pattern: Optional[str]) -> Optional[str]:
@@ -77,12 +81,15 @@ def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubA
     if not pattern:
         return []
 
-    files = get_files(pattern)
+    files, has_absolute_patterns = get_files(pattern)
     file_format = f' {file_format}' if file_format else ''
 
     prettyfied_pattern = prettify_glob_pattern(pattern)
     if len(files) == 0:
         gha.warning(f'Could not find any{file_format} files for {prettyfied_pattern}')
+        if has_absolute_patterns:
+            gha.warning(f'Your file pattern contains absolute paths, please read the notes on absolute paths:')
+            gha.warning(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths')
     else:
         logger.info(f'Reading{file_format} files {prettyfied_pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading{file_format} files {list(files)}')
@@ -208,6 +215,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     return process_junit_xml_elems(
         elems,
         time_factor=settings.time_factor,
+        test_file_prefix=settings.test_file_prefix,
         add_suite_details=settings.report_suite_out_logs or settings.report_suite_err_logs or settings.json_suite_details
     ).with_commit(settings.commit)
 
@@ -219,7 +227,7 @@ def log_parse_errors(errors: List[ParseError], gha: GithubAction):
 
 def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inconclusive: bool) -> bool:
     return action_fail and conclusion == 'failure' or \
-           action_fail_on_inconclusive and conclusion == 'inconclusive'
+           action_fail_on_inconclusive and conclusion == 'neutral'
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
@@ -261,9 +269,8 @@ def main(settings: Settings, gha: GithubAction) -> None:
     Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
-        gha.error(f'This action finished successfully, but test results have status {conclusion}.')
-        gha.error(f'Configuration requires this action to fail (action_fail={settings.action_fail}, '
-                  f'action_fail_on_inconclusive={settings.action_fail_on_inconclusive}).')
+        status = f"{conclusion} / inconclusive" if conclusion == "neutral" else conclusion
+        gha.error(f'This action finished successfully, but test results have status {status}.')
         sys.exit(1)
 
 
@@ -390,6 +397,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         event = json.load(f)
 
     repo = get_var('GITHUB_REPOSITORY', options)
+    check_run = get_bool_var('CHECK_RUN', options, default=True)
     job_summary = get_bool_var('JOB_SUMMARY', options, default=True)
     comment_mode = get_var('COMMENT_MODE', options) or comment_mode_always
 
@@ -464,9 +472,11 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         xunit_files_glob=get_var('XUNIT_FILES', options),
         trx_files_glob=get_var('TRX_FILES', options),
         time_factor=time_factor,
+        test_file_prefix=get_var('TEST_FILE_PREFIX', options) or None,
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=comment_mode,
+        check_run=check_run,
         job_summary=job_summary,
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),
         pull_request_build=get_var('PULL_REQUEST_BUILD', options) or 'merge',
@@ -481,12 +491,16 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         seconds_between_github_reads=float(seconds_between_github_reads),
         seconds_between_github_writes=float(seconds_between_github_writes),
         secondary_rate_limit_wait_seconds=float(secondary_rate_limit_wait_seconds),
-        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False)
+        search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False),
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
     check_var(settings.repo, 'GITHUB_REPOSITORY', 'GitHub repository')
     check_var(settings.commit, 'COMMIT, GITHUB_SHA or event file', 'Commit SHA')
+    check_var_condition(
+        settings.test_file_prefix is None or any([settings.test_file_prefix.startswith(sign) for sign in ['-', '+']]),
+        f"TEST_FILE_PREFIX is optional, but when given, it must start with '-' or '+': {settings.test_file_prefix}"
+    )
     check_var(settings.comment_mode, 'COMMENT_MODE', 'Comment mode', comment_modes)
     check_var(settings.pull_request_build, 'PULL_REQUEST_BUILD', 'Pull Request build', pull_request_build_modes)
     check_var(suite_logs_mode, 'REPORT_SUITE_LOGS', 'Report suite logs mode', available_report_suite_logs)

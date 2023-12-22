@@ -7,21 +7,9 @@
     'output': {
       'title': '1 errors, 1 fail, 1 skipped, 1 pass in 0s',
       'summary':
-        '4 tests\u2002\u2003\u20031 '
-        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
-        'sult-action/blob/VERSION/README.md#the-symbols "passed tests")\u2003\u2003'
-        '0s '
-        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
-        'tion/blob/VERSION/README.md#the-symbols "duration of all tests")\n1 '
-        'suites\u2003\u20031 '
-        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
-        'lob/VERSION/README.md#the-symbols "skipped / disabled tests")\n1 '
-        'files\u2004\u2002\u2003\u20031 '
-        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
-        'b/VERSION/README.md#the-symbols "failed tests")\u2003\u20031 '
-        '[:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/'
-        'blob/VERSION/README.md#the-symbols "test errors")\n\nResults for '
-        'commit commit s.\n\n'
+        '4 tests\u2002\u2003\u20031 :white_check_mark:\u2003\u20030s '
+        ':stopwatch:\n1 suites\u2003\u20031 :zzz:\n1 files\u2004\u2002\u2003\u2003'
+        '1 :x:\u2003\u20031 :fire:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
         '0KoLTSx8jKGIMSNfMwClfHuAoJC92Z2MxeVoISjC5kGQl0A/8EWkHmwJuIYMR58Os11ry'
         '5wXn6LOODshGSgOiEQLRaDwdRemm3u5b+WuYllblvcag0+QlnE7YzeD8XajRvdAAAA\n',
