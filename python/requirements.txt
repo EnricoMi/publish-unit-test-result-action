@@ -20,6 +20,6 @@ PyGithub==2.1.1
     # latest version that support Python 3.7
     urllib3==2.0.7
   # latest version that support Python 3.7
-  typing_extensions==4.7.1
+  typing_extensions==4.9.0
   # latest version that support Python 3.7
   urllib3==2.0.7
