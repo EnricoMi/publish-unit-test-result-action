@@ -1,5 +1,5 @@
 name: 'Fetch workflows'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'A GitHub Action to find workflows matching a query'
 
 outputs:
@@ -16,7 +16,7 @@ runs:
       run: |
         for i in {1..60}
         do
-          workflows=$(curl -s https://github.com/EnricoMi/publish-unit-test-result-action | (grep "Used by" || true) | sed -e "s/.*title=//" -e 's/["]//g' | cut -d " " -f 1)
+          workflows=$(curl -s https://github.com/im-open/publish-unit-test-result-action | (grep "Used by" || true) | sed -e "s/.*title=//" -e 's/["]//g' | cut -d " " -f 1)
           if [ -n "$workflows" ]
           then
             echo "total=$workflows" >> $GITHUB_OUTPUT

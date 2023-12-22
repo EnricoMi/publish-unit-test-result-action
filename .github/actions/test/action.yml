@@ -1,5 +1,5 @@
 name: 'Test'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'A GitHub Action that tests this action'
 
 inputs:

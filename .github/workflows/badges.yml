@@ -40,14 +40,14 @@ jobs:
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          gistURL: https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395
           file: downloads.svg
 
       - name: Upload JSON to Gist
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          gistURL: https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395
           file: downloads.json
 
   workflows:
@@ -80,12 +80,12 @@ jobs:
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          gistURL: https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395
           file: workflows.svg
 
       - name: Upload JSON to Gist
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          gistURL: https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395
           file: workflows.json

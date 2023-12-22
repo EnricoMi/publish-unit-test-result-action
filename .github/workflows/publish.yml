@@ -75,7 +75,7 @@ jobs:
           load: true
           push: false
           platforms: linux/${{ matrix.arch }}
-          tags: enricomi/publish-unit-test-result-action:latest
+          tags: im-open/publish-unit-test-result-action:latest
           outputs: type=docker
 
       - name: Download Artifacts
@@ -188,7 +188,7 @@ jobs:
             -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
             -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
             -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
-            enricomi/publish-unit-test-result-action:latest
+            im-open/publish-unit-test-result-action:latest
         shell: bash
 
       - name: JSON output
@@ -201,7 +201,7 @@ jobs:
         id: scan
         uses: crazy-max/ghaction-container-scan@v3
         with:
-          image: enricomi/publish-unit-test-result-action:latest
+          image: im-open/publish-unit-test-result-action:latest
           dockerfile: ./Dockerfile
           annotations: true
       - name: Upload SARIF artifact

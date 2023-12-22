@@ -89,7 +89,7 @@ def expand_glob(pattern: Optional[str], file_format: Optional[str], gha: GithubA
         gha.warning(f'Could not find any{file_format} files for {prettyfied_pattern}')
         if has_absolute_patterns:
             gha.warning(f'Your file pattern contains absolute paths, please read the notes on absolute paths:')
-            gha.warning(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths')
+            gha.warning(f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths')
     else:
         logger.info(f'Reading{file_format} files {prettyfied_pattern} ({get_number_of_files(files)}, {get_files_size(files)})')
         logger.debug(f'reading{file_format} files {list(files)}')
@@ -190,7 +190,7 @@ def parse_files(settings: Settings, gha: GithubAction) -> ParsedUnitTestResultsW
     elems = []
 
     # parse files, log the progress
-    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    # https://github.com/im-open/publish-unit-test-result-action/issues/304
     with progress_logger(items=len(files + junit_files + nunit_files + xunit_files + trx_files),
                          interval_seconds=10,
                          progress_template='Read {progress} files in {time}',
@@ -235,12 +235,12 @@ def main(settings: Settings, gha: GithubAction) -> None:
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
                     f'The only useful thing it can do in this situation is creating a job summary, which is disabled in settings. '
                     f'To fully run the action on fork repository pull requests, see '
-                    f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
+                    f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
 
     # log the available RAM to help spot OOM issues:
-    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/231
-    # https://github.com/EnricoMi/publish-unit-test-result-action/issues/304
+    # https://github.com/im-open/publish-unit-test-result-action/issues/231
+    # https://github.com/im-open/publish-unit-test-result-action/issues/304
     avail_mem = humanize.naturalsize(psutil.virtual_memory().available, binary=True)
     logger.info(f'Available memory to read files: {avail_mem}')
 

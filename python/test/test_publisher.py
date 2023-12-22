@@ -453,7 +453,7 @@ class TestPublisher(unittest.TestCase):
                 mock.call('This action is running on a pull_request event for a fork repository. '
                           'Pull request comments and check runs cannot be created, so disabling these features. '
                           'To fully run the action on fork repository pull requests, '
-                          f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
+                          f'see https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}'
                           '/README.md#support-fork-repositories-and-dependabot-branches')
             ], l.info.call_args_list)
 

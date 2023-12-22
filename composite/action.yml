@@ -1,5 +1,5 @@
 name: 'Publish Test Results'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
 
 inputs:
@@ -201,7 +201,7 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-fc884bb0b8d89fb24ccb9a84a3d97821
+        key: im-open-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-fc884bb0b8d89fb24ccb9a84a3d97821
 
     - name: Create virtualenv
       id: venv
@@ -212,13 +212,13 @@ runs:
         echo '##[group]Create virtualenv'
         # install virtualenv, if it is not yet installed
         python3 -m pip install $PIP_OPTIONS virtualenv
-        python3 -m virtualenv enricomi-publish-action-venv
+        python3 -m virtualenv im-open-publish-action-venv
         # test activating virtualenv
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
+            source im-open-publish-action-venv/bin/activate;;
           Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
+            source im-open-publish-action-venv\\Scripts\\activate;;
         esac
         which python3
         echo '##[endgroup]'
@@ -234,9 +234,9 @@ runs:
           # activate virtualenv
           case "$RUNNER_OS" in
             Linux*|macOS*)
-              source enricomi-publish-action-venv/bin/activate;;
+              source im-open-publish-action-venv/bin/activate;;
             Windows*)
-              source enricomi-publish-action-venv\\Scripts\\activate;;
+              source im-open-publish-action-venv\\Scripts\\activate;;
           esac
         fi
         which python3
@@ -254,9 +254,9 @@ runs:
         # activate virtualenv
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
+            source im-open-publish-action-venv/bin/activate;;
           Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
+            source im-open-publish-action-venv\\Scripts\\activate;;
         esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'

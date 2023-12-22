@@ -25,7 +25,7 @@ jobs:
 
       - name: Publish Test Results
         id: test-results
-        uses: EnricoMi/publish-unit-test-result-action/composite@master
+        uses: im-open/publish-unit-test-result-action/composite@master
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           check_name: Test Results (reference)
@@ -67,5 +67,5 @@ jobs:
         uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
         with:
           token: ${{ secrets.GIST_TOKEN }}
-          gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
+          gistURL: https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395
           file: tests.svg

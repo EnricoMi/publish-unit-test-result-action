@@ -66,7 +66,7 @@ jobs:
     name: Configure Deployment
     needs: [test-mac, test-lnx, test-win]
     # do not build or deploy on forked repositories
-    if: github.repository_owner == 'EnricoMi'
+    if: github.repository_owner == 'im-open'
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.action.outputs.image }}
@@ -104,14 +104,14 @@ jobs:
     needs: [publish, config-deploy]
 
     # do not build or deploy on forked repositories
-    if: github.repository_owner == 'EnricoMi'
+    if: github.repository_owner == 'im-open'
     runs-on: ubuntu-latest
     steps:
       - name: Docker meta
         id: docker-meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/EnricoMi/publish-unit-test-result-action
+          images: ghcr.io/im-open/publish-unit-test-result-action
           flavor: |
             latest=false
             prefix=v

@@ -1138,16 +1138,16 @@ class Test(unittest.TestCase):
         gha.warning.assert_has_calls([
             mock.call(f'Could not find any JUnit XML files for {missing_junit}'),
             mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
-            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
+            mock.call(f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
             mock.call(f'Could not find any NUnit XML files for {missing_nunit}'),
             mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
-            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
+            mock.call(f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
             mock.call(f'Could not find any XUnit XML files for {missing_xunit}'),
             mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
-            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
+            mock.call(f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
             mock.call(f'Could not find any TRX files for {missing_trx}'),
             mock.call(f'Your file pattern contains absolute paths, please read the notes on absolute paths:'),
-            mock.call(f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
+            mock.call(f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#running-with-absolute-paths'),
         ])
         gha.error.assert_not_called()
 
@@ -1248,7 +1248,7 @@ class Test(unittest.TestCase):
                 mock.call('This action is running on a pull_request event for a fork repository. '
                           'The only useful thing it can do in this situation is creating a job summary, '
                           'which is disabled in settings. To fully run the action on fork repository pull requests, '
-                          f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
+                          f'see https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}'
                           '/README.md#support-fork-repositories-and-dependabot-branches'),
                 mock.call('At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, '
                           'or TRX_FILES options has to be set! '

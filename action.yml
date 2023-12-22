@@ -1,5 +1,5 @@
 name: 'Publish Test Results'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
 
 inputs:
@@ -148,7 +148,7 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.12.0'
+  image: 'docker://ghcr.io/im-open/publish-unit-test-result-action:v2.12.0'
 
 branding:
   icon: 'check-circle'

@@ -1,5 +1,5 @@
 name: 'Assert JSON output'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'A GitHub Action that asserts the publish action''s JSON output'
 
 inputs:
