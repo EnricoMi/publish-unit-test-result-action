@@ -355,7 +355,7 @@ Here is an example JSON:
 ```json
 {
   "title": "4 parse errors, 4 errors, 23 fail, 18 skipped, 227 pass in 39m 12s",
-  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
+  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:white_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:white_check_mark:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/EnricoMi/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
   "conclusion": "success",
   "stats": {
     "files": 24,
@@ -827,52 +827,3 @@ Self-hosted runners may require setting up a Python environment first:
 Self-hosted runners for Windows require Bash shell to be installed. Easiest way to have one is by installing
 Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
 environment variable seen by the self-hosted runner.
-
-<details>
-<summary>Isolating composite action from your workflow</summary>
-
-Note that the composite action modifies this Python environment by installing dependency packages.
-If this conflicts with actions that later run Python in the same workflow (which is a rare case),
-it is recommended to run this action as the last step in your workflow, or to run it in an isolated workflow.
-Running it in an isolated workflow is similar to the workflows shown in [Use with matrix strategy](#use-with-matrix-strategy).
-
-To run the composite action in an isolated workflow, your CI workflow should upload all test result files:
-
-```yaml
-build-and-test:
-  name: "Build and Test"
-  runs-on: macos-latest
-
-  steps:
-  - …
-  - name: Upload Test Results
-    if: always()
-    uses: actions/upload-artifact@v3
-    with:
-      name: Test Results
-      path: "test-results/**/*.xml"
-```
-
-Your dedicated publish-test-results workflow then downloads these files and runs the action there:
-
-```yaml
-publish-test-results:
-  name: "Publish Tests Results"
-  needs: build-and-test
-  runs-on: windows-latest
-  # the build-and-test job might be skipped, we don't need to run this job then
-  if: success() || failure()
-
-  steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        path: artifacts
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v2
-      with:
-        files: "artifacts/**/*.xml"
-```
-</details>
-
