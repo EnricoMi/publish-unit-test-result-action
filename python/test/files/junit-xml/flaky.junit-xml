@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="example.ExampleTests" time="0.002" tests="2" errors="1" skipped="0" failures="1">
+  <testcase name="throwsAlways" classname="example.ExampleTests" time="0.01">
+    <error message="Always throws exception" type="java.lang.RuntimeException">java.lang.RuntimeException: Always throws exception
+	at example.ExampleTests.throwsAlways(ExampleTests.java:26)
+</error>
+    <rerunError message="Always throws exception" type="java.lang.RuntimeException">
+      <stackTrace>java.lang.RuntimeException: Always throws exception
+	at example.ExampleTests.throwsAlways(ExampleTests.java:26)
+</stackTrace>
+    </rerunError>
+    <rerunError message="Always throws exception" type="java.lang.RuntimeException">
+      <stackTrace>java.lang.RuntimeException: Always throws exception
+	at example.ExampleTests.throwsAlways(ExampleTests.java:26)
+</stackTrace>
+    </rerunError>
+    <rerunError message="Always throws exception" type="java.lang.RuntimeException">
+      <stackTrace>java.lang.RuntimeException: Always throws exception
+	at example.ExampleTests.throwsAlways(ExampleTests.java:26)
+</stackTrace>
+    </rerunError>
+  </testcase>
+  <testcase name="failsAssertionAlways" classname="example.ExampleTests" time="0.003">
+    <failure message="Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;
+	at example.ExampleTests.failsAssertionAlways(ExampleTests.java:40)
+</failure>
+    <rerunFailure message="Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;
+	at example.ExampleTests.failsAssertionAlways(ExampleTests.java:40)
+</stackTrace>
+    </rerunFailure>
+    <rerunFailure message="Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;
+	at example.ExampleTests.failsAssertionAlways(ExampleTests.java:40)
+</stackTrace>
+    </rerunFailure>
+    <rerunFailure message="Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: Always fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;
+	at example.ExampleTests.failsAssertionAlways(ExampleTests.java:40)
+</stackTrace>
+    </rerunFailure>
+  </testcase>
+  <testcase name="failsAssertionOnlyFirstAttempt" classname="example.ExampleTests" time="0.0">
+    <flakyFailure message="First attempt fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: First attempt fails assertion ==&gt; expected: &lt;1&gt; but was: &lt;2&gt;
+	at example.ExampleTests.failsAssertionOnlyFirstAttempt(ExampleTests.java:32)
+</stackTrace>
+    </flakyFailure>
+  </testcase>
+  <testcase name="throwsOnlyFirstAttempt" classname="example.ExampleTests" time="0.001">
+    <flakyError message="First attempt throws exception" type="java.lang.RuntimeException">
+      <stackTrace>java.lang.RuntimeException: First attempt throws exception
+	at example.ExampleTests.throwsOnlyFirstAttempt(ExampleTests.java:18)
+</stackTrace>
+    </flakyError>
+  </testcase>
+</testsuite>
