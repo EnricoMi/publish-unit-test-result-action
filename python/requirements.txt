@@ -1,7 +1,7 @@
 humanize==3.14.0
 junitparser==3.1.0
   future==0.18.3
-lxml==4.9.3
+lxml==4.9.4
 psutil==5.9.7
 PyGithub==2.1.1
   Deprecated==1.2.14
