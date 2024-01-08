@@ -1,5 +1,5 @@
 name: 'GHCR package downloads'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'A GitHub Action that fetches the number of downloads of a GHCR package'
 
 inputs:

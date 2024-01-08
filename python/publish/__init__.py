@@ -5,20 +5,20 @@ import logging
 import re
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable
+from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, Iterable, Dict
 
 from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 # keep the version in sync with action.yml
-__version__ = 'v2.9.0'
+__version__ = 'v2.12.0'
 
 logger = logging.getLogger('publish')
 digest_prefix = '[test-results]:data:'
 digest_mime_type = 'application/gzip'
 digest_encoding = 'base64'
 digest_header = f'{digest_prefix}{digest_mime_type};{digest_encoding},'
-digit_space = '  '
+digit_space = ' '
 punctuation_space = ' '
 
 comment_mode_off = 'off'
@@ -149,6 +149,24 @@ class SomeTestChanges:
         if removed is None or skipped_before is None:
             return None
         return skipped_before.intersection(removed)
+
+
+def get_json_path(json: Dict[str, Any], path: Union[str, List[str]]) -> Any:
+    if isinstance(path, str):
+        path = path.split('.')
+
+    if path[0] not in json:
+        return None
+
+    elem = json[path[0]]
+
+    if len(path) > 1:
+        if isinstance(elem, dict):
+            return get_json_path(elem, path[1:])
+        else:
+            return None
+    else:
+        return elem
 
 
 def utf8_character_length(c: int) -> int:
@@ -422,17 +440,17 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
 def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
     return '[{label}]({link} "{tooltip}")'.format(
         label=label,
-        link=f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols',
+        link=f'https://github.com/im-open/publish-unit-test-result-action/blob/{__version__}/README.md#the-symbols',
         tooltip=tooltip
     )
 
 
 all_tests_label_md = 'tests'
-passed_tests_label_md = get_link_and_tooltip_label_md(':heavy_check_mark:', 'passed tests')
-skipped_tests_label_md = get_link_and_tooltip_label_md(':zzz:', 'skipped / disabled tests')
-failed_tests_label_md = get_link_and_tooltip_label_md(':x:', 'failed tests')
-test_errors_label_md = get_link_and_tooltip_label_md(':fire:', 'test errors')
-duration_label_md = get_link_and_tooltip_label_md(':stopwatch:', 'duration of all tests')
+passed_tests_label_md = ':white_check_mark:'
+skipped_tests_label_md = ':zzz:'
+failed_tests_label_md = ':x:'
+test_errors_label_md = ':fire:'
+duration_label_md = ':stopwatch:'
 
 
 def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
@@ -619,7 +637,7 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
         runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.runs_error) else ''
     runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
-        runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
+        runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, passed_tests_label_md),
         runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
         runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md),

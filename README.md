@@ -6,16 +6,13 @@
 [![GitHub Workflows badge](https://gist.github.com/im-open/612cb538c14731f1a8fefe504f519395/raw/workflows.svg)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
 [![Docker pulls badge](https://gist.github.com/im-open/612cb538c14731f1a8fefe504f519395/raw/downloads.svg)](https://github.com/users/im-open/packages/container/package/publish-unit-test-result-action)
 
+![Arm badge](misc/badge-arm.svg)
 ![Ubuntu badge](misc/badge-ubuntu.svg)
 ![macOS badge](misc/badge-macos.svg)
 ![Windows badge](misc/badge-windows.svg)
-![JUnit badge](misc/badge-junit-xml.svg)
-![NUnit badge](misc/badge-nunit-xml.svg)
-![XUnit badge](misc/badge-xunit-xml.svg)
+![XML badge](misc/badge-xml.svg)
 ![TRX badge](misc/badge-trx.svg)
-![Dart badge](misc/badge-dart.svg)
-![Mocha badge](misc/badge-mocha.svg)
-
+![JS badge](misc/badge-js.svg)
 
 [![Test Results](https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395/raw/tests.svg)](https://gist.githubusercontent.com/im-open/612cb538c14731f1a8fefe504f519395/raw/tests.svg)
 
@@ -23,7 +20,8 @@ This [GitHub Action](https://github.com/actions) analyses test result files and
 publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, VS) and XML (JUnit, NUnit, XUnit) file formats](#generating-test-result-files),
 and runs on Linux, macOS and Windows.
 
-You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badgen.net/badge/icon/Ubuntu?icon=terminal&label) (e.g. `runs-on: ubuntu-latest`) runners:
+You can use this action with ![Ubuntu Linux](misc/badge-ubuntu.svg) runners (e.g. `runs-on: ubuntu-latest`)
+or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 ```yaml
 - name: Publish Test Results
@@ -36,8 +34,10 @@ You can add this action to your GitHub workflow for ![Ubuntu Linux](https://badg
       test-results/**/*.json
 ```
 
-Use this for ![macOS](https://badgen.net/badge/icon/macOS?icon=apple&label) (e.g. `runs-on: macos-latest`)
-and ![Windows](https://badgen.net/badge/icon/Windows?icon=windows&label) (e.g. `runs-on: windows-latest`) runners:
+See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
+
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
+and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
 
 ```yaml
 - name: Publish Test Results
@@ -60,9 +60,9 @@ The `if: always()` clause guarantees that this action always runs, even if earli
 When run multiple times in one workflow, the [option](#configuration) `check_name` has to be set to a unique value for each instance.
 Otherwise, the multiple runs overwrite each other's results.
 
-***Note:** This action does not fail if tests failed. The action that executed the tests should
-fail on test failure. The published results however indicate failure if tests fail or errors occur.
-This behaviour is configurable.*
+***Note:** By default, this action does not fail if tests failed. This can be [configured](#configuration) via `action_fail`.
+The action that executed the tests should fail on test failure. The published results however indicate failure if tests fail or errors occur,
+which can be [configured](#configuration) via `fail_on`.*
 
 ## Permissions
 
@@ -94,14 +94,14 @@ Check your favorite development and test environment for its JSON, TRX file or J
 
 |Test Environment |Language| JUnit<br/>XML | NUnit<br/>XML | XUnit<br/>XML | TRX<br/>file | JSON<br/>file |
 |-----------------|:------:|:---------:|:---------:|:---------:|:---:|:---:|
-|[Dart](https://github.com/dart-lang/test/blob/master/pkgs/test/doc/json_reporter.md)|Dart, Flutter| | | | | :heavy_check_mark: |
-|[Jest](https://jestjs.io/docs/configuration#default-reporter)|JavaScript|:heavy_check_mark:| | | | |
-|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|Java, Scala, Kotlin|:heavy_check_mark:| | | | |
-|[Mocha](https://mochajs.org/#xunit)|JavaScript|:heavy_check_mark:| |[not xunit](https://github.com/mochajs/mocha/issues/4758)| | :heavy_check_mark: |
-|[MStest / dotnet](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)|.Net|[:heavy_check_mark:](https://github.com/spekt/junit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/nunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/spekt/xunit.testlogger#usage)|[:heavy_check_mark:](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)| |
-|[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:heavy_check_mark:| | | | |
-|[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:heavy_check_mark:| | | | |
-|Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:heavy_check_mark:| | | | |
+|[Dart](https://github.com/dart-lang/test/blob/master/pkgs/test/doc/json_reporter.md)|Dart, Flutter| | | | |:white_check_mark:|
+|[Jest](https://jestjs.io/docs/configuration#default-reporter)|JavaScript|:white_check_mark:| | | | |
+|[Maven](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit.html)|Java, Scala, Kotlin|:white_check_mark:| | | | |
+|[Mocha](https://mochajs.org/#xunit)|JavaScript|:white_check_mark:| |[not xunit](https://github.com/mochajs/mocha/issues/4758)| |:white_check_mark:|
+|[MStest / dotnet](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)|.Net|[:white_check_mark:](https://github.com/spekt/junit.testlogger#usage)|[:white_check_mark:](https://github.com/spekt/nunit.testlogger#usage)|[:white_check_mark:](https://github.com/spekt/xunit.testlogger#usage)|[:white_check_mark:](https://github.com/Microsoft/vstest-docs/blob/main/docs/report.md#syntax-of-default-loggers)| |
+|[pytest](https://docs.pytest.org/en/latest/how-to/output.html#creating-junitxml-format-files)|Python|:white_check_mark:| | | | |
+|[sbt](https://www.scala-sbt.org/release/docs/Testing.html#Test+Reports)|Scala|:white_check_mark:| | | | |
+|Your favorite<br/>environment|Your favorite<br/>language|probably<br/>:white_check_mark:| | | | |
 
 ## What is new in version 2
 
@@ -128,7 +128,7 @@ See workaround for `check_name`.
 
 ### Modes `create new` and `update last` removed for option `comment_mode`
 The action always updates an earlier pull request comment, which is the exact behaviour of mode `update last`.
-The configuration options `create new` and `update last` are therefore removed.
+The [configuration](#configuration) options `create new` and `update last` are therefore removed.
 
 **Impact:**
 An existing pull request comment is always updated.
@@ -150,7 +150,7 @@ Set `comment_mode` to `always` (the default) or `off`.
 
 ## Publishing test results
 
-Test results are published on GitHub at various (configurable) places:
+Test results are published on GitHub at various ([configurable](#configuration)) places:
 
 - as [a comment](#pull-request-comment) in related pull requests
 - as [a check](#commit-and-pull-request-checks) in the checks section of a commit and related pull requests
@@ -185,6 +185,8 @@ Those are highlighted in pull request comments to easily spot unintended test re
 
 ***Note:** This requires `check_run_annotations` to be set to `all tests, skipped tests`.*
 
+Comments can be disabled with `comment_mode: off`.
+
 ### Commit and pull request checks
 
 The checks section of a commit and related pull requests list a short summary (here `1 fail, 1 skipped, …`),
@@ -198,6 +200,8 @@ Pull request checks:
 
 ![pull request checks example](misc/github-pull-request-checks.png)
 
+Check runs can be disabled with `check_run: false`.
+
 ### Commit and pull request annotations
 
 Each failing test produces an annotation with failure details in the checks section of a commit:
@@ -208,7 +212,12 @@ and the changed files section of related pull requests:
 
 ![annotations example changed files](misc/github-pull-request-changes-annotation.png)
 
+***Note:** Annotations for test files are only supported when test file paths in test result files are relative to the repository root.
+Use option `test_file_prefix` to add a prefix to, or remove a prefix from these file paths. See [Configuration](#configuration) section for details.*
+
 ***Note:** Only the first failure of a test is shown. If you want to see all failures, set `report_individual_runs: "true"`.*
+
+Check run annotations can be disabled with `ignore_runs: true`.
 
 ### GitHub Actions job summary
 
@@ -220,11 +229,15 @@ In presence of failures or errors, the job summary links to the respective [chec
 
 ***Note:** Job summary requires [GitHub Actions runner v2.288.0](https://github.com/actions/runner/releases/tag/v2.288.0) or above.*
 
+Job summaries can be disabled with `job_summary: false`.
+
 ### GitHub Actions check summary of a commit
 
 Test results are published in the GitHub Actions check summary of the respective commit:
 
 ![checks comment example](misc/github-checks-comment.png)
+
+Check runs can be disabled with `check_run: false`.
 
 ## The symbols
 [comment]: <> (This heading is linked to from method get_link_and_tooltip_label_md)
@@ -233,7 +246,7 @@ The symbols have the following meaning:
 
 |Symbol|Meaning|
 |:----:|-------|
-|<img src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png" height="20"/>|A successful test or run|
+|<img src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png" height="20"/>  :white_check_mark:|A successful test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png" height="20"/>|A skipped test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/274c.png" height="20"/>|A failed test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
@@ -260,7 +273,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|_no default_|File patterns of test result files. Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the composite action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
@@ -290,8 +303,10 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`time_unit`|`seconds`|Time values in the XML files have this unit. Supports `seconds` and `milliseconds`.|
-|`job_summary`|`true`| Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
+|`time_unit`|`seconds`|Time values in the test result files have this unit. Supports `seconds` and `milliseconds`.|
+|`test_file_prefix`|`none`|Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".|
+|`check_run`|`true`|Set to `true`, the results are published as a check run, but it may not be associated with the workflow that ran this action.|
+|`job_summary`|`true`|Set to `true`, the results are published as part of the [job summary page](https://github.blog/2022-05-09-supercharging-github-actions-with-job-summaries/) of the workflow run.|
 |`compare_to_earlier_commit`|`true`|Test results are compared to results of earlier commits to show changes:<br/>`false` - disable comparison, `true` - compare across commits.'|
 |`test_changes_limit`|`10`|Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of `0`.|
 |`report_individual_runs`|`false`|Individual runs of the same test may see different failures. Reports all individual failures when set `true`, and the first failure only otherwise.|
@@ -340,7 +355,7 @@ Here is an example JSON:
 ```json
 {
   "title": "4 parse errors, 4 errors, 23 fail, 18 skipped, 227 pass in 39m 12s",
-  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v1.0.0/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
+  "summary": "  24 files  ±0      4 errors  21 suites  ±0   39m 12s [:stopwatch:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"duration of all tests\") ±0s\n272 tests ±0  227 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  18 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  23 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  4 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n437 runs  ±0  354 [:heavy_check_mark:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"passed tests\") ±0  53 [:zzz:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"skipped / disabled tests\") ±0  25 [:x:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"failed tests\") ±0  5 [:fire:](https://github.com/im-open/publish-unit-test-result-action/blob/v2.6.1/README.md#the-symbols \"test errors\") ±0 \n\nResults for commit 11c02e56. ± Comparison against earlier commit d8ce4b6c.\n",
   "conclusion": "success",
   "stats": {
     "files": 24,
@@ -397,7 +412,7 @@ is not easily available, e.g. when [creating a badge from test results](#create-
 <details>
 <summary>Access JSON via file</summary>
 
-The optional `json_file` allows to configure a file where extended JSON information are to be written.
+The optional `json_file` allows to [configure](#configuration) a file where extended JSON information are to be written.
 Compared to `"Access JSON via step outputs"` above, `errors` and `annotations` contain more information
 than just the number of errors and annotations, respectively.
 
@@ -765,6 +780,34 @@ Set the `gistURL` to the Gist that you want to write the badge file to, in the f
 You can then use the badge via this URL: https://gist.githubusercontent.com/{user}/{id}/raw/badge.svg
 </details>
 
+## Running with absolute paths
+
+It is known that this action works best with relative paths (e.g. `test-results/**/*.xml`),
+but most absolute paths (e.g. `/tmp/test-results/**/*.xml`) require to use the composite variant
+of this action (`uses: im-open/publish-unit-test-result-action/composite@v2`).
+
+If you have to use absolute paths with the non-composite variant of this action (`uses: im-open/publish-unit-test-result-action@v2`),
+you have to copy files to a relative path first, and then use the relative path:
+
+```yaml
+- name: Copy Test Results
+  if: always()
+  run: |
+    cp -Lpr /tmp/test-results test-results
+  shell: bash
+
+- name: Publish Test Results
+  uses: im-open/publish-unit-test-result-action@v2
+  if: always()
+  with:
+     files: |
+        test-results/**/*.xml
+        test-results/**/*.trx
+        test-results/**/*.json
+```
+
+Using the non-composite variant of this action is recommended as it starts up much quicker.
+
 ## Running as a composite action
 
 Running this action as a composite action allows to run it on various operating systems as it
@@ -833,7 +876,3 @@ publish-test-results:
 ```
 </details>
 
-## Credits
-
-The initial GitHub action has been created by [EnricoMi](https://github.com/EnricoMi) at
-[EnricoMi/publish-unit-test-result-action](https://github.com/EnricoMi/publish-unit-test-result-action).

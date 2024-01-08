@@ -1,7 +1,7 @@
 FROM python:3.8-alpine
 
-LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
-LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
+LABEL repository="https://github.com/im-open/publish-unit-test-result-action"
+LABEL homepage="https://github.com/im-open/publish-unit-test-result-action"
 LABEL maintainer="Enrico Minack <github@Enrico.Minack.dev>"
 
 LABEL com.github.actions.name="Publish Test Results"

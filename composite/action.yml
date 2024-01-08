@@ -1,5 +1,5 @@
 name: 'Publish Test Results'
-author: 'EnricoMi'
+author: 'im-open'
 description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
 
 inputs:
@@ -42,7 +42,7 @@ inputs:
     default: 'false'
     required: false
   files:
-    description: 'File patterns of test result files. Supports *, **, ?, and []. Use multiline string for multiple patterns. Patterns starting with ! exclude the matching files. There have to be at least one pattern starting without a "!".'
+    description: 'File patterns of test result files. Relative paths are known to work best, while the composite action also works with absolute paths. Supports "*", "**", "?", and "[]" character ranges. Use multiline string for multiple patterns. Patterns starting with "!" exclude the matching files. There have to be at least one pattern starting without a "!".'
     required: false
   junit_files:
     description: 'Deprecated, use "files" option instead.'
@@ -60,6 +60,9 @@ inputs:
     description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
     default: 'seconds'
     required: false
+  test_file_prefix:
+    description: 'Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".'
+    required: false
   report_individual_runs:
     description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
     required: false
@@ -76,6 +79,10 @@ inputs:
   ignore_runs:
     description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
     default: 'false'
+    required: false
+  check_run:
+    description: 'Set to "true", the results are published as a check run, but it may not be associated with the workflow that ran this action.'
+    default: 'true'
     required: false
   job_summary:
     description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
@@ -135,6 +142,7 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
+
 outputs:
   json:
     description: "Test results as JSON"
@@ -182,6 +190,7 @@ runs:
             ;;
           Windows*)
             echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
+            echo "pip-options=--user" >> $GITHUB_OUTPUT
             ;;
         esac
       shell: bash
@@ -192,14 +201,49 @@ runs:
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-d81e5b217e041ea3f958821f6daca2f5
+        key: im-open-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-fc884bb0b8d89fb24ccb9a84a3d97821
+
+    - name: Create virtualenv
+      id: venv
+      continue-on-error: true
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
+      run: |
+        echo '##[group]Create virtualenv'
+        # install virtualenv, if it is not yet installed
+        python3 -m pip install $PIP_OPTIONS virtualenv
+        python3 -m virtualenv im-open-publish-action-venv
+        # test activating virtualenv
+        case "$RUNNER_OS" in
+          Linux*|macOS*)
+            source im-open-publish-action-venv/bin/activate;;
+          Windows*)
+            source im-open-publish-action-venv\\Scripts\\activate;;
+        esac
+        which python3
+        echo '##[endgroup]'
+      shell: bash
 
     - name: Install Python dependencies
+      env:
+        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Install Python dependencies'
+        if [ "${{ steps.venv.outcome }}" == "success" ]
+        then
+          # activate virtualenv
+          case "$RUNNER_OS" in
+            Linux*|macOS*)
+              source im-open-publish-action-venv/bin/activate;;
+            Windows*)
+              source im-open-publish-action-venv\\Scripts\\activate;;
+          esac
+        fi
+        which python3
+
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install wheel
-        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install $PIP_OPTIONS wheel
+        python3 -m pip install $PIP_OPTIONS -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -207,6 +251,13 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
+        # activate virtualenv
+        case "$RUNNER_OS" in
+          Linux*|macOS*)
+            source im-open-publish-action-venv/bin/activate;;
+          Windows*)
+            source im-open-publish-action-venv\\Scripts\\activate;;
+        esac
         python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
@@ -226,6 +277,7 @@ runs:
         XUNIT_FILES: ${{ inputs.xunit_files }}
         TRX_FILES: ${{ inputs.trx_files }}
         TIME_UNIT: ${{ inputs.time_unit }}
+        TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
         REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
         REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
         DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
@@ -245,6 +297,7 @@ runs:
         JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
         JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
         JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
+        CHECK_RUN: ${{ inputs.check_run }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
         # not documented

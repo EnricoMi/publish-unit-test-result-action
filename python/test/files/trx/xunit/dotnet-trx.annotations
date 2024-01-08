@@ -7,19 +7,9 @@
     'output': {
       'title': '5 fail, 1 skipped, 5 pass in 0s',
       'summary':
-        '11 tests\u2002\u2003\u20035 '
-        '[:heavy_check_mark:](https://github.com/EnricoMi/publish-unit-test-re'
-        'sult-action/blob/VERSION/README.md#the-symbols "passed tests")\u2003\u2003'
-        '0s '
-        '[:stopwatch:](https://github.com/EnricoMi/publish-unit-test-result-ac'
-        'tion/blob/VERSION/README.md#the-symbols "duration of all tests")\n\u205f\u2004'
-        '1 suites\u2003\u20031 '
-        '[:zzz:](https://github.com/EnricoMi/publish-unit-test-result-action/b'
-        'lob/VERSION/README.md#the-symbols "skipped / disabled tests")\n\u205f\u2004'
-        '1 files\u2004\u2002\u2003\u20035 '
-        '[:x:](https://github.com/EnricoMi/publish-unit-test-result-action/blo'
-        'b/VERSION/README.md#the-symbols "failed tests")\n\nResults for commit '
-        'commit s.\n\n'
+        '11 tests\u2002\u2003\u20035 :white_check_mark:\u2003\u20030s '
+        ':stopwatch:\n\u20071 suites\u2003\u20031 :zzz:\n\u20071 files\u2004\u2002\u2003\u2003'
+        '5 :x:\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
         '0KoLaSw8TKGIMaNfMwClfHuroCK3byZ3XfwBYwOfGSiYzwkiC/MCWUE7wh7QhpinsQDU0'
         'hKUTN8xQZ7/S7FIsH8LjSix2rE5F7hnVtf4U+XubFlbmXKWwuRoCYWVsnPC2b3Tg/fAAA'
