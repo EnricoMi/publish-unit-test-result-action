@@ -85,7 +85,7 @@ runs:
           # we only upload the changed files if we can find zip
           if which zip
           then
-            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs -d "\n" zip changed-expectations.zip
+            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs zip changed-expectations.zip
             exit 1
           fi
         fi
