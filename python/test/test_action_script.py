@@ -1031,28 +1031,15 @@ class Test(unittest.TestCase):
         self.assertEqual([], gha.method_calls)
 
         self.assertEqual(145, actual.files)
-        if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
-                (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
-            # on macOS and below Python 3.9 we see one particular error
-            self.assertEqual(17, len(actual.errors))
-            self.assertEqual(731, actual.suites)
-            self.assertEqual(4109, actual.suite_tests)
-            self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(450, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
-            self.assertEqual(7956, actual.suite_time)
-            self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4085, len(actual.cases))
-        else:
-            self.assertEqual(13, len(actual.errors))
-            self.assertEqual(735, actual.suites)
-            self.assertEqual(4117, actual.suite_tests)
-            self.assertEqual(214, actual.suite_skipped)
-            self.assertEqual(454, actual.suite_failures)
-            self.assertEqual(21, actual.suite_errors)
-            self.assertEqual(7957, actual.suite_time)
-            self.assertEqual(0, len(actual.suite_details))
-            self.assertEqual(4093, len(actual.cases))
+        self.assertEqual(17, len(actual.errors))
+        self.assertEqual(731, actual.suites)
+        self.assertEqual(4109, actual.suite_tests)
+        self.assertEqual(214, actual.suite_skipped)
+        self.assertEqual(450, actual.suite_failures)
+        self.assertEqual(21, actual.suite_errors)
+        self.assertEqual(7956, actual.suite_time)
+        self.assertEqual(0, len(actual.suite_details))
+        self.assertEqual(4085, len(actual.cases))
         self.assertEqual('commit', actual.commit)
 
         with io.StringIO() as string:
@@ -1066,7 +1053,11 @@ class Test(unittest.TestCase):
                 "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
                 "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
                 "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
-                "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)"
+                "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)",
+                "::error file=NUnit-sec1752-file.xml::Error processing result file: Entity 'xxe' not defined, line 17, column 51 (NUnit-sec1752-file.xml, line 17)",
+                "::error::lxml.etree.XMLSyntaxError: Entity 'xxe' not defined, line 17, column 51",
+                "::error file=NUnit-sec1752-https.xml::Error processing result file: Entity 'xxe' not defined, line 17, column 51 (NUnit-sec1752-https.xml, line 17)",
+                "::error::lxml.etree.XMLSyntaxError: Entity 'xxe' not defined, line 17, column 51",
             ] * 2 + [
                 # these occur once, either from FILES and or from *_FILES options
                 "::error::Exception: File is empty.",
@@ -1084,14 +1075,6 @@ class Test(unittest.TestCase):
                 '::error file=malformed-json.json::Error processing result file: Unsupported file format: malformed-json.json',
                 '::error file=non-json.json::Error processing result file: Unsupported file format: non-json.json',
             ]
-            if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
-                    (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
-                expected.extend([
-                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
-                    '::error file=NUnit-sec1752-file.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-file.xml, line 17)',
-                    '::error::lxml.etree.XMLSyntaxError: Failure to process entity xxe, line 17, column 51',
-                    '::error file=NUnit-sec1752-https.xml::Error processing result file: Failure to process entity xxe, line 17, column 51 (NUnit-sec1752-https.xml, line 17)',
-                ] * 2)
             self.assertEqual(
                 sorted(expected),
                 sorted([re.sub(r'file=.*[/\\]', 'file=', re.sub(r'[(]file:.*/', '(', re.sub(r'format: .*[/\\]', 'format: ', line)))
@@ -1115,12 +1098,7 @@ class Test(unittest.TestCase):
                                              **options)
                 actual = parse_files(settings, gha)
 
-                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
-                        (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
-                    # on macOS (below macOS 13) and Python below 3.9 we see one particular error
-                    self.assertEqual(363, len(actual.suite_details))
-                else:
-                    self.assertEqual(365, len(actual.suite_details))
+                self.assertEqual(363, len(actual.suite_details))
 
     def test_parse_files_no_matches(self):
         gha = mock.MagicMock()
@@ -1207,16 +1185,9 @@ class Test(unittest.TestCase):
                 # Publisher.publish is expected to have been called with these arguments
                 results, cases, conclusion = m.call_args_list[0].args
                 self.assertEqual(145, results.files)
-                if Version(sys.version.split(' ')[0]) < Version('3.9.0') and sys.platform.startswith('darwin') and \
-                        (platform.mac_ver()[0].startswith("11.") or platform.mac_ver()[0].startswith("12.")):
-                    # on macOS and below Python 3.9 we see one particular error
-                    self.assertEqual(731, results.suites)
-                    self.assertEqual(731, len(results.suite_details))
-                    self.assertEqual(1811, len(cases))
-                else:
-                    self.assertEqual(735, results.suites)
-                    self.assertEqual(735, len(results.suite_details))
-                    self.assertEqual(1811, len(cases))
+                self.assertEqual(731, results.suites)
+                self.assertEqual(731, len(results.suite_details))
+                self.assertEqual(1811, len(cases))
                 self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check_wo_summary(self):
