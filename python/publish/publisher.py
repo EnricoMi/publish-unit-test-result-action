@@ -412,10 +412,10 @@ class Publisher:
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
 
+        check_run = None
         if self._settings.check_run:
             # only publish check run if it is enabled, else we only publish json output & json file
             # we can send only 50 annotations at once, so we split them into chunks of 50
-            check_run = None
             summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
             split_annotations = [annotation.to_dict() for annotation in all_annotations]
             split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
