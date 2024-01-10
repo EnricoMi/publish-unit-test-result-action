@@ -300,7 +300,7 @@ class TestPublisher(unittest.TestCase):
         publisher = mock.MagicMock(Publisher)
         publisher._settings = settings
         publisher.get_pulls = mock.Mock(return_value=prs)
-        publisher.publish_check = mock.Mock(return_value=(cr, None))
+        publisher.publish_check = mock.Mock(return_value=(cr, bcr))
         publisher.get_check_run = mock.Mock(return_value=bcr)
         Publisher.publish(publisher, stats, cases, 'success')
 
@@ -508,6 +508,23 @@ class TestPublisher(unittest.TestCase):
         mock_calls = self.call_mocked_publish(settings, prs=[object()])
 
         self.assertEqual(0, len(mock_calls))
+
+    def test_publish_with_json_file_without_check_run_and_comment(self):
+        bcr = object()
+        
+        settings = self.create_settings(comment_mode=comment_mode_off, check_run=False, json_file='foo.json')
+        mock_calls = self.call_mocked_publish(settings, cr=None, bcr = bcr)
+
+        self.assertEqual(2, len(mock_calls))
+        (method, args, kwargs) = mock_calls[0]
+        self.assertEqual('publish_check', method)
+        self.assertEqual((self.stats, self.cases, 'success'), args)
+        self.assertEqual({}, kwargs)
+
+        (method, args, kwargs) = mock_calls[1]
+        self.assertEqual('publish_job_summary', method)
+        self.assertEqual((settings.comment_title, self.stats, None, bcr), args)
+        self.assertEqual({}, kwargs)
 
     def test_publish_with_comment_without_pr(self):
         settings = self.create_settings()
