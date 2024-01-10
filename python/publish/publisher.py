@@ -199,8 +199,13 @@ class Publisher:
 
         check_run = None
         before_check_run = None
-        if self._settings.check_run:
-            if self._settings.is_fork:
+        if self._settings.check_run or self._settings.json_file:
+            
+            if not self._settings.is_fork:
+                # we can only publish check run if we are not running on a fork
+                check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+            
+            if self._settings.is_fork and self._settings.check_run:
                 # running on a fork, we cannot publish the check, but we can still read before_check_run
                 # bump the version if you change the target of this link (if it did not exist already) or change the section
                 logger.info('This action is running on a pull_request event for a fork repository. '
@@ -211,8 +216,7 @@ class Publisher:
                     before_commit_sha = get_json_path(self._settings.event, 'before')
                     logger.debug(f'comparing against before={before_commit_sha}')
                     before_check_run = self.get_check_run(before_commit_sha)
-            else:
-                check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+
 
         if self._settings.job_summary:
             self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
@@ -408,30 +412,32 @@ class Publisher:
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
 
-        # we can send only 50 annotations at once, so we split them into chunks of 50
-        check_run = None
-        summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
-        split_annotations = [annotation.to_dict() for annotation in all_annotations]
-        split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
-        for annotations in split_annotations:
-            output = dict(
-                title=title,
-                summary=summary_with_digest,
-                annotations=annotations
-            )
+        if self._settings.check_run:
+            # only publish check run if it is enabled, else we only publish json output & json file
+            # we can send only 50 annotations at once, so we split them into chunks of 50
+            check_run = None
+            summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
+            split_annotations = [annotation.to_dict() for annotation in all_annotations]
+            split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
+            for annotations in split_annotations:
+                output = dict(
+                    title=title,
+                    summary=summary_with_digest,
+                    annotations=annotations
+                )
 
-            if check_run is None:
-                logger.debug(f'creating check with {len(annotations)} annotations')
-                check_run = self._repo.create_check_run(name=self._settings.check_name,
-                                                        head_sha=self._settings.commit,
-                                                        status='completed',
-                                                        conclusion=conclusion,
-                                                        output=output)
-                logger.info(f'Created check {check_run.html_url}')
-            else:
-                logger.debug(f'updating check with {len(annotations)} more annotations')
-                check_run.edit(output=output)
-                logger.debug(f'updated check')
+                if check_run is None:
+                    logger.debug(f'creating check with {len(annotations)} annotations')
+                    check_run = self._repo.create_check_run(name=self._settings.check_name,
+                                                            head_sha=self._settings.commit,
+                                                            status='completed',
+                                                            conclusion=conclusion,
+                                                            output=output)
+                    logger.info(f'Created check {check_run.html_url}')
+                else:
+                    logger.debug(f'updating check with {len(annotations)} more annotations')
+                    check_run.edit(output=output)
+                    logger.debug(f'updated check')
 
         # create full json
         data = PublishData(
@@ -441,7 +447,7 @@ class Publisher:
             stats=stats,
             stats_with_delta=stats_with_delta if before_stats is not None else None,
             annotations=all_annotations,
-            check_url=check_run.html_url,
+            check_url=check_run.html_url if check_run is not None else None,
             cases=cases
         )
         self.publish_json(data)
