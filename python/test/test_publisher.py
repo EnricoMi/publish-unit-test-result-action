@@ -1369,6 +1369,25 @@ class TestPublisher(unittest.TestCase):
     def test_publish_check_with_base_stats_with_errors(self):
         self.do_test_publish_check_with_base_stats(errors)
 
+    def test_publish_check_with_json_file_without_check_run(self):
+        with tempfile.TemporaryDirectory() as path:
+            filepath = os.path.join(path, 'file.json')
+            settings = self.create_settings(check_run=False, json_file=filepath)
+            gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
+            publisher = Publisher(settings, gh, gha)
+
+            # makes gzipped digest deterministic
+            with mock.patch('gzip.time.time', return_value=0):
+                check_run, before_check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
+
+                repo.create_check_run.assert_not_called()
+
+                self.assertIsNone(check_run, "check_run should be None when check_run is False")
+
+                # assert the json file has been created
+                self.assertTrue(os.path.isfile(filepath), "json file should have been created")
+
+
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         earlier_commit = 'past'
         settings = self.create_settings(event={'before': earlier_commit})
