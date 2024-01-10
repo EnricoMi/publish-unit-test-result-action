@@ -210,8 +210,10 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
-        # install virtualenv, if it is not yet installed
-        python3 -m pip install $PIP_OPTIONS virtualenv
+        # install virtualenv, if it is not yet installed        
+        if [[ -z $(dpkg -l | grep python3-virtualenv) ]]; then
+          python3 -m pip install $PIP_OPTIONS virtualenv
+        fi
         python3 -m virtualenv enricomi-publish-action-venv
         # test activating virtualenv
         case "$RUNNER_OS" in
