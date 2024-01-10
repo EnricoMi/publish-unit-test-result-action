@@ -1381,6 +1381,7 @@ class TestPublisher(unittest.TestCase):
                 check_run, before_check_run = publisher.publish_check(self.stats, self.cases, 'conclusion')
 
             repo.create_check_run.assert_not_called()
+            gha.add_to_output.assert_called_once()
             self.assertIsNone(check_run, "check_run should be None when check_run input is False")
             self.assertTrue(os.path.isfile(filepath), "json file should have been created")
 
