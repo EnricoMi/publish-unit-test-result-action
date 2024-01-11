@@ -35,6 +35,10 @@ class TestActionYml(unittest.TestCase):
         dockerfile_action_wo_runs = {k: v for k, v in dockerfile_action.items() if k != 'runs'}
         composite_action_wo_runs = {k: v for k, v in composite_action.items() if k != 'runs'}
 
+        # composite action has input.python_interpreter, which does not exist for dockerfile action
+        self.assertIn('python_interpreter', composite_action.get('inputs', {}))
+        del composite_action.get('inputs', {})['python_interpreter']
+
         # composite action has outputs.json.value, which does not exist for dockerfile action
         self.assertIn('value', composite_action.get('outputs', {}).get('json', {}))
         del composite_action.get('outputs', {}).get('json', {})['value']
@@ -60,7 +64,9 @@ class TestActionYml(unittest.TestCase):
 
         # these are not documented in the action.yml files but still needs to be forwarded
         extra_inputs = ['files', 'root_log_level', 'log_level']
-        expected = {key.upper(): f'${{{{ inputs.{key} }}}}' for key in list(action.get('inputs', {}).keys()) + extra_inputs}
+        expected = {key.upper(): f'${{{{ inputs.{key} }}}}'
+                    for key in (list(action.get('inputs', {}).keys()) + extra_inputs)
+                    if key != 'python_interpreter'}
 
         steps = action.get('runs', {}).get('steps', [])
         step = next((step for step in steps if step.get('name') == 'Publish Test Results'), {})
