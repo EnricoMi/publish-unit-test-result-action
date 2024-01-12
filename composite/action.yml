@@ -166,22 +166,19 @@ runs:
             exit 1
           fi
 
-          interpreter="$(which python)"
-          if [[ ! -e "${interpreter}3" ]]
-          then
-            mkdir -p "$RUNNER_TEMP/bin/"
-            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
-            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
-          fi
+          echo "PYTHON=$(which python)" >> $GITHUB_ENV
+          echo "version=$(python -V)" >> $GITHUB_OUTPUT
+        else
+          echo "PYTHON=$(which python3)" >> $GITHUB_ENV
+          echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         fi
-        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
 
     - name: Check for venv package
       id: check-venv
       run: |
-        python3 >> $GITHUB_OUTPUT << EOF
+        ${PYTHON} >> $GITHUB_OUTPUT << EOF
         try:
           import virtualenv
           print("venv=virtualenv")
@@ -230,41 +227,21 @@ runs:
         # create virtual environment
         if [ "${{ steps.check-venv.outputs.venv }}" == "none" ]
         then
-          python3 -m pip install $PIP_OPTIONS virtualenv
-          python3 -m virtualenv enricomi-publish-action-venv
+          ${PYTHON} -m pip install $PIP_OPTIONS virtualenv
+          ${PYTHON} -m virtualenv enricomi-publish-action-venv
         else
-          python3 -m "${{ steps.check-venv.outputs.venv }}" enricomi-publish-action-venv
+          ${PYTHON} -m "${{ steps.check-venv.outputs.venv }}" enricomi-publish-action-venv
         fi
-
-        # test activating virtualenv
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
-          Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
-        esac
-        which python3
+        echo "VENV_PYTHON=$(cd enricomi-publish-action-venv; cd bin; $(find . -name python3) -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
         echo '##[endgroup]'
       shell: bash
 
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        if [ "${{ steps.venv.outcome }}" == "success" ]
-        then
-          # activate virtualenv
-          case "$RUNNER_OS" in
-            Linux*|macOS*)
-              source enricomi-publish-action-venv/bin/activate;;
-            Windows*)
-              source enricomi-publish-action-venv\\Scripts\\activate;;
-          esac
-        fi
-        which python3
-
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install wheel
-        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        ${VENV_PYTHON} -m pip install wheel
+        ${VENV_PYTHON} -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -272,14 +249,7 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        # activate virtualenv
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
-          Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
-        esac
-        python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
+        ${VENV_PYTHON} $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
