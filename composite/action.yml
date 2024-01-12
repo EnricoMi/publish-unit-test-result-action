@@ -233,8 +233,6 @@ runs:
       shell: bash
 
     - name: Install Python dependencies
-      env:
-        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Install Python dependencies'
         if [ "${{ steps.venv.outcome }}" == "success" ]
@@ -250,8 +248,8 @@ runs:
         which python3
 
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install $PIP_OPTIONS wheel
-        python3 -m pip install $PIP_OPTIONS -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        python3 -m pip install wheel
+        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
