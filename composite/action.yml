@@ -169,9 +169,10 @@ runs:
           interpreter="$(which python)"
           if [[ ! -e "${interpreter}3" ]]
           then
-            mkdir -p "$RUNNER_TEMP/bin/"
-            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
-            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
+            mkdir -p "$RUNNER_TEMP/enricomi-publish-action-bin/"
+            ln -s "$interpreter" "$RUNNER_TEMP/enricomi-publish-action-bin/python3"
+            chmod ugo-w "$RUNNER_TEMP/enricomi-publish-action-bin/python3"
+            echo "$RUNNER_TEMP/enricomi-publish-action-bin" >> $GITHUB_PATH
           fi
         fi
         echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
