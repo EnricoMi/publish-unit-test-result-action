@@ -280,6 +280,7 @@ jobs:
         run: |
           python3 -m pip install virtualenv
           python3 -m virtualenv test-venv
+          ls -lah test-venv/bin
         shell: bash
 
       - name: Download Artifacts
