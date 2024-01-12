@@ -178,6 +178,22 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
+    - name: Check for venv package
+      id: check-venv
+      run: |
+        python3 >> $GITHUB_OUTPUT << EOF
+        try:
+          import virtualenv
+          print("venv=virtualenv")
+        except:
+          try:
+            import venv
+            print("venv=venv")
+          except:
+            print("venv=none")
+        EOF
+      shell: bash
+
     - name: Detect OS
       id: os
       run: |
@@ -211,8 +227,15 @@ runs:
       run: |
         echo '##[group]Create virtualenv'
         # install virtualenv, if it is not yet installed
-        python3 -m pip install $PIP_OPTIONS virtualenv
-        python3 -m virtualenv enricomi-publish-action-venv
+        # create virtual environment
+        if [ "${{ steps.check-venv.outputs.venv }}" == "none" ]
+        then
+          python3 -m pip install $PIP_OPTIONS virtualenv
+          python3 -m virtualenv enricomi-publish-action-venv
+        else
+          python3 -m "${{ steps.check-venv.outputs.venv }}" enricomi-publish-action-venv
+        fi
+
         # test activating virtualenv
         case "$RUNNER_OS" in
           Linux*|macOS*)
