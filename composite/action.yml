@@ -235,6 +235,8 @@ runs:
         else
           python3 -m "${{ steps.check-venv.outputs.venv }}" enricomi-publish-action-venv
         fi
+        echo "venv installed:"
+        ls -lahR enricomi-publish-action-venv
 
         # test activating virtualenv
         case "$RUNNER_OS" in
