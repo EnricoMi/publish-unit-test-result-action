@@ -179,22 +179,6 @@ runs:
         echo '##[endgroup]'
       shell: bash
 
-    - name: Check for venv package
-      id: check-venv
-      run: |
-        python3 >> $GITHUB_OUTPUT << EOF
-        try:
-          import virtualenv
-          print("venv=virtualenv")
-        except:
-          try:
-            import venv
-            print("venv=venv")
-          except:
-            print("venv=none")
-        EOF
-      shell: bash
-
     - name: Detect OS
       id: os
       run: |
@@ -227,18 +211,17 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
-        # install virtualenv, if it is not yet installed
         # create virtual environment
-        if [ "${{ steps.check-venv.outputs.venv }}" == "none" ]
+        if ! python3 -m virtualenv enricomi-publish-action-venv && ! python3 -m venv enricomi-publish-action-venv
         then
-          echo "No venv package installed"
+          echo "Looks like no venv package installed"
           python3 -m pip install $PIP_OPTIONS virtualenv
-          python3 -m virtualenv enricomi-publish-action-venv
-        else
-          echo "Venv package installed: ${{ steps.check-venv.outputs.venv }}"
-          python3 -m "${{ steps.check-venv.outputs.venv }}" enricomi-publish-action-venv
+          if ! python3 -m virtualenv enricomi-publish-action-venv
+          then
+            echo "Still no luck creating a venv"
+          fi
         fi
-        echo "venv installed:"
+        echo "installed venv:"
         ls -lahR enricomi-publish-action-venv
 
         # test activating virtualenv
@@ -248,7 +231,6 @@ runs:
           Windows*)
             source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
-        which python3
         echo '##[endgroup]'
       shell: bash
 
