@@ -211,7 +211,7 @@ runs:
         echo '##[group]Create virtualenv'
         echo "Python that creates venv: $PYTHON_BIN"
 
-        echo "Createing virtual environment"
+        echo "Creating virtual environment"
         if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv && ! $PYTHON_BIN -m venv enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
@@ -223,15 +223,14 @@ runs:
           fi
         fi
 
-        echo "Testing activating virtualenv"
+        echo "Finding Python interpreter in venv"
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
+            PYTHON_VENV="enricomi-publish-action-venv/bin/python";;
           Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
+            PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
         esac
-
-        PYTHON_VENV=$(python3 -c 'import sys; print(sys.executable)')
+        PYTHON_VENV=$($PYTHON_VENV -c 'import sys; print(sys.executable)')
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> $GITHUB_ENV
         echo '##[endgroup]'
