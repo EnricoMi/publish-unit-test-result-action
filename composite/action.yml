@@ -166,15 +166,14 @@ runs:
             exit 1
           fi
 
-          interpreter="$(which python)"
-          if [[ ! -e "${interpreter}3" ]]
-          then
-            mkdir -p "$RUNNER_TEMP/bin/"
-            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
-            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
-          fi
+          PYTHON_BIN=$(python -c 'import sys; print(sys.executable)')
+        else
+          PYTHON_BIN=$(python3 -c 'import sys; print(sys.executable)')
         fi
-        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
+
+        echo "Python that creates venv: $PYTHON_BIN"
+        echo "PYTHON_BIN=$PYTHON_BIN" >> $GITHUB_ENV
+        echo "version=$($PYTHON_BIN -V)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
 
@@ -210,14 +209,14 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
-        echo "Python that creates venv: $(which python3)"
+        echo "Python that creates venv: $PYTHON_BIN"
 
         echo "Createing virtual environment"
-        if ! python3 -m virtualenv enricomi-publish-action-venv && ! python3 -m venv enricomi-publish-action-venv
+        if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv && ! $PYTHON_BIN -m venv enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          python3 -m pip install $PIP_OPTIONS virtualenv
-          if ! python3 -m virtualenv enricomi-publish-action-venv
+          $PYTHON_BIN -m pip install $PIP_OPTIONS virtualenv
+          if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv
           then
             echo "Still cannot create venv after installing virtualenv package"
             exit 1
@@ -231,8 +230,10 @@ runs:
           Windows*)
             source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
-        echo "Python in venv: $(python -c 'import sys; print(sys.executable)')"
-        echo "PYTHON_VENV=$(python -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
+
+        PYTHON_VENV=$(python3 -c 'import sys; print(sys.executable)')
+        echo "Python in venv: $PYTHON_VENV"
+        echo "PYTHON_VENV=$PYTHON_VENV" >> $GITHUB_ENV
         echo '##[endgroup]'
       shell: bash
 
