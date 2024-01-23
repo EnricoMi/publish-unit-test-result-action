@@ -231,29 +231,17 @@ runs:
           Windows*)
             source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
-        echo "Python in venv: $(which python3)"
-        python -c "import sys; print(sys.executable)"
+        echo "Python in venv: $(python -c 'import sys; print(sys.executable)')"
+        echo "PYTHON_VENV=$(python -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
         echo '##[endgroup]'
       shell: bash
 
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        if [ "${{ steps.venv.outcome }}" == "success" ]
-        then
-          # activate virtualenv
-          case "$RUNNER_OS" in
-            Linux*|macOS*)
-              source enricomi-publish-action-venv/bin/activate;;
-            Windows*)
-              source enricomi-publish-action-venv\\Scripts\\activate;;
-          esac
-        fi
-        which python3
-
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install wheel
-        python3 -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        $PYTHON_VENV -m pip install wheel
+        $PYTHON_VENV -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -261,14 +249,7 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        # activate virtualenv
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
-          Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
-        esac
-        python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
+        $PYTHON_VENV $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
