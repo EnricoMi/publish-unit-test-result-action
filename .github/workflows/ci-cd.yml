@@ -30,15 +30,27 @@ jobs:
           .github/upgrade-pip-packages.sh
         shell: bash
 
+  test-mac:
+    name: "Test macOS"
+    uses: "./.github/workflows/test-os.yml"
+    with:
+      os: '["macos-11", "macos-12", "macos-13"]'
+
   test-lnx:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["ubuntu-20.04", "ubuntu-22.04"]'
 
+  test-win:
+    name: "Test Windows"
+    uses: "./.github/workflows/test-os.yml"
+    with:
+      os: '["windows-2019", "windows-2022"]'
+
   publish:
     name: "Publish"
-    needs: [test-lnx]
+    needs: [test-mac, test-lnx, test-win]
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       ! cancelled() &&
@@ -52,7 +64,7 @@ jobs:
 
   config-deploy:
     name: Configure Deployment
-    needs: [test-lnx]
+    needs: [test-mac, test-lnx, test-win]
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
