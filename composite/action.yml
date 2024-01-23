@@ -174,7 +174,6 @@ runs:
             echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
           fi
         fi
-        echo "python version: $(python3 -V)"
         echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
@@ -211,26 +210,29 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
-        # create virtual environment
+        echo "Python that creates venv: $(which python3)"
+
+        echo "Createing virtual environment"
         if ! python3 -m virtualenv enricomi-publish-action-venv && ! python3 -m venv enricomi-publish-action-venv
         then
-          echo "Looks like no venv package installed"
+          echo "Looks like there is neither virtualenv nor venv package installed"
           python3 -m pip install $PIP_OPTIONS virtualenv
           if ! python3 -m virtualenv enricomi-publish-action-venv
           then
-            echo "Still no luck creating a venv"
+            echo "Still cannot create venv after installing virtualenv package"
+            exit 1
           fi
         fi
-        echo "installed venv:"
-        ls -lahR enricomi-publish-action-venv
 
-        # test activating virtualenv
+        echo "Testing activating virtualenv"
         case "$RUNNER_OS" in
           Linux*|macOS*)
             source enricomi-publish-action-venv/bin/activate;;
           Windows*)
             source enricomi-publish-action-venv\\Scripts\\activate;;
         esac
+        echo "Python in venv: $(which python3)"
+        python -c "import sys; print(sys.executable)"
         echo '##[endgroup]'
       shell: bash
 
