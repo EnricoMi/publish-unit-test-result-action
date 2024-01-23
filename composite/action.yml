@@ -215,7 +215,12 @@ runs:
         if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv && ! $PYTHON_BIN -m venv enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          $PYTHON_BIN -m pip install $PIP_OPTIONS virtualenv
+          if ! $PYTHON_BIN -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
+          then
+            echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
+            $PYTHON_BIN -m pip install virtualenv
+          fi
+
           if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv
           then
             echo "Still cannot create venv after installing virtualenv package"
