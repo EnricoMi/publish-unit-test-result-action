@@ -1,0 +1,80 @@
+{
+  "title": "1 errors, 1 fail, 1 skipped, 1 pass in 1s",
+  "summary": "1 files  1 suites   1s :stopwatch:\n4 tests 1 :white_check_mark: 1 :zzz: 1 :x: 1 :fire:\n4 runs  -2 :white_check_mark: 3 :zzz: 2 :x: 1 :fire:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 1,
+    "tests": 4,
+    "tests_succ": 1,
+    "tests_skip": 1,
+    "tests_fail": 1,
+    "tests_error": 1,
+    "runs": 4,
+    "runs_succ": -2,
+    "runs_skip": 3,
+    "runs_fail": 2,
+    "runs_error": 1,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "test class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "failure",
+      "message": "junit.multiresult.xml [took 0s]",
+      "title": "test that errors (test class) with error",
+      "raw_details": "test teardown failure\nstdout"
+    },
+    {
+      "path": "test class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "junit.multiresult.xml [took 0s]",
+      "title": "test that fails (test class) failed",
+      "raw_details": "test failure\nAssertion failed"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "test class ‑ test that is skipped"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 4 tests, see \"Raw output\" for the full list of tests.",
+      "title": "4 tests found",
+      "raw_details": "test class ‑ test that errors\ntest class ‑ test that fails\ntest class ‑ test that is skipped\ntest class ‑ test that succeeds"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "1",
+      "tests": "4",
+      "tests_succ": "1",
+      "tests_skip": "1",
+      "tests_fail": "1",
+      "tests_error": "1",
+      "runs": "4",
+      "runs_succ": "-2",
+      "runs_skip": "3",
+      "runs_fail": "2",
+      "runs_error": "1",
+      "commit": "commit sha"
+    }
+  }
+}

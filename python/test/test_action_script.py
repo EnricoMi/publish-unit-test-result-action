@@ -981,7 +981,10 @@ class Test(unittest.TestCase):
 
     def test_parse_files(self):
         gha = mock.MagicMock()
-        settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'), str(test_files_path / '**' / '*.trx'), str(test_files_path / '**' / '*.json')]),
+        settings = self.get_settings(files_glob='\n'.join([str(test_files_path / '**' / '*.xml'),
+                                                           str(test_files_path / '**' / '*.trx'),
+                                                           str(test_files_path / '**' / '*.json'),
+                                                           "!" + str(test_files_path / '**' / '*.results.json')]),
                                      junit_files_glob=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                                      nunit_files_glob=str(test_files_path / 'nunit' / '**' / '*.xml'),
                                      xunit_files_glob=str(test_files_path / 'xunit' / '**' / '*.xml'),
@@ -1164,9 +1167,10 @@ class Test(unittest.TestCase):
                 GITHUB_EVENT_NAME='push',
                 GITHUB_REPOSITORY='repo',
                 EVENT_FILE=None,
-                FILES='\n'.join(str(path) for path in [test_files_path / '**' / '*.xml',
-                                                       test_files_path / '**' / '*.trx',
-                                                       test_files_path / '**' / '*.json']),
+                FILES='\n'.join(path for path in [str(test_files_path / '**' / '*.xml'),
+                                                  str(test_files_path / '**' / '*.trx'),
+                                                  str(test_files_path / '**' / '*.json'),
+                                                  "!" + str(test_files_path / '**' / '*.results.json')]),
                 JUNIT_FILES=str(test_files_path / 'junit-xml' / '**' / '*.xml'),
                 NUNIT_FILES=str(test_files_path / 'nunit' / '**' / '*.xml'),
                 XUNIT_FILES=str(test_files_path / 'xunit' / '**' / '*.xml'),

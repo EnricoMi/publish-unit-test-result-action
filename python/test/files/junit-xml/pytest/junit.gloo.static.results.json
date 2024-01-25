@@ -1,0 +1,62 @@
+{
+  "title": "All 12 tests pass, 12 skipped in 1m 9s",
+  "summary": "24 tests   12 :white_check_mark:  1m 9s :stopwatch:\n 1 suites  12 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 69,
+    "tests": 24,
+    "tests_succ": 12,
+    "tests_skip": 12,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 24,
+    "runs_succ": 12,
+    "runs_skip": 12,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 12 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "12 skipped tests found",
+      "raw_details": "test.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_remote_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_remote_func"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 24 tests, see \"Raw output\" for the full list of tests.",
+      "title": "24 tests found",
+      "raw_details": "test.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_gloo_remote_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_failure_mpi_remote_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_gloo_remote_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_local_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_local_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_mixed_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_mixed_func\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_remote_cmd\ntest.integration.test_static_run.StaticRunTests ‑ test_run_success_mpi_remote_func"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "69",
+      "tests": "24",
+      "tests_succ": "12",
+      "tests_skip": "12",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "24",
+      "runs_succ": "12",
+      "runs_skip": "12",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

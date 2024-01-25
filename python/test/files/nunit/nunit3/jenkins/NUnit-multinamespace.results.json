@@ -1,0 +1,53 @@
+{
+  "title": "All 4 tests pass in 0s",
+  "summary": "4 tests   4 :white_check_mark:  0s :stopwatch:\n2 suites  0 :zzz:\n1 files    0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 0,
+    "tests": 4,
+    "tests_succ": 4,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 4,
+    "runs_succ": 4,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 4 tests, see \"Raw output\" for the full list of tests.",
+      "title": "4 tests found",
+      "raw_details": "AnotherNS.OtherMainClassTest.TestPropertyValueAgain\nUnitTests.MainClassTest.TestFailure\nUnitTests.MainClassTest.TestMethodUpdateValue\nUnitTests.MainClassTest.TestPropertyValue"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "0",
+      "tests": "4",
+      "tests_succ": "4",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "4",
+      "runs_succ": "4",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

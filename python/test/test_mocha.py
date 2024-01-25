@@ -42,7 +42,9 @@ class TestMochaJson(unittest.TestCase, JUnitXmlParseTest):
 
     @staticmethod
     def get_test_files() -> List[str]:
-        return glob(str(test_files_path / '**' / '*.json'), recursive=True)
+        return [file
+                for file in glob(str(test_files_path / '**' / '*.json'), recursive=True)
+                if not file.endswith(".results.json")]
 
     @staticmethod
     def parse_file(filename) -> JUnitTreeOrParseError:

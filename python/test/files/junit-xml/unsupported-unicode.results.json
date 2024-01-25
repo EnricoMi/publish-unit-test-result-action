@@ -1,0 +1,98 @@
+{
+  "title": "2 errors, 2 fail, 2 skipped, 1 pass in 8s",
+  "summary": "7 tests   1 :white_check_mark:  8s :stopwatch:\n1 suites  2 :zzz:\n1 files    2 :x:  2 :fire:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 8,
+    "tests": 7,
+    "tests_succ": 1,
+    "tests_skip": 2,
+    "tests_fail": 2,
+    "tests_error": 2,
+    "runs": 7,
+    "runs_succ": 1,
+    "runs_skip": 2,
+    "runs_fail": 2,
+    "runs_error": 2,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "test/test-4.py",
+      "start_line": 4,
+      "end_line": 4,
+      "annotation_level": "warning",
+      "message": "unsupported-unicode.xml [took 1s]",
+      "title": "test 4 failed",
+      "raw_details": "Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓\nfailed"
+    },
+    {
+      "path": "test/test-5.py",
+      "start_line": 5,
+      "end_line": 5,
+      "annotation_level": "warning",
+      "message": "unsupported-unicode.xml [took 1s]",
+      "title": "test 5 failed",
+      "raw_details": "message\nSome unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓"
+    },
+    {
+      "path": "test/test-6.py",
+      "start_line": 6,
+      "end_line": 6,
+      "annotation_level": "failure",
+      "message": "unsupported-unicode.xml [took 1s]",
+      "title": "test 6 with error",
+      "raw_details": "Some unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓\nerror"
+    },
+    {
+      "path": "test/test-7.py",
+      "start_line": 7,
+      "end_line": 7,
+      "annotation_level": "failure",
+      "message": "unsupported-unicode.xml [took 1s]",
+      "title": "test 7 with error",
+      "raw_details": "message\nSome unsupported unicode characters: 헴䜝헱홐㣇㿷䔭𒍺𡓿𠄉㦓"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 2 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "2 skipped tests found",
+      "raw_details": "test 2\ntest 3"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 7 tests, see \"Raw output\" for the full list of tests.",
+      "title": "7 tests found",
+      "raw_details": "test 1 헴䜝헱홐㣇㿷䔭\\U0001237a\\U000214ff\\U00020109㦓\ntest 2\ntest 3\ntest 4\ntest 5\ntest 6\ntest 7"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "8",
+      "tests": "7",
+      "tests_succ": "1",
+      "tests_skip": "2",
+      "tests_fail": "2",
+      "tests_error": "2",
+      "runs": "7",
+      "runs_succ": "1",
+      "runs_skip": "2",
+      "runs_fail": "2",
+      "runs_error": "2",
+      "commit": "commit sha"
+    }
+  }
+}

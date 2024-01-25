@@ -1,0 +1,89 @@
+{
+  "title": "3 fail, 1 skipped, 1 pass in 8s",
+  "summary": "1 files  2 suites   8s :stopwatch:\n5 tests 1 :white_check_mark: 1 :zzz: 3 :x:\n7 runs  3 :white_check_mark: 1 :zzz: 3 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 8,
+    "tests": 5,
+    "tests_succ": 1,
+    "tests_skip": 1,
+    "tests_fail": 3,
+    "tests_error": 0,
+    "runs": 7,
+    "runs_succ": 3,
+    "runs_skip": 1,
+    "runs_fail": 3,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "[genericTestClass]",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "mstest/fixie.xml [took 1s]",
+      "title": "1 out of 3 runs failed: ShouldBeString ([genericTestClass])",
+      "raw_details": "Expected: System.String\nActual:   System.Int32   at [genericTestClassForStackTrace].ShouldBeString[T](T genericArgument) in [fileLocation]:line #"
+    },
+    {
+      "path": "[testClass]",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "mstest/fixie.xml [took 1s]",
+      "title": "Fail ([testClass]) failed",
+      "raw_details": "'Fail' failed!   at [testClassForStackTrace].Fail() in [fileLocation]:line #"
+    },
+    {
+      "path": "[testClass]",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "mstest/fixie.xml [took 1s]",
+      "title": "FailByAssertion ([testClass]) failed",
+      "raw_details": "Expected: 2\nActual:   1   at [testClassForStackTrace].FailByAssertion() in [fileLocation]:line #"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "[testClass] ‑ Skip"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 5 tests, see \"Raw output\" for the full list of tests.",
+      "title": "5 tests found",
+      "raw_details": "[genericTestClass] ‑ ShouldBeString\n[testClass] ‑ Fail\n[testClass] ‑ FailByAssertion\n[testClass] ‑ Pass\n[testClass] ‑ Skip"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "8",
+      "tests": "5",
+      "tests_succ": "1",
+      "tests_skip": "1",
+      "tests_fail": "3",
+      "tests_error": "0",
+      "runs": "7",
+      "runs_succ": "3",
+      "runs_skip": "1",
+      "runs_fail": "3",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

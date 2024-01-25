@@ -1,0 +1,53 @@
+{
+  "title": "All 5 tests pass in 2s",
+  "summary": "5 tests   5 :white_check_mark:  2s :stopwatch:\n1 suites  0 :zzz:\n1 files    0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 2,
+    "tests": 5,
+    "tests_succ": 5,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 5,
+    "runs_succ": 5,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 5 tests, see \"Raw output\" for the full list of tests.",
+      "title": "5 tests found",
+      "raw_details": "uk.co.gresearch.spark.diff.DiffOptionsSuite ‑ diff options diff value\nuk.co.gresearch.spark.diff.DiffOptionsSuite ‑ diff options left and right prefixes\nuk.co.gresearch.spark.diff.DiffOptionsSuite ‑ diff options with change column name same as diff column\nuk.co.gresearch.spark.diff.DiffOptionsSuite ‑ diff options with empty diff column name\nuk.co.gresearch.spark.diff.DiffOptionsSuite ‑ fluent methods of diff options"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "2",
+      "tests": "5",
+      "tests_succ": "5",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "5",
+      "runs_succ": "5",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

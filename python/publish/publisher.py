@@ -456,7 +456,7 @@ class Publisher:
                         self._settings.json_thousands_separator,
                         self._settings.json_suite_details,
                         self._settings.json_test_case_results
-                    ), w, ensure_ascii=False)
+                    ), w, ensure_ascii=False, indent=2)
             except Exception as e:
                 self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:

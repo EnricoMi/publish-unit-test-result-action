@@ -1,0 +1,62 @@
+{
+  "title": "1 fail, 3 pass in 0s",
+  "summary": "4 tests   3 :white_check_mark:  0s :stopwatch:\n1 suites  0 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 4,
+    "tests_succ": 3,
+    "tests_skip": 0,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 4,
+    "runs_succ": 3,
+    "runs_skip": 0,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "Pickles.TestHarness.MSTest.AdditionFeature",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "mstest/pickles.trx [took 0s]",
+      "title": "FailToAddTwoNumbers (Pickles.TestHarness.MSTest.AdditionFeature) failed",
+      "raw_details": "\n            Test method Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw exception:\n            Should.Core.Exceptions.NotEqualException: Assert.NotEqual() Failure\n          \n            at Pickles.TestHarness.MSTest.Steps.ThenTheResultShouldBePass(Int32 result) in C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarness.MSTest\\Steps.cs:line 28\n            at lambda_method(Closure , IContextManager , Int32 )<...>\n            at TechTalk.SpecFlow.Bindings.MethodBinding.InvokeAction(IContextManager contextManager, Object[] arguments, ITestTracer testTracer, TimeSpan& duration)\n            at TechTalk.SpecFlow.Bindings.StepDefinitionBinding.Invoke(IContextManager contextManager, ITestTracer testTracer, Object[] arguments, TimeSpan& duration)\n            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStepMatch(BindingMatch match, Object[] arguments)\n            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.ExecuteStep(StepArgs stepArgs)\n            at TechTalk.SpecFlow.Infrastructure.TestExecutionEngine.OnAfterLastStep()\n            at TechTalk.SpecFlow.TestRunner.CollectScenarioErrors()\n            at Pickles.TestHarness.MSTest.AdditionFeature.ScenarioCleanup() in C:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarness.MSTest\\Addition.feature.cs:line 0\n            at Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() in c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarness.MSTest\\Addition.feature:line 18"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 4 tests, see \"Raw output\" for the full list of tests.",
+      "title": "4 tests found",
+      "raw_details": "Pickles.TestHarness.MSTest.AdditionFeature ‑ AddTwoNumbers\nPickles.TestHarness.MSTest.AdditionFeature ‑ AddingSeveralNumbers_40\nPickles.TestHarness.MSTest.AdditionFeature ‑ AddingSeveralNumbers_60\nPickles.TestHarness.MSTest.AdditionFeature ‑ FailToAddTwoNumbers"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "4",
+      "tests_succ": "3",
+      "tests_skip": "0",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "4",
+      "runs_succ": "3",
+      "runs_skip": "0",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "title": "1 fail, 1 skipped, 3 pass in 2s",
+  "summary": "5 tests   3 :white_check_mark:  2s :stopwatch:\n1 suites  1 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 2,
+    "tests": 5,
+    "tests_succ": 3,
+    "tests_skip": 1,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 5,
+    "runs_succ": 3,
+    "runs_skip": 1,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "test/test_spark.py",
+      "start_line": 819,
+      "end_line": 819,
+      "annotation_level": "warning",
+      "message": "pytest/junit.fail.xml [took 7s]",
+      "title": "test_rsh_events (test.test_spark.SparkTests) failed",
+      "raw_details": "self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n                def test_rsh_events(self):\n                > self.do_test_rsh_events(3)\n\n                test_spark.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test_spark.py:836: in do_test_rsh_events\n                self.do_test_rsh(command, 143, events=events)\n                test_spark.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "test.test_spark.SparkTests ‑ test_get_available_devices"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 5 tests, see \"Raw output\" for the full list of tests.",
+      "title": "5 tests found",
+      "raw_details": "test.test_spark.SparkTests ‑ test_check_shape_compatibility\ntest.test_spark.SparkTests ‑ test_get_available_devices\ntest.test_spark.SparkTests ‑ test_get_col_info\ntest.test_spark.SparkTests ‑ test_rsh_events\ntest.test_spark.SparkTests ‑ test_rsh_with_non_zero_exit_code"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "2",
+      "tests": "5",
+      "tests_succ": "3",
+      "tests_skip": "1",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "5",
+      "runs_succ": "3",
+      "runs_skip": "1",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

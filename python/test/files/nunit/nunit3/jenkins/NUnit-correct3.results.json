@@ -1,0 +1,53 @@
+{
+  "title": "All 22 tests pass in 4m 24s",
+  "summary": "22 tests   22 :white_check_mark:  4m 24s :stopwatch:\n13 suites   0 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 13,
+    "duration": 264,
+    "tests": 22,
+    "tests_succ": 22,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 22,
+    "runs_succ": 22,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 22 tests, see \"Raw output\" for the full list of tests.",
+      "title": "22 tests found",
+      "raw_details": "BlogEngine.Tests.Account.Login.InvalidLoginShouldFail\nBlogEngine.Tests.Account.Login.ValidLoginShouldPass\nBlogEngine.Tests.Comments.Comment.CanAddUpdateAndDeleteComment\nBlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppCodeDirectory\nBlogEngine.Tests.FileSystem.Crud.CanWriteAndReadAppDataDirectory\nBlogEngine.Tests.Navigation.CustomPages.CanNavigateToCustomAspxPage\nBlogEngine.Tests.Navigation.CustomPages.CanNavigateToDefaultAspxPageInSubDiretory\nBlogEngine.Tests.Navigation.SubBlog.MyTest\nBlogEngine.Tests.Navigation.SubBlogAggregation.MyTest\nBlogEngine.Tests.Packaging.Installer.CanInstallAndUninstallTheme\nBlogEngine.Tests.Posts.Post.CanCreateAndDeletePost\nBlogEngine.Tests.QuickNotes.Crud.ShouldBeAbleToCreateUpdateAndDeleteNote\nBlogEngine.Tests.QuickNotes.Navigation.AdminShouldSeeQuickNotesPanel\nBlogEngine.Tests.QuickNotes.Navigation.AnonymousUserShouldNotSeeQuickNotesPanel\nBlogEngine.Tests.QuickNotes.Navigation.ShouldBeAbleBrowseThroughTabs\nBlogEngine.Tests.QuickNotes.Posting.PublishQuickNoteAsPost\nBlogEngine.Tests.Quixote.Runner.RunAvatarTests\nBlogEngine.Tests.Quixote.Runner.RunPackagingTests\nBlogEngine.Tests.Quixote.Runner.RunPagerTests\nBlogEngine.Tests.Quixote.Runner.RunUrlRewriteNoExtensionsTests\nBlogEngine.Tests.Quixote.Runner.RunUrlRewriteTests\nBlogEngine.Tests.Users.AuthorProfile.CanAddUpdateAndDeleteUserProfile"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "13",
+      "duration": "264",
+      "tests": "22",
+      "tests_succ": "22",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "22",
+      "runs_succ": "22",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

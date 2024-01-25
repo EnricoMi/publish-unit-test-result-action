@@ -1,0 +1,53 @@
+{
+  "title": "All 3 tests pass in 17s",
+  "summary": "3 tests   3 :white_check_mark:  17s :stopwatch:\n2 suites  0 :zzz:\n1 files    0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 17,
+    "tests": 3,
+    "tests_succ": 3,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 3,
+    "runs_succ": 3,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 3 tests, see \"Raw output\" for the full list of tests.",
+      "title": "3 tests found",
+      "raw_details": "TestAllInfo\nTestAllRawData\nTestFirst10RawData"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "17",
+      "tests": "3",
+      "tests_succ": "3",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "3",
+      "runs_succ": "3",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}
