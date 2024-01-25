@@ -1374,10 +1374,17 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(event={'before': earlier_commit})
         gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
         publisher = Publisher(settings, gh, gha)
+        data = PublishData(
+            title = 'title',
+            summary='summary',
+            stats=self.stats.with_errors(errors),
+            cases=self.cases,
+            conclusion='conclusion',
+        )
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            check_run, before_check_run = publisher.publish_check(self.stats.with_errors(errors), self.cases, 'conclusion')
+            check_run, data = publisher.publish_check(data)
 
         repo.get_commit.assert_called_once_with(earlier_commit)
         error_annotations = [get_error_annotation(error).to_dict() for error in errors]
@@ -1578,6 +1585,7 @@ class TestPublisher(unittest.TestCase):
     publish_data = PublishData(
         title='title',
         summary='summary',
+        summary_with_digest='summary with digest',
         conclusion='conclusion',
         stats=UnitTestRunResults(
             files=12345,
@@ -1606,6 +1614,7 @@ class TestPublisher(unittest.TestCase):
             commit='commit',
             reference_type='type', reference_commit='ref'
         ),
+        before_stats=None,
         annotations=[Annotation(
             path='path',
             start_line=1,
