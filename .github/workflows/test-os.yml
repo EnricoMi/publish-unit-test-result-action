@@ -26,6 +26,8 @@ jobs:
 
       - name: Test
         uses: ./.github/actions/test
+        # exclude Python 3.8 and 3.9 for macos-14
+        if: matrix.os != 'macos-14' || (matrix.python-version != '3.9' && matrix.python-version != '3.9')
         with:
           os: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
