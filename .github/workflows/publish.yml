@@ -234,6 +234,9 @@ jobs:
             python: "3.8"
           - os: macos-latest
             os-label: macOS
+            python: "venv"
+          - os: macos-latest
+            os-label: macOS
             python: "installed"
           - os: macos-11
             os-label: macOS 11
@@ -244,6 +247,9 @@ jobs:
             python: "3.8"
           - os: ubuntu-latest
             os-label: Linux
+            python: "venv"
+          - os: ubuntu-latest
+            os-label: Linux
             python: "installed"
           - os: ubuntu-20.04
             os-label: Linux 20.04
@@ -252,6 +258,9 @@ jobs:
           - os: windows-latest
             os-label: Windows
             python: "installed"
+          - os: windows-latest
+            os-label: Windows
+            python: "venv"
           - os: windows-2019
             os-label: Windows 2019
             python: "installed"
@@ -261,10 +270,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        if: matrix.python != 'installed'
+        if: matrix.python != 'installed' && matrix.python != 'venv'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+
+      - name: Install virtualenv
+        if: matrix.python == 'venv'
+        run: |
+          python3 -m pip install virtualenv
+        shell: bash
 
       - name: Download Artifacts
         uses: actions/download-artifact@v3

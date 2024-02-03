@@ -166,15 +166,14 @@ runs:
             exit 1
           fi
 
-          interpreter="$(which python)"
-          if [[ ! -e "${interpreter}3" ]]
-          then
-            mkdir -p "$RUNNER_TEMP/bin/"
-            ln -s "$interpreter" "$RUNNER_TEMP/bin/python3"
-            echo "$RUNNER_TEMP/bin" >> $GITHUB_PATH
-          fi
+          PYTHON_BIN=$(python -c 'import sys; print(sys.executable)')
+        else
+          PYTHON_BIN=$(python3 -c 'import sys; print(sys.executable)')
         fi
-        echo "version=$(python3 -V)" >> $GITHUB_OUTPUT
+
+        echo "Python that creates venv: $PYTHON_BIN"
+        echo "PYTHON_BIN=$PYTHON_BIN" >> $GITHUB_ENV
+        echo "version=$($PYTHON_BIN -V)" >> $GITHUB_OUTPUT
         echo '##[endgroup]'
       shell: bash
 
@@ -210,40 +209,44 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
-        # install virtualenv, if it is not yet installed
-        python3 -m pip install $PIP_OPTIONS virtualenv
-        python3 -m virtualenv enricomi-publish-action-venv
-        # test activating virtualenv
+        echo "Python that creates venv: $PYTHON_BIN"
+
+        echo "Creating virtual environment"
+        if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv && ! $PYTHON_BIN -m venv enricomi-publish-action-venv
+        then
+          echo "Looks like there is neither virtualenv nor venv package installed"
+          if ! $PYTHON_BIN -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
+          then
+            echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
+            $PYTHON_BIN -m pip install virtualenv
+          fi
+
+          if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv
+          then
+            echo "Still cannot create venv after installing virtualenv package"
+            exit 1
+          fi
+        fi
+
+        echo "Finding Python interpreter in venv"
         case "$RUNNER_OS" in
           Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
+            PYTHON_VENV="enricomi-publish-action-venv/bin/python";;
           Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
+            PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
         esac
-        which python3
+        PYTHON_VENV=$($PYTHON_VENV -c 'import sys; print(sys.executable)')
+        echo "Python in venv: $PYTHON_VENV"
+        echo "PYTHON_VENV=$PYTHON_VENV" >> $GITHUB_ENV
         echo '##[endgroup]'
       shell: bash
 
     - name: Install Python dependencies
-      env:
-        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Install Python dependencies'
-        if [ "${{ steps.venv.outcome }}" == "success" ]
-        then
-          # activate virtualenv
-          case "$RUNNER_OS" in
-            Linux*|macOS*)
-              source enricomi-publish-action-venv/bin/activate;;
-            Windows*)
-              source enricomi-publish-action-venv\\Scripts\\activate;;
-          esac
-        fi
-        which python3
-
         # make sure wheel is installed, which improves installing our dependencies
-        python3 -m pip install $PIP_OPTIONS wheel
-        python3 -m pip install $PIP_OPTIONS -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        $PYTHON_VENV -m pip install wheel
+        $PYTHON_VENV -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -251,14 +254,7 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        # activate virtualenv
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            source enricomi-publish-action-venv/bin/activate;;
-          Windows*)
-            source enricomi-publish-action-venv\\Scripts\\activate;;
-        esac
-        python3 $GITHUB_ACTION_PATH/../python/publish_test_results.py
+        $PYTHON_VENV $GITHUB_ACTION_PATH/../python/publish_test_results.py
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
