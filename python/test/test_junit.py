@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+import io
 import json
 import os
 import pathlib
@@ -137,9 +138,12 @@ class JUnitXmlParseTest:
 
                         json_expectation_path = path.parent / (path.stem + '.results.json')
                         annotations_expectation_path = path.parent / (path.stem + '.annotations')
-                        actual_annotations, actual_json = self.get_check_runs(actual_results)
+                        actual_annotations, data = self.get_check_runs(actual_results)
                         self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2).replace(__version__, 'VERSION'), annotations_expectation_path)
-                        self.assert_expectation(self.test, json.dumps(actual_json, ensure_ascii=False, indent=2), json_expectation_path)
+
+                        actual_json = io.StringIO()
+                        Publisher.write_json(data, actual_json, Test.get_settings())
+                        self.assert_expectation(self.test, actual_json.getvalue(), json_expectation_path)
 
     def test_parse_and_process_files(self):
         for file in self.get_test_files() + self.unsupported_files():
@@ -165,10 +169,10 @@ class JUnitXmlParseTest:
                     results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)], add_suite_details=True)
                     w.write(pp.pformat(results, indent=2))
                 with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
-                    check_runs, json_result = cls.get_check_runs(results)
+                    check_runs, data = cls.get_check_runs(results)
                     w.write(pp.pformat(check_runs, indent=2).replace(__version__, 'VERSION'))
                 with open(path.parent / (path.stem + '.results.json'), 'w', encoding='utf-8') as w:
-                    json.dump(json_result, w, ensure_ascii=False, indent=2)
+                    Publisher.write_json(data, w, Test.get_settings())
 
     @classmethod
     def get_check_runs(cls, parsed):
@@ -187,35 +191,31 @@ class JUnitXmlParseTest:
             )
             return mock.MagicMock(html_url='html', edit=mock.Mock(side_effect=edit))
 
-        with tempfile.TemporaryDirectory() as tmp:
-            commit = 'commit sha'
-            parsed = parsed.with_commit(commit)
-            results = get_test_results(parsed, False)
-            stats = get_stats(results)
-            conclusion = get_conclusion(parsed, fail_on_failures=True, fail_on_errors=True)
-            json_file = str(pathlib.Path(tmp) / "result.json")
-            settings = Test.get_settings(check_name='Test Results',
-                                         commit=commit,
-                                         compare_earlier=False,
-                                         report_individual_runs=False,
-                                         report_suite_out_logs=True,
-                                         report_suite_err_logs=True,
-                                         dedup_classes_by_file_name=False,
-                                         check_run_annotation=set(available_annotations).difference(set(none_annotations)),
-                                         json_file=json_file)
+        commit = 'commit sha'
+        parsed = parsed.with_commit(commit)
+        results = get_test_results(parsed, False)
+        stats = get_stats(results)
+        conclusion = get_conclusion(parsed, fail_on_failures=True, fail_on_errors=True)
+        settings = Test.get_settings(check_name='Test Results',
+                                     commit=commit,
+                                     compare_earlier=False,
+                                     report_individual_runs=False,
+                                     report_suite_out_logs=True,
+                                     report_suite_err_logs=True,
+                                     dedup_classes_by_file_name=False,
+                                     check_run_annotation=set(available_annotations).difference(set(none_annotations)))
 
-            repo = mock.MagicMock(create_check_run=create_check_run)
-            gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
-            gha = mock.MagicMock()
+        repo = mock.MagicMock(create_check_run=create_check_run)
+        gh = mock.MagicMock(get_repo=mock.Mock(return_value=repo))
+        gha = mock.MagicMock()
 
-            # makes gzipped digest deterministic
-            with mock.patch('gzip.time.time', return_value=0):
-                Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            publisher = Publisher(settings, gh, gha)
+            publisher.publish(stats, results.case_results, conclusion)
+            data = publisher.get_publish_data(stats, results.case_results, conclusion).with_check_url('html')
 
-            with open(json_file, "rt", encoding='utf-8') as r:
-                json_result = json.load(r)
-
-        return check_runs, json_result
+        return check_runs, data
 
     @staticmethod
     def prettify_exception(exception) -> str:
