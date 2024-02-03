@@ -312,6 +312,8 @@ class UnitTestRunDeltaResults:
     suites: Numeric
     duration: Numeric
 
+    suite_details: Optional[List[UnitTestSuite]]
+
     tests: Numeric
     tests_succ: Numeric
     tests_skip: Numeric
@@ -377,6 +379,9 @@ class UnitTestRunDeltaResults:
 
     def without_exceptions(self) -> 'UnitTestRunDeltaResults':
         return dataclasses.replace(self, errors=[error.without_exception() for error in self.errors])
+
+    def without_suite_details(self) -> 'UnitTestRunDeltaResults':
+        return dataclasses.replace(self, suite_details=None)
 
 
 UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaResults]
@@ -497,6 +502,8 @@ def get_stats_delta(stats: UnitTestRunResults,
         errors=stats.errors,
         suites=get_diff_value(stats.suites, reference_stats.suites),
         duration=get_diff_value(stats.duration, reference_stats.duration, 'duration'),
+
+        suite_details=stats.suite_details,
 
         tests=get_diff_value(stats.tests, reference_stats.tests),
         tests_succ=get_diff_value(stats.tests_succ, reference_stats.tests_succ),

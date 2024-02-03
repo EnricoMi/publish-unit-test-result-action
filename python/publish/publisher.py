@@ -24,7 +24,7 @@ from publish import __version__, get_json_path, comment_mode_off, digest_prefix,
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestRunResultsOrDeltaResults, get_stats_delta, create_unit_test_case_results
+    UnitTestRunResultsOrDeltaResults, get_stats_delta, get_diff_value
 
 
 @dataclass(frozen=True)
@@ -105,7 +105,12 @@ class PublishData:
         )
 
     def without_suite_details(self) -> 'PublishData':
-        return dataclasses.replace(self, stats=self.stats.without_suite_details())
+        return dataclasses.replace(
+            self,
+            stats=self.stats.without_suite_details() if self.stats is not None else None,
+            stats_with_delta=self.stats_with_delta.without_suite_details() if self.stats_with_delta is not None else None,
+            before_stats=self.before_stats.without_suite_details() if self.before_stats is not None else None
+        )
 
     def without_cases(self) -> 'PublishData':
         return dataclasses.replace(self, cases=None)
@@ -129,12 +134,15 @@ class PublishData:
     def _formatted_stats_and_delta(cls,
                                    stats: Optional[Mapping[str, Any]],
                                    stats_with_delta: Optional[Mapping[str, Any]],
+                                   before_stats: Optional[Mapping[str, Any]],
                                    thousands_separator: str) -> Mapping[str, Any]:
         d = {}
         if stats is not None:
             d.update(stats=cls._format(stats, thousands_separator))
         if stats_with_delta is not None:
             d.update(stats_with_delta=cls._format(stats_with_delta, thousands_separator))
+        if before_stats is not None:
+            d.update(before_stats=cls._format(before_stats, thousands_separator))
         return d
 
     def _as_dict(self) -> Dict[str, Any]:
@@ -160,29 +168,33 @@ class PublishData:
 
         # provide formatted stats and delta
         d.update(formatted=self._formatted_stats_and_delta(
-            d.get('stats'), d.get('stats_with_delta'), thousands_separator
+            d.get('stats'), d.get('stats_with_delta'), d.get('before_stats'), thousands_separator
         ))
 
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         # remove exceptions, suite details and cases
-        data = self.without_exceptions().without_suite_details().without_cases()._as_dict()
+        data = self.without_exceptions().without_summary_with_digest().without_suite_details().without_cases()._as_dict()
 
         # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
             d = deepcopy(d)
             if d.get('stats', {}).get('errors') is not None:
                 d['stats']['errors'] = len(d['stats']['errors'])
-            if d.get('stats_with_delta', {}).get('errors') is not None:
-                d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
+            if d.get('before_stats', {}).get('errors') is not None:
+                d['before_stats']['errors'] = len(d['before_stats']['errors'])
+            if d.get('stats', {}).get('errors') is not None and \
+                    d.get('before_stats', {}).get('errors') is not None and \
+                    d.get('stats_with_delta', {}).get('errors') is not None:
+                d['stats_with_delta']['errors'] = get_diff_value(d['stats']['errors'], d['before_stats']['errors'])
             if d.get('annotations') is not None:
                 d['annotations'] = len(d['annotations'])
             return d
 
         data = reduce(data)
         data.update(formatted=self._formatted_stats_and_delta(
-            data.get('stats'), data.get('stats_with_delta'), thousands_separator
+            data.get('stats'), data.get('stats_with_delta'), data.get('before_stats'), thousands_separator
         ))
 
         return data
@@ -480,7 +492,7 @@ class Publisher:
             settings.json_thousands_separator,
             settings.json_suite_details,
             settings.json_test_case_results
-        ), writer, ensure_ascii=False)
+        ), writer, ensure_ascii=False, indent=2)
 
     def publish_job_summary(self, title: str, data: PublishData):
         title = title
