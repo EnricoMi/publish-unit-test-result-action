@@ -9,6 +9,9 @@ on:
       python-version:
         required: true
         type: string
+      include:
+        required: true
+        type: string
 jobs:
   test:
     name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
@@ -18,10 +21,7 @@ jobs:
       matrix:
         os: ${{ fromJson(inputs.os) }}
         python-version: ${{ fromJson(inputs.python-version) }}
-
-        include:
-          - os: ${{ fromJson(inputs.os)[0] }}
-            python-version: "3.7"
+        include: ${{ fromJson(inputs.include) }}
 
     steps:
       - name: Checkout

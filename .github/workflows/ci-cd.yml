@@ -36,6 +36,16 @@ jobs:
     with:
       os: '["macos-11", "macos-12", "macos-13", "macos-14"]'
       python-version: '["3.10", "3.11", "3.12.0-rc.3", "installed"]'
+      include: >
+        [
+          {"os": "macos-11", "python-version": "3.7"},
+          {"os": "macos-11", "python-version": "3.8"},
+          {"os": "macos-11", "python-version": "3.9"},
+          {"os": "macos-12", "python-version": "3.8"},
+          {"os": "macos-12", "python-version": "3.9"},
+          {"os": "macos-13", "python-version": "3.8"},
+          {"os": "macos-13", "python-version": "3.9"},
+        ]
 
   test-lnx:
     name: "Test Ubuntu"
@@ -43,6 +53,7 @@ jobs:
     with:
       os: '["ubuntu-20.04", "ubuntu-22.04"]'
       python-version: '["3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3", "installed"]'
+      include: '[{"os": "ubuntu-20.04", "python-version": "3.7"}]'
 
   test-win:
     name: "Test Windows"
@@ -50,6 +61,7 @@ jobs:
     with:
       os: '["windows-2019", "windows-2022"]'
       python-version: '["3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3", "installed"]'
+      include: '[{"os": "windows-2019", "python-version": "3.7"}]'
 
   publish:
     name: "Publish"
