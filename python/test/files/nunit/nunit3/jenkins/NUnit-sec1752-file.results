@@ -26,7 +26,7 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UnitTests.MainClassTest.TestPropertyValue',
       result='failure',
-      message=None,
+      message='abc\n',
       content=None,
       stdout=None,
       stderr=None,
