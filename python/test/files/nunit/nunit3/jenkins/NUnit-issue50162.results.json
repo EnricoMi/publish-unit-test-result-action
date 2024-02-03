@@ -1,0 +1,80 @@
+{
+  "title": "3 fail, 3 pass in 0s",
+  "summary": "6 tests   3 :white_check_mark:  0s :stopwatch:\n2 suites  0 :zzz:\n1 files    3 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 0,
+    "tests": 6,
+    "tests_succ": 3,
+    "tests_skip": 0,
+    "tests_fail": 3,
+    "tests_error": 0,
+    "runs": 6,
+    "runs_succ": 3,
+    "runs_skip": 0,
+    "runs_fail": 3,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue50162.xml [took 0s]",
+      "title": "TestWithParameters(\"Ä\") failed",
+      "raw_details": "  Expected: greater than 2\n  But was:  1\n   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\\Program Files (x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWorldTests.cs:Zeile 27."
+    },
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue50162.xml [took 0s]",
+      "title": "TestWithParameters(\"Ö\") failed",
+      "raw_details": "  Expected: greater than 2\n  But was:  1\n   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in C:\\Program Files (x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWorldTests.cs:Zeile 27."
+    },
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue50162.xml [took 0s]",
+      "title": "FailThisTest failed",
+      "raw_details": "Oh no the test failed!\n   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files (x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWorldTests.cs:Zeile 18."
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 6 tests, see \"Raw output\" for the full list of tests.",
+      "title": "6 tests found",
+      "raw_details": "DoATest\nFailThisTest\nTestWithParameters(\"Bar\")\nTestWithParameters(\"Foo\")\nTestWithParameters(\"Ä\")\nTestWithParameters(\"Ö\")"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "0",
+      "tests": "6",
+      "tests_succ": "3",
+      "tests_skip": "0",
+      "tests_fail": "3",
+      "tests_error": "0",
+      "runs": "6",
+      "runs_succ": "3",
+      "runs_skip": "0",
+      "runs_fail": "3",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

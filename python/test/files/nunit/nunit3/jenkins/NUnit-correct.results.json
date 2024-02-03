@@ -1,0 +1,80 @@
+{
+  "title": "1 errors, 1 fail, 8 skipped, 18 pass in 0s",
+  "summary": "28 tests   18 :white_check_mark:  0s :stopwatch:\n11 suites   8 :zzz:\n 1 files     1 :x:  1 :fire:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 11,
+    "duration": 0,
+    "tests": 28,
+    "tests_succ": 18,
+    "tests_skip": 8,
+    "tests_fail": 1,
+    "tests_error": 1,
+    "runs": 28,
+    "runs_succ": 18,
+    "runs_skip": 8,
+    "runs_fail": 1,
+    "runs_error": 1,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-correct.xml [took 0s]",
+      "title": "NUnit.Tests.Assemblies.MockTestFixture.FailingTest failed",
+      "raw_details": "Intentional failure\n\n                                                        at NUnit.Tests.Assemblies.MockTestFixture.FailingTest () [0x00000] in /home/charlie/Dev/NUnit/nunit-2.5/work/src/tests/mock-assembly/MockAssembly.cs:121"
+    },
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "failure",
+      "message": "nunit3/jenkins/NUnit-correct.xml [took 0s]",
+      "title": "NUnit.Tests.Assemblies.MockTestFixture.TestWithException with error",
+      "raw_details": "System.ApplicationException : Intentional Exception\n\n                                                        at NUnit.Tests.Assemblies.MockTestFixture.TestWithException () [0x00000] in /home/charlie/Dev/NUnit/nunit-2.5/work/src/tests/mock-assembly/MockAssembly.cs:153"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 8 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "8 skipped tests found",
+      "raw_details": "NUnit.Tests.Assemblies.MockTestFixture.InconclusiveTest\nNUnit.Tests.Assemblies.MockTestFixture.MockTest4\nNUnit.Tests.Assemblies.MockTestFixture.MockTest5\nNUnit.Tests.Assemblies.MockTestFixture.NotRunnableTest\nNUnit.Tests.BadFixture.SomeTest\nNUnit.Tests.IgnoredFixture.Test1\nNUnit.Tests.IgnoredFixture.Test2\nNUnit.Tests.IgnoredFixture.Test3"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 28 tests, see \"Raw output\" for the full list of tests.",
+      "title": "28 tests found",
+      "raw_details": "NUnit.Tests.Assemblies.MockTestFixture.FailingTest\nNUnit.Tests.Assemblies.MockTestFixture.InconclusiveTest\nNUnit.Tests.Assemblies.MockTestFixture.MockTest1\nNUnit.Tests.Assemblies.MockTestFixture.MockTest2\nNUnit.Tests.Assemblies.MockTestFixture.MockTest3\nNUnit.Tests.Assemblies.MockTestFixture.MockTest4\nNUnit.Tests.Assemblies.MockTestFixture.MockTest5\nNUnit.Tests.Assemblies.MockTestFixture.NotRunnableTest\nNUnit.Tests.Assemblies.MockTestFixture.TestWithException\nNUnit.Tests.Assemblies.MockTestFixture.TestWithManyProperties\nNUnit.Tests.BadFixture.SomeTest\nNUnit.Tests.FixtureWithTestCases.GenericMethod<Double>(9.2d,11.7d)\nNUnit.Tests.FixtureWithTestCases.GenericMethod<Int32>(2,4)\nNUnit.Tests.FixtureWithTestCases.MethodWithParameters(2,2)\nNUnit.Tests.FixtureWithTestCases.MethodWithParameters(9,11)\nNUnit.Tests.GenericFixture<Double>(11.5d).Test1\nNUnit.Tests.GenericFixture<Double>(11.5d).Test2\nNUnit.Tests.GenericFixture<Int32>(5).Test1\nNUnit.Tests.GenericFixture<Int32>(5).Test2\nNUnit.Tests.IgnoredFixture.Test1\nNUnit.Tests.IgnoredFixture.Test2\nNUnit.Tests.IgnoredFixture.Test3\nNUnit.Tests.ParameterizedFixture(42).Test1\nNUnit.Tests.ParameterizedFixture(42).Test2\nNUnit.Tests.ParameterizedFixture(5).Test1\nNUnit.Tests.ParameterizedFixture(5).Test2\nNUnit.Tests.Singletons.OneTestCase.TestCase\nNUnit.Tests.TestAssembly.MockTestFixture.MyTest"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "11",
+      "duration": "0",
+      "tests": "28",
+      "tests_succ": "18",
+      "tests_skip": "8",
+      "tests_fail": "1",
+      "tests_error": "1",
+      "runs": "28",
+      "runs_succ": "18",
+      "runs_skip": "8",
+      "runs_fail": "1",
+      "runs_error": "1",
+      "commit": "commit sha"
+    }
+  }
+}

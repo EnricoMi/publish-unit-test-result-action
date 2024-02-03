@@ -1,0 +1,80 @@
+{
+  "title": "3 fail, 6 pass in 0s",
+  "summary": "9 tests   6 :white_check_mark:  0s :stopwatch:\n3 suites  0 :zzz:\n1 files    3 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 3,
+    "duration": 0,
+    "tests": 9,
+    "tests_succ": 6,
+    "tests_skip": 0,
+    "tests_fail": 3,
+    "tests_error": 0,
+    "runs": 9,
+    "runs_succ": 6,
+    "runs_skip": 0,
+    "runs_fail": 3,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue5674.xml [took 0s]",
+      "title": "GetBrowsersTest.BrowserNamesTest1.FailTest(\"IE\") failed",
+      "raw_details": "at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\\Users\\Samw\\Documents\\Visual Studio 2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:line 27"
+    },
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue5674.xml [took 0s]",
+      "title": "GetBrowsersTest.BrowserNamesTest1.FailTest(\"FireFox\") failed",
+      "raw_details": "at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\\Users\\Samw\\Documents\\Visual Studio 2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:line 27"
+    },
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-issue5674.xml [took 0s]",
+      "title": "GetBrowsersTest.BrowserNamesTest1.FailTest(\"Safari\") failed",
+      "raw_details": "at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in C:\\Users\\Samw\\Documents\\Visual Studio 2008\\Projects\\GetBrowsersTest\\GetBrowsersTest\\BrowserNamesTest1.cs:line 27"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 9 tests, see \"Raw output\" for the full list of tests.",
+      "title": "9 tests found",
+      "raw_details": "GetBrowsersTest.BrowserNamesTest1.AnotherTest(\"FireFox\")\nGetBrowsersTest.BrowserNamesTest1.AnotherTest(\"IE\")\nGetBrowsersTest.BrowserNamesTest1.AnotherTest(\"Safari\")\nGetBrowsersTest.BrowserNamesTest1.FailTest(\"FireFox\")\nGetBrowsersTest.BrowserNamesTest1.FailTest(\"IE\")\nGetBrowsersTest.BrowserNamesTest1.FailTest(\"Safari\")\nGetBrowsersTest.BrowserNamesTest1.ShowBrowsers(\"FireFox\")\nGetBrowsersTest.BrowserNamesTest1.ShowBrowsers(\"IE\")\nGetBrowsersTest.BrowserNamesTest1.ShowBrowsers(\"Safari\")"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "3",
+      "duration": "0",
+      "tests": "9",
+      "tests_succ": "6",
+      "tests_skip": "0",
+      "tests_fail": "3",
+      "tests_error": "0",
+      "runs": "9",
+      "runs_succ": "6",
+      "runs_skip": "0",
+      "runs_fail": "3",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

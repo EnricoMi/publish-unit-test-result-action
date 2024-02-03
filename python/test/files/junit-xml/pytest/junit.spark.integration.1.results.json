@@ -1,0 +1,62 @@
+{
+  "title": "All 33 tests pass, 2 skipped in 2m 45s",
+  "summary": "35 tests   33 :white_check_mark:  2m 45s :stopwatch:\n 1 suites   2 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 165,
+    "tests": 35,
+    "tests_succ": 33,
+    "tests_skip": 2,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 35,
+    "runs_succ": 33,
+    "runs_skip": 2,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 2 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "2 skipped tests found",
+      "raw_details": "test.test_spark_keras.SparkKerasTests ‑ test_session\ntest.test_spark_torch.SparkTorchTests ‑ test_happy_run_elastic_fault_tolerant_fails"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 35 tests, see \"Raw output\" for the full list of tests.",
+      "title": "35 tests found",
+      "raw_details": "test.test_spark_keras.SparkKerasTests ‑ test_batch_generator_fn\ntest.test_spark_keras.SparkKerasTests ‑ test_calculate_shuffle_buffer_size\ntest.test_spark_keras.SparkKerasTests ‑ test_calculate_shuffle_buffer_size_small_row_size\ntest.test_spark_keras.SparkKerasTests ‑ test_convert_custom_sparse_to_dense_bare_keras_fn\ntest.test_spark_keras.SparkKerasTests ‑ test_custom_sparse_to_dense_fn\ntest.test_spark_keras.SparkKerasTests ‑ test_fit_model\ntest.test_spark_keras.SparkKerasTests ‑ test_fit_model_multiclass\ntest.test_spark_keras.SparkKerasTests ‑ test_keras_direct_parquet_train\ntest.test_spark_keras.SparkKerasTests ‑ test_keras_model_checkpoint_callback\ntest.test_spark_keras.SparkKerasTests ‑ test_model_serialization\ntest.test_spark_keras.SparkKerasTests ‑ test_prep_data_tf_keras_fn_with_sparse_col\ntest.test_spark_keras.SparkKerasTests ‑ test_prep_data_tf_keras_fn_without_sparse_col\ntest.test_spark_keras.SparkKerasTests ‑ test_prepare_data_bare_keras_fn\ntest.test_spark_keras.SparkKerasTests ‑ test_reshape\ntest.test_spark_keras.SparkKerasTests ‑ test_restore_from_checkpoint\ntest.test_spark_keras.SparkKerasTests ‑ test_serialize_param_value\ntest.test_spark_keras.SparkKerasTests ‑ test_session\ntest.test_spark_torch.SparkTorchTests ‑ test_calculate_loss_with_sample_weight\ntest.test_spark_torch.SparkTorchTests ‑ test_calculate_loss_without_sample_weight\ntest.test_spark_torch.SparkTorchTests ‑ test_calculate_shuffle_buffer_size\ntest.test_spark_torch.SparkTorchTests ‑ test_calculate_shuffle_buffer_size_small_row_size\ntest.test_spark_torch.SparkTorchTests ‑ test_construct_metric_value_holders_one_metric_for_all_labels\ntest.test_spark_torch.SparkTorchTests ‑ test_fit_model\ntest.test_spark_torch.SparkTorchTests ‑ test_get_metric_avgs\ntest.test_spark_torch.SparkTorchTests ‑ test_happy_run_elastic\ntest.test_spark_torch.SparkTorchTests ‑ test_happy_run_elastic_fault_tolerant\ntest.test_spark_torch.SparkTorchTests ‑ test_happy_run_elastic_fault_tolerant_fails\ntest.test_spark_torch.SparkTorchTests ‑ test_metric_class\ntest.test_spark_torch.SparkTorchTests ‑ test_prepare_np_data\ntest.test_spark_torch.SparkTorchTests ‑ test_pytorch_get_optimizer_with_unscaled_lr\ntest.test_spark_torch.SparkTorchTests ‑ test_restore_from_checkpoint\ntest.test_spark_torch.SparkTorchTests ‑ test_torch_direct_parquet_train\ntest.test_spark_torch.SparkTorchTests ‑ test_torch_param_serialize\ntest.test_spark_torch.SparkTorchTests ‑ test_transform_multi_class\ntest.test_spark_torch.SparkTorchTests ‑ test_update_metrics"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "165",
+      "tests": "35",
+      "tests_succ": "33",
+      "tests_skip": "2",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "35",
+      "runs_succ": "33",
+      "runs_skip": "2",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

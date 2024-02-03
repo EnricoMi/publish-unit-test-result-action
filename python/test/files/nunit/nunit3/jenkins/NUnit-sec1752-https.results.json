@@ -1,0 +1,61 @@
+{
+  "title": "1 fail, 1 pass in 0s",
+  "summary": "2 tests   1 :white_check_mark:  0s :stopwatch:\n1 suites  0 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 2,
+    "tests_succ": 1,
+    "tests_skip": 0,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 2,
+    "runs_succ": 1,
+    "runs_skip": 0,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit-sec1752-https.xml [took 0s]",
+      "title": "UnitTests.MainClassTest.TestPropertyValue failed"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 2 tests, see \"Raw output\" for the full list of tests.",
+      "title": "2 tests found",
+      "raw_details": "UnitTests.MainClassTest.TestMethodUpdateValue\nUnitTests.MainClassTest.TestPropertyValue"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "2",
+      "tests_succ": "1",
+      "tests_skip": "0",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "2",
+      "runs_succ": "1",
+      "runs_skip": "0",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

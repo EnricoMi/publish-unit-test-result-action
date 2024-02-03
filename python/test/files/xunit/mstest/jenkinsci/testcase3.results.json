@@ -1,0 +1,71 @@
+{
+  "title": "1 fail, 1 skipped, 1 pass in 4m 48s",
+  "summary": "3 tests   1 :white_check_mark:  4m 48s :stopwatch:\n1 suites  1 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 288,
+    "tests": 3,
+    "tests_succ": 1,
+    "tests_skip": 1,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 3,
+    "runs_succ": 1,
+    "runs_skip": 1,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "MyProject.Tests.SampleFact",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "mstest/jenkinsci/testcase3.xml [took 14s]",
+      "title": "FailedTest (MyProject.Tests.SampleFact) failed",
+      "raw_details": "Assert.True() Failure   at MyProject.Tests.SampleFact.FailedTest() in c:\\Jenkins\\jobs\\my-project\\workspace\\MyProject\\MyProject.Tests\\SampleFact.cs:line 16"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "MyProject.Tests.SampleFact ‑ SkippedTest"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 3 tests, see \"Raw output\" for the full list of tests.",
+      "title": "3 tests found",
+      "raw_details": "MyProject.Tests.SampleFact ‑ FailedTest\nMyProject.Tests.SampleFact ‑ SkippedTest\nMyProject.Tests.SampleFact ‑ SuccessfulTest"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "288",
+      "tests": "3",
+      "tests_succ": "1",
+      "tests_skip": "1",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "3",
+      "runs_succ": "1",
+      "runs_skip": "1",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

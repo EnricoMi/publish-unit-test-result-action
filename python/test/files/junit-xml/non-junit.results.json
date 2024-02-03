@@ -1,0 +1,63 @@
+{
+  "title": "1 parse errors",
+  "summary": "0 tests   0 :white_check_mark:  0s :stopwatch:\n0 suites  0 :zzz:\n1 files    0 :x:\n1 errors\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [
+      {
+        "file": "non-junit.xml",
+        "message": "Invalid format."
+      }
+    ],
+    "suites": 0,
+    "duration": 0,
+    "tests": 0,
+    "tests_succ": 0,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 0,
+    "runs_succ": 0,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "non-junit.xml",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "failure",
+      "message": "Invalid format.",
+      "title": "Error processing result file",
+      "raw_details": "non-junit.xml"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [
+        {
+          "file": "non-junit.xml",
+          "message": "Invalid format."
+        }
+      ],
+      "suites": "0",
+      "duration": "0",
+      "tests": "0",
+      "tests_succ": "0",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "0",
+      "runs_succ": "0",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

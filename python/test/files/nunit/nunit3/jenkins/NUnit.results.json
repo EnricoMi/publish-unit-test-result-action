@@ -1,0 +1,62 @@
+{
+  "title": "1 fail, 3 pass in 0s",
+  "summary": "4 tests   3 :white_check_mark:  0s :stopwatch:\n2 suites  0 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 0,
+    "tests": 4,
+    "tests_succ": 3,
+    "tests_skip": 0,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 4,
+    "runs_succ": 3,
+    "runs_skip": 0,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit3/jenkins/NUnit.xml [took 0s]",
+      "title": "UnitTests.MainClassTest.TestFailure failed",
+      "raw_details": "  Expected failure\n  Expected: 30\n  But was:  20\n  at UnitTests.MainClassTest.TestFailure () [0x00000] \n  at <0x00000> <unknown method>\n  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])\n  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000]"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 4 tests, see \"Raw output\" for the full list of tests.",
+      "title": "4 tests found",
+      "raw_details": "AnotherNS.OtherMainClassTest.TestPropertyValueAgain\nUnitTests.MainClassTest.TestFailure\nUnitTests.MainClassTest.TestMethodUpdateValue\nUnitTests.MainClassTest.TestPropertyValue"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "0",
+      "tests": "4",
+      "tests_succ": "3",
+      "tests_skip": "0",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "4",
+      "runs_succ": "3",
+      "runs_skip": "0",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

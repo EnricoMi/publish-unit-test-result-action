@@ -1,0 +1,53 @@
+{
+  "title": "All 22 tests pass in 11m 10s",
+  "summary": "22 tests   22 :white_check_mark:  11m 10s :stopwatch:\n 1 suites   0 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 670,
+    "tests": 22,
+    "tests_succ": 22,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 22,
+    "runs_succ": 22,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 22 tests, see \"Raw output\" for the full list of tests.",
+      "title": "22 tests found",
+      "raw_details": "test.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_down_by_discovery\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_down_by_exception\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_no_spark_black_list\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_spark_blacklist_no_executor_reuse\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_spark_blacklist_no_executor_reuse_in_app\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_spark_blacklist_no_executor_reuse_same_task\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_spark_blacklist_no_node_reuse\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_spark_blacklist_no_node_reuse_in_app\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_auto_scale_up\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_all_hosts_lost\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_exception_all_ranks\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_exception_single_rank\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_exception_with_min_hosts_timeout\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_hosts_added_and_removed\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_no_spark_blacklist\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_spark_blacklist_no_executor_reuse\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_spark_blacklist_no_executor_reuse_in_app\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_spark_blacklist_no_executor_reuse_same_task\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_spark_blacklist_no_node_reuse\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_spark_blacklist_no_node_reuse_in_app\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_fault_tolerance_unused_hosts_added_and_removed\ntest.integration.test_elastic_spark_torch.ElasticSparkTorchTests ‑ test_happy_run"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "670",
+      "tests": "22",
+      "tests_succ": "22",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "22",
+      "runs_succ": "22",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

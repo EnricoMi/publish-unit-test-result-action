@@ -1,0 +1,80 @@
+{
+  "title": "2 fail, 21 skipped, 2 pass in 26s",
+  "summary": "25 tests    2 :white_check_mark:  26s :stopwatch:\n 1 suites  21 :zzz:\n 1 files     2 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 26,
+    "tests": 25,
+    "tests_succ": 2,
+    "tests_skip": 21,
+    "tests_fail": 2,
+    "tests_error": 0,
+    "runs": 25,
+    "runs_succ": 2,
+    "runs_skip": 21,
+    "runs_fail": 2,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "Prueba_Sistema.SIARAlgorithmTest",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "yami_YAMILEX 2015-10-24 04_18_59.trx [took 19s]",
+      "title": "EST_INTER_TEMPTest (Prueba_Sistema.SIARAlgorithmTest) failed",
+      "raw_details": "El método de prueba Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest produjo la excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tamaño de la colección.\nNombre del parámetro: index    en System.ThrowHelper.ThrowArgumentOutOfRangeException()\n   en System.Collections.Generic.List`1.set_Item(Int32 index, T value)\n   en TMC.Components.TemperatureControl.SIARAlgorithm.EST_INTER_TEMP(Double TAMP, Int32 TEXTERN) en E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea 363\n   en Prueba_Sistema.SIARAlgorithmTest.EST_INTER_TEMPTest() en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 199"
+    },
+    {
+      "path": "Prueba_Sistema.SIARAlgorithmTest",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "yami_YAMILEX 2015-10-24 04_18_59.trx [took 2s]",
+      "title": "EST_LAMB_TEMPTest (Prueba_Sistema.SIARAlgorithmTest) failed",
+      "raw_details": "El método de prueba Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest produjo la excepción: \nSystem.ArgumentOutOfRangeException: El índice estaba fuera del intervalo. Debe ser un valor no negativo e inferior al tamaño de la colección.\nNombre del parámetro: index    en System.ThrowHelper.ThrowArgumentOutOfRangeException()\n   en System.Collections.Generic.List`1.get_Item(Int32 index)\n   en TMC.Components.TemperatureControl.SIARAlgorithm.EST_LAMB_TEMP(Double TINTPP, Double TAMP, Int32 TEXTERN, Int32 CRPBuscar) en E:\\TMC\\TMC\\Components\\TemperatureControl\\SIARAlgorithms.cs:línea 474\n   en Prueba_Sistema.SIARAlgorithmTest.EST_LAMB_TEMPTest() en E:\\TMC\\Prueba_Sistema\\SIARAlgorithmTest.cs:línea 217"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 21 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "21 skipped tests found",
+      "raw_details": "Prueba_Sistema.SIARAlgorithmTest ‑ CompareTest\nPrueba_Sistema.SIARAlgorithmTest ‑ CostoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EST_SEG_TEMPTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EspesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ FlujoCaloricoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetAlphaExternoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetComposicionTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetDiseñoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetSpesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ LamdaTest\nPrueba_Sistema.SIARAlgorithmTest ‑ MaterialesTest\nPrueba_Sistema.SIARAlgorithmTest ‑ PerdidaTotalTest\nPrueba_Sistema.SIARAlgorithmTest ‑ PesoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ ProjectObjectTest\nPrueba_Sistema.SIARAlgorithmTest ‑ ProjectTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SIARAlgorithmConstructorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SiSParcialTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SpesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ TDataSetTest\nPrueba_Sistema.SIARAlgorithmTest ‑ TempExternaTest\nPrueba_Sistema.SIARAlgorithmTest ‑ VolumenTest"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 25 tests, see \"Raw output\" for the full list of tests.",
+      "title": "25 tests found",
+      "raw_details": "Prueba_Sistema.SIARAlgorithmTest ‑ ClearListTest\nPrueba_Sistema.SIARAlgorithmTest ‑ CompareTest\nPrueba_Sistema.SIARAlgorithmTest ‑ CostoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EST_INTER_TEMPTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EST_LAMB_TEMPTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EST_SEG_TEMPTest\nPrueba_Sistema.SIARAlgorithmTest ‑ EspesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ FlujoCaloricoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetAlphaExternoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetComposicionTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetDiseñoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ GetSpesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ LamdaTest\nPrueba_Sistema.SIARAlgorithmTest ‑ MaterialesTest\nPrueba_Sistema.SIARAlgorithmTest ‑ PerdidaTotalTest\nPrueba_Sistema.SIARAlgorithmTest ‑ PesoTest\nPrueba_Sistema.SIARAlgorithmTest ‑ ProjectObjectTest\nPrueba_Sistema.SIARAlgorithmTest ‑ ProjectTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SIARAlgorithmConstructorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SiSParcialTest\nPrueba_Sistema.SIARAlgorithmTest ‑ SpesorTest\nPrueba_Sistema.SIARAlgorithmTest ‑ TDataSetTest\nPrueba_Sistema.SIARAlgorithmTest ‑ TempExternaTest\nPrueba_Sistema.SIARAlgorithmTest ‑ VolumenTest\nPrueba_Sistema.UnitTest1 ‑ TestMethod1"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "26",
+      "tests": "25",
+      "tests_succ": "2",
+      "tests_skip": "21",
+      "tests_fail": "2",
+      "tests_error": "0",
+      "runs": "25",
+      "runs_succ": "2",
+      "runs_skip": "21",
+      "runs_fail": "2",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

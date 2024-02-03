@@ -1,0 +1,89 @@
+{
+  "title": "2 errors, 1 fail, 1 skipped, 16 pass in 0s",
+  "summary": "20 tests   16 :white_check_mark:  0s :stopwatch:\n 4 suites   1 :zzz:\n 1 files     1 :x:  2 :fire:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 4,
+    "duration": 0,
+    "tests": 20,
+    "tests_succ": 16,
+    "tests_skip": 1,
+    "tests_fail": 1,
+    "tests_error": 2,
+    "runs": 20,
+    "runs_succ": 16,
+    "runs_skip": 1,
+    "runs_fail": 1,
+    "runs_error": 2,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/cli_runner_test.dart",
+      "start_line": 21,
+      "end_line": 21,
+      "annotation_level": "warning",
+      "message": "json/tests.json [took 0s]",
+      "title": "Cli runner should have correct invocation failed",
+      "raw_details": "Expected: 'metrics <command> [arguments] <directories> nope'\n  Actual: 'metrics <command> [arguments] <directories>'\n   Which: is different. Both strings start the same, but the actual value is missing the following trailing characters:  nope\n\npackage:test_api                        expect\ntest/src/cli/cli_runner_test.dart 22:7  main.<fn>.<fn>"
+    },
+    {
+      "path": "file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart",
+      "start_line": 16,
+      "end_line": 16,
+      "annotation_level": "failure",
+      "message": "json/tests.json [took 0s]",
+      "title": "detectSdkPath should return `null` if running inside VM with error",
+      "raw_details": "Exception: exception\ntest/src/cli/utils/detect_sdk_path_test.dart 21:7  main.<fn>.<fn>"
+    },
+    {
+      "path": "file:///home/runner/work/dart-code-metrics/dart-code-metrics/test/src/cli/utils/detect_sdk_path_test.dart",
+      "start_line": 46,
+      "end_line": 46,
+      "annotation_level": "failure",
+      "message": "json/tests.json [took 0s]",
+      "title": "detectSdkPath should return null if sdk path is not found inside environment PATH variable with error",
+      "raw_details": "Instance of 'Error'\ntest/src/cli/utils/detect_sdk_path_test.dart 67:9  main.<fn>.<fn>"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "Cli runner should have correct description"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 20 tests, see \"Raw output\" for the full list of tests.",
+      "title": "20 tests found",
+      "raw_details": "AnalysisOptions readIterableOfString returns iterables with data or not\nAnalysisOptions readMap returns map with data or not\nAnalysisOptions readMapOfMap returns map with data or not\nAnalysisOptions returns correct \"folderPath\" on posix platforms\nCheckUnnecessaryNullableCommand should have correct description\nCheckUnnecessaryNullableCommand should have correct invocation\nCheckUnnecessaryNullableCommand should have correct name\nCheckUnnecessaryNullableCommand should have correct usage\nCli runner run with version argument\nCli runner should have correct description\nCli runner should have correct invocation\nanalysisOptionsFromFile constructs AnalysisOptions from extends config\nanalysisOptionsFromFile constructs AnalysisOptions from invalid file\nanalysisOptionsFromFile constructs AnalysisOptions from null\nanalysisOptionsFromFile constructs AnalysisOptions from valid file with single import\nanalysisOptionsFromFile constructs AnalysisOptions from yaml file\ndetectSdkPath should find sdk path inside environment PATH variable\ndetectSdkPath should return `null` for non-Windows platforms\ndetectSdkPath should return `null` if running inside VM\ndetectSdkPath should return null if sdk path is not found inside environment PATH variable"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "4",
+      "duration": "0",
+      "tests": "20",
+      "tests_succ": "16",
+      "tests_skip": "1",
+      "tests_fail": "1",
+      "tests_error": "2",
+      "runs": "20",
+      "runs_succ": "16",
+      "runs_skip": "1",
+      "runs_fail": "1",
+      "runs_error": "2",
+      "commit": "commit sha"
+    }
+  }
+}
