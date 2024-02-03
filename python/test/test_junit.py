@@ -212,7 +212,7 @@ class JUnitXmlParseTest:
             with mock.patch('gzip.time.time', return_value=0):
                 Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
 
-            with open(json_file, "rt") as r:
+            with open(json_file, "rt", encoding='utf-8') as r:
                 json_result = json.load(r)
 
         return check_runs, json_result
