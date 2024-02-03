@@ -6,6 +6,9 @@ on:
       os:
         required: true
         type: string
+      python-version:
+        required: true
+        type: string
 jobs:
   test:
     name: Test (python-${{ matrix.python-version }}, ${{ matrix.os }})
@@ -14,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ${{ fromJson(inputs.os) }}
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3", "installed"]
+        python-version: ${{ fromJson(inputs.python-version) }}
 
         include:
           - os: ${{ fromJson(inputs.os)[0] }}
