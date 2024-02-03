@@ -241,6 +241,12 @@ jobs:
           - os: macos-11
             os-label: macOS 11
             python: "installed"
+          - os: macos-13
+            os-label: macOS 13
+            python: "installed"
+          - os: macos-14
+            os-label: macOS 14
+            python: "installed"
 
           - os: ubuntu-latest
             os-label: Linux
