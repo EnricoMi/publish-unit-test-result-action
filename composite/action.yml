@@ -158,17 +158,17 @@ runs:
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
         # command `which python3` finds that, but `python3 -V` does not return the version on stdout
-        if ! which python3 || [[ $(python3 -V) != *"python 3."* && $(python3 -V) != *"Python 3."* ]]
+        if ! which python3 || [[ "$(python3 -V)" != *"python 3."* && "$(python3 -V)" != *"Python 3."* ]]
         then
-          if ! which python || [[ $(python -V) != *"python 3."* && $(python -V) != *"Python 3."* ]]
+          if ! which python || [[ "$(python -V)" != *"python 3."* && "$(python -V)" != *"Python 3."* ]]
           then
             echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
             exit 1
           fi
 
-          PYTHON_BIN=$(python -c 'import sys; print(sys.executable)')
+          PYTHON_BIN="$(python -c 'import sys; print(sys.executable)')"
         else
-          PYTHON_BIN=$(python3 -c 'import sys; print(sys.executable)')
+          PYTHON_BIN="$(python3 -c 'import sys; print(sys.executable)')"
         fi
 
         echo "Python that creates venv: $PYTHON_BIN"
@@ -212,16 +212,16 @@ runs:
         echo "Python that creates venv: $PYTHON_BIN"
 
         echo "Creating virtual environment"
-        if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv && ! $PYTHON_BIN -m venv enricomi-publish-action-venv
+        if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          if ! $PYTHON_BIN -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
+          if ! "$PYTHON_BIN" -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
           then
             echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
-            $PYTHON_BIN -m pip install virtualenv
+            "$PYTHON_BIN" -m pip install virtualenv
           fi
 
-          if ! $PYTHON_BIN -m virtualenv enricomi-publish-action-venv
+          if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
           then
             echo "Still cannot create venv after installing virtualenv package"
             exit 1
@@ -235,9 +235,9 @@ runs:
           Windows*)
             PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
         esac
-        PYTHON_VENV=$($PYTHON_VENV -c 'import sys; print(sys.executable)')
-        echo "Python in venv: $PYTHON_VENV"
-        echo "PYTHON_VENV=$PYTHON_VENV" >> $GITHUB_ENV
+        PYTHON_VENV=$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')
+        echo "Python in venv: "$PYTHON_VENV""
+        echo "PYTHON_VENV="$PYTHON_VENV"" >> $GITHUB_ENV
         echo '##[endgroup]'
       shell: bash
 
@@ -245,8 +245,8 @@ runs:
       run: |
         echo '##[group]Install Python dependencies'
         # make sure wheel is installed, which improves installing our dependencies
-        $PYTHON_VENV -m pip install wheel
-        $PYTHON_VENV -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        "$PYTHON_VENV" -m pip install wheel
+        "$PYTHON_VENV" -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
         echo '##[endgroup]'
       shell: bash
 
@@ -254,7 +254,7 @@ runs:
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        $PYTHON_VENV $GITHUB_ACTION_PATH/../python/publish_test_results.py
+        "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../python/publish_test_results.py"
         echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
