@@ -92,7 +92,7 @@ runs:
       shell: bash
     - name: Upload changed expectation files
       if: steps.changes.outcome == 'failure'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Changed expectations
         path: changed-expectations.zip
@@ -128,7 +128,7 @@ runs:
   
     - name: Upload Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Test Results (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: |
