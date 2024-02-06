@@ -195,7 +195,7 @@ runs:
       shell: bash
 
     - name: Restore PIP packages cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: cache
       continue-on-error: true
       with:
@@ -303,7 +303,7 @@ runs:
       shell: bash
 
     - name: Save PIP packages cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
