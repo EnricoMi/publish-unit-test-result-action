@@ -172,8 +172,8 @@ runs:
         fi
 
         echo "Python that creates venv: $PYTHON_BIN"
-        echo "PYTHON_BIN=$PYTHON_BIN" >> $GITHUB_ENV
-        echo "version=$($PYTHON_BIN -V)" >> $GITHUB_OUTPUT
+        echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
+        echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
         echo '##[endgroup]'
       shell: bash
 
@@ -182,14 +182,14 @@ runs:
       run: |
         case "$RUNNER_OS" in
           Linux*)
-            echo "pip-cache=~/.cache/pip" >> $GITHUB_OUTPUT
+            echo "pip-cache=~/.cache/pip" >> "$GITHUB_OUTPUT"
             ;;
           macOS*)
-            echo "pip-cache=~/Library/Caches/pip" >> $GITHUB_OUTPUT
+            echo "pip-cache=~/Library/Caches/pip" >> "$GITHUB_OUTPUT"
             ;;
           Windows*)
-            echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> $GITHUB_OUTPUT
-            echo "pip-options=--user" >> $GITHUB_OUTPUT
+            echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> "$GITHUB_OUTPUT"
+            echo "pip-options=--user" >> "$GITHUB_OUTPUT"
             ;;
         esac
       shell: bash
@@ -235,9 +235,9 @@ runs:
           Windows*)
             PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
         esac
-        PYTHON_VENV=$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')
-        echo "Python in venv: "$PYTHON_VENV""
-        echo "PYTHON_VENV="$PYTHON_VENV"" >> $GITHUB_ENV
+        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
+        echo "Python in venv: $PYTHON_VENV"
+        echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
         echo '##[endgroup]'
       shell: bash
 
@@ -246,7 +246,7 @@ runs:
         echo '##[group]Install Python dependencies'
         # make sure wheel is installed, which improves installing our dependencies
         "$PYTHON_VENV" -m pip install wheel
-        "$PYTHON_VENV" -m pip install -r $GITHUB_ACTION_PATH/../python/requirements.txt
+        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
         echo '##[endgroup]'
       shell: bash
 
