@@ -36,12 +36,34 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
-Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
-and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
-
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners:
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v2
+  uses: EnricoMi/publish-unit-test-result-action/macos@v2
+  if: always()
+  with:
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
+      test-results/**/*.json
+```
+
+… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/windows@v2
+  if: always()
+  with:
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
+      test-results/**/*.json
+```
+
+For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/linux@v2
   if: always()
   with:
     files: |
@@ -810,9 +832,15 @@ Using the non-composite variant of this action is recommended as it starts up mu
 
 ## Running as a composite action
 
-Running this action as a composite action allows to run it on various operating systems as it
-does not require Docker. The composite action, however, requires a Python3 environment to be setup
-on the action runner. All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
+Running this action as a composite action (macOs and Windows) allows to run it on operating systems
+other than Linux as it does not require Docker:
+
+    uses: EnricoMi/publish-unit-test-result-action/linux@v2
+    uses: EnricoMi/publish-unit-test-result-action/macos@v2
+    uses: EnricoMi/publish-unit-test-result-action/windows@v2
+
+The composite action, however, requires a Python3 environment to be setup on the action runner.
+All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
 Python3 environment out-of-the-box.
 
 Self-hosted runners may require setting up a Python environment first:
@@ -824,6 +852,4 @@ Self-hosted runners may require setting up a Python environment first:
     python-version: 3.8
 ```
 
-Self-hosted runners for Windows require Bash shell to be installed. Easiest way to have one is by installing
-Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
-environment variable seen by the self-hosted runner.
+Start-up of the action is faster with `virtualenv` or `venv`, as well as `wheel` packages installed.
