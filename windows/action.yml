@@ -194,20 +194,20 @@ runs:
       run: |
         Write-Output "##[group]Create virtualenv"
         try {
-          Write-Output "Python that creates venv: $PYTHON_BIN"
+          Write-Output "Python that creates venv: $env:PYTHON_BIN"
 
           Write-Output "Creating virtual environment"
-          if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) -And -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m venv enricomi-publish-action-venv" 2> $null) ) {
+          if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) -And -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m venv enricomi-publish-action-venv" 2> $null) ) {
             Write-Output "Looks like there is neither virtualenv nor venv package installed"
-            if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m pip install --user virtualenv" 2> $null) ) {
+            if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip install --user virtualenv" 2> $null) ) {
               Write-Output "Installing virtualenv package with PIP option '--user' failed, now trying without"
-              if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m pip install virtualenv" 2> $null) ) {
+              if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip install virtualenv" 2> $null) ) {
                 Write-Output "::error::Installing virtualenv package failed"
                 Exit 1
               }
             }
 
-            if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) ) {
+            if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) ) {
               Write-Output "::error::Cannot create venv after installing virtualenv package"
               Exit 1
             }
@@ -227,8 +227,8 @@ runs:
         Write-Output "##[group]Install Python dependencies"
         try {
           # make sure wheel is installed, which improves installing our dependencies
-          Invoke-Expression -Command "& '$PYTHON_VENV' -m pip install wheel"
-          Invoke-Expression -Command "& '$PYTHON_VENV' -m pip install -r '$GITHUB_ACTION_PATH\\..\\python\\requirements.txt'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install wheel"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$GITHUB_ACTION_PATH\\..\\python\\requirements.txt'"
         } finally {
           Write-Output "##[endgroup]"
         }
@@ -239,7 +239,7 @@ runs:
       run: |
         Write-Output "##[group]Publish Test Results"
         try {
-          Invoke-Expression -Command "& '$PYTHON_VENV' '$GITHUB_ACTION_PATH\\..\\python\\publish_test_results.py'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' '$GITHUB_ACTION_PATH\\..\\python\\publish_test_results.py'"
         } finally {
           Write-Output "##[endgroup]"
         }
