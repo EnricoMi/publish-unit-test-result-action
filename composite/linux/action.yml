@@ -178,36 +178,17 @@ runs:
         echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
       shell: bash
 
-    - name: Detect OS
-      id: os
-      run: |
-        case "$RUNNER_OS" in
-          Linux*)
-            echo "pip-cache=~/.cache/pip" >> "$GITHUB_OUTPUT"
-            ;;
-          macOS*)
-            echo "pip-cache=~/Library/Caches/pip" >> "$GITHUB_OUTPUT"
-            ;;
-          Windows*)
-            echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> "$GITHUB_OUTPUT"
-            echo "pip-options=--user" >> "$GITHUB_OUTPUT"
-            ;;
-        esac
-      shell: bash
-
     - name: Restore PIP packages cache
       uses: actions/cache/restore@v4
       id: cache
       continue-on-error: true
       with:
-        path: ${{ steps.os.outputs.pip-cache }}
+        path: ~/.cache/pip
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
       id: venv
       continue-on-error: true
-      env:
-        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '##[group]Create virtualenv'
         trap "echo '##[endgroup]'" EXIT
@@ -218,27 +199,21 @@ runs:
         if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          if ! "$PYTHON_BIN" -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
+          if ! "$PYTHON_BIN" -m pip install virtualenv
           then
-            echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
-            "$PYTHON_BIN" -m pip install virtualenv
+            echo "Installing virtualenv package failed"
+            exit 1
           fi
 
           if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
           then
-            echo "Still cannot create venv after installing virtualenv package"
+            echo "Cannot create venv after installing virtualenv package"
             exit 1
           fi
         fi
 
         echo "Finding Python interpreter in venv"
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            PYTHON_VENV="enricomi-publish-action-venv/bin/python";;
-          Windows*)
-            PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
-        esac
-        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
+        PYTHON_VENV="$(enricomi-publish-action-venv/bin/python -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
       shell: bash
@@ -311,7 +286,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ${{ steps.os.outputs.pip-cache }}
+        path: ~/.cache/pip
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
