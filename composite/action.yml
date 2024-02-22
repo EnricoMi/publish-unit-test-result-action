@@ -154,12 +154,12 @@ runs:
     - name: Run on Linux
       id: linux
       if: startsWith(env.RUNNER_OS, 'Linux')
-      uses: $GITHUB_ACTION_PATH/linux
+      uses: $GITHUB_ACTION_PATH/../linux
 
     - name: Run on macOS
       id: macos
       if: startsWith(env.RUNNER_OS, 'macOS')
-      uses: $GITHUB_ACTION_PATH/macos
+      uses: $GITHUB_ACTION_PATH/../macos
 
     - name: Run on Windows
       id: windows
@@ -167,7 +167,7 @@ runs:
       # for backward-compatibility (Windows used to be a bash script)
       # deprecated, remove in v3
       # prefer to use $GITHUB_ACTION_PATH/windows
-      uses: $GITHUB_ACTION_PATH/windows-bash
+      uses: $GITHUB_ACTION_PATH/../windows-bash
 
     - name: Run on unsupported Operating System
       if: ${{ ! (startsWith(env.RUNNER_OS, 'Linux') || startsWith(env.RUNNER_OS, 'macOS') || startsWith(env.RUNNER_OS, 'Windows')) }}
