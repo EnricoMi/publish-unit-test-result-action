@@ -178,7 +178,7 @@ runs:
         } finally {
           Write-Output "##[endgroup]"
         }
-      shell: bash
+      shell: pwsh
 
     - name: Restore PIP packages cache
       uses: actions/cache/restore@v4
@@ -220,7 +220,7 @@ runs:
         } finally {
           Write-Output "##[endgroup]"
         }
-      shell: bash
+      shell: pwsh
 
     - name: Install Python dependencies
       run: |
@@ -232,7 +232,7 @@ runs:
         } finally {
           Write-Output "##[endgroup]"
         }
-      shell: bash
+      shell: pwsh
 
     - name: Publish Test Results
       id: test-results
@@ -287,7 +287,7 @@ runs:
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
         # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
-      shell: bash
+      shell: pwsh
 
     - name: Save PIP packages cache
       uses: actions/cache/save@v4
