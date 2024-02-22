@@ -151,9 +151,14 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check OS
+      # env.RUNNER_OS is not available in if condition of steps
+      run: echo "OS=$RUNNER_OS" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Run on Linux
       id: linux
-      if: startsWith(env.RUNNER_OS, 'Linux')
+      if: startsWith(env.OS, 'Linux')
       uses: EnricoMi/publish-unit-test-result-action/linux@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
@@ -202,7 +207,7 @@ runs:
 
     - name: Run on macOS
       id: macos
-      if: startsWith(env.RUNNER_OS, 'macOS')
+      if: startsWith(env.OS, 'macOS')
       uses: EnricoMi/publish-unit-test-result-action/macos@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
@@ -251,10 +256,8 @@ runs:
 
     - name: Run on Windows
       id: windows
-      if: startsWith(env.RUNNER_OS, 'Windows')
-      # for backward-compatibility (Windows used to be a bash script)
-      # deprecated, remove in v3
-      # prefer to use $GITHUB_ACTION_PATH/../windows
+      if: startsWith(env.OS, 'Windows')
+      # this general composite action requires Bash shell, so this calls into windows-bash as well
       uses: EnricoMi/publish-unit-test-result-action/windows-bash@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
@@ -302,7 +305,7 @@ runs:
         LOG_LEVEL: ${{ inputs.log_level }}
 
     - name: Run on unsupported Operating System
-      if: ${{ ! (startsWith(env.RUNNER_OS, 'Linux') || startsWith(env.RUNNER_OS, 'macOS') || startsWith(env.RUNNER_OS, 'Windows')) }}
+      if: steps.linux.outcome == 'skipped' && steps.macos.outcome == 'skipped' && steps.windows.outcome == 'skipped'
       run: |
         echo "::error::Unsupported operating system: $RUNNER_OS"
         exit 1

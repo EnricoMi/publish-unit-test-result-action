@@ -67,7 +67,10 @@ class TestActionYml(unittest.TestCase):
         steps = composite_action.get('runs', {}).get('steps', [])
         if action == 'composite':
             # the 'composite' composite action is just a proxy to the os-specific actions, it forwards inputs via 'with'
-            steps = [step for step in steps if step.get('name') != 'Run on unsupported Operating System']
+            steps = [step for step in steps
+                     if 'name' in step
+                     and step.get('name').startswith('Run on ')
+                     and step.get('name') != 'Run on unsupported Operating System']
             inputs_key = 'with'
         else:
             # the other composite actions forward inputs via env
