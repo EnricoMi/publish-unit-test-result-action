@@ -162,7 +162,6 @@ runs:
           if ( !(Get-Command python3 -ErrorAction SilentlyContinue) -Or -Not ((python3 -V 2> $null) -Like "Python 3.*") ) {
             if ( !(Get-Command python -ErrorAction SilentlyContinue) -Or -Not ((python -V 2> $null) -Like "Python 3.*") ) {
               Write-Output "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
-              Write-Output "##[endgroup]"
               Exit 1
             }
 
