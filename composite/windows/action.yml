@@ -154,44 +154,31 @@ runs:
     - name: Check for Python3
       id: python
       run: |
-        echo '##[group]Check for Python3'
-        # we check version here just to execute `python3` with an argument
-        # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
-        # command `which python3` finds that, but `python3 -V` does not return the version on stdout
-        if ! which python3 || [[ "$(python3 -V)" != *"python 3."* && "$(python3 -V)" != *"Python 3."* ]]
-        then
-          if ! which python || [[ "$(python -V)" != *"python 3."* && "$(python -V)" != *"Python 3."* ]]
-          then
-            echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
-            exit 1
-          fi
+        Write-Output "##[group]Check for Python3"
+        try {
+          # we check version here just to execute `python3` with an argument
+          # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
+          # command `which python3` finds that, but `python3 -V` does not return the version on stdout
+          if ( !(Get-Command python3 -ErrorAction SilentlyContinue) -Or -Not ((python3 -V 2> $null) -Like "Python 3.*") ) {
+            if ( !(Get-Command python -ErrorAction SilentlyContinue) -Or -Not ((python -V 2> $null) -Like "Python 3.*") ) {
+              Write-Output "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
+              Write-Output "##[endgroup]"
+              Exit 1
+            }
 
-          PYTHON_BIN="$(python -c 'import sys; print(sys.executable)')"
-        else
-          PYTHON_BIN="$(python3 -c 'import sys; print(sys.executable)')"
-        fi
+            $PYTHON_BIN = python -c "import sys; print(sys.executable)"
+          } else {
+            $PYTHON_BIN = python3 -c "import sys; print(sys.executable)"
+          }
+          Write-Output "Python that creates venv: $PYTHON_BIN"
+          "PYTHON_BIN=$PYTHON_BIN" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-        echo "Python that creates venv: $PYTHON_BIN"
-        echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
-        echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
-        echo '##[endgroup]'
-      shell: bash
-
-    - name: Detect OS
-      id: os
-      run: |
-        case "$RUNNER_OS" in
-          Linux*)
-            echo "pip-cache=~/.cache/pip" >> "$GITHUB_OUTPUT"
-            ;;
-          macOS*)
-            echo "pip-cache=~/Library/Caches/pip" >> "$GITHUB_OUTPUT"
-            ;;
-          Windows*)
-            echo "pip-cache=~\\AppData\\Local\\pip\\Cache" >> "$GITHUB_OUTPUT"
-            echo "pip-options=--user" >> "$GITHUB_OUTPUT"
-            ;;
-        esac
+          $VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -V"
+          Write-Output "Python version: $VERSION"
+          "version=$VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        } finally {
+          Write-Output "##[endgroup]"
+        }
       shell: bash
 
     - name: Restore PIP packages cache
@@ -199,63 +186,64 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: ${{ steps.os.outputs.pip-cache }}
+        path: '~\\AppData\\Local\\pip\\Cache'
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
       id: venv
       continue-on-error: true
-      env:
-        PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
-        echo '##[group]Create virtualenv'
-        echo "Python that creates venv: $PYTHON_BIN"
+        Write-Output "##[group]Create virtualenv"
+        try {
+          Write-Output "Python that creates venv: $PYTHON_BIN"
 
-        echo "Creating virtual environment"
-        if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv enricomi-publish-action-venv
-        then
-          echo "Looks like there is neither virtualenv nor venv package installed"
-          if ! "$PYTHON_BIN" -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
-          then
-            echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
-            "$PYTHON_BIN" -m pip install virtualenv
-          fi
+          Write-Output "Creating virtual environment"
+          if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) -And -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m venv enricomi-publish-action-venv" 2> $null) ) {
+            Write-Output "Looks like there is neither virtualenv nor venv package installed"
+            if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m pip install --user virtualenv" 2> $null) ) {
+              Write-Output "Installing virtualenv package with PIP option '--user' failed, now trying without"
+              if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m pip install virtualenv" 2> $null) ) {
+                Write-Output "::error::Installing virtualenv package failed"
+                Exit 1
+              }
+            }
 
-          if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
-          then
-            echo "Still cannot create venv after installing virtualenv package"
-            exit 1
-          fi
-        fi
+            if ( -Not (Invoke-Expression -Command "& '$PYTHON_BIN' -m virtualenv enricomi-publish-action-venv" 2> $null) ) {
+              Write-Output "::error::Cannot create venv after installing virtualenv package"
+              Exit 1
+            }
+          }
 
-        echo "Finding Python interpreter in venv"
-        case "$RUNNER_OS" in
-          Linux*|macOS*)
-            PYTHON_VENV="enricomi-publish-action-venv/bin/python";;
-          Windows*)
-            PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python";;
-        esac
-        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
-        echo "Python in venv: $PYTHON_VENV"
-        echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
-        echo '##[endgroup]'
+          Write-Output "Finding Python interpreter in venv"
+          $PYTHON_VENV = enricomi-publish-action-venv\\Scripts\\python -c "import sys; print(sys.executable)"
+          Write-Output "Python in venv: $PYTHON_VENV"
+          "PYTHON_VENV=$PYTHON_VENV" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } finally {
+          Write-Output "##[endgroup]"
+        }
       shell: bash
 
     - name: Install Python dependencies
       run: |
-        echo '##[group]Install Python dependencies'
-        # make sure wheel is installed, which improves installing our dependencies
-        "$PYTHON_VENV" -m pip install wheel
-        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
-        echo '##[endgroup]'
+        Write-Output "##[group]Install Python dependencies"
+        try {
+          # make sure wheel is installed, which improves installing our dependencies
+          Invoke-Expression -Command "& '$PYTHON_VENV' -m pip install wheel"
+          Invoke-Expression -Command "& '$PYTHON_VENV' -m pip install -r '$GITHUB_ACTION_PATH\\..\\python\\requirements.txt'"
+        } finally {
+          Write-Output "##[endgroup]"
+        }
       shell: bash
 
     - name: Publish Test Results
       id: test-results
       run: |
-        echo '##[group]Publish Test Results'
-        "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../python/publish_test_results.py"
-        echo '##[endgroup]'
+        Write-Output "##[group]Publish Test Results"
+        try {
+          Invoke-Expression -Command "& '$PYTHON_VENV' '$GITHUB_ACTION_PATH\\..\\python\\publish_test_results.py'"
+        } finally {
+          Write-Output "##[endgroup]"
+        }
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
@@ -307,7 +295,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ${{ steps.os.outputs.pip-cache }}
+        path: '~\\AppData\\Local\\pip\\Cache'
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
