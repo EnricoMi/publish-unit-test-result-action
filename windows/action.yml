@@ -185,7 +185,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: '~\\AppData\\Local\\pip\\Cache'
+        path: '~\AppData\Local\pip\Cache'
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
@@ -214,7 +214,7 @@ runs:
           }
 
           Write-Output "Finding Python interpreter in venv"
-          $PYTHON_VENV = enricomi-publish-action-venv\\Scripts\\python -c "import sys; print(sys.executable)"
+          $PYTHON_VENV = enricomi-publish-action-venv\Scripts\python -c "import sys; print(sys.executable)"
           Write-Output "Python in venv: $PYTHON_VENV"
           "PYTHON_VENV=$PYTHON_VENV" | Out-File -FilePath $env:GITHUB_ENV -Append
         } finally {
@@ -228,7 +228,7 @@ runs:
         try {
           # make sure wheel is installed, which improves installing our dependencies
           Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install wheel"
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$GITHUB_ACTION_PATH\\..\\python\\requirements.txt'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env.GITHUB_ACTION_PATH\..\python\requirements.txt'"
         } finally {
           Write-Output "##[endgroup]"
         }
@@ -239,7 +239,7 @@ runs:
       run: |
         Write-Output "##[group]Publish Test Results"
         try {
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' '$GITHUB_ACTION_PATH\\..\\python\\publish_test_results.py'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\python\publish_test_results.py'"
         } finally {
           Write-Output "##[endgroup]"
         }
@@ -294,7 +294,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: '~\\AppData\\Local\\pip\\Cache'
+        path: '~\AppData\Local\pip\Cache'
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
