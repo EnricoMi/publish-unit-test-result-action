@@ -24,10 +24,25 @@ class TestActionYml(unittest.TestCase):
         self.assertEqual(__version__, version, 'version in action.yml must match __version__ in python/publish/__init__.py')
 
     def test_composite_action(self):
+        self.do_test_composite_action('composite')
+
+    def test_linux_action(self):
+        self.do_test_composite_action('linux')
+
+    def test_macos_action(self):
+        self.do_test_composite_action('macos')
+
+    def test_windows_action(self):
+        self.do_test_composite_action('windows')
+
+    def test_windows_bash_action(self):
+        self.do_test_composite_action('windows-bash')
+
+    def do_test_composite_action(self, action: str):
         with open(project_root / 'action.yml', encoding='utf-8') as r:
             dockerfile_action = yaml.safe_load(r)
 
-        with open(project_root / 'composite/action.yml', encoding='utf-8') as r:
+        with open(project_root / f'{action}/action.yml', encoding='utf-8') as r:
             composite_action = yaml.safe_load(r)
 
         self.assertIn('runs', dockerfile_action)
@@ -43,26 +58,35 @@ class TestActionYml(unittest.TestCase):
         self.assertEqual(dockerfile_action_wo_runs, composite_action_wo_runs)
         self.assertIn(('using', 'composite'), composite_action.get('runs', {}).items())
 
-        # check cache key hash is up-to-date in composite action
-        # this md5 is linux-based (on Windows, git uses different newlines, which changes the hash)
-        if sys.platform != 'win32':
-            with open(project_root / 'python' / 'requirements.txt', mode='rb') as r:
-                expected_hash = hashlib.md5(r.read()).hexdigest()
-            cache_hash = next(step.get('with', {}).get('key', '').split('-')[-1]
-                              for step in composite_action.get('runs', {}).get('steps', [])
-                              if step.get('uses', '').startswith('actions/cache/restore@'))
-            self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
-                                                            'to update the MD5 hash in composite/action.yaml')
-
-    def test_composite_inputs(self):
-        with open(project_root / 'composite/action.yml', encoding='utf-8') as r:
-            action = yaml.safe_load(r)
-
+        # check inputs forwarded to action
         # these are not documented in the action.yml files but still needs to be forwarded
         extra_inputs = ['files', 'root_log_level', 'log_level']
-        expected = {key.upper(): f'${{{{ inputs.{key} }}}}' for key in list(action.get('inputs', {}).keys()) + extra_inputs}
+        expected = {key.upper(): f'${{{{ inputs.{key} }}}}'
+                    for key in list(composite_action.get('inputs', {}).keys()) + extra_inputs}
 
-        steps = action.get('runs', {}).get('steps', [])
-        step = next((step for step in steps if step.get('name') == 'Publish Test Results'), {})
-        inputs = {key.upper(): value for key, value in step.get('env', {}).items()}
-        self.assertEqual(expected, inputs)
+        steps = composite_action.get('runs', {}).get('steps', [])
+        if action == 'composite':
+            # the 'composite' composite action is just a proxy to the os-specific actions, it forwards inputs via 'with'
+            steps = [step for step in steps if step.get('name') != 'Run on unsupported Operating System']
+            inputs_key = 'with'
+        else:
+            # the other composite actions forward inputs via env
+            steps = [step for step in steps if step.get('name') == 'Publish Test Results']
+            inputs_key = 'env'
+        for step in steps:
+            self.assertIn(inputs_key, step, step.get('name'))
+            inputs = {key.upper(): value for key, value in step.get(inputs_key, {}).items()}
+            self.assertEqual(expected, inputs)
+
+        # the 'composite' composite action is just a proxy to the os-specific actions, so there is no caching
+        if action != 'composite':
+            # check cache key hash is up-to-date in composite action
+            # this md5 is linux-based (on Windows, git uses different newlines, which changes the hash)
+            if sys.platform != 'win32':
+                with open(project_root / 'python' / 'requirements.txt', mode='rb') as r:
+                    expected_hash = hashlib.md5(r.read()).hexdigest()
+                cache_hash = next(step.get('with', {}).get('key', '').split('-')[-1]
+                                  for step in composite_action.get('runs', {}).get('steps', [])
+                                  if step.get('uses', '').startswith('actions/cache/restore@'))
+                self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
+                                                                'to update the MD5 hash in composite/action.yaml')

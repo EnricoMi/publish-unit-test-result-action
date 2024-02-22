@@ -142,6 +142,7 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
+
 outputs:
   json:
     description: "Test results as JSON"
