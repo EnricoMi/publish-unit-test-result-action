@@ -154,7 +154,7 @@ runs:
     - name: Run on Linux
       id: linux
       if: startsWith(env.RUNNER_OS, 'Linux')
-      uses: $GITHUB_ACTION_PATH/../linux
+      uses: EnricoMi/publish-unit-test-result-action/linux@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
@@ -203,7 +203,7 @@ runs:
     - name: Run on macOS
       id: macos
       if: startsWith(env.RUNNER_OS, 'macOS')
-      uses: $GITHUB_ACTION_PATH/../macos
+      uses: EnricoMi/publish-unit-test-result-action/macos@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
@@ -254,8 +254,8 @@ runs:
       if: startsWith(env.RUNNER_OS, 'Windows')
       # for backward-compatibility (Windows used to be a bash script)
       # deprecated, remove in v3
-      # prefer to use $GITHUB_ACTION_PATH/windows
-      uses: $GITHUB_ACTION_PATH/../windows-bash
+      # prefer to use $GITHUB_ACTION_PATH/../windows
+      uses: EnricoMi/publish-unit-test-result-action/windows-bash@branch-composite-os-actions-2
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
