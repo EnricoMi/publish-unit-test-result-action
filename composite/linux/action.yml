@@ -201,13 +201,13 @@ runs:
           echo "Looks like there is neither virtualenv nor venv package installed"
           if ! "$PYTHON_BIN" -m pip install virtualenv
           then
-            echo "Installing virtualenv package failed"
+            echo "::error::Installing virtualenv package failed"
             exit 1
           fi
 
           if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
           then
-            echo "Cannot create venv after installing virtualenv package"
+            echo "::error::Cannot create venv after installing virtualenv package"
             exit 1
           fi
         fi
