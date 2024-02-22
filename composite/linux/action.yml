@@ -156,6 +156,7 @@ runs:
       run: |
         echo '##[group]Check for Python3'
         trap "echo '##[endgroup]'" EXIT
+        echo "OS: $RUNNER_OS"
 
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store

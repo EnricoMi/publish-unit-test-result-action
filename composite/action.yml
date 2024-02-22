@@ -169,6 +169,13 @@ runs:
       # prefer to use $GITHUB_ACTION_PATH/windows
       uses: $GITHUB_ACTION_PATH/windows-bash
 
+    - name: Run on unsupported Operating System
+      if: ${{ ! (startsWith(env.RUNNER_OS, 'Linux') || startsWith(env.RUNNER_OS, 'macOS') || startsWith(env.RUNNER_OS, 'Windows')) }}
+      run: |
+        echo "::error::Unsupported operating system: $RUNNER_OS"
+        exit 1
+      shell: bash
+
 branding:
   icon: 'check-circle'
   color: 'green'
