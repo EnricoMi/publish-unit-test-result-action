@@ -190,7 +190,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: ~\\AppData\\Local\\pip\\Cache
+        path: '~\AppData\Local\pip\Cache'
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
@@ -296,7 +296,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ~\\AppData\\Local\\pip\\Cache
+        path: '~\AppData\Local\pip\Cache'
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
