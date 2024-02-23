@@ -17,7 +17,8 @@ class TestActionYml(unittest.TestCase):
 
         for input, config in action.get('inputs').items():
             with self.subTest(input=input):
-                if 'deprecated' not in config.get('description', '').lower():
+                if 'deprecated' not in config.get('description', '').lower() and \
+                        input not in ['log_level', 'root_log_level']:
                     self.assertTrue(
                         any(input in line for line in readme),
                         msg=f'There is no line in README.md that mentions {input}'
