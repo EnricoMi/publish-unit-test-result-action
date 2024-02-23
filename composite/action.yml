@@ -165,7 +165,7 @@ runs:
     - name: Run on Linux
       id: linux
       if: startsWith(env.OS, 'Linux')
-      uses: EnricoMi/publish-unit-test-result-action/linux@branch-composite-os-actions-2
+      uses: ./../linux
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
@@ -212,7 +212,7 @@ runs:
     - name: Run on macOS
       id: macos
       if: startsWith(env.OS, 'macOS')
-      uses: EnricoMi/publish-unit-test-result-action/macos@branch-composite-os-actions-2
+      uses: ./../macos
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
@@ -260,7 +260,7 @@ runs:
       id: windows
       if: startsWith(env.OS, 'Windows')
       # this general composite action requires Bash shell, so this calls into windows/bash as well
-      uses: EnricoMi/publish-unit-test-result-action/windows/bash@branch-composite-os-actions-2
+      uses: ./../windows/bash
       with:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
