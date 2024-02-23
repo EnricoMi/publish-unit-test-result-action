@@ -160,7 +160,7 @@ runs:
     - name: Check for Python3
       id: python
       run: |
-        Write-Output "##[group]Check for Python3"
+        Write-Output "::group::Check for Python3"
         try {
           # we check version here just to execute `python3` with an argument
           # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
@@ -182,7 +182,7 @@ runs:
           Write-Output "Python version: $VERSION"
           "version=$VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         } finally {
-          Write-Output "##[endgroup]"
+          Write-Output "::endgroup::"
         }
       shell: pwsh
 
@@ -198,7 +198,7 @@ runs:
       id: venv
       continue-on-error: true
       run: |
-        Write-Output "##[group]Create virtualenv"
+        Write-Output "::group::Create virtualenv"
         try {
           Write-Output "Python that creates venv: $env:PYTHON_BIN"
 
@@ -224,30 +224,30 @@ runs:
           Write-Output "Python in venv: $PYTHON_VENV"
           "PYTHON_VENV=$PYTHON_VENV" | Out-File -FilePath $env:GITHUB_ENV -Append
         } finally {
-          Write-Output "##[endgroup]"
+          Write-Output "::endgroup::"
         }
       shell: pwsh
 
     - name: Install Python dependencies
       run: |
-        Write-Output "##[group]Install Python dependencies"
+        Write-Output "::group::Install Python dependencies"
         try {
           # make sure wheel is installed, which improves installing our dependencies
           Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install wheel"
           Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env.GITHUB_ACTION_PATH\..\python\requirements.txt'"
         } finally {
-          Write-Output "##[endgroup]"
+          Write-Output "::endgroup::"
         }
       shell: pwsh
 
     - name: Publish Test Results
       id: test-results
       run: |
-        Write-Output "##[group]Publish Test Results"
+        Write-Output "::group::Publish Test Results"
         try {
           Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\python\publish_test_results.py'"
         } finally {
-          Write-Output "##[endgroup]"
+          Write-Output "::endgroup::"
         }
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
