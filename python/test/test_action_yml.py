@@ -36,7 +36,7 @@ class TestActionYml(unittest.TestCase):
         self.do_test_composite_action('windows')
 
     def test_windows_bash_action(self):
-        self.do_test_composite_action('windows-bash')
+        self.do_test_composite_action('windows/bash')
 
     def do_test_composite_action(self, action: str):
         with open(project_root / 'action.yml', encoding='utf-8') as r:

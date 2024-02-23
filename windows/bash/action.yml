@@ -236,7 +236,7 @@ runs:
 
         # make sure wheel is installed, which improves installing our dependencies
         "$PYTHON_VENV" -m pip install wheel
-        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
+        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../../python/requirements.txt"
 
         echo '::endgroup::'
       shell: bash
@@ -245,7 +245,7 @@ runs:
       id: test-results
       run: |
         echo '::group::Publish Test Results'
-        "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../python/publish_test_results.py"
+        "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../../python/publish_test_results.py"
         echo '::endgroup::'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
