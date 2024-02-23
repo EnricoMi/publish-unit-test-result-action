@@ -161,7 +161,6 @@ runs:
       id: python
       run: |
         echo '##[group]Check for Python3'
-        trap "echo '##[endgroup]'" EXIT
 
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
@@ -182,6 +181,8 @@ runs:
         echo "Python that creates venv: $PYTHON_BIN"
         echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
         echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
+
+        echo '##[endgroup]'
       shell: bash
 
     - name: Restore PIP packages cache
@@ -197,7 +198,6 @@ runs:
       continue-on-error: true
       run: |
         echo '##[group]Create virtualenv'
-        trap "echo '##[endgroup]'" EXIT
 
         echo "Python that creates venv: $PYTHON_BIN"
 
@@ -222,25 +222,27 @@ runs:
         PYTHON_VENV="$(enricomi-publish-action-venv/bin/python -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
+
+        echo '##[endgroup]'
       shell: bash
 
     - name: Install Python dependencies
       run: |
         echo '##[group]Install Python dependencies'
-        trap "echo '##[endgroup]'" EXIT
 
         # make sure wheel is installed, which improves installing our dependencies
         "$PYTHON_VENV" -m pip install wheel
         "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
+
+        echo '##[endgroup]'
       shell: bash
 
     - name: Publish Test Results
       id: test-results
       run: |
         echo '##[group]Publish Test Results'
-        trap "echo '##[endgroup]'" EXIT
-
         "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../python/publish_test_results.py"
+        echo '##[endgroup]'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
