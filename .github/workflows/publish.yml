@@ -44,7 +44,7 @@ jobs:
 
       - name: Publish Test Results
         id: test-results
-        uses: ./composite
+        uses: EnricoMi/publish-unit-test-result-action/composite@20ee7c944c7c907f0d61f124aed1ec1565e97c72
         with:
           check_name: Test Results (${{ matrix.os-label }} composite python ${{ matrix.python }})
           files: |
