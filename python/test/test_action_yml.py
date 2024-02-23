@@ -67,13 +67,15 @@ class TestActionYml(unittest.TestCase):
             # the 'composite' composite action is just a proxy to the os-specific actions, it forwards inputs via 'with'
             steps = [step for step in steps
                      if 'name' in step
-                     and step.get('name').startswith('Run on ')
+                     and step.get('name').startswith('Run')
                      and step.get('name') != 'Run on unsupported Operating System']
             inputs_key = 'with'
         else:
             # the other composite actions forward inputs via env
             steps = [step for step in steps if step.get('name') == 'Publish Test Results']
             inputs_key = 'env'
+
+        self.assertTrue(len(steps) > 0)
         for step in steps:
             self.assertIn(inputs_key, step, step.get('name'))
             inputs = {key.upper(): value for key, value in step.get(inputs_key, {}).items()}
@@ -91,3 +93,9 @@ class TestActionYml(unittest.TestCase):
                                   if step.get('uses', '').startswith('actions/cache/restore@'))
                 self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
                                                                 'to update the MD5 hash in composite/action.yaml')
+
+    def test_proxy_action(self):
+        # TODO
+        # run RUNNER_OS=Linux|Windows|macOS GITHUB_ACTION_PATH=... composite/proxy.sh
+        # and compare with python/test/files/proxy.yml
+        pass

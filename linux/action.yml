@@ -162,6 +162,8 @@ runs:
       run: |
         echo '::group::Check for Python3'
 
+        echo "GITHUB_ACTION_PATH: $GITHUB_ACTION_PATH"
+
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
         # command `which python3` finds that, but `python3 -V` does not return the version on stdout
