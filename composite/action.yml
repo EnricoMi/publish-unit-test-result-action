@@ -160,6 +160,7 @@ runs:
     - name: Check for Python3
       id: python
       run: |
+        # Check for Python3
         echo '::group::Check for Python3'
 
         # we check version here just to execute `python3` with an argument
@@ -188,6 +189,7 @@ runs:
     - name: Detect OS
       id: os
       run: |
+        # Detect OS
         case "$RUNNER_OS" in
           Linux*)
             echo "pip-cache=~/.cache/pip" >> "$GITHUB_OUTPUT"
@@ -216,6 +218,7 @@ runs:
       env:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
+        # Create virtualenv
         echo '::group::Create virtualenv'
 
         echo "Python that creates venv: $PYTHON_BIN"
@@ -257,6 +260,7 @@ runs:
 
     - name: Install Python dependencies
       run: |
+        # Install Python dependencies
         echo '::group::Install Python dependencies'
 
         # make sure wheel is installed, which improves installing our dependencies
@@ -269,6 +273,7 @@ runs:
     - name: Publish Test Results
       id: test-results
       run: |
+        # Publish Test Results
         echo '::group::Publish Test Results'
         "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../python/publish_test_results.py"
         echo '::endgroup::'

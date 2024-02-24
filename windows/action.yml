@@ -154,6 +154,7 @@ runs:
     - name: Check for Python3
       id: python
       run: |
+        # Check for Python3
         Write-Output "::group::Check for Python3"
         try {
           # we check version here just to execute `python3` with an argument
@@ -192,6 +193,7 @@ runs:
       id: venv
       continue-on-error: true
       run: |
+        # Create virtualenv
         Write-Output "::group::Create virtualenv"
         try {
           Write-Output "Python that creates venv: $env:PYTHON_BIN"
@@ -224,6 +226,7 @@ runs:
 
     - name: Install Python dependencies
       run: |
+        # Install Python dependencies
         Write-Output "::group::Install Python dependencies"
         try {
           # make sure wheel is installed, which improves installing our dependencies
@@ -237,6 +240,7 @@ runs:
     - name: Publish Test Results
       id: test-results
       run: |
+        # Publish Test Results
         Write-Output "::group::Publish Test Results"
         try {
           Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\python\publish_test_results.py'"
