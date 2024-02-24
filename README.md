@@ -836,7 +836,7 @@ Using the Docker variant of this action is recommended as it starts up much quic
 
 ## Running as a non-Docker action
 
-Running this action as below allows to run it on self-hosted runners that do not provide Docker:
+Running this action as below allows to run it on action runners that do not provide Docker:
 
     uses: EnricoMi/publish-unit-test-result-action/linux@v2
     uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -854,4 +854,17 @@ Self-hosted runners may require setting up a Python environment first:
     python-version: 3.8
 ```
 
-Start-up of the action is faster with `virtualenv` or `venv`, as well as `wheel` packages installed.
+Start-up of the action is faster with `virtualenv` or `venv`, as well as `wheel` packages are installed.
+
+## Running as a composite action
+
+Running this action via:
+
+    uses: EnricoMi/publish-unit-test-result-action/composite@v2
+
+is **deprecated**, please use an action appropriate for your operating system and shell:
+
+- Linux (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/linux@v2`
+- macOS (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/macos@v2`
+- Windows (PowerShell): `uses: EnricoMi/publish-unit-test-result-action/windows@v2`
+- Windows (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2`

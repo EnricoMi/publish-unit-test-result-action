@@ -154,12 +154,7 @@ runs:
     - name: Deprecation warning
       run: |
         # Print deprecation warning
-        echo "::warning::Running this action via 'uses: EnricoMi/publish-unit-test-result-action/composite@v2 is deprecated!"
-        echo "::warning::Please use an action appropriate for your operating system and shell:"
-        echo "::warning::- Linux (Bash shell):   EnricoMi/publish-unit-test-result-action/linux@v2"
-        echo "::warning::- macOS (Bash shell):   EnricoMi/publish-unit-test-result-action/macos@v2"
-        echo "::warning::- Windows (PowerShell): EnricoMi/publish-unit-test-result-action/windows@v2"
-        echo "::warning::- Windows (Bash shell): EnricoMi/publish-unit-test-result-action/windows/bash@v2"
+        echo "::warning::Running this action via 'uses: EnricoMi/publish-unit-test-result-action/composite@v2 is deprecated! For details, see: https://github.com/EnricoMi/publish-unit-test-result-action/tree/v2#running-as-a-composite-action"
       shell: bash
 
     - name: Check for Python3
