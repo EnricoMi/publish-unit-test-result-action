@@ -65,22 +65,11 @@ class TestActionYml(unittest.TestCase):
                     for key in list(composite_action.get('inputs', {}).keys()) + extra_inputs}
 
         steps = composite_action.get('runs', {}).get('steps', [])
-        if action == 'composite':
-            # the 'composite' composite action is just a proxy to the os-specific actions, it forwards inputs via 'with'
-            steps = [step for step in steps
-                     if 'name' in step
-                     and step.get('name').startswith('Run')
-                     and step.get('name') != 'Run on unsupported Operating System']
-            inputs_key = 'with'
-        else:
-            # the other composite actions forward inputs via env
-            steps = [step for step in steps if step.get('name') == 'Publish Test Results']
-            inputs_key = 'env'
-
+        steps = [step for step in steps if step.get('name') == 'Publish Test Results']
         self.assertTrue(len(steps) > 0)
         for step in steps:
-            self.assertIn(inputs_key, step, step.get('name'))
-            inputs = {key.upper(): value for key, value in step.get(inputs_key, {}).items()}
+            self.assertIn('env', step, step.get('name'))
+            inputs = {key.upper(): value for key, value in step.get('env', {}).items()}
             self.assertEqual(expected, inputs)
 
         # the 'composite' composite action is just a proxy to the os-specific actions, so there is no caching
