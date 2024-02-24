@@ -142,12 +142,6 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
-  root_log_level:
-    description: 'Log level for all Python modules.'
-    required: false
-  log_level:
-    description: 'Log level for the publish action.'
-    required: false
 
 outputs:
   json:
@@ -287,7 +281,9 @@ runs:
         CHECK_RUN: ${{ inputs.check_run }}
         JOB_SUMMARY: ${{ inputs.job_summary }}
         SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
+        # not documented
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+        # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
       shell: bash
 

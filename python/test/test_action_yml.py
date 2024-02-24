@@ -59,8 +59,10 @@ class TestActionYml(unittest.TestCase):
         self.assertIn(('using', 'composite'), composite_action.get('runs', {}).items())
 
         # check inputs forwarded to action
+        # these are not documented in the action.yml files but still needs to be forwarded
+        extra_inputs = ['files', 'root_log_level', 'log_level']
         expected = {key.upper(): f'${{{{ inputs.{key} }}}}'
-                    for key in list(composite_action.get('inputs', {}).keys())}
+                    for key in list(composite_action.get('inputs', {}).keys()) + extra_inputs}
 
         steps = composite_action.get('runs', {}).get('steps', [])
         if action == 'composite':
