@@ -55,9 +55,9 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
   if: always()
   with:
     files: |
-      test-results/**/*.xml
-      test-results/**/*.trx
-      test-results/**/*.json
+      test-results\**\*.xml
+      test-results\**\*.trx
+      test-results\**\*.json
 ```
 
 For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
@@ -832,16 +832,14 @@ Using the non-composite variant of this action is recommended as it starts up mu
 
 ## Running as a composite action
 
-Running this action as a composite action (macOs and Windows) allows to run it on operating systems
-other than Linux as it does not require Docker:
+Running this action as a composite action allows to run it on self-hosted runners that do not provide Docker:
 
     uses: EnricoMi/publish-unit-test-result-action/linux@v2
     uses: EnricoMi/publish-unit-test-result-action/macos@v2
     uses: EnricoMi/publish-unit-test-result-action/windows@v2
 
 The composite action, however, requires a Python3 environment to be setup on the action runner.
-All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
-Python3 environment out-of-the-box.
+All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable Python3 environment out-of-the-box.
 
 Self-hosted runners may require setting up a Python environment first:
 
