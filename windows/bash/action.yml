@@ -217,7 +217,8 @@ runs:
         fi
 
         echo "Finding Python interpreter in venv"
-        PYTHON_VENV="$(enricomi-publish-action-venv\\Scripts\\python -c 'import sys; print(sys.executable)')"
+        PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python"
+        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
 

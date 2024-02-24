@@ -156,8 +156,6 @@ runs:
       run: |
         echo '::group::Check for Python3'
 
-        echo "GITHUB_ACTION_PATH: $GITHUB_ACTION_PATH"
-
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
         # command `which python3` finds that, but `python3 -V` does not return the version on stdout
@@ -186,7 +184,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: ~/.cache/pip
+        path: '~/.cache/pip'
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
@@ -215,7 +213,8 @@ runs:
         fi
 
         echo "Finding Python interpreter in venv"
-        PYTHON_VENV="$(enricomi-publish-action-venv/bin/python -c 'import sys; print(sys.executable)')"
+        PYTHON_VENV="enricomi-publish-action-venv/bin/python"
+        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
 
@@ -290,7 +289,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ~/.cache/pip
+        path: '~/.cache/pip'
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:

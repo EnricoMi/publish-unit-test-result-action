@@ -184,7 +184,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: ~/Library/Caches/pip
+        path: '~/Library/Caches/pip'
         key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
 
     - name: Create virtualenv
@@ -213,7 +213,8 @@ runs:
         fi
 
         echo "Finding Python interpreter in venv"
-        PYTHON_VENV="$(enricomi-publish-action-venv/bin/python -c 'import sys; print(sys.executable)')"
+        PYTHON_VENV="enricomi-publish-action-venv/bin/python"
+        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
 
@@ -288,7 +289,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: ~/Library/Caches/pip
+        path: '~/Library/Caches/pip'
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:

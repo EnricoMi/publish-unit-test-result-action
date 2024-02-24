@@ -155,6 +155,7 @@ runs:
       id: python
       run: |
         echo '::group::Check for Python3'
+
         # we check version here just to execute `python3` with an argument
         # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
         # command `which python3` finds that, but `python3 -V` does not return the version on stdout
@@ -174,6 +175,7 @@ runs:
         echo "Python that creates venv: $PYTHON_BIN"
         echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
         echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
+
         echo '::endgroup::'
       shell: bash
 
@@ -209,6 +211,7 @@ runs:
         PIP_OPTIONS: ${{ steps.os.outputs.pip-options }}
       run: |
         echo '::group::Create virtualenv'
+
         echo "Python that creates venv: $PYTHON_BIN"
 
         echo "Creating virtual environment"
@@ -218,12 +221,16 @@ runs:
           if ! "$PYTHON_BIN" -m pip install $PIP_OPTIONS virtualenv && [ -n "$PIP_OPTIONS" ]
           then
             echo "Installing virtualenv package with PIP options '$PIP_OPTIONS' failed, now trying without"
-            "$PYTHON_BIN" -m pip install virtualenv
+            if ! "$PYTHON_BIN" -m pip install virtualenv
+            then
+              echo "::error::Installing virtualenv package failed"
+              exit 1
+            fi
           fi
 
           if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
           then
-            echo "Still cannot create venv after installing virtualenv package"
+            echo "::error::Cannot create venv after installing virtualenv package"
             exit 1
           fi
         fi
@@ -238,15 +245,18 @@ runs:
         PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
+
         echo '::endgroup::'
       shell: bash
 
     - name: Install Python dependencies
       run: |
         echo '::group::Install Python dependencies'
+
         # make sure wheel is installed, which improves installing our dependencies
         "$PYTHON_VENV" -m pip install wheel
         "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
+
         echo '::endgroup::'
       shell: bash
 
