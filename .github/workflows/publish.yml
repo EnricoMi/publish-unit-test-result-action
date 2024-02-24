@@ -440,28 +440,14 @@ jobs:
         include:
           - os: macos-latest
             os-label: macOS
-            python: "installed"
           - os: ubuntu-latest
             os-label: Linux
-            python: "installed"
           - os: windows-latest
             os-label: Windows
-            python: "installed"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Python
-        if: matrix.python != 'installed' && matrix.python != 'venv'
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-
-      - name: Install virtualenv
-        if: matrix.python == 'venv'
-        run: python3 -m pip install virtualenv
-        shell: bash
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
