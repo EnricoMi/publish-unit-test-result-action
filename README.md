@@ -21,7 +21,7 @@ publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, V
 and runs on Linux, macOS and Windows.
 
 You can use this action with ![Ubuntu Linux](misc/badge-ubuntu.svg) runners (e.g. `runs-on: ubuntu-latest`)
-or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
+or ![ARM Linux](misc/badge-arm.svg) self-hosted runners that support Docker:
 
 ```yaml
 - name: Publish Test Results
@@ -36,12 +36,10 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
-Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
-and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
-
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners:
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/composite@v2
+  uses: EnricoMi/publish-unit-test-result-action/macos@v2
   if: always()
   with:
     files: |
@@ -50,7 +48,31 @@ and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
       test-results/**/*.json
 ```
 
-See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
+… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/windows@v2
+  if: always()
+  with:
+    files: |
+      test-results\**\*.xml
+      test-results\**\*.trx
+      test-results\**\*.json
+```
+
+For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/linux@v2
+  if: always()
+  with:
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
+      test-results/**/*.json
+```
+
+See the [notes on running this action as a non-Docker action](#running-as-a-non-docker-action).
 
 If you see the `"Resource not accessible by integration"` error, you have to grant additional [permissions](#permissions), or
 [setup the support for pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
@@ -273,7 +295,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the composite action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the non-Docker action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
@@ -783,10 +805,14 @@ You can then use the badge via this URL: https://gist.githubusercontent.com/{use
 ## Running with absolute paths
 
 It is known that this action works best with relative paths (e.g. `test-results/**/*.xml`),
-but most absolute paths (e.g. `/tmp/test-results/**/*.xml`) require to use the composite variant
-of this action (`uses: EnricoMi/publish-unit-test-result-action/composite@v2`).
+but most absolute paths (e.g. `/tmp/test-results/**/*.xml`) require to use the non-Docker variant
+of this action:
 
-If you have to use absolute paths with the non-composite variant of this action (`uses: EnricoMi/publish-unit-test-result-action@v2`),
+    uses: EnricoMi/publish-unit-test-result-action/linux@v2
+    uses: EnricoMi/publish-unit-test-result-action/macos@v2
+    uses: EnricoMi/publish-unit-test-result-action/windows@v2
+
+If you have to use absolute paths with the Docker variant of this action (`uses: EnricoMi/publish-unit-test-result-action@v2`),
 you have to copy files to a relative path first, and then use the relative path:
 
 ```yaml
@@ -806,14 +832,18 @@ you have to copy files to a relative path first, and then use the relative path:
         test-results/**/*.json
 ```
 
-Using the non-composite variant of this action is recommended as it starts up much quicker.
+Using the Docker variant of this action is recommended as it starts up much quicker.
 
-## Running as a composite action
+## Running as a non-Docker action
 
-Running this action as a composite action allows to run it on various operating systems as it
-does not require Docker. The composite action, however, requires a Python3 environment to be setup
-on the action runner. All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
-Python3 environment out-of-the-box.
+Running this action as below allows to run it on action runners that do not provide Docker:
+
+    uses: EnricoMi/publish-unit-test-result-action/linux@v2
+    uses: EnricoMi/publish-unit-test-result-action/macos@v2
+    uses: EnricoMi/publish-unit-test-result-action/windows@v2
+
+These actions, however, require a Python3 environment to be setup on the action runner.
+All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable Python3 environment out-of-the-box.
 
 Self-hosted runners may require setting up a Python environment first:
 
@@ -824,6 +854,19 @@ Self-hosted runners may require setting up a Python environment first:
     python-version: 3.8
 ```
 
-Self-hosted runners for Windows require Bash shell to be installed. Easiest way to have one is by installing
-Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
-environment variable seen by the self-hosted runner.
+Start-up of the action is faster with `virtualenv` or `venv`, as well as `wheel` packages are installed.
+
+## Running as a composite action
+
+Running this action via:
+
+    uses: EnricoMi/publish-unit-test-result-action/composite@v2
+
+is **deprecated**, please use an action appropriate for your operating system and shell:
+
+- Linux (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/linux@v2`
+- macOS (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/macos@v2`
+- Windows (PowerShell): `uses: EnricoMi/publish-unit-test-result-action/windows@v2`
+- Windows (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2`
+
+These are non-Docker variations of this action. For details, see section ["Running as a non-Docker action"](#running-as-a-non-docker-action) above.
