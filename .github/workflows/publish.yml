@@ -409,6 +409,7 @@ jobs:
 
       - name: Publish Test Results (Bash)
         id: test-results-bash
+        if: always() && steps.test-results.outcome != 'skipped'
         uses: ./windows/bash
         with:
           check_name: Test Results (${{ matrix.os-label }} bash python ${{ matrix.python }})
