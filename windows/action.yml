@@ -231,7 +231,7 @@ runs:
         try {
           # make sure wheel is installed, which improves installing our dependencies
           Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install wheel"
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env.GITHUB_ACTION_PATH\..\python\requirements.txt'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env:GITHUB_ACTION_PATH\..\python\requirements.txt'"
         } finally {
           Write-Output "::endgroup::"
         }
