@@ -395,7 +395,7 @@ jobs:
         uses: ./windows
         with:
           check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
-          files: artifacts\**\*.xml
+          files: artifacts/**/*.xml
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
@@ -409,10 +409,11 @@ jobs:
 
       - name: Publish Test Results (Bash)
         id: test-results-bash
+        if: always() && steps.test-results.outcome != 'skipped'
         uses: ./windows/bash
         with:
           check_name: Test Results (${{ matrix.os-label }} bash python ${{ matrix.python }})
-          files: artifacts\**\*.xml
+          files: artifacts/**/*.xml
           json_file: "tests.json"
           json_suite_details: true
           json_test_case_results: true
