@@ -14,7 +14,7 @@ RUN apk add --no-cache --upgrade expat libuuid
 COPY python/requirements.txt /action/
 RUN apk add --no-cache build-base libffi-dev; \
     pip install --upgrade --force --no-cache-dir pip && \
-    pip install --upgrade --force --no-cache-dir -r /action/requirements.txt; \
+    pip install --upgrade --force --no-cache-dir -r /action/requirements-post-3.7.txt; \
     apk del build-base libffi-dev
 
 COPY python/publish /action/publish

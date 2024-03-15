@@ -72,7 +72,8 @@ runs:
         rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location:" | sed -e "s/.*: *//")"
 
         # install dependencies
-        python3 -m pip install --force -r python/requirements.txt
+        python_minor_version="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        python3 -m pip install --force -r python/requirements-$python_minor_version.txt
         python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
 
         # inspect pip cache
