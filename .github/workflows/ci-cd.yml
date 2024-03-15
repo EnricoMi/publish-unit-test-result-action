@@ -27,7 +27,7 @@ jobs:
         shell: bash
       - name: Check for dependency updates
         continue-on-error: true
-        run:
+        run: |
           pip install tox
           tox
           git diff --exit-code
