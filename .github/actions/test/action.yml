@@ -70,7 +70,7 @@ runs:
         python3 -m pip cache list || true
 
         # remove cached built whl files
-        #rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location:" | sed -e "s/.*: *//")"
+        rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location:" | sed -e "s/.*: *//")"
 
         # install dependencies
         python_minor_version="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
