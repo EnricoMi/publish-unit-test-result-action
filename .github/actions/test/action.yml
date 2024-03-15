@@ -18,7 +18,6 @@ runs:
       run: |
         sudo apt-get update
         sudo apt-get install language-pack-en language-pack-de
-        sudo apt-get purge libffi-dev
       shell: bash
   
     - name: Setup Python
@@ -63,15 +62,26 @@ runs:
     - name: Install Python dependencies
       run: |
         python3 -V
+
+        # inspect pip cache
         python3 -m pip freeze | sort
         python3 -m pip cache info || true
         python3 -m pip cache list || true
-        python3 -m pip install --upgrade --force pip wheel
+
+        # remove cached built whl files
+        rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location:" | sed -e "s/.*: *//")"
+
+        # install dependencies
         python3 -m pip install --force -r python/requirements.txt
         python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+
+        # inspect pip cache
         python3 -m pip freeze | sort
         python3 -m pip cache info || true
         python3 -m pip cache list || true
+
+        # assert no whl files have been built
+        python3 -m pip cache info | grep "Locally built wheels size:" | (! grep -v "Locally built wheels size: 0")
       shell: bash
   
     - name: Update expectation files
