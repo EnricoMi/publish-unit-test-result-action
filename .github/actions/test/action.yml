@@ -62,7 +62,6 @@ runs:
     - name: Install Python dependencies
       run: |
         python3 -V
-        pip install --upgrade --force pip==24.0.0
 
         # inspect pip cache
         python3 -m pip freeze | sort
