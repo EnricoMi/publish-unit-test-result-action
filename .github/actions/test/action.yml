@@ -51,6 +51,7 @@ runs:
     - name: Cache PIP Packages
       uses: actions/cache@v4
       id: cache
+      if: github.event_name != 'schedule'
       with:
         path: ${{ steps.os.outputs.pip-cache }}
         key: ${{ inputs.os }}-pip-test-${{ inputs.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-${{ steps.os.outputs.date }}
