@@ -173,9 +173,15 @@ runs:
           Write-Output "Python that creates venv: $PYTHON_BIN"
           "PYTHON_BIN=$PYTHON_BIN" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-          $VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -V"
-          Write-Output "Python version: $VERSION"
-          "version=$VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          $PYTHON_VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -c 'import sys; print(f""{sys.version_info.major}.{sys.version_info.minor}"")'"
+          Write-Output "Python version: $PYTHON_VERSION"
+
+          if ( $PYTHON_VERSION -eq "3.7" ) {
+            "DEPENDENCIES_VERSION=3.7" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } else {
+            "DEPENDENCIES_VERSION=post-3.7" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+          "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         } finally {
           Write-Output "::endgroup::"
         }
@@ -229,9 +235,7 @@ runs:
         # Install Python dependencies
         Write-Output "::group::Install Python dependencies"
         try {
-          # make sure wheel is installed, which improves installing our dependencies
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install wheel"
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env:GITHUB_ACTION_PATH\..\python\requirements.txt'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip install -r '$env:GITHUB_ACTION_PATH\..\python\requirements-$env:DEPENDENCIES_VERSION.txt'"
         } finally {
           Write-Output "::endgroup::"
         }

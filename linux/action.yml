@@ -235,11 +235,7 @@ runs:
       run: |
         # Install Python dependencies
         echo '::group::Install Python dependencies'
-
-        # make sure wheel is installed, which improves installing our dependencies
-        "$PYTHON_VENV" -m pip install wheel
-        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements.txt"
-
+        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../python/requirements-$DEPENDENCIES_VERSION.txt"
         echo '::endgroup::'
       shell: bash
 
