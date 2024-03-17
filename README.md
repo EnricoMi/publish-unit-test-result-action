@@ -854,7 +854,7 @@ Self-hosted runners may require setting up a Python environment first:
     python-version: 3.8
 ```
 
-Start-up of the action is faster with `virtualenv` or `venv`, as well as `wheel` packages are installed.
+Start-up of the action is faster with `virtualenv` or `venv` package installed.
 
 ## Running as a composite action
 
