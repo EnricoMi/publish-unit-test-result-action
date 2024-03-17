@@ -69,7 +69,7 @@ runs:
         python3 -m pip cache list || true
 
         # remove cached built whl files
-        python3 -m pip cache purge || true
+        rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location: " | cut -d ":" -f 2- | cut -d " " -f 2-)"
         python3 -m pip cache list || true
 
         # install dependencies
