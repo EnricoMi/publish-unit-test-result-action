@@ -1,6 +1,6 @@
 humanize==4.6.0
   importlib-metadata==6.7.0
-    typing_extensions==4.7.1
+    typing_extensions==4.10.0
     zipp==3.15.0
 junitparser==3.1.2
 lxml==5.1.0
@@ -9,7 +9,7 @@ PyGithub==2.2.0
   Deprecated==1.2.14
     wrapt==1.16.0
   PyJWT==2.8.0
-    typing_extensions==4.7.1
+    typing_extensions==4.10.0
   PyNaCl==1.5.0
     cffi==1.15.1
       pycparser==2.21
@@ -18,5 +18,5 @@ PyGithub==2.2.0
     charset-normalizer==3.3.2
     idna==3.6
     urllib3==2.0.7
-  typing_extensions==4.7.1
+  typing_extensions==4.10.0
   urllib3==2.0.7
