@@ -20,14 +20,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Check requirements.txt against requirements-direct.txt
+      - name: Check requirements.txt
         run: |
-          (diff -w python/requirements-direct.txt python/requirements.txt || true) | (! grep -e "^<")
+          (diff -w <(grep -v "python_version >  '3.7'" python/requirements.txt | sed -e "s/;.*//") python/requirements-3.7.txt || true) | (! grep -e "^<")
+          (diff -w <(grep -v "python_version <= '3.7'" python/requirements.txt | sed -e "s/;.*//") python/requirements-post-3.7.txt || true) | (! grep -e "^<")
         shell: bash
       - name: Check for dependency updates
         continue-on-error: true
-        run:
-          .github/upgrade-pip-packages.sh
+        run: |
+          pip install tox
+          tox
+          git diff --exit-code
         shell: bash
 
   test-mac:

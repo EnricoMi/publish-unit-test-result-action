@@ -1,2 +1,0 @@
-# test_github.py fails with newer version
-Werkzeug<2.1.0

@@ -175,7 +175,15 @@ runs:
 
         echo "Python that creates venv: $PYTHON_BIN"
         echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
-        echo "version=$("$PYTHON_BIN" -V)" >> "$GITHUB_OUTPUT"
+
+        PYTHON_VERSION="$($PYTHON_BIN -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        if [[ "$PYTHON_VERSION" == "3.7" ]]
+        then
+          echo "DEPENDENCIES_VERSION=3.7" >> "$GITHUB_ENV"
+        else
+          echo "DEPENDENCIES_VERSION=post-3.7" >> "$GITHUB_ENV"
+        fi
+        echo "version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
 
         echo '::endgroup::'
       shell: bash
@@ -186,7 +194,7 @@ runs:
       continue-on-error: true
       with:
         path: '~\AppData\Local\pip\Cache'
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-70a313922fdbeb7398ec60313d908b11
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-e594996205319a7990b3a4ec677d10a3
 
     - name: Create virtualenv
       id: venv
@@ -231,11 +239,7 @@ runs:
       run: |
         # Install Python dependencies
         echo '::group::Install Python dependencies'
-
-        # make sure wheel is installed, which improves installing our dependencies
-        "$PYTHON_VENV" -m pip install wheel
-        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../../python/requirements.txt"
-
+        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../../python/requirements-$DEPENDENCIES_VERSION.txt"
         echo '::endgroup::'
       shell: bash
 
