@@ -11,7 +11,7 @@ from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults,
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
 # keep the version in sync with action.yml
-__version__ = 'v2.16.0'
+__version__ = 'v2.16.1'
 
 logger = logging.getLogger('publish')
 digest_prefix = '[test-results]:data:'
