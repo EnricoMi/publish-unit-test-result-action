@@ -176,7 +176,7 @@ runs:
         echo "Python that creates venv: $PYTHON_BIN"
         echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
 
-        PYTHON_VERSION="$($PYTHON_BIN -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        PYTHON_VERSION="$("$PYTHON_BIN" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
         if [[ "$PYTHON_VERSION" == "3.7" ]]
         then
           echo "DEPENDENCIES_VERSION=3.7" >> "$GITHUB_ENV"
