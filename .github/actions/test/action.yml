@@ -63,28 +63,30 @@ runs:
     - name: Install Python dependencies
       run: |
         python3 -V
+        python3 -m venv venv
+        venv/bin/python -V
 
         # inspect pip cache
-        python3 -m pip freeze | sort
-        python3 -m pip cache info || true
-        python3 -m pip cache list || true
+        venv/bin/pip freeze | sort
+        venv/bin/pip cache info || true
+        venv/bin/pip cache list || true
 
         # remove cached built whl files
-        rm -rf "$(python3 -m pip cache info | grep "Locally built wheels location: " | cut -d ":" -f 2- | cut -d " " -f 2-)"
-        python3 -m pip cache list || true
+        rm -rf "$(venv/bin/pip cache info | grep "Locally built wheels location: " | cut -d ":" -f 2- | cut -d " " -f 2-)"
+        venv/bin/pip cache list || true
 
         # install dependencies
-        python_minor_version="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
-        python3 -m pip install --force -r python/requirements-$python_minor_version.txt
-        python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+        python_minor_version="$(venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        venv/bin/pip install --force -r python/requirements-$python_minor_version.txt
+        venv/bin/pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
 
         # inspect pip cache
-        python3 -m pip freeze | sort
-        python3 -m pip cache info || true
-        python3 -m pip cache list || true
+        venv/bin/pip freeze | sort
+        venv/bin/pip cache info || true
+        venv/bin/pip cache list || true
 
         # assert no whl files have been built
-        if [ python3 -m pip cache info ] && [ "$(python3 -m pip cache info | grep "Number of locally built wheels:")" != "Number of locally built wheels: 0" ]
+        if [ venv/bin/pip cache info ] && [ "$(venv/bin/pip cache info | grep "Number of locally built wheels:")" != "Number of locally built wheels: 0" ]
         then
           echo "Dependency whl files have been built"
           exit 1
@@ -121,7 +123,7 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
+        venv/bin/python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
       shell: bash
   
     - name: PyTest (EST)
@@ -131,7 +133,7 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
+        venv/bin/python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
       shell: bash
   
     - name: PyTest (CET)
@@ -141,7 +143,7 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
+        venv/bin/python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
       shell: bash
   
     - name: Upload Test Results
