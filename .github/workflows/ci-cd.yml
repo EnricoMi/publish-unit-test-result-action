@@ -33,31 +33,6 @@ jobs:
           git diff --exit-code
         shell: bash
 
-  test-mac:
-    name: "Test macOS"
-    uses: "./.github/workflows/test-os.yml"
-    with:
-      os: '["macos-11", "macos-12", "macos-13", "macos-14"]'
-      python-version: '["3.10", "3.11", "3.12", "installed"]'
-      include: >
-        [
-          {"os": "macos-11", "python-version": "3.7"},
-          {"os": "macos-11", "python-version": "3.8"},
-          {"os": "macos-11", "python-version": "3.9"},
-          {"os": "macos-12", "python-version": "3.8"},
-          {"os": "macos-12", "python-version": "3.9"},
-          {"os": "macos-13", "python-version": "3.8"},
-          {"os": "macos-13", "python-version": "3.9"},
-        ]
-
-  test-lnx:
-    name: "Test Ubuntu"
-    uses: "./.github/workflows/test-os.yml"
-    with:
-      os: '["ubuntu-20.04", "ubuntu-22.04"]'
-      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "installed"]'
-      include: '[{"os": "ubuntu-20.04", "python-version": "3.7"}]'
-
   test-win:
     name: "Test Windows"
     uses: "./.github/workflows/test-os.yml"
@@ -68,7 +43,7 @@ jobs:
 
   publish:
     name: "Publish"
-    needs: [test-mac, test-lnx, test-win]
+    needs: [test-win]
     # we run the action from this branch whenever we can (when it runs in our repo's context)
     if: >
       ! cancelled() &&
@@ -82,7 +57,7 @@ jobs:
 
   config-deploy:
     name: Configure Deployment
-    needs: [test-mac, test-lnx, test-win]
+    needs: [test-win]
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest

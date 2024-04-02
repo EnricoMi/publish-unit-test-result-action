@@ -51,7 +51,7 @@ runs:
     - name: Cache PIP Packages
       uses: actions/cache@v4
       id: cache
-      if: github.event_name != 'schedule'
+      if: github.event_name != 'schedule' && 1 == 0
       with:
         path: ${{ steps.os.outputs.pip-cache }}
         key: ${{ inputs.os }}-pip-test-${{ inputs.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-${{ steps.os.outputs.date }}
@@ -62,16 +62,22 @@ runs:
   
     - name: Install Python dependencies
       run: |
+        pwd
         python3 -V
         which python3
-        python3 -m venv $RUNNER_TEMP/venv
-        ls -lah "$RUNNER_TEMP/venv/Scripts"
+        echo "creating venv"
+        python3 -m venv --verbose "venv"
+        echo "venv created"
+        ls -lah "venv"
+        ls -lah "venv/Scripts"
         echo "$GITHUB_PATH"
         cat "$GITHUB_PATH"
-        echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
-        echo "$RUNNER_TEMP\\venv\\Scripts" >> "$GITHUB_PATH"
+        echo "venv/bin" >> "$GITHUB_PATH"
+        echo "venv/Scripts" >> "$GITHUB_PATH"
         cat "$GITHUB_PATH"
-        export PATH="$RUNNER_TEMP/venv/bin:$RUNNER_TEMP\\Scripts:$PATH"
+        echo "$PATH"
+        export PATH="venv/bin:venv/Scripts:$PATH"
+        echo "$PATH"
         which python3
 
         # inspect pip cache
@@ -108,12 +114,12 @@ runs:
         python/test/files/update_expectations.sh
         git status
   
-        if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
+        if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard --exclude venv | wc -l) -gt 0 ]]
         then
           # we only upload the changed files if we can find zip
           if which zip
           then
-            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs zip changed-expectations.zip
+            (git diff --name-only && git ls-files -o  --exclude-standard --exclude venv) | xargs zip changed-expectations.zip
             exit 1
           fi
         fi
