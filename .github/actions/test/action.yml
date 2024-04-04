@@ -66,17 +66,17 @@ runs:
         python -V
         which python
         echo "creating venv"
-        python -m venv "venv"
+        python -m venv "$RUNNER_TEMP/venv"
         echo "venv created"
-        ls -lah "venv"
-        ls -lah "venv/Scripts"
+        ls -lah "$RUNNER_TEMP/venv"
+        ls -lah "$RUNNER_TEMP/venv/Scripts"
         echo "$GITHUB_PATH"
         cat "$GITHUB_PATH"
-        echo "venv/bin" >> "$GITHUB_PATH"
-        echo "venv/Scripts" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP/venv/Scripts" >> "$GITHUB_PATH"
         cat "$GITHUB_PATH"
         echo "$PATH"
-        export PATH="venv/bin:venv/Scripts:$PATH"
+        export PATH="$RUNNER_TEMP/venv/bin:$RUNNER_TEMP/venv/Scripts:$PATH"
         echo "$PATH"
         which python
 
