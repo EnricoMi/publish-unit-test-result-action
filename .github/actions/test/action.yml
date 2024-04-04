@@ -100,7 +100,7 @@ runs:
         python -m pip cache list || true
 
         # assert no whl files have been built
-        if [ python -m pip cache info ] && [ "$(python -m pip cache info | grep "Number of locally built wheels:")" != "Number of locally built wheels: 0" ]
+        if python -m pip cache info && [[ "$(python -m pip cache info | grep "Number of .*wheels:")" != "Number of "*"wheels: 0" ]]
         then
           echo "Dependency whl files have been built"
           exit 1
