@@ -151,6 +151,16 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check XML installation
+      run: |
+        # Check XML installation
+        echo '::group::Check XML installation'
+        if ! pkg-config --exists libxml-2.0; then brew install libxml2; fi
+        if ! pkg-config --exists libxslt; then brew install libxslt; fi
+        pkg-config --modversion libxml-2.0 libxslt
+        echo '::endgroup::'
+      shell: bash
+
     - name: Check for Python3
       id: python
       run: |
