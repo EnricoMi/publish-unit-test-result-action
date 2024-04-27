@@ -146,7 +146,8 @@ def safe_parse_xml_file(path: str, parse: Callable[[str], JUnitTree]) -> JUnitTr
     try:
         return parse(path)
     except BaseException as e:
-        return ParseError.from_exception(path, e)
+        raise e
+        #return ParseError.from_exception(path, e)
 
 
 def progress_safe_parse_xml_file(files: Iterable[str],
