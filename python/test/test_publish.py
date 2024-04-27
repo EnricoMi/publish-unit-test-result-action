@@ -29,6 +29,10 @@ class PublishTest(unittest.TestCase):
     old_locale = None
     details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
 
+    def test_etree(self):
+        from lxml import etree
+        etree.fromstring('<?xml version="1.0"?><tag></tag>')
+
     def test_get_json_path(self):
         detail = {'a': 'A', 'b': 'B', 'c': ['d'], 'e': {}, 'f': None}
         json = {'id': 1, 'name': 'Name', 'detail': detail}
