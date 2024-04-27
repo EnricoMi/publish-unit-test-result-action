@@ -320,9 +320,15 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Setup Python
+        if: matrix.python == 'venv'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
       - name: Install virtualenv
         if: matrix.python == 'venv'
-        run: if ! python3 -m pip install virtualenv; then brew install virtualenv; fi
+        run: python3 -m pip install virtualenv
         shell: bash
 
       - name: Download Artifacts
