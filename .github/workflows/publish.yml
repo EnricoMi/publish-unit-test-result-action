@@ -320,6 +320,13 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Setup Python
+        if: matrix.python == 'venv'
+        uses: actions/setup-python@v5
+        with:
+          # install Python for installing virtualenv
+          python-version: "3.10"
+
       - name: Install virtualenv
         if: matrix.python == 'venv'
         run: python3 -m pip install virtualenv
