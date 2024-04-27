@@ -3,7 +3,7 @@ humanize==4.6.0
     typing_extensions==4.7.1
     zipp==3.15.0
 junitparser==3.1.2
-lxml==5.1.0
+lxml==5.2.0
 psutil==5.9.8
 PyGithub==2.2.0
   Deprecated==1.2.14
@@ -16,7 +16,7 @@ PyGithub==2.2.0
   requests==2.31.0
     certifi==2024.2.2
     charset-normalizer==3.3.2
-    idna==3.6
+    idna==3.7
     urllib3==2.0.7
   typing_extensions==4.7.1
   urllib3==2.0.7
