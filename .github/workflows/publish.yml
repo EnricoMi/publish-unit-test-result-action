@@ -291,7 +291,7 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         include:
-          - os: macos-latest
+          - os: macos-13
             os-label: macOS
             python: "3.8"
           - os: macos-latest
@@ -303,11 +303,11 @@ jobs:
           - os: macos-11
             os-label: macOS 11
             python: "installed"
+          - os: macos-12
+            os-label: macOS 12
+            python: "installed"
           - os: macos-13
             os-label: macOS 13
-            python: "installed"
-          - os: macos-14
-            os-label: macOS 14
             python: "installed"
 
     steps:
@@ -319,6 +319,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+
+      - name: Setup Python
+        if: matrix.python == 'venv'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
       - name: Install virtualenv
         if: matrix.python == 'venv'
