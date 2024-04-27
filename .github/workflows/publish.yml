@@ -322,7 +322,7 @@ jobs:
 
       - name: Install virtualenv
         if: matrix.python == 'venv'
-        run: python3 -m pip install virtualenv
+        run: if ! python -c "import virtualenv; print(virtualenv.__version__)"; then python3 -m pip install virtualenv; fi
         shell: bash
 
       - name: Download Artifacts
