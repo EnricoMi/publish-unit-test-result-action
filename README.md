@@ -662,6 +662,7 @@ jobs:
   test-results:
     name: Test Results
     runs-on: ubuntu-latest
+    needs: ['event_file'] # add your test workflow here
     if: github.event.workflow_run.conclusion != 'skipped'
 
     permissions:
