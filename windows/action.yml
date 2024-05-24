@@ -173,7 +173,7 @@ runs:
           Write-Output "Python that creates venv: $PYTHON_BIN"
           "PYTHON_BIN=$PYTHON_BIN" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-          $PYTHON_VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -c 'import sys; print(f""{sys.version_info.major}.{sys.version_info.minor}"")'"
+          $PYTHON_VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -c 'import sys; print(sys.version_info.major, sys.version_info.minor, sep=chr(46))'"
           Write-Output "Python version: $PYTHON_VERSION"
 
           if ( $PYTHON_VERSION -eq "3.7" ) {
