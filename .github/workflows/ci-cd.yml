@@ -38,7 +38,7 @@ jobs:
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["macos-12", "macos-13", "macos-14", "macos-15"]'
-      python-version: '["3.10", "3.11", "3.12", "3.13.0-alpha.3", "installed"]'
+      python-version: '["3.10", "3.11", "3.12", "3.13.0-beta.3", "installed"]'
       include: >
         [
           {"os": "macos-12", "python-version": "3.8"},
@@ -52,7 +52,7 @@ jobs:
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["ubuntu-20.04", "ubuntu-22.04", "ubuntu-24.04"]'
-      python-version: '["3.9", "3.10", "3.11", "3.12", "3.13.0-alpha.3", "installed"]'
+      python-version: '["3.9", "3.10", "3.11", "3.12", "3.13.0-beta.3", "installed"]'
       include: >
         [
           {"os": "ubuntu-20.04", "python-version": "3.7"},
@@ -65,7 +65,7 @@ jobs:
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["windows-2019", "windows-2022"]'
-      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13.0-alpha.3", "installed"]'
+      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13.0-beta.3", "installed"]'
       include: '[{"os": "windows-2019", "python-version": "3.7"}]'
 
   publish:
