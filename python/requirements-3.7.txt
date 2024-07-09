@@ -12,7 +12,7 @@ PyGithub==2.2.0
     typing_extensions==4.7.1
   PyNaCl==1.5.0
     cffi==1.15.1
-      pycparser==2.21
+      pycparser==2.22
   requests==2.31.0
     certifi==2024.7.4
     charset-normalizer==3.3.2
