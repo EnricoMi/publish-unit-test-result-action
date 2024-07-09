@@ -1,4 +1,4 @@
-humanize==4.6.0
+humanize==4.10.0
   importlib-metadata==6.7.0
     typing_extensions==4.7.1
     zipp==3.15.0
