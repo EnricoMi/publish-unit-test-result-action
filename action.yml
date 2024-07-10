@@ -149,7 +149,7 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.16.1'
+  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.17.0'
 
 branding:
   icon: 'check-circle'
