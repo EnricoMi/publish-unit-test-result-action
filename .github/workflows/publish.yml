@@ -77,6 +77,8 @@ jobs:
           platforms: linux/${{ matrix.arch }}
           tags: enricomi/publish-unit-test-result-action:latest
           outputs: type=docker
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
