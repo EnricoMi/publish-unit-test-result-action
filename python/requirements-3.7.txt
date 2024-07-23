@@ -1,7 +1,7 @@
 humanize==4.6.0
   importlib-metadata==6.7.0
     typing_extensions==4.7.1
-    zipp==3.15.0
+    zipp==3.19.1
 junitparser==3.1.2
 lxml==5.1.0
 psutil==5.9.8
