@@ -863,13 +863,13 @@ def get_case_annotations(case_results: UnitTestCaseResults,
 
 def get_error_annotation(error: ParseError) -> Annotation:
     return Annotation(
-        path=error.file,
+        path=error.file or '/',
         start_line=error.line or 0,
         end_line=error.line or 0,
         start_column=error.column,
         end_column=error.column,
         annotation_level='failure',
-        message=error.message,
+        message=error.message or '',
         title=f'Error processing result file',
         raw_details=error.file
     )
@@ -882,14 +882,14 @@ def get_error_annotations(parse_errors: List[ParseError]) -> List[Annotation]:
 def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
     return [
         Annotation(
-            path=suite.name,
+            path=suite.name or '/',
             start_line=0,
             end_line=0,
             start_column=None,
             end_column=None,
             annotation_level='warning' if source == 'stderr' else 'notice',
-            message=f'Test suite {suite.name} has the following {source} output (see Raw output).',
-            title=f'Logging on {source} of test suite {suite.name}',
+            message=f'Test suite {suite.name or "<unknown>"} has the following {source} output (see Raw output).',
+            title=f'Logging on {source} of test suite {suite.name or "<unknown>"}',
             raw_details=details
         )
         for details, source in ([(suite.stdout, 'stdout')] if with_suite_out_logs else []) +
