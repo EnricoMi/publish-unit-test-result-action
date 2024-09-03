@@ -457,7 +457,8 @@ class Publisher:
             )
 
             if check_run is None:
-                logger.debug(f'creating check with {len(annotations)} annotations')
+                logger.debug(f'creating check with {len(annotations)} annotations:')
+                logger.debug(annotations)
                 check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                         head_sha=self._settings.commit,
                                                         status='completed',
@@ -466,6 +467,7 @@ class Publisher:
                 logger.info(f'Created check {check_run.html_url}')
             else:
                 logger.debug(f'updating check with {len(annotations)} more annotations')
+                logger.debug(annotations)
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
 
