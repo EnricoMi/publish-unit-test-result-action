@@ -3,9 +3,9 @@ import json
 import logging
 import os
 import re
-from dataclasses import dataclass
-from typing import List, Set, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from copy import deepcopy
+from dataclasses import dataclass
+from typing import List, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 
 from github import Github, GithubException, UnknownObjectException
 from github.CheckRun import CheckRun
@@ -24,7 +24,7 @@ from publish import __version__, get_json_path, comment_mode_off, digest_prefix,
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
-    UnitTestRunResultsOrDeltaResults, get_stats_delta, create_unit_test_case_results
+    UnitTestRunResultsOrDeltaResults, get_stats_delta, get_diff_value
 
 
 @dataclass(frozen=True)
@@ -81,12 +81,17 @@ class Settings:
 class PublishData:
     title: str
     summary: str
+    summary_with_digest: Optional[str]
     conclusion: str
     stats: UnitTestRunResults
     stats_with_delta: Optional[UnitTestRunDeltaResults]
+    before_stats: Optional[UnitTestRunResults]
     annotations: List[Annotation]
-    check_url: str
+    check_url: Optional[str]
     cases: Optional[UnitTestCaseResults]
+
+    def with_check_url(self, url: str) -> 'PublishData':
+        return dataclasses.replace(self, check_url=url)
 
     def without_exceptions(self) -> 'PublishData':
         return dataclasses.replace(
@@ -100,10 +105,18 @@ class PublishData:
         )
 
     def without_suite_details(self) -> 'PublishData':
-        return dataclasses.replace(self, stats=self.stats.without_suite_details())
+        return dataclasses.replace(
+            self,
+            stats=self.stats.without_suite_details() if self.stats is not None else None,
+            stats_with_delta=self.stats_with_delta.without_suite_details() if self.stats_with_delta is not None else None,
+            before_stats=self.before_stats.without_suite_details() if self.before_stats is not None else None
+        )
 
     def without_cases(self) -> 'PublishData':
         return dataclasses.replace(self, cases=None)
+
+    def without_summary_with_digest(self) -> 'PublishData':
+        return dataclasses.replace(self, summary_with_digest=None)
 
     @classmethod
     def _format_digit(cls, value: Union[int, Mapping[str, int], Any], thousands_separator: str) -> Union[str, Mapping[str, str], Any]:
@@ -121,12 +134,15 @@ class PublishData:
     def _formatted_stats_and_delta(cls,
                                    stats: Optional[Mapping[str, Any]],
                                    stats_with_delta: Optional[Mapping[str, Any]],
+                                   before_stats: Optional[Mapping[str, Any]],
                                    thousands_separator: str) -> Mapping[str, Any]:
         d = {}
         if stats is not None:
             d.update(stats=cls._format(stats, thousands_separator))
         if stats_with_delta is not None:
             d.update(stats_with_delta=cls._format(stats_with_delta, thousands_separator))
+        if before_stats is not None:
+            d.update(before_stats=cls._format(before_stats, thousands_separator))
         return d
 
     def _as_dict(self) -> Dict[str, Any]:
@@ -134,7 +150,7 @@ class PublishData:
         return dataclasses.asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
     def to_dict(self, thousands_separator: str, with_suite_details: bool, with_cases: bool) -> Mapping[str, Any]:
-        data = self.without_exceptions()
+        data = self.without_exceptions().without_summary_with_digest()
         if not with_suite_details:
             data = data.without_suite_details()
         if not with_cases:
@@ -152,29 +168,33 @@ class PublishData:
 
         # provide formatted stats and delta
         d.update(formatted=self._formatted_stats_and_delta(
-            d.get('stats'), d.get('stats_with_delta'), thousands_separator
+            d.get('stats'), d.get('stats_with_delta'), d.get('before_stats'), thousands_separator
         ))
 
         return d
 
     def to_reduced_dict(self, thousands_separator: str) -> Mapping[str, Any]:
         # remove exceptions, suite details and cases
-        data = self.without_exceptions().without_suite_details().without_cases()._as_dict()
+        data = self.without_exceptions().without_summary_with_digest().without_suite_details().without_cases()._as_dict()
 
         # replace some large fields with their lengths and delete individual test cases if present
         def reduce(d: Dict[str, Any]) -> Dict[str, Any]:
             d = deepcopy(d)
             if d.get('stats', {}).get('errors') is not None:
                 d['stats']['errors'] = len(d['stats']['errors'])
-            if d.get('stats_with_delta', {}).get('errors') is not None:
-                d['stats_with_delta']['errors'] = len(d['stats_with_delta']['errors'])
+            if d.get('before_stats', {}).get('errors') is not None:
+                d['before_stats']['errors'] = len(d['before_stats']['errors'])
+            if d.get('stats', {}).get('errors') is not None and \
+                    d.get('before_stats', {}).get('errors') is not None and \
+                    d.get('stats_with_delta', {}).get('errors') is not None:
+                d['stats_with_delta']['errors'] = get_diff_value(d['stats']['errors'], d['before_stats']['errors'])
             if d.get('annotations') is not None:
                 d['annotations'] = len(d['annotations'])
             return d
 
         data = reduce(data)
         data.update(formatted=self._formatted_stats_and_delta(
-            data.get('stats'), data.get('stats_with_delta'), thousands_separator
+            data.get('stats'), data.get('stats_with_delta'), data.get('before_stats'), thousands_separator
         ))
 
         return data
@@ -197,8 +217,10 @@ class Publisher:
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
 
-        check_run = None
-        before_check_run = None
+        # construct publish data (test results)
+        data = self.get_publish_data(stats, cases, conclusion)
+
+        # publish the check status
         if self._settings.check_run:
             if self._settings.is_fork:
                 # running on a fork, we cannot publish the check, but we can still read before_check_run
@@ -212,17 +234,22 @@ class Publisher:
                     logger.debug(f'comparing against before={before_commit_sha}')
                     before_check_run = self.get_check_run(before_commit_sha)
             else:
-                check_run, before_check_run = self.publish_check(stats, cases, conclusion)
+                data = self.publish_check(data)
 
+        # create data as json
+        self.publish_json(data)
+
+        # publish job summary
         if self._settings.job_summary:
-            self.publish_job_summary(self._settings.comment_title, stats, check_run, before_check_run)
+            self.publish_job_summary(self._settings.comment_title, data)
 
+        # publish pr comments
         if not self._settings.is_fork:
             if self._settings.comment_mode != comment_mode_off:
                 pulls = self.get_pulls(self._settings.commit)
                 if pulls:
                     for pull in pulls:
-                        self.publish_comment(self._settings.comment_title, stats, pull, check_run, cases)
+                        self.publish_comment(self._settings.comment_title, stats, pull, data.check_url, cases)
                 else:
                     logger.info(f'There is no pull request for commit {self._settings.commit}')
             else:
@@ -384,14 +411,13 @@ class Publisher:
             return None
         return annotation.raw_details.split('\n')
 
-    def publish_check(self,
-                      stats: UnitTestRunResults,
-                      cases: UnitTestCaseResults,
-                      conclusion: str) -> Tuple[CheckRun, Optional[CheckRun]]:
+    def get_publish_data(self,
+                         stats: UnitTestRunResults,
+                         cases: UnitTestCaseResults,
+                         conclusion: str) -> PublishData:
         # get stats from earlier commits
         before_stats = None
-        before_check_run = None
-        if self._settings.compare_earlier:
+        if self._settings.compare_earlier and self._settings.check_run:
             before_commit_sha = get_json_path(self._settings.event, 'before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_check_run = self.get_check_run(before_commit_sha)
@@ -407,16 +433,30 @@ class Publisher:
 
         title = get_short_summary(stats)
         summary = get_long_summary_md(stats_with_delta)
+        summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
 
+        return PublishData(
+            title=title,
+            summary=summary,
+            summary_with_digest=summary_with_digest,
+            conclusion=conclusion,
+            stats=stats,
+            stats_with_delta=stats_with_delta if before_stats is not None else None,
+            before_stats=before_stats,
+            annotations=all_annotations,
+            check_url=None,
+            cases=cases
+        )
+
+    def publish_check(self, data: PublishData) -> PublishData:
         # we can send only 50 annotations at once, so we split them into chunks of 50
         check_run = None
-        summary_with_digest = get_long_summary_with_digest_md(stats_with_delta, stats)
-        split_annotations = [annotation.to_dict() for annotation in all_annotations]
+        split_annotations = [annotation.to_dict() for annotation in data.annotations]
         split_annotations = [split_annotations[x:x+50] for x in range(0, len(split_annotations), 50)] or [[]]
         for annotations in split_annotations:
             output = dict(
-                title=title,
-                summary=summary_with_digest,
+                title=data.title,
+                summary=data.summary_with_digest,
                 annotations=annotations
             )
 
@@ -425,7 +465,7 @@ class Publisher:
                 check_run = self._repo.create_check_run(name=self._settings.check_name,
                                                         head_sha=self._settings.commit,
                                                         status='completed',
-                                                        conclusion=conclusion,
+                                                        conclusion=data.conclusion,
                                                         output=output)
                 logger.info(f'Created check {check_run.html_url}')
             else:
@@ -433,30 +473,13 @@ class Publisher:
                 check_run.edit(output=output)
                 logger.debug(f'updated check')
 
-        # create full json
-        data = PublishData(
-            title=title,
-            summary=summary,
-            conclusion=conclusion,
-            stats=stats,
-            stats_with_delta=stats_with_delta if before_stats is not None else None,
-            annotations=all_annotations,
-            check_url=check_run.html_url,
-            cases=cases
-        )
-        self.publish_json(data)
-
-        return check_run, before_check_run
+        return data.with_check_url(check_run.html_url)
 
     def publish_json(self, data: PublishData):
         if self._settings.json_file:
             try:
                 with open(self._settings.json_file, 'wt', encoding='utf-8') as w:
-                    json.dump(data.to_dict(
-                        self._settings.json_thousands_separator,
-                        self._settings.json_suite_details,
-                        self._settings.json_test_case_results
-                    ), w, ensure_ascii=False)
+                    self.write_json(data, w, self._settings)
             except Exception as e:
                 self._gha.error(f'Failed to write JSON file {self._settings.json_file}: {str(e)}')
                 try:
@@ -467,15 +490,18 @@ class Publisher:
         # provide a reduced version to Github actions
         self._gha.add_to_output('json', json.dumps(data.to_reduced_dict(self._settings.json_thousands_separator), ensure_ascii=False))
 
-    def publish_job_summary(self,
-                            title: str,
-                            stats: UnitTestRunResults,
-                            check_run: Optional[CheckRun],
-                            before_check_run: Optional[CheckRun]):
-        before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
-        stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
+    @staticmethod
+    def write_json(data: PublishData, writer, settings: Settings):
+        json.dump(data.to_dict(
+            settings.json_thousands_separator,
+            settings.json_suite_details,
+            settings.json_test_case_results
+        ), writer, ensure_ascii=False, indent=2)
 
-        details_url = check_run.html_url if check_run else None
+    def publish_job_summary(self, title: str, data: PublishData):
+        title = title
+        stats_with_delta = data.stats_with_delta if data.stats_with_delta is not None else data.stats
+        details_url = data.check_url
         summary = get_long_summary_md(stats_with_delta, details_url)
         markdown = f'## {title}\n{summary}'
         self._gha.add_to_job_summary(markdown)
@@ -534,11 +560,11 @@ class Publisher:
                         title: str,
                         stats: UnitTestRunResults,
                         pull_request: PullRequest,
-                        check_run: Optional[CheckRun] = None,
+                        details_url: Optional[str] = None,
                         cases: Optional[UnitTestCaseResults] = None):
         # compare them with earlier stats
         base_check_run = None
-        if self._settings.compare_earlier:
+        if self._settings.compare_earlier and self._settings.check_run:
             base_commit_sha = self.get_base_commit_sha(pull_request)
             if stats.commit == base_commit_sha:
                 # we do not publish a comment when we compare the commit to itself
@@ -567,7 +593,6 @@ class Publisher:
             logger.info(f'No pull request comment required as comment mode is {self._settings.comment_mode} (comment_mode)')
             return
 
-        details_url = check_run.html_url if check_run else None
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 

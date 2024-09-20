@@ -1,0 +1,89 @@
+{
+  "title": "3 fail, 1 skipped, 2 pass in 0s",
+  "summary": "6 tests   2 :white_check_mark:  0s :stopwatch:\n1 suites  1 :zzz:\n1 files    3 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 6,
+    "tests_succ": 2,
+    "tests_skip": 1,
+    "tests_fail": 3,
+    "tests_error": 0,
+    "runs": 6,
+    "runs_succ": 2,
+    "runs_skip": 1,
+    "runs_fail": 3,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "SampleProject.NUnit.TestServiceTests",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit/NUnit-net461-sample.trx [took 0s]",
+      "title": "TestTheory(False) (SampleProject.NUnit.TestServiceTests) failed",
+      "raw_details": "  Expected: False\r\n  But was:  True\r\n   at SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 25"
+    },
+    {
+      "path": "SampleProject.NUnit.TestServiceTests",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit/NUnit-net461-sample.trx [took 0s]",
+      "title": "TestThrowingException (SampleProject.NUnit.TestServiceTests) failed",
+      "raw_details": "System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestService.cs:line 19\r\n   at SampleProject.NUnit.TestServiceTests.TestThrowingException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 50"
+    },
+    {
+      "path": "SampleProject.NUnit.TestServiceTests",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "nunit/NUnit-net461-sample.trx [took 0s]",
+      "title": "FailTest (SampleProject.NUnit.TestServiceTests) failed",
+      "raw_details": "  Expected: True\r\n  But was:  False\r\n   at SampleProject.NUnit.TestServiceTests.FailTest() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 61"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "SampleProject.NUnit.TestServiceTests ‑ SkipTest"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 6 tests, see \"Raw output\" for the full list of tests.",
+      "title": "6 tests found",
+      "raw_details": "SampleProject.NUnit.TestServiceTests ‑ FailTest\nSampleProject.NUnit.TestServiceTests ‑ PassingTest\nSampleProject.NUnit.TestServiceTests ‑ SkipTest\nSampleProject.NUnit.TestServiceTests ‑ TestTheory(False)\nSampleProject.NUnit.TestServiceTests ‑ TestTheory(True)\nSampleProject.NUnit.TestServiceTests ‑ TestThrowingException"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "6",
+      "tests_succ": "2",
+      "tests_skip": "1",
+      "tests_fail": "3",
+      "tests_error": "0",
+      "runs": "6",
+      "runs_succ": "2",
+      "runs_skip": "1",
+      "runs_fail": "3",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

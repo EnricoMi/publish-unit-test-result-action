@@ -9,7 +9,7 @@
                     <testsuite time="0.289" name="UnitTests.MainClassTest">
                         
                             <testcase name="UnitTests.MainClassTest.TestPropertyValue" classname="" time="0.146">
-                                <failure message=""/>
+                                <failure message="abc&#10;"/>
                             </testcase>
                             <testcase name="UnitTests.MainClassTest.TestMethodUpdateValue" classname="" time="0.001"/>
                         

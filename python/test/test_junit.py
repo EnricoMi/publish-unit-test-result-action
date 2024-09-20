@@ -1,9 +1,12 @@
 import abc
 import dataclasses
+import io
+import json
 import os
 import pathlib
 import re
 import sys
+import tempfile
 import unittest
 from glob import glob
 from typing import Optional, List
@@ -133,9 +136,14 @@ class JUnitXmlParseTest:
                         actual_results = process_junit_xml_elems([(self.shorten_filename(path.resolve().as_posix()), actual)], add_suite_details=True)
                         self.assert_expectation(self.test, pp.pformat(actual_results, indent=2), results_expectation_path)
 
+                        json_expectation_path = path.parent / (path.stem + '.results.json')
                         annotations_expectation_path = path.parent / (path.stem + '.annotations')
-                        actual_annotations = self.get_check_runs(actual_results)
+                        actual_annotations, data = self.get_check_runs(actual_results)
                         self.assert_expectation(self.test, pp.pformat(actual_annotations, indent=2).replace(__version__, 'VERSION'), annotations_expectation_path)
+
+                        actual_json = io.StringIO()
+                        Publisher.write_json(data, actual_json, Test.get_settings())
+                        self.assert_expectation(self.test, actual_json.getvalue(), json_expectation_path)
 
     def test_parse_and_process_files(self):
         for file in self.get_test_files() + self.unsupported_files():
@@ -161,8 +169,10 @@ class JUnitXmlParseTest:
                     results = process_junit_xml_elems([(cls.shorten_filename(path.resolve().as_posix()), actual)], add_suite_details=True)
                     w.write(pp.pformat(results, indent=2))
                 with open(path.parent / (path.stem + '.annotations'), 'w', encoding='utf-8') as w:
-                    check_runs = cls.get_check_runs(results)
+                    check_runs, data = cls.get_check_runs(results)
                     w.write(pp.pformat(check_runs, indent=2).replace(__version__, 'VERSION'))
+                with open(path.parent / (path.stem + '.results.json'), 'w', encoding='utf-8') as w:
+                    Publisher.write_json(data, w, Test.get_settings())
 
     @classmethod
     def get_check_runs(cls, parsed):
@@ -201,9 +211,11 @@ class JUnitXmlParseTest:
 
         # makes gzipped digest deterministic
         with mock.patch('gzip.time.time', return_value=0):
-            Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+            publisher = Publisher(settings, gh, gha)
+            publisher.publish(stats, results.case_results, conclusion)
+            data = publisher.get_publish_data(stats, results.case_results, conclusion).with_check_url('html')
 
-        return check_runs
+        return check_runs, data
 
     @staticmethod
     def prettify_exception(exception) -> str:

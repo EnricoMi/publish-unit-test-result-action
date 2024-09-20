@@ -571,7 +571,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_short_summary_md_with_delta(self):
         self.assertEqual(get_short_summary_md(UnitTestRunDeltaResults(
-            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='commit',
@@ -612,7 +612,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_commit_line_md(stats), 'Results for commit commit.')
 
         stats_with_delta = UnitTestRunDeltaResults(
-            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='commit', reference_type='type', reference_commit='ref'
@@ -622,7 +622,7 @@ class PublishTest(unittest.TestCase):
         for ref_type, ref in [(None, None), ('type', None), (None, 'ref')]:
             with self.subTest(ref_type=ref_type, ref=ref):
                 stats_with_delta = UnitTestRunDeltaResults(
-                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
                     tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='commit', reference_type=ref_type, reference_commit=ref
@@ -693,7 +693,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_with_runs_md_with_deltas(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunDeltaResults(
-            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -824,7 +824,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_without_runs_md_with_delta(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
-            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(0, 0),
             runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(0, 0),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -836,7 +836,7 @@ class PublishTest(unittest.TestCase):
 
     def test_get_long_summary_without_runs_md_with_errors_and_deltas(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
-            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+            files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
             tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
             runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -1078,7 +1078,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunDeltaResults(
-                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+                    files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
                     tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -1107,7 +1107,7 @@ class PublishTest(unittest.TestCase):
         with mock.patch('gzip.time.time', return_value=0):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunDeltaResults(
-                    files=n(1, 2), errors=errors, suites=n(2, -3), duration=d(3, 4),
+                    files=n(1, 2), errors=errors, suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
                     tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                     runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
@@ -1134,7 +1134,7 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_digest_md_with_delta_results_only(self):
         with self.assertRaises(ValueError) as context:
             get_long_summary_with_digest_md(UnitTestRunDeltaResults(
-                files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4),
+                files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
                 tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
                 runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
                 commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'

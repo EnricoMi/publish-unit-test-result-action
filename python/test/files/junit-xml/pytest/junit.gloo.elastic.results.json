@@ -1,0 +1,62 @@
+{
+  "title": "All 10 tests pass, 4 skipped in 1m 12s",
+  "summary": "14 tests   10 :white_check_mark:  1m 12s :stopwatch:\n 1 suites   4 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 72,
+    "tests": 14,
+    "tests_succ": 10,
+    "tests_skip": 4,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 14,
+    "runs_succ": 10,
+    "runs_skip": 4,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 4 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "4 skipped tests found",
+      "raw_details": "test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_all_hosts_blacklisted\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_min_hosts_timeout\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_all_hosts_blacklisted\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_min_hosts_timeout"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 14 tests, see \"Raw output\" for the full list of tests.",
+      "title": "14 tests found",
+      "raw_details": "test.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_all_hosts_blacklisted\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_all_ranks_failure\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_fault_tolerance_without_scaling\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_hosts_added_and_removed\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_min_hosts_timeout\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_reset_limit\ntest.integration.test_elastic_tensorflow.ElasticTensorFlowTests ‑ test_single_rank_failure\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_all_hosts_blacklisted\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_all_ranks_failure\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_fault_tolerance_without_scaling\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_hosts_added_and_removed\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_min_hosts_timeout\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_reset_limit\ntest.integration.test_elastic_torch.ElasticTorchTests ‑ test_single_rank_failure"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "72",
+      "tests": "14",
+      "tests_succ": "10",
+      "tests_skip": "4",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "14",
+      "runs_succ": "10",
+      "runs_skip": "4",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

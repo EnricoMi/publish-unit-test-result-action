@@ -3,6 +3,7 @@
 [![CI/CD](https://github.com/im-open/publish-unit-test-result-action/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/im-open/publish-unit-test-result-action/actions/workflows/ci-cd.yml)
 [![GitHub release badge](https://badgen.net/github/release/im-open/publish-unit-test-result-action/stable)](https://github.com/im-open/publish-unit-test-result-action/releases/latest)
 [![GitHub license badge](misc/badge-license.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+
 [![GitHub Workflows badge](https://gist.github.com/im-open/612cb538c14731f1a8fefe504f519395/raw/workflows.svg)](https://github.com/search?q=publish-unit-test-result-action+path%3A.github%2Fworkflows%2F+language%3AYAML+language%3AYAML&type=Code&l=YAML)
 [![Docker pulls badge](https://gist.github.com/im-open/612cb538c14731f1a8fefe504f519395/raw/downloads.svg)](https://github.com/users/im-open/packages/container/package/publish-unit-test-result-action)
 
@@ -21,7 +22,7 @@ publishes the results on GitHub. It supports [JSON (Dart, Mocha), TRX (MSTest, V
 and runs on Linux, macOS and Windows.
 
 You can use this action with ![Ubuntu Linux](misc/badge-ubuntu.svg) runners (e.g. `runs-on: ubuntu-latest`)
-or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
+or ![ARM Linux](misc/badge-arm.svg) self-hosted runners that support Docker:
 
 ```yaml
 - name: Publish Test Results
@@ -36,12 +37,10 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners:
 
 See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
-Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`)
-and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
-
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners:
 ```yaml
 - name: Publish Test Results
-  uses: im-open/publish-unit-test-result-action/composite@v2
+  uses: EnricoMi/publish-unit-test-result-action/macos@v2
   if: always()
   with:
     files: |
@@ -50,7 +49,31 @@ and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
       test-results/**/*.json
 ```
 
-See the [notes on running this action as a composite action](#running-as-a-composite-action) if you run it on Windows or macOS.
+… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+```yaml
+- name: Publish Test Results
+  uses: im-open/publish-unit-test-result-action/composite@v2
+  if: always()
+  with:
+    files: |
+      test-results\**\*.xml
+      test-results\**\*.trx
+      test-results\**\*.json
+```
+
+For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
+```yaml
+- name: Publish Test Results
+  uses: im-open/publish-unit-test-result-action/linux@v2
+  if: always()
+  with:
+    files: |
+      test-results/**/*.xml
+      test-results/**/*.trx
+      test-results/**/*.json
+```
+
+See the [notes on running this action as a non-Docker action](#running-as-a-non-docker-action).
 
 If you see the `"Resource not accessible by integration"` error, you have to grant additional [permissions](#permissions), or
 [setup the support for pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
@@ -273,7 +296,7 @@ The list of most notable options:
 
 |Option|Default Value|Description|
 |:-----|:-----:|:----------|
-|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the composite action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
+|`files`|_no default_|File patterns of test result files. Relative paths are known to work best, while the non-Docker action [also works with absolute paths](#running-with-absolute-paths). Supports `*`, `**`, `?`, and `[]` character ranges. Use multiline string for multiple patterns. Patterns starting with `!` exclude the matching files. There have to be at least one pattern starting without a `!`.|
 |`check_name`|`"Test Results"`|An alternative name for the check result. Required to be unique for each instance in one workflow.|
 |`comment_title`|same as `check_name`|An alternative name for the pull request comment.|
 |`comment_mode`|`always`|The action posts comments to pull requests that are associated with the commit. Set to:<br/>`always` - always comment<br/>`changes` - comment when changes w.r.t. the target branch exist<br/>`changes in failures` - when changes in the number of failures and errors exist<br/>`changes in errors` - when changes in the number of (only) errors exist<br/>`failures` - when failures or errors exist<br/>`errors` - when (only) errors exist<br/>`off` - to not create pull request comments.|
@@ -512,10 +535,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -524,7 +547,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
@@ -548,7 +571,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -589,7 +612,7 @@ event_file:
   runs-on: ubuntu-latest
   steps:
   - name: Upload
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
       name: Event File
       path: ${{ github.event_path }}
@@ -601,7 +624,7 @@ Adjust the value of `path` to fit your setup:
 ```yaml
 - name: Upload Test Results
   if: always()
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v4
   with:
     name: Test Results
     path: |
@@ -659,7 +682,7 @@ jobs:
 
     steps:
        - name: Download and Extract Artifacts
-         uses: dawidd6/action-download-artifact@246dbf436b23d7c49e21a7ab8204ca9ecd1fe615
+         uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
          with:
             run_id: ${{ github.event.workflow_run.id }}
             path: artifacts
@@ -754,7 +777,7 @@ steps:
     esac
 
 - name: Create badge
-  uses: emibcn/badge-action@d6f51ff11b5c3382b3b88689ae2d6db22d9737d1
+  uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8
   with:
     label: Tests
     status: '${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
@@ -766,7 +789,7 @@ steps:
   if: >
     github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'master' ||
     github.event_name != 'workflow_run' && github.ref == 'refs/heads/master'
-  uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+  uses: andymckay/append-gist-action@6e8d64427fe47cbacf4ab6b890411f1d67c07f3e
   with:
     token: ${{ secrets.GIST_TOKEN }}
     gistURL: https://gist.githubusercontent.com/{user}/{id}
@@ -806,23 +829,28 @@ you have to copy files to a relative path first, and then use the relative path:
         test-results/**/*.json
 ```
 
-Using the non-composite variant of this action is recommended as it starts up much quicker.
+Using the Docker variant of this action is recommended as it starts up much quicker.
 
-## Running as a composite action
+## Running as a non-Docker action
 
-Running this action as a composite action allows to run it on various operating systems as it
-does not require Docker. The composite action, however, requires a Python3 environment to be setup
-on the action runner. All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable
-Python3 environment out-of-the-box.
+Running this action as below allows to run it on action runners that do not provide Docker:
+
+    uses: im-open/publish-unit-test-result-action/linux@v2
+    uses: im-open/publish-unit-test-result-action/macos@v2
+    uses: im-open/publish-unit-test-result-action/windows@v2
+
+These actions, however, require a Python3 environment to be setup on the action runner.
+All GitHub-hosted runners (Ubuntu, Windows Server and macOS) provide a suitable Python3 environment out-of-the-box.
 
 Self-hosted runners may require setting up a Python environment first:
 
 ```yaml
 - name: Setup Python
-  uses: actions/setup-python@v4
+  uses: actions/setup-python@v5
   with:
     python-version: 3.8
 ```
+
 
 Self-hosted runners for Windows require Bash shell to be installed. Easiest way to have one is by installing
 Git for Windows, which comes with Git BASH. Make sure that the location of `bash.exe` is part of the `PATH`
@@ -876,3 +904,20 @@ publish-test-results:
 ```
 </details>
 
+=======
+Start-up of the action is faster with `virtualenv` or `venv` package installed.
+
+## Running as a composite action
+
+Running this action via:
+
+    uses: im-open/publish-unit-test-result-action/composite@v2
+
+is **deprecated**, please use an action appropriate for your operating system and shell:
+
+- Linux (Bash shell): `uses: im-open/publish-unit-test-result-action/linux@v2`
+- macOS (Bash shell): `uses: im-open/publish-unit-test-result-action/macos@v2`
+- Windows (PowerShell): `uses: im-open/publish-unit-test-result-action/windows@v2`
+- Windows (Bash shell): `uses: im-open/publish-unit-test-result-action/windows/bash@v2`
+
+These are non-Docker variations of this action. For details, see section ["Running as a non-Docker action"](#running-as-a-non-docker-action) above.

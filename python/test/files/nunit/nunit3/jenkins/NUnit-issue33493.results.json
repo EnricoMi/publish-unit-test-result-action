@@ -1,0 +1,62 @@
+{
+  "title": "All 1 tests pass, 1 skipped in 6s",
+  "summary": "1 files  2 suites   6s :stopwatch:\n2 tests 1 :white_check_mark: 1 :zzz: 0 :x:\n2 runs  2 :white_check_mark: 0 :zzz: 0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 2,
+    "duration": 6,
+    "tests": 2,
+    "tests_succ": 1,
+    "tests_skip": 1,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 2,
+    "runs_succ": 2,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "AddTwoNumbers"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 2 tests, see \"Raw output\" for the full list of tests.",
+      "title": "2 tests found",
+      "raw_details": "AddTwoNumbers\nSubSmokeTest(\"Geo\",\"Geonw\",\"dev1234567\",System.String[])"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "2",
+      "duration": "6",
+      "tests": "2",
+      "tests_succ": "1",
+      "tests_skip": "1",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "2",
+      "runs_succ": "2",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "title": "All 96 tests pass, 1 skipped in 3m 39s",
+  "summary": "97 tests   96 :white_check_mark:  3m 39s :stopwatch:\n 1 suites   1 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 219,
+    "tests": 97,
+    "tests_succ": 96,
+    "tests_skip": 1,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 97,
+    "runs_succ": 96,
+    "runs_skip": 1,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
+      "title": "1 skipped test found",
+      "raw_details": "test.test_spark.SparkTests ‑ test_get_available_devices"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 97 tests, see \"Raw output\" for the full list of tests.",
+      "title": "97 tests found",
+      "raw_details": "test.test_run.RunTests ‑ test_autotune_args\ntest.test_run.RunTests ‑ test_autotuning_with_fixed_param\ntest.test_run.RunTests ‑ test_config_file\ntest.test_run.RunTests ‑ test_config_file_override_args\ntest.test_run.RunTests ‑ test_generate_jsrun_rankfile\ntest.test_run.RunTests ‑ test_get_mpi_implementation\ntest.test_run.RunTests ‑ test_gloo_run_minimal\ntest.test_run.RunTests ‑ test_gloo_run_with_os_environ\ntest.test_run.RunTests ‑ test_hash\ntest.test_run.RunTests ‑ test_horovodrun_hostfile\ntest.test_run.RunTests ‑ test_host_hash\ntest.test_run.RunTests ‑ test_in_thread_args\ntest.test_run.RunTests ‑ test_js_run\ntest.test_run.RunTests ‑ test_library_args\ntest.test_run.RunTests ‑ test_logging_args\ntest.test_run.RunTests ‑ test_mpi_run_full\ntest.test_run.RunTests ‑ test_mpi_run_minimal\ntest.test_run.RunTests ‑ test_mpi_run_on_large_cluster\ntest.test_run.RunTests ‑ test_mpi_run_with_both_paths\ntest.test_run.RunTests ‑ test_mpi_run_with_both_pythonpaths\ntest.test_run.RunTests ‑ test_mpi_run_with_env_path\ntest.test_run.RunTests ‑ test_mpi_run_with_env_pythonpath\ntest.test_run.RunTests ‑ test_mpi_run_with_non_zero_exit\ntest.test_run.RunTests ‑ test_mpi_run_with_os_environ\ntest.test_run.RunTests ‑ test_mpi_run_with_sys_path\ntest.test_run.RunTests ‑ test_mpi_run_with_sys_pythonpath\ntest.test_run.RunTests ‑ test_mpi_run_without_path\ntest.test_run.RunTests ‑ test_mpi_run_without_pythonpath\ntest.test_run.RunTests ‑ test_on_event\ntest.test_run.RunTests ‑ test_params_args\ntest.test_run.RunTests ‑ test_run_controller\ntest.test_run.RunTests ‑ test_run_with_jsrun\ntest.test_run.RunTests ‑ test_safe_shell_exec_captures_last_line_wo_eol\ntest.test_run.RunTests ‑ test_safe_shell_exec_captures_stderr\ntest.test_run.RunTests ‑ test_safe_shell_exec_captures_stdout\ntest.test_run.RunTests ‑ test_safe_shell_exec_interrupts_on_event\ntest.test_run.RunTests ‑ test_safe_shell_exec_interrupts_on_parent_shutdown\ntest.test_run.RunTests ‑ test_safe_shell_exec_returns_exit_code\ntest.test_run.RunTests ‑ test_stall_check_args\ntest.test_run.RunTests ‑ test_timeline_args\ntest.test_run.RunTests ‑ test_validate_config_args\ntest.test_spark.SparkTests ‑ test_check_shape_compatibility\ntest.test_spark.SparkTests ‑ test_df_cache\ntest.test_spark.SparkTests ‑ test_driver_common_interfaces\ntest.test_spark.SparkTests ‑ test_driver_common_interfaces_fails\ntest.test_spark.SparkTests ‑ test_driver_common_interfaces_from_settings\ntest.test_spark.SparkTests ‑ test_driver_set_local_rank_to_index\ntest.test_spark.SparkTests ‑ test_get_available_devices\ntest.test_spark.SparkTests ‑ test_get_col_info\ntest.test_spark.SparkTests ‑ test_get_col_info_error_bad_shape\ntest.test_spark.SparkTests ‑ test_get_col_info_error_bad_size\ntest.test_spark.SparkTests ‑ test_get_metadata\ntest.test_spark.SparkTests ‑ test_gloo_exec_fn\ntest.test_spark.SparkTests ‑ test_gloo_exec_fn_provides_driver_with_local_rank\ntest.test_spark.SparkTests ‑ test_happy_run_elastic\ntest.test_spark.SparkTests ‑ test_happy_run_with_gloo\ntest.test_spark.SparkTests ‑ test_happy_run_with_mpi\ntest.test_spark.SparkTests ‑ test_hdfs_store_parse_url\ntest.test_spark.SparkTests ‑ test_host_hash\ntest.test_spark.SparkTests ‑ test_mpi_exec_fn_provides_driver_with_local_rank\ntest.test_spark.SparkTests ‑ test_mpirun_exec_fn\ntest.test_spark.SparkTests ‑ test_mpirun_not_found\ntest.test_spark.SparkTests ‑ test_prepare_data_compress_sparse\ntest.test_spark.SparkTests ‑ test_prepare_data_no_compression\ntest.test_spark.SparkTests ‑ test_rsh_event\ntest.test_spark.SparkTests ‑ test_rsh_events\ntest.test_spark.SparkTests ‑ test_rsh_with_non_zero_exit_code\ntest.test_spark.SparkTests ‑ test_rsh_with_zero_exit_code\ntest.test_spark.SparkTests ‑ test_spark_driver_host_discovery\ntest.test_spark.SparkTests ‑ test_spark_run_defaults_num_proc_to_spark_cores_with_gloo\ntest.test_spark.SparkTests ‑ test_spark_run_defaults_num_proc_to_spark_cores_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_does_not_default_env_to_os_env_with_gloo\ntest.test_spark.SparkTests ‑ test_spark_run_does_not_default_env_to_os_env_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_num_proc_precedes_spark_cores_with_gloo\ntest.test_spark.SparkTests ‑ test_spark_run_num_proc_precedes_spark_cores_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_with_gloo\ntest.test_spark.SparkTests ‑ test_spark_run_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_with_non_zero_exit_with_gloo\ntest.test_spark.SparkTests ‑ test_spark_run_with_non_zero_exit_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_with_os_environ_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_run_with_path_with_mpi\ntest.test_spark.SparkTests ‑ test_spark_task_service_abort_command\ntest.test_spark.SparkTests ‑ test_spark_task_service_abort_no_command\ntest.test_spark.SparkTests ‑ test_spark_task_service_env\ntest.test_spark.SparkTests ‑ test_spark_task_service_execute_command\ntest.test_spark.SparkTests ‑ test_sync_hdfs_store\ntest.test_spark.SparkTests ‑ test_task_fn_run_commands\ntest.test_spark.SparkTests ‑ test_task_fn_run_gloo_exec\ntest.test_spark.SparkTests ‑ test_task_service_check_for_command_start\ntest.test_spark.SparkTests ‑ test_task_service_wait_for_command_start_with_timeout\ntest.test_spark.SparkTests ‑ test_task_service_wait_for_command_start_without_timeout\ntest.test_spark.SparkTests ‑ test_timeout_with_gloo\ntest.test_spark.SparkTests ‑ test_timeout_with_mpi\ntest.test_spark.SparkTests ‑ test_to_list\ntest.test_spark.SparkTests ‑ test_train_val_split_col_boolean\ntest.test_spark.SparkTests ‑ test_train_val_split_col_integer\ntest.test_spark.SparkTests ‑ test_train_val_split_ratio"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "219",
+      "tests": "97",
+      "tests_succ": "96",
+      "tests_skip": "1",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "97",
+      "runs_succ": "96",
+      "runs_skip": "1",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

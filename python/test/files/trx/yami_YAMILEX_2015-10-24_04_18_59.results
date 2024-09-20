@@ -20,7 +20,7 @@ publish.unittestresults.ParsedUnitTestResults(
   ],
   cases=[
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.UnitTest1',
@@ -33,7 +33,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0099709
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -54,7 +54,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -67,7 +67,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.4619928
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -96,7 +96,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=19.039413
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -124,7 +124,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=2.5091335
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -137,7 +137,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=4.6492659
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -150,7 +150,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -163,7 +163,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -176,7 +176,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -189,7 +189,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -202,7 +202,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -215,7 +215,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -228,7 +228,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -241,7 +241,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -254,7 +254,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -267,7 +267,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -280,7 +280,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -293,7 +293,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -306,7 +306,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -319,7 +319,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -332,7 +332,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -345,7 +345,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -358,7 +358,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',
@@ -371,7 +371,7 @@ publish.unittestresults.ParsedUnitTestResults(
       time=0.0
     ),
     publish.unittestresults.UnitTestCase(
-      result_file='yami_YAMILEX 2015-10-24 04_18_59.trx',
+      result_file='yami_YAMILEX_2015-10-24_04_18_59.trx',
       test_file=None,
       line=None,
       class_name='Prueba_Sistema.SIARAlgorithmTest',

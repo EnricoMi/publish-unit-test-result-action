@@ -55,6 +55,7 @@ def create_unit_test_run_delta_results(files=1, files_delta=-1,
         errors=errors,
         suites={'number': suites, 'delta': suites_delta},
         duration={'duration': duration, 'delta': duration_delta},
+        suite_details=TestUnitTestResults.details,
         tests={'number': tests, 'delta': tests_delta}, tests_succ={'number': tests_succ, 'delta': tests_succ_delta}, tests_skip={'number': tests_skip, 'delta': tests_skip_delta}, tests_fail={'number': tests_fail, 'delta': tests_fail_delta}, tests_error={'number': tests_error, 'delta': tests_error_delta},
         runs={'number': runs, 'delta': runs_delta}, runs_succ={'number': runs_succ, 'delta': runs_succ_delta}, runs_skip={'number': runs_skip, 'delta': runs_skip_delta}, runs_fail={'number': runs_fail, 'delta': runs_fail_delta}, runs_error={'number': runs_error, 'delta': runs_error_delta},
         commit='commit',
@@ -493,6 +494,8 @@ class TestUnitTestResults(unittest.TestCase):
             errors=errors,
             suites=n(2, -3),
             duration=d(3, -4),
+
+            suite_details=self.details,
 
             tests=n(20, -21),
             tests_succ=n(2, -3),

@@ -9,7 +9,7 @@ on:
       - '*'
   pull_request:
   schedule:
-    - cron: '0 16 * * *'
+    - cron: '10 9 * * *'
   workflow_dispatch:
 permissions: {}
 
@@ -20,33 +20,53 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Check requirements.txt against requirements-direct.txt
+      - name: Check requirements.txt
         run: |
-          (diff -w python/requirements-direct.txt python/requirements.txt || true) | (! grep -e "^<")
+          (diff -w <(grep -v "python_version >  '3.7'" python/requirements.txt | sed -e "s/;.*//") python/requirements-3.7.txt || true) | (! grep -e "^<")
+          (diff -w <(grep -v "python_version <= '3.7'" python/requirements.txt | sed -e "s/;.*//") python/requirements-post-3.7.txt || true) | (! grep -e "^<")
         shell: bash
       - name: Check for dependency updates
         continue-on-error: true
-        run:
-          .github/upgrade-pip-packages.sh
+        run: |
+          pip install tox
+          tox
+          git diff --exit-code
         shell: bash
 
   test-mac:
     name: "Test macOS"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["macos-11", "macos-12", "macos-13"]'
+      os: '["macos-12", "macos-13", "macos-14"]'
+      python-version: '["3.10", "3.11", "3.12", "installed"]'
+      include: >
+        [
+          {"os": "macos-12", "python-version": "3.8"},
+          {"os": "macos-12", "python-version": "3.9"},
+          {"os": "macos-13", "python-version": "3.8"},
+          {"os": "macos-13", "python-version": "3.9"},
+        ]
 
   test-lnx:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["ubuntu-20.04", "ubuntu-22.04"]'
+      os: '["ubuntu-20.04", "ubuntu-22.04", "ubuntu-24.04"]'
+      python-version: '["3.9", "3.10", "3.11", "3.12", "installed"]'
+      include: >
+        [
+          {"os": "ubuntu-20.04", "python-version": "3.7"},
+          {"os": "ubuntu-20.04", "python-version": "3.8"},
+          {"os": "ubuntu-22.04", "python-version": "3.8"},
+        ]
 
   test-win:
     name: "Test Windows"
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["windows-2019", "windows-2022"]'
+      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "installed"]'
+      include: '[{"os": "windows-2019", "python-version": "3.7"}]'
 
   publish:
     name: "Publish"
@@ -136,7 +156,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           tags: ${{ steps.docker-meta.outputs.tags }}
           labels: ${{ steps.docker-meta.outputs.labels }}
@@ -151,13 +171,15 @@ jobs:
                 needs.config-deploy.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
               )
             }}
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
 
   event_file:
     name: "Event File"
     runs-on: ubuntu-latest
     steps:
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Event File
           path: ${{ github.event_path }}

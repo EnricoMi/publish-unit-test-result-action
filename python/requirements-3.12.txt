@@ -1,0 +1,18 @@
+humanize==4.9.0
+junitparser==3.1.2
+lxml==5.1.0
+psutil==5.9.8
+PyGithub==2.2.0
+  Deprecated==1.2.14
+    wrapt==1.16.0
+  PyJWT==2.8.0
+  PyNaCl==1.5.0
+    cffi==1.16.0
+      pycparser==2.22
+  requests==2.32.3
+    certifi==2024.7.4
+    charset-normalizer==3.3.2
+    idna==3.7
+    urllib3==2.2.2
+  typing_extensions==4.12.2
+  urllib3==2.2.2

@@ -1,0 +1,53 @@
+{
+  "title": "All 101 tests pass in 0s",
+  "summary": "  1 files    1 suites   0s :stopwatch:\n101 tests 101 :white_check_mark: 0 :zzz: 0 :x:\n109 runs  109 :white_check_mark: 0 :zzz: 0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 101,
+    "tests_succ": 101,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 109,
+    "runs_succ": 109,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 101 tests, see \"Raw output\" for the full list of tests.",
+      "title": "101 tests found",
+      "raw_details": "bibtexParser ‑ parse @comment @article @comment\nbibtexParser ‑ parse a simple bib file\nbibtexParser ‑ parse an entry with only key\nbibtexParser ‑ parse bib with abbreviation\nbibtexParser ‑ parse bib with comments\nbibtexParser ‑ parse entry with command\nbibtexParser ‑ parse entry with concat\nbibtexParser ‑ parse entry with empty citeky\nbibtexParser ‑ parse entry with quotes\nbibtexParser ‑ parse fields ending ,\nbibtexParser ‑ parse only @comment\nbibtexParser ‑ should not throw SyntaxError\nbibtexParser ‑ should throw SyntaxError\nlatexLogParser ‑ parse LaTeX log files\nlatexLogParser ‑ parse LaTeX log files generated with -halt-on-error\nlatexParser matchers findAll ‑ test latexParser.findAll\nlatexParser matchers findAllSeqences ‑ test latexParser.findAllSeqences\nlatexParser matchers latexParser findNodeAt ‑ test latexParser.findNodeAt\nlatexParser matchers latexParser findNodeAt ‑ test latexParser.findNodeAt with line and column\nlatexParser matchers latexParser findNodeAt ‑ test latexParser.findNodeAt with line and column for multiple lines\nlatexParser matchers pattern ‑ test latexParser.pattern\nlatexParser matchers pattern ‑ test latexParser.pattern.match\nlatexParser matchers type ‑ test that properties having a Node-related-type value are only content, args, and arg.\nlatexParser matchers type ‑ test the types of content, arg, and args.\nlatexParser other ‑ test type guard\nlatexParser other ‑ test type guard with assingment and never type\nlatexParser parse 2 ‑ parse Sch\\\"onbrunner Schlo\\ss{} Stra\\ss e\nlatexParser parse 2 ‑ parse \\\"\\i\nlatexParser parse 2 ‑ parse a\\\\b c\\newline\nlatexParser parse 2 ‑ parse space + \\begin{center}\nlatexParser parse 2 ‑ parse x {a} { b }d\nlatexParser parse 2 ‑ parse { a }d\nlatexParser parse ‑ parse $ $, including only spaces\nlatexParser parse ‑ parse $ a ^ b $\nlatexParser parse ‑ parse $$ $$\nlatexParser parse ‑ parse $1$\nlatexParser parse ‑ parse $\\left(1\\right]$\nlatexParser parse ‑ parse $\\left.1\\right]$\nlatexParser parse ‑ parse $a^b$\nlatexParser parse ‑ parse $a^b$ with {enableMathCharacterLocation: true}\nlatexParser parse ‑ parse \\( \\)\nlatexParser parse ‑ parse \\[ \\]\nlatexParser parse ‑ parse \\begin{align} \\begin{alignedat}\nlatexParser parse ‑ parse \\begin{align} \\begin{aligned}\nlatexParser parse ‑ parse \\begin{align} \\end{align}\nlatexParser parse ‑ parse \\begin{align}...\nlatexParser parse ‑ parse \\begin{center} \\begin{itemize}\nlatexParser parse ‑ parse \\begin{center}...\nlatexParser parse ‑ parse \\begin{center}\\endcommand\nlatexParser parse ‑ parse \\begin{lstlisting}...\nlatexParser parse ‑ parse \\begin{minted}...\nlatexParser parse ‑ parse \\begin{verbatim*}...\nlatexParser parse ‑ parse \\begin{verbatim}...\nlatexParser parse ‑ parse \\begin{verbatim}... 02\nlatexParser parse ‑ parse \\def\\abc [#1]#2 {#2#1abc}\nlatexParser parse ‑ parse \\def\\abc{abc}\nlatexParser parse ‑ parse \\href\nlatexParser parse ‑ parse \\label{a_b}\nlatexParser parse ‑ parse \\linebreakMyCommand\nlatexParser parse ‑ parse \\newlineMyCommand\nlatexParser parse ‑ parse \\node[label={abc}, efg]\nlatexParser parse ‑ parse \\par\\par\nlatexParser parse ‑ parse \\part\nlatexParser parse ‑ parse \\url\nlatexParser parse ‑ parse \\verb*|1|\nlatexParser parse ‑ parse \\verbatimfont{\\small}\nlatexParser parse ‑ parse \\verb|1|\nlatexParser parse ‑ parse a command whose name has @\nlatexParser parse ‑ parse a^b\nlatexParser parse ‑ parse a_b\nlatexParser parse ‑ parse an optional argument having only spaces\nlatexParser parse ‑ parse comments\nlatexParser parse ‑ parse empty preamble\nlatexParser parse ‑ parse invalid commands without error\nlatexParser parse ‑ parse newenvironment command\nlatexParser parse ‑ parse optional arguments having a tilde\nlatexParser parse ‑ parse optional arguments having spaces\nlatexParser parse ‑ parse preamble\nlatexParser parse ‑ parse unbalanced \\begin\nlatexParser parse ‑ parse unbalanced \\begin{aligned}\nlatexParser parse ‑ parse unbalanced \\end\nlatexParser parse ‑ parse unbalanced \\end{aligned}\nlatexParser parse ‑ parse { }, including only spaces\nlatexParser parse ‑ parse ~\nlatexParser parse ‑ should throw SyntaxError\nlatexParser stringify ‑ test latexParser.stringify a  b\nlatexParser stringify ‑ test latexParser.stringify a b\nlatexParser stringify ‑ test latexParser.stringify a\\nb\nlatexParser stringify ‑ test latexParser.stringify a_b\nlatexParser stringify ‑ test latexParser.stringify newcommand 01\nlatexParser stringify ‑ test latexParser.stringify newcommand 02\nlatexParser stringify ‑ test latexParser.stringify newcommand 03\nlatexParser stringify ‑ test latexParser.stringify with lineBreak 01\nlatexParser stringify ‑ test latexParser.stringify with lineBreak 02\nlatexParser stringify ‑ test stringify $ \\sin x$\nlatexParser stringify ‑ test stringify $a^b$\nlatexParser stringify ‑ test stringify \\def\\abc [#1]#2 {#2#1abc}\nlatexParser stringify ‑ test stringify \\href[]{}{}\nlatexParser stringify ‑ test stringify \\href{}{}\nlatexParser stringify ‑ test stringify \\url\nlatexParser stringify ‑ test stringify a_b"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "101",
+      "tests_succ": "101",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "109",
+      "runs_succ": "109",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

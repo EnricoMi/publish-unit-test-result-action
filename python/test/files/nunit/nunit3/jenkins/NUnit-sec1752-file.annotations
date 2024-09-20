@@ -20,7 +20,8 @@
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnit-sec1752-file.xml\u2003[took 0s]',
-          'title': 'UnitTests.MainClassTest.TestPropertyValue failed'
+          'title': 'UnitTests.MainClassTest.TestPropertyValue failed',
+          'raw_details': 'abc'
         },
         {
           'path': '.github',

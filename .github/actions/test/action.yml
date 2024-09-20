@@ -22,7 +22,7 @@ runs:
   
     - name: Setup Python
       if: inputs.python-version != 'installed'
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
   
@@ -49,8 +49,9 @@ runs:
       shell: bash
   
     - name: Cache PIP Packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache
+      if: github.event_name != 'schedule'
       with:
         path: ${{ steps.os.outputs.pip-cache }}
         key: ${{ inputs.os }}-pip-test-${{ inputs.python-version }}-${{ hashFiles('**/requirements.txt', '**/constraints.txt') }}-${{ steps.os.outputs.date }}
@@ -61,16 +62,37 @@ runs:
   
     - name: Install Python dependencies
       run: |
-        python3 -V
-        python3 -m pip freeze | sort
-        python3 -m pip cache info || true
-        python3 -m pip cache list || true
-        python3 -m pip install --upgrade --force pip wheel
-        python3 -m pip install --force -r python/requirements.txt
-        python3 -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
-        python3 -m pip freeze | sort
-        python3 -m pip cache info || true
-        python3 -m pip cache list || true
+        python -m venv "$RUNNER_TEMP/venv"
+        echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP/venv/Scripts" >> "$GITHUB_PATH"
+        export PATH="$RUNNER_TEMP/venv/bin:$RUNNER_TEMP/venv/Scripts:$PATH"
+        which python
+
+        # inspect pip cache
+        python -m pip freeze | sort
+        python -m pip cache info || true
+        python -m pip cache list || true
+
+        # remove cached built whl files
+        rm -rf "$(python -m pip cache info | grep ".*[Ww]heels location: " | cut -d ":" -f 2- | cut -d " " -f 2-)"
+        python -m pip cache list || true
+
+        # install dependencies
+        python_minor_version="$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        python -m pip install --force -r python/requirements-$python_minor_version.txt
+        python -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
+
+        # inspect pip cache
+        python -m pip freeze | sort
+        python -m pip cache info || true
+        python -m pip cache list || true
+
+        # assert no whl files have been built
+        if python -m pip cache info && [[ "$(python -m pip cache info | grep "Number of .*wheels:")" != "Number of "*"wheels: 0" ]]
+        then
+          echo "Dependency whl files have been built"
+          exit 1
+        fi
       shell: bash
   
     - name: Update expectation files
@@ -85,16 +107,16 @@ runs:
           # we only upload the changed files if we can find zip
           if which zip
           then
-            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs -d "\n" zip changed-expectations.zip
+            (git diff --name-only && git ls-files -o  --exclude-standard) | xargs zip changed-expectations.zip
             exit 1
           fi
         fi
       shell: bash
     - name: Upload changed expectation files
       if: steps.changes.outcome == 'failure'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: Changed expectations
+        name: Changed expectations (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: changed-expectations.zip
         if-no-files-found: error
   
@@ -103,7 +125,7 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
+        python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
       shell: bash
   
     - name: PyTest (EST)
@@ -113,7 +135,7 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
+        python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
       shell: bash
   
     - name: PyTest (CET)
@@ -123,12 +145,12 @@ runs:
         PYTHONPATH: ..
       run: |
         cd python/test
-        python3 -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
+        python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
       shell: bash
   
     - name: Upload Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Test Results (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: |

@@ -1,0 +1,309 @@
+name: 'Publish Test Results'
+author: 'EnricoMi'
+description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
+
+inputs:
+  github_token:
+    description: 'GitHub API Access Token.'
+    default: ${{ github.token }}
+    required: false
+  github_token_actor:
+    description: 'The name of the GitHub app that owns the GitHub API Access Token (see github_token). Used to identify pull request comments created by this action during earlier runs. Has to be set when `github_token` is set to a GitHub app installation token (other than GitHub actions). Otherwise, existing comments will not be updated, but new comments created. Note: this does not change the bot name of the pull request comments. Defaults to "github-actions".'
+    default: 'github-actions'
+    required: false
+  github_retries:
+    description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
+    default: '10'
+    required: false
+  commit:
+    description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
+    required: false
+  check_name:
+    description: 'Name of the created check run.'
+    default: 'Test Results'
+    required: false
+  comment_title:
+    description: 'An alternative title for the pull request comment. Defaults to value of check_name input.'
+    required: false
+  comment_mode:
+    description: 'The action posts comments to pull requests that are associated with the commit. Set to "always" - always comment, "changes" - comment when changes w.r.t. the target branch exist, "changes in failures" - when changes in the number of failures and errors exist, "changes in errors" - when changes in the number of (only) errors exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments.'
+    default: 'always'
+    required: false
+  fail_on:
+    description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
+    default: 'test failures'
+    required: false
+  action_fail:
+    description: 'When set "true", the action itself fails when tests have failed (see option fail_on).'
+    default: 'false'
+    required: false
+  action_fail_on_inconclusive:
+    description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
+    default: 'false'
+    required: false
+  files:
+    description: 'File patterns of test result files. Relative paths are known to work best, while the non-Docker action also works with absolute paths. Supports "*", "**", "?", and "[]" character ranges. Use multiline string for multiple patterns. Patterns starting with "!" exclude the matching files. There have to be at least one pattern starting without a "!".'
+    required: false
+  junit_files:
+    description: 'Deprecated, use "files" option instead.'
+    required: false
+  nunit_files:
+    description: 'Deprecated, use "files" option instead.'
+    required: false
+  xunit_files:
+    description: 'Deprecated, use "files" option instead.'
+    required: false
+  trx_files:
+    description: 'Deprecated, use "files" option instead.'
+    required: false
+  time_unit:
+    description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
+    default: 'seconds'
+    required: false
+  test_file_prefix:
+    description: 'Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".'
+    required: false
+  report_individual_runs:
+    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
+    required: false
+  report_suite_logs:
+    description: 'In addition to reporting regular test logs, also report test suite logs. These are logs provided on suite level, not individual test level. Set to "info" for normal output, "error" for error output, "any" for both, or "none" for no suite logs at all. Defaults to "none".'
+    default: 'none'
+    required: false
+  deduplicate_classes_by_file_name:
+    description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise.'
+    required: false
+  large_files:
+    description: 'Support for large files is enabled when set to "true". Defaults to "false", unless ignore_runs is "true".'
+    required: false
+  ignore_runs:
+    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
+    default: 'false'
+    required: false
+  check_run:
+    description: 'Set to "true", the results are published as a check run, but it may not be associated with the workflow that ran this action.'
+    default: 'true'
+    required: false
+  job_summary:
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
+    default: 'true'
+    required: false
+  compare_to_earlier_commit:
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits.'
+    default: 'true'
+    required: false
+  pull_request_build:
+    description: 'As part of pull requests, GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to "commit". Defaults to "merge".'
+    default: 'merge'
+    required: false
+  event_file:
+    description: 'An alternative event file to use. Useful to replace a "workflow_run" event file with the actual source event file.'
+    required: false
+  event_name:
+    description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
+    required: false
+  test_changes_limit:
+    description: 'Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of 0. The default is 10.'
+    required: false
+  check_run_annotations:
+    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all.'
+    default: 'all tests, skipped tests'
+    required: false
+  check_run_annotations_branch:
+    description: 'Adds check run annotations only on given branches. Comma-separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
+    required: false
+  seconds_between_github_reads:
+    description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
+    default: '0.25'
+    required: false
+  seconds_between_github_writes:
+    description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
+    default: '2.0'
+    required: false
+  secondary_rate_limit_wait_seconds:
+    description: 'Sets the number of seconds to wait before retrying secondary rate limit errors. If not set, the default defined in the PyGithub library is used (currently 60 seconds).'
+    required: false
+  json_file:
+    description: 'Results are written to this JSON file.'
+    required: false
+  json_thousands_separator:
+    description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
+    default: ' '
+    required: false
+  json_suite_details:
+    description: 'Write out all suite details to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
+    default: 'false'
+    required: false
+  json_test_case_results:
+    description: 'Write out all individual test case results to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
+    default: 'false'
+    required: false
+  search_pull_requests:
+    description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
+    default: 'false'
+    required: false
+
+outputs:
+  json:
+    description: "Test results as JSON"
+    value: ${{ steps.test-results.outputs.json }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check for Python3
+      id: python
+      run: |
+        # Check for Python3
+        echo '::group::Check for Python3'
+
+        # we check version here just to execute `python3` with an argument
+        # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
+        # command `which python3` finds that, but `python3 -V` does not return the version on stdout
+        if ! which python3 || [[ "$(python3 -V)" != *"python 3."* && "$(python3 -V)" != *"Python 3."* ]]
+        then
+          if ! which python || [[ "$(python -V)" != *"python 3."* && "$(python -V)" != *"Python 3."* ]]
+          then
+            echo "::error::No python3 interpreter found. Please setup python before running this action. You could use https://github.com/actions/setup-python."
+            exit 1
+          fi
+
+          PYTHON_BIN="$(python -c 'import sys; print(sys.executable)')"
+        else
+          PYTHON_BIN="$(python3 -c 'import sys; print(sys.executable)')"
+        fi
+
+        echo "Python that creates venv: $PYTHON_BIN"
+        echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
+
+        PYTHON_VERSION="$("$PYTHON_BIN" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        if [[ "$PYTHON_VERSION" == "3.7" ]]
+        then
+          echo "DEPENDENCIES_VERSION=3.7" >> "$GITHUB_ENV"
+        else
+          echo "DEPENDENCIES_VERSION=post-3.7" >> "$GITHUB_ENV"
+        fi
+        echo "version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
+
+        echo '::endgroup::'
+      shell: bash
+
+    - name: Restore PIP packages cache
+      uses: actions/cache/restore@v4
+      id: cache
+      continue-on-error: true
+      with:
+        path: '~\AppData\Local\pip\Cache'
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-e594996205319a7990b3a4ec677d10a3
+
+    - name: Create virtualenv
+      id: venv
+      continue-on-error: true
+      run: |
+        # Create virtualenv
+        echo '::group::Create virtualenv'
+
+        echo "Python that creates venv: $PYTHON_BIN"
+
+        echo "Creating virtual environment"
+        if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv enricomi-publish-action-venv
+        then
+          echo "Looks like there is neither virtualenv nor venv package installed"
+          if ! "$PYTHON_BIN" -m pip install --user virtualenv
+          then
+            echo "Installing virtualenv package with PIP options '--user' failed, now trying without"
+            if ! "$PYTHON_BIN" -m pip install virtualenv
+            then
+              echo "::error::Installing virtualenv package failed"
+              exit 1
+            fi
+          fi
+
+          if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
+          then
+            echo "::error::Cannot create venv after installing virtualenv package"
+            exit 1
+          fi
+        fi
+
+        echo "Finding Python interpreter in venv"
+        PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python"
+        PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
+        echo "Python in venv: $PYTHON_VENV"
+        echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
+
+        echo '::endgroup::'
+      shell: bash
+
+    - name: Install Python dependencies
+      run: |
+        # Install Python dependencies
+        echo '::group::Install Python dependencies'
+        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../../python/requirements-$DEPENDENCIES_VERSION.txt"
+        echo '::endgroup::'
+      shell: bash
+
+    - name: Publish Test Results
+      id: test-results
+      run: |
+        # Publish Test Results
+        echo '::group::Publish Test Results'
+        "$PYTHON_VENV" "$GITHUB_ACTION_PATH/../../python/publish_test_results.py"
+        echo '::endgroup::'
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
+        GITHUB_RETRIES: ${{ inputs.github_retries }}
+        COMMIT: ${{ inputs.commit }}
+        CHECK_NAME: ${{ inputs.check_name }}
+        COMMENT_TITLE: ${{ inputs.comment_title }}
+        COMMENT_MODE: ${{ inputs.comment_mode }}
+        FAIL_ON: ${{ inputs.fail_on }}
+        ACTION_FAIL: ${{ inputs.action_fail }}
+        ACTION_FAIL_ON_INCONCLUSIVE: ${{ inputs.action_fail_on_inconclusive }}
+        FILES: ${{ inputs.files }}
+        JUNIT_FILES: ${{ inputs.junit_files }}
+        NUNIT_FILES: ${{ inputs.nunit_files }}
+        XUNIT_FILES: ${{ inputs.xunit_files }}
+        TRX_FILES: ${{ inputs.trx_files }}
+        TIME_UNIT: ${{ inputs.time_unit }}
+        TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
+        REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
+        REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
+        DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
+        LARGE_FILES: ${{ inputs.large_files }}
+        IGNORE_RUNS: ${{ inputs.ignore_runs }}
+        COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
+        PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
+        EVENT_FILE: ${{ inputs.event_file }}
+        EVENT_NAME: ${{ inputs.event_name }}
+        TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}
+        CHECK_RUN_ANNOTATIONS: ${{ inputs.check_run_annotations }}
+        CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
+        SECONDS_BETWEEN_GITHUB_READS: ${{ inputs.seconds_between_github_reads }}
+        SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
+        SECONDARY_RATE_LIMIT_WAIT_SECONDS: ${{ inputs.secondary_rate_limit_wait_seconds }}
+        JSON_FILE: ${{ inputs.json_file }}
+        JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
+        JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
+        JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
+        CHECK_RUN: ${{ inputs.check_run }}
+        JOB_SUMMARY: ${{ inputs.job_summary }}
+        SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
+        # not documented
+        ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+        # not documented
+        LOG_LEVEL: ${{ inputs.log_level }}
+      shell: bash
+
+    - name: Save PIP packages cache
+      uses: actions/cache/save@v4
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
+      continue-on-error: true
+      with:
+        path: '~\AppData\Local\pip\Cache'
+        key: ${{ steps.cache.outputs.cache-primary-key }}
+
+branding:
+  icon: 'check-circle'
+  color: 'green'

@@ -1,0 +1,43 @@
+{
+  "title": "1 fail, 2 skipped, 3 pass in 0s",
+  "summary": "6 tests   3 :white_check_mark:  0s :stopwatch:\n1 suites  2 :zzz:\n1 files    1 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 6,
+    "tests_succ": 3,
+    "tests_skip": 2,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 6,
+    "runs_succ": 3,
+    "runs_skip": 2,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "6",
+      "tests_succ": "3",
+      "tests_skip": "2",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "6",
+      "runs_succ": "3",
+      "runs_skip": "2",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

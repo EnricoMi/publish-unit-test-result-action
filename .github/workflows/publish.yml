@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -70,16 +70,18 @@ jobs:
 
       - name: Build Docker image
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           load: true
           push: false
           platforms: linux/${{ matrix.arch }}
           tags: im-open/publish-unit-test-result-action:latest
           outputs: type=docker
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -205,9 +207,9 @@ jobs:
           dockerfile: ./Dockerfile
           annotations: true
       - name: Upload SARIF artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: SARIF
+          name: SARIF ${{ matrix.arch }}
           path: ${{ steps.scan.outputs.sarif }}
       - name: Upload SARIF file
         if: always() && steps.scan.outputs.sarif != ''
@@ -215,7 +217,7 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
-  publish-composite:
+  publish-linux:
     name: Publish Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
     permissions:
@@ -224,34 +226,154 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-        # test *-latest and newer (because newer eventually become 'latest' and should be tested to work before that)
         include:
-          - os: macos-latest
-            os-label: macOS
-            python: "3.8"
-          - os: macos-latest
-            os-label: macOS
-            python: "installed"
-          - os: macos-11
-            os-label: macOS 11
-            python: "installed"
-
           - os: ubuntu-latest
             os-label: Linux
             python: "3.8"
+          - os: ubuntu-latest
+            os-label: Linux
+            python: "venv"
           - os: ubuntu-latest
             os-label: Linux
             python: "installed"
           - os: ubuntu-20.04
             os-label: Linux 20.04
             python: "installed"
+          - os: ubuntu-24.04
+            os-label: Linux 24.04
+            python: "installed"
 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: matrix.python != 'installed' && matrix.python != 'venv'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install virtualenv
+        if: matrix.python == 'venv'
+        run: python3 -m pip install virtualenv
+        shell: bash
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
+        id: test-results
+        uses: ./linux
+        with:
+          check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+          files: artifacts/**/*.xml
+          json_file: "tests.json"
+          json_suite_details: true
+          json_test_case_results: true
+          report_suite_logs: "any"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
+
+  publish-macos:
+    name: Publish Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      pull-requests: write
+
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        include:
+          - os: macos-13
+            os-label: macOS
+            python: "3.8"
+          - os: macos-latest
+            os-label: macOS
+            python: "venv"
+          - os: macos-latest
+            os-label: macOS
+            python: "installed"
+          - os: macos-12
+            os-label: macOS 12
+            python: "installed"
+          - os: macos-13
+            os-label: macOS 13
+            python: "installed"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: matrix.python != 'installed' && matrix.python != 'venv'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Setup Python
+        if: matrix.python == 'venv'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install virtualenv
+        if: matrix.python == 'venv'
+        run: python3 -m pip install virtualenv
+        shell: bash
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
+        id: test-results
+        uses: ./macos
+        with:
+          check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+          files: artifacts/**/*.xml
+          json_file: "tests.json"
+          json_suite_details: true
+          json_test_case_results: true
+          report_suite_logs: "any"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
+
+  publish-windows:
+    name: Publish Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      pull-requests: write
+
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        include:
           - os: windows-latest
             os-label: Windows
             python: "installed"
+          - os: windows-latest
+            os-label: Windows
+            python: "venv"
           - os: windows-2019
             os-label: Windows 2019
             python: "installed"
@@ -261,13 +383,83 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        if: matrix.python != 'installed'
+        if: matrix.python != 'installed' && matrix.python != 'venv'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Install virtualenv
+        if: matrix.python == 'venv'
+        run: python3 -m pip install virtualenv
+        shell: bash
+
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
+        id: test-results
+        uses: ./windows
+        with:
+          check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+          files: artifacts\**\*.xml
+          json_file: "tests.json"
+          json_suite_details: true
+          json_test_case_results: true
+          report_suite_logs: "any"
+
+      - name: JSON output
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results.outputs.json }}'
+          json_file: 'tests.json'
+
+      - name: Publish Test Results (Bash)
+        id: test-results-bash
+        if: always() && steps.test-results.outcome != 'skipped'
+        uses: ./windows/bash
+        with:
+          check_name: Test Results (${{ matrix.os-label }} bash python ${{ matrix.python }})
+          files: artifacts\**\*.xml
+          json_file: "tests.json"
+          json_suite_details: true
+          json_test_case_results: true
+          report_suite_logs: "any"
+
+      - name: JSON output (Bash)
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.test-results-bash.outputs.json }}'
+          json_file: 'tests.json'
+
+  publish-composite:
+    name: Publish Test Results (${{ matrix.os-label }} composite)
+    runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      pull-requests: write
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        # test *-latest and newer (because newer eventually become 'latest' and should be tested to work before that)
+        include:
+          - os: macos-latest
+            os-label: macOS
+          - os: ubuntu-latest
+            os-label: Linux
+          - os: windows-latest
+            os-label: Windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -275,7 +467,7 @@ jobs:
         id: test-results
         uses: ./composite
         with:
-          check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+          check_name: Test Results (${{ matrix.os-label }} composite python ${{ matrix.python }})
           files: |
             artifacts/**/*.xml
             artifacts\**\*.xml

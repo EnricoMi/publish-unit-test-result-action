@@ -1,0 +1,62 @@
+{
+  "title": "All 67 tests pass, 12 skipped in 0s",
+  "summary": "79 tests   67 :white_check_mark:  0s :stopwatch:\n 1 suites  12 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 79,
+    "tests_succ": 67,
+    "tests_skip": 12,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 79,
+    "runs_succ": 67,
+    "runs_skip": 12,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 12 skipped tests, see \"Raw output\" for the full list of skipped tests.",
+      "title": "12 skipped tests found",
+      "raw_details": "VanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoRefreshToken\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidPassword\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidUrl\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidUsername\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoRefreshToken\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoRefreshToken"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 79 tests, see \"Raw output\" for the full list of tests.",
+      "title": "79 tests found",
+      "raw_details": "VanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ AreEqualWorksWithDifferentPassword\nVanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ AreEqualWorksWithSameContent\nVanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ CorrectlyConvertsSecureStringToString\nVanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ CorrectlyConvertsStringToSecureString\nVanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ ValidateAcceptsValidCredentials\nVanillaCloudStorageClientTest.CloudStorageCredentialsTest ‑ ValidateRejectsInvalidCredentials\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ FileLifecycleWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ReallyDoRefreshToken\nVanillaCloudStorageClientTest.CloudStorageProviders.DropboxCloudStorageClientTest ‑ ThrowsAccessDeniedExceptionWithInvalidToken\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ FileLifecycleWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ SanitizeCredentials_ChangesInvalidPrefix\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ SecureSslConnectionWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithHttpInsteadOfFtp\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidPassword\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidUrl\nVanillaCloudStorageClientTest.CloudStorageProviders.FtpCloudStorageClientTest ‑ ThrowsWithInvalidUsername\nVanillaCloudStorageClientTest.CloudStorageProviders.GmxCloudStorageClientTest ‑ ChoosesCorrectUrlForGmxComEmail\nVanillaCloudStorageClientTest.CloudStorageProviders.GmxCloudStorageClientTest ‑ ChoosesCorrectUrlForGmxNetEmail\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ FileLifecycleWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.GoogleCloudStorageClientTest ‑ ReallyDoRefreshToken\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ FileLifecycleWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoFetchToken\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoOpenAuthorizationPageInBrowser\nVanillaCloudStorageClientTest.CloudStorageProviders.OnedriveCloudStorageClientTest ‑ ReallyDoRefreshToken\nVanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest ‑ FileLifecycleWorks\nVanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest ‑ ParseGmxWebdavResponseCorrectly\nVanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest ‑ ParseStratoWebdavResponseCorrectly\nVanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest ‑ ThrowsWithInvalidPath\nVanillaCloudStorageClientTest.CloudStorageProviders.WebdavCloudStorageClientTest ‑ ThrowsWithInvalidUsername\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ AreEqualWorksWithNullDate\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ AreEqualWorksWithSameContent\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ NeedsRefreshReturnsFalseForTokenFlow\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ NeedsRefreshReturnsFalseIfNotExpired\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ NeedsRefreshReturnsTrueIfExpired\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ NeedsRefreshReturnsTrueIfNoExpirationDate\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ SetExpiryDateBySecondsWorks\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ SetExpiryDateBySecondsWorksWithNull\nVanillaCloudStorageClientTest.CloudStorageTokenTest ‑ SetExpiryDateBySecondsWorksWithVeryShortPeriod\nVanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest ‑ ParsesAllErrorCodesCorrectly\nVanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest ‑ ParsesNullErrorCodeCorrectly\nVanillaCloudStorageClientTest.OAuth2.AuthorizationResponseErrorTest ‑ ParsesUnknownErrorCodeCorrectly\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ BuildAuthorizationRequestUrlEscapesParameters\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ BuildAuthorizationRequestUrlLeavesOutOptionalParameters\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ BuildAuthorizationRequestUrlThrowsWithMissingRedirectUrlForTokenFlow\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ BuildAuthorizationRequestUrlUsesAllParameters\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ BuildAuthorizationRequestUrlUsesCodeVerifier\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ ParseRealWorldDropboxRejectResponse\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ ParseRealWorldDropboxSuccessResponse\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ ParseRealWorldGoogleRejectResponse\nVanillaCloudStorageClientTest.OAuth2.OAuth2UtilsTest ‑ ParseRealWorldGoogleSuccessResponse\nVanillaCloudStorageClientTest.OAuth2CloudStorageClientTest ‑ BuildOAuth2AuthorizationRequestUrlWorks\nVanillaCloudStorageClientTest.OAuth2CloudStorageClientTest ‑ FetchTokenCanInterpretGoogleResponse\nVanillaCloudStorageClientTest.OAuth2CloudStorageClientTest ‑ FetchTokenReturnsNullForDeniedAccess\nVanillaCloudStorageClientTest.OAuth2CloudStorageClientTest ‑ FetchTokenThrowsWithWrongState\nVanillaCloudStorageClientTest.OAuth2CloudStorageClientTest ‑ RefreshTokenCanInterpretGoogleResponse\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ AreEqualsWorksCorrectly\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsSecureStringToString\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsSecureStringToUnicodeBytes\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsSecureStringToUtf8Bytes\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsStringToSecureString\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsUnicodeBytesToSecureString\nVanillaCloudStorageClientTest.SecureStringExtensionsTest ‑ CorrectlyConvertsUtf8BytesToSecureString\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ DecryptAfterDesrializationCanReadAllPropertiesBack\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ DecryptAfterDesrializationRespectsNullProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ EncryptBeforeSerializationProtectsAllNecessaryProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ EncryptBeforeSerializationRespectsNullProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedDatacontractCanBeReadBack\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedDatacontractDoesNotContainNullProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedDatacontractDoesNotContainPlaintextData\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedJsonCanBeReadBack\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedJsonDoesNotContainNullProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedJsonDoesNotContainPlaintextData\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedXmlCanBeReadBack\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedXmlDoesNotContainNullProperties\nVanillaCloudStorageClientTest.SerializeableCloudStorageCredentialsTest ‑ SerializedXmlDoesNotContainPlaintextData"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "79",
+      "tests_succ": "67",
+      "tests_skip": "12",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "79",
+      "runs_succ": "67",
+      "runs_skip": "12",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}
