@@ -3,4 +3,4 @@ humanize==4.9.0; python_version >  '3.7'
 junitparser==3.1.2
 lxml==5.1.0
 psutil==5.9.8
-PyGithub==2.2.0
+PyGithub==1.59.1
