@@ -208,7 +208,7 @@ class Publisher:
 
     def __init__(self, settings: Settings, gh: ApiClient, gha: GithubAction):
         self._settings = settings
-        self._gtea = ApiClient
+        self._gtea = gh
         self._gha = gha
 
     def publish(self,

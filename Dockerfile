@@ -1,13 +1,13 @@
 FROM python:3.8-alpine
 
-LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
-LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
-LABEL maintainer="Enrico Minack <github@Enrico.Minack.dev>"
+LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-actiona"
+LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-actiona"
+LABEL maintainer="Enrico Minacka <github@Enrico.Minack.dev>"
 
-LABEL com.github.actions.name="Publish Test Results"
-LABEL com.github.actions.description="A GitHub Action to publish test results."
-LABEL com.github.actions.icon="check-circle"
-LABEL com.github.actions.color="green"
+LABEL com.github.actions.name="Publish Test Results abc"
+LABEL com.github.actions.description="A GitHub Action to publish test results. abc"
+LABEL com.github.actions.icon="check-circlea"
+LABEL com.github.actions.color="greena"
 
 RUN apk add --no-cache --upgrade expat libuuid
 
