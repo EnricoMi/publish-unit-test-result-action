@@ -10,8 +10,11 @@ from typing import List, Any, Optional, Tuple, Mapping, Dict, Union, Callable
 from github import Github, GithubException, UnknownObjectException
 from github.CheckRun import CheckRun
 from github.CheckRunAnnotation import CheckRunAnnotation
-from github.PullRequest import PullRequest
 from github.IssueComment import IssueComment
+
+from publish.gitea_client.api_client import ApiClient
+from publish.gitea_client.api import RepositoryApi
+from publish.gitea_client.models import PullRequest
 
 from publish import __version__, get_json_path, comment_mode_off, digest_prefix, restrict_unicode_list, \
     comment_mode_always, comment_mode_changes, comment_mode_changes_failures, comment_mode_changes_errors, \
@@ -75,6 +78,7 @@ class Settings:
     seconds_between_github_writes: float
     secondary_rate_limit_wait_seconds: float
     search_pull_requests: bool
+    owner: str
 
 
 @dataclasses.dataclass(frozen=True)
@@ -202,9 +206,9 @@ class PublishData:
 
 class Publisher:
 
-    def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
+    def __init__(self, settings: Settings, gh: ApiClient, gha: GithubAction):
         self._settings = settings
-        self._gh = gh
+        self._gtea = ApiClient
         self._gha = gha
         self._repo = gh.get_repo(self._settings.repo)
         self._req = gh._Github__requester
@@ -258,7 +262,7 @@ class Publisher:
             return None
 
         try:
-            return self._repo.get_pull(number)
+            return RepositoryApi(self._gtea).repo_get_pull_request_with_http_info(self._settings.owner, self._settings.repo, number)
         except UnknownObjectException:
             return None
 
@@ -266,6 +270,7 @@ class Publisher:
         try:
             # totalCount of PaginatedList calls the GitHub API just to get the total number
             # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
+            RepositoryApi(self._gtea).repo_get_commit_pull_request_with_http_info()
             return list(self._repo.get_commit(commit).get_pulls())
         except UnknownObjectException:
             return []
@@ -274,11 +279,15 @@ class Publisher:
         if self._settings.search_pull_requests:
             # totalCount of PaginatedList calls the GitHub API just to get the total number
             # we have to retrieve them all anyway so better do this once by materialising the PaginatedList via list()
-            issues = list(self._gh.search_issues(f'type:pr repo:"{self._settings.repo}" {commit}'))
-            pull_requests = [issue.as_pull_request() for issue in issues]
+            raise NotImplemented()
         else:
             pull_request = self.get_pull_from_event()
-            pull_requests = [pull_request] if pull_request is not None else self.get_pulls_from_commit(commit)
+
+            if pull_request is None:
+                raise NotImplemented()
+
+            pull_requests = [pull_request]
+
 
         logger.debug(f'found {len(pull_requests)} pull requests in repo {self._settings.repo} containing commit {commit}')
         return pull_requests
@@ -291,7 +300,7 @@ class Publisher:
         if logger.isEnabledFor(logging.DEBUG):
             for pr in pull_requests:
                 logger.debug(pr)
-                logger.debug(pr.raw_data)
+                logger.debug(pr.to_dict())
                 logger.debug(f'PR {pr.html_url}: {pr.head.repo.full_name} -> {pr.base.repo.full_name}')
 
         # we can only publish the comment to PRs that are in the same repository as this action is executed in

@@ -12,6 +12,10 @@ import humanize
 import psutil
 from github.GithubRetry import DEFAULT_SECONDARY_RATE_WAIT
 
+from .publish.gitea_client import api_client as gitea_client
+from .publish.gitea_client import configuration as gitea_configuration
+
+
 import publish.github_action
 from publish import __version__, available_annotations, default_annotations, none_annotations, \
     report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
@@ -259,14 +263,15 @@ def main(settings: Settings, gha: GithubAction) -> None:
 
     # publish the delta stats
     backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
-    gh = get_github(auth=github.Auth.Token(settings.token),
-                    url=settings.api_url,
-                    retries=settings.api_retries,
-                    backoff_factor=backoff_factor,
-                    seconds_between_requests=settings.seconds_between_github_reads,
-                    seconds_between_writes=settings.seconds_between_github_writes,
-                    secondary_rate_wait=settings.secondary_rate_limit_wait_seconds)
-    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+
+    config = gitea_configuration.Configuration()
+    config.api_key = settings.token
+    config.host = settings.api_url
+
+
+    gitea = gitea_client.ApiClient(config)
+
+    Publisher(settings, gitea, gha).publish(stats, results.case_results, conclusion)
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
         status = f"{conclusion} / inconclusive" if conclusion == "neutral" else conclusion
@@ -492,6 +497,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         seconds_between_github_writes=float(seconds_between_github_writes),
         secondary_rate_limit_wait_seconds=float(secondary_rate_limit_wait_seconds),
         search_pull_requests=get_bool_var('SEARCH_PULL_REQUESTS', options, default=False),
+        owner=get_var("REPOSITORY_OWNER")
     )
 
     check_var(settings.token, 'GITHUB_TOKEN', 'GitHub token')
