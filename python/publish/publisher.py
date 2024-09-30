@@ -210,8 +210,6 @@ class Publisher:
         self._settings = settings
         self._gtea = ApiClient
         self._gha = gha
-        self._repo = gh.get_repo(self._settings.repo)
-        self._req = gh._Github__requester
 
     def publish(self,
                 stats: UnitTestRunResults,
