@@ -12,8 +12,8 @@ import humanize
 import psutil
 from github.GithubRetry import DEFAULT_SECONDARY_RATE_WAIT
 
-from .publish.gitea_client import api_client as gitea_client
-from .publish.gitea_client import configuration as gitea_configuration
+from publish.gitea_client import api_client as gitea_client
+from publish.gitea_client import configuration as gitea_configuration
 
 
 import publish.github_action
