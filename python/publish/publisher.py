@@ -414,7 +414,9 @@ class Publisher:
         # get stats from earlier commits
         before_stats = None
         if self._settings.compare_earlier and self._settings.check_run:
-            before_commit_sha = get_json_path(self._settings.event, 'before')
+            # compare to pull request base, or the 'before' commit of the event
+            before_commit_sha = get_json_path(self._settings.event, 'pull_request.base.sha') or \
+                                get_json_path(self._settings.event, 'before')
             logger.debug(f'comparing against before={before_commit_sha}')
             before_check_run = self.get_check_run(before_commit_sha)
             before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
