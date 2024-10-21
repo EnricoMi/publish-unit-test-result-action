@@ -177,11 +177,12 @@ runs:
         echo "PYTHON_BIN=$PYTHON_BIN" >> "$GITHUB_ENV"
 
         PYTHON_VERSION="$($PYTHON_BIN -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
-        if [[ "$PYTHON_VERSION" == "3.7" ]]
-        then
+        if [[ "$PYTHON_VERSION" == "3.7" ]]; then
           echo "DEPENDENCIES_VERSION=3.7" >> "$GITHUB_ENV"
+        elif [[ "$PYTHON_VERSION" == "3.8" ]]; then
+          echo "DEPENDENCIES_VERSION=3.8" >> "$GITHUB_ENV"
         else
-          echo "DEPENDENCIES_VERSION=post-3.7" >> "$GITHUB_ENV"
+          echo "DEPENDENCIES_VERSION=post-3.8" >> "$GITHUB_ENV"
         fi
         echo "version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -194,7 +195,7 @@ runs:
       continue-on-error: true
       with:
         path: '~/.cache/pip'
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-1a7833c49f5935a970bc661e3c45aa2a
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
 
     - name: Create virtualenv
       id: venv
