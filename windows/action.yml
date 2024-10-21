@@ -178,8 +178,10 @@ runs:
 
           if ( $PYTHON_VERSION -eq "3.7" ) {
             "DEPENDENCIES_VERSION=3.7" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } elseif ( $PYTHON_VERSION -eq "3.8" ) {
+            "DEPENDENCIES_VERSION=3.8" | Out-File -FilePath $env:GITHUB_ENV -Append
           } else {
-            "DEPENDENCIES_VERSION=post-3.7" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=post-3.8" | Out-File -FilePath $env:GITHUB_ENV -Append
           }
           "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         } finally {
@@ -193,7 +195,7 @@ runs:
       continue-on-error: true
       with:
         path: '~\AppData\Local\pip\Cache'
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-1a7833c49f5935a970bc661e3c45aa2a
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
 
     - name: Create virtualenv
       id: venv
