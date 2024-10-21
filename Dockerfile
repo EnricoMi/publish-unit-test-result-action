@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.12-alpine
 
 LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
 LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
@@ -11,7 +11,7 @@ LABEL com.github.actions.color="green"
 
 RUN apk add --no-cache --upgrade expat libuuid
 
-COPY python/requirements-3.7.txt /action/requirements.txt
+COPY python/requirements-post-3.8.txt /action/requirements.txt
 RUN apk add --no-cache build-base libffi-dev; \
     pip install --upgrade --force --no-cache-dir pip && \
     pip install --upgrade --force --no-cache-dir -r /action/requirements.txt; \
