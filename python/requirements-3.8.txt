@@ -7,7 +7,7 @@ PyGithub==2.2.0
     wrapt==1.16.0
   PyJWT==2.8.0
   PyNaCl==1.5.0
-    cffi==1.16.0
+    cffi==1.17.1
       pycparser==2.22
   requests==2.32.3
     certifi==2024.7.4
