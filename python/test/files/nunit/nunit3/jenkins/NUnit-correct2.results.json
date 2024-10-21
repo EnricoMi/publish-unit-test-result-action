@@ -1,6 +1,6 @@
 {
   "title": "All 183 tests pass in 0s",
-  "summary": "  1 files  102 suites   0s :stopwatch:\n183 tests 183 :white_check_mark: 0 :zzz: 0 :x:\n218 runs  218 :white_check_mark: 0 :zzz: 0 :x:\n\nResults for commit commit s.\n",
+  "summary": "  1 files  102 suites   0s ⏱️\n183 tests 183 ✅ 0 💤 0 ❌\n218 runs  218 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,

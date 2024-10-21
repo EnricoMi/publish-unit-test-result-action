@@ -7,10 +7,9 @@
     'output': {
       'title': '10 fail, 12 pass in 0s',
       'summary':
-        '\u20071 files\u2004\u2003\u20078 suites\u2004\u2003\u20020s '
-        ':stopwatch:\n22 tests\u200312 :white_check_mark:\u20030 :zzz:\u2003'
-        '10 :x:\n23 runs\u200a\u200313 :white_check_mark:\u20030 :zzz:\u2003'
-        '10 :x:\n\nResults for commit commit s.\n\n'
+        '\u20071 files\u2004\u2003\u20078 suites\u2004\u2003\u20020s ⏱️\n22 '
+        'tests\u200312 ✅\u20030 💤\u200310 ❌\n23 runs\u200a\u200313 ✅\u20030 💤\u2003'
+        '10 ❌\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MSw6AIAxEr'
         '0JYu/CzMV7GENTYCGJKWRnvbiEo7Ppmpu+WG5jVy0l0jZA+ACUYGZaAisCdjC0jFxSrvv'
         '9g9kHr+FklB1z1ft4UmDgpyYroMG8wnEk55Ps3lqAIE9e+FNQ67awFYsiX8LuSzwvzas/'

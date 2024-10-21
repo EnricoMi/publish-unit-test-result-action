@@ -1,6 +1,6 @@
 {
   "title": "2 errors, 1 fail, 1 skipped, 16 pass in 0s",
-  "summary": "20 tests   16 :white_check_mark:  0s :stopwatch:\n 4 suites   1 :zzz:\n 1 files     1 :x:  2 :fire:\n\nResults for commit commit s.\n",
+  "summary": "20 tests   16 ✅  0s ⏱️\n 4 suites   1 💤\n 1 files     1 ❌  2 🔥\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,

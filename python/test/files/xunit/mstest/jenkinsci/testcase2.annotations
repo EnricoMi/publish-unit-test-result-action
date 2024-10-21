@@ -7,10 +7,9 @@
     'output': {
       'title': 'All 1 tests pass in 0s',
       'summary':
-        '1 files\u2004\u20031 suites\u2004\u2003\u20020s :stopwatch:\n1 tests\u2003'
-        '1 :white_check_mark:\u20030 :zzz:\u20030 :x:\n3 runs\u200a\u20031 '
-        ':white_check_mark:\u20031 :zzz:\u20031 :x:\n\nResults for commit '
-        'commit s.\n\n'
+        '1 files\u2004\u20031 suites\u2004\u2003\u20020s ⏱️\n1 tests\u20031 ✅\u2003'
+        '0 💤\u20030 ❌\n3 runs\u200a\u20031 ✅\u20031 💤\u20031 ❌\n\nResults for '
+        'commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
         '0KoLTR2XoYQhLiRj1mWynh3UZBgN29m8k5uwOrIFzYNjMcE1GBNKAmCzzhmzAN905tFTE'
         'r9ix2O/i2MBPsrNGLA2mDyj2+usdcVLrbGVda4d6ngHFCGmljcJL9uwvXP6N0AAAA=\n',

@@ -446,11 +446,11 @@ def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
 
 
 all_tests_label_md = 'tests'
-passed_tests_label_md = ':white_check_mark:'
-skipped_tests_label_md = ':zzz:'
-failed_tests_label_md = ':x:'
-test_errors_label_md = ':fire:'
-duration_label_md = ':stopwatch:'
+passed_tests_label_md = '✅'
+skipped_tests_label_md = '💤'
+failed_tests_label_md = '❌'
+test_errors_label_md = '🔥'
+duration_label_md = '⏱️'
 
 
 def get_short_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:

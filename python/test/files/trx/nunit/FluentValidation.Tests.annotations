@@ -7,10 +7,9 @@
     'output': {
       'title': 'All 803 tests pass, 1 skipped in 3s',
       'summary':
-        '804 tests\u2002\u2003\u2003803 :white_check_mark:\u2003\u20033s '
-        ':stopwatch:\n\u2007\u20071 suites\u2003\u2003\u2007\u20071 :zzz:\n\u2007\u2007'
-        '1 files\u2004\u2002\u2003\u2003\u2007\u20070 :x:\n\nResults for '
-        'commit commit s.\n\n'
+        '804 tests\u2002\u2003\u2003803 ✅\u2003\u20033s ⏱️\n\u2007\u20071 '
+        'suites\u2003\u2003\u2007\u20071 💤\n\u2007\u20071 files\u2004\u2002\u2003\u2003\u2007\u2007'
+        '0 ❌\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMwQqAIBAFf'
         '0U8dzDsEP1MiBUtacaqp+jf28yybm/mwex8AjN63rG6YtxHCC8MEVUAtxJKQjrCdbWiea'
         'j3UeukZFELbDlwi0mBISFeMSI6zAbjWpoX/JO3KcXEn2Dib087ayEQ5MX8rPhxArdpBif'

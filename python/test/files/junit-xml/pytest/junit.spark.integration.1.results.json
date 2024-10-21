@@ -1,6 +1,6 @@
 {
   "title": "All 33 tests pass, 2 skipped in 2m 45s",
-  "summary": "35 tests   33 :white_check_mark:  2m 45s :stopwatch:\n 1 suites   2 :zzz:\n 1 files     0 :x:\n\nResults for commit commit s.\n",
+  "summary": "35 tests   33 ✅  2m 45s ⏱️\n 1 suites   2 💤\n 1 files     0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,
