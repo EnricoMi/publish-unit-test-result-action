@@ -194,7 +194,7 @@ runs:
       continue-on-error: true
       with:
         path: '~\AppData\Local\pip\Cache'
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-e594996205319a7990b3a4ec677d10a3
+        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-1a7833c49f5935a970bc661e3c45aa2a
 
     - name: Create virtualenv
       id: venv

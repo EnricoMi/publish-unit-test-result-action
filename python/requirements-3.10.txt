@@ -1,6 +1,6 @@
 humanize==4.9.0
 junitparser==3.1.2
-lxml==5.1.0
+lxml==5.3.0
 psutil==5.9.8
 PyGithub==2.2.0
   Deprecated==1.2.14
