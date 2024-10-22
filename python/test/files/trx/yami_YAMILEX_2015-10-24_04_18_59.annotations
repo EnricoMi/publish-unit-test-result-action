@@ -7,9 +7,9 @@
     'output': {
       'title': '2 fail, 21 skipped, 2 pass in 26s',
       'summary':
-        '25 tests\u2002\u2003\u2003\u20072 :white_check_mark:\u2003\u200326s '
-        ':stopwatch:\n\u20071 suites\u2003\u200321 :zzz:\n\u20071 files\u2004\u2002\u2003\u2003\u2007'
-        '2 :x:\n\nResults for commit commit s.\n\n'
+        '25 tests\u2002\u2003\u2003\u20072 ✅\u2003\u200326s ⏱️\n\u20071 '
+        'suites\u2003\u200321 💤\n\u20071 files\u2004\u2002\u2003\u2003\u20072 '
+        '❌\n\nResults for commit commit s.\n\n'
         '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
         '0KoLcRECy9jCErciGAWqIx3d/GD2O3M28zONZjJ856JinEfIWQYI8oAzhI2HTEtIW1N+8'
         'Lgo1LJfGKBLQmRjZZgfi8TokMyNRmMNhfTXQZvLnqXKHIXlzXl1hUCwXMxP0t+nB5bCu/'

@@ -1,6 +1,6 @@
 {
   "title": "1 parse errors",
-  "summary": "0 tests   0 :white_check_mark:  0s :stopwatch:\n0 suites  0 :zzz:\n1 files    0 :x:\n1 errors\n\nResults for commit commit s.\n",
+  "summary": "0 tests   0 ✅  0s ⏱️\n0 suites  0 💤\n1 files    0 ❌\n1 errors\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,

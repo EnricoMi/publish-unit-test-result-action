@@ -555,11 +555,11 @@ class PublishTest(unittest.TestCase):
 
     def test_label_md(self):
         self.assertEqual(all_tests_label_md, 'tests')
-        self.assertEqual(passed_tests_label_md, f':white_check_mark:')
-        self.assertEqual(skipped_tests_label_md, f':zzz:')
-        self.assertEqual(failed_tests_label_md, f':x:')
-        self.assertEqual(test_errors_label_md, f':fire:')
-        self.assertEqual(duration_label_md, f':stopwatch:')
+        self.assertEqual(passed_tests_label_md, '✅')
+        self.assertEqual(skipped_tests_label_md, '💤')
+        self.assertEqual(failed_tests_label_md, '❌')
+        self.assertEqual(test_errors_label_md, '🔥')
+        self.assertEqual(duration_label_md, '⏱️')
 
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
@@ -816,7 +816,7 @@ class PublishTest(unittest.TestCase):
             tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
             runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
             commit='commit'
-        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s :stopwatch:\n'
+        )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
              f'2 suites  6 {skipped_tests_label_md}\n'
              f'1 files    7 {failed_tests_label_md}  8 {test_errors_label_md}\n'
              f'\n'
@@ -2090,7 +2090,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s :stopwatch:\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s {duration_label_md}\n'
                               f'1 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'
@@ -2101,7 +2101,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'6 {all_tests_label_md}   3 {passed_tests_label_md}  0s :stopwatch:\n'
+        self.assertEqual(md, (f'6 {all_tests_label_md}   3 {passed_tests_label_md}  0s {duration_label_md}\n'
                               f'1 suites  2 {skipped_tests_label_md}\n'
                               f'1 files    1 {failed_tests_label_md}\n'
                               f'\n'
@@ -2112,7 +2112,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s :stopwatch:\n'
+        self.assertEqual(md, (f'0 {all_tests_label_md}   0 {passed_tests_label_md}  0s {duration_label_md}\n'
                               f'0 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'1 errors\n'
@@ -2124,7 +2124,7 @@ class PublishTest(unittest.TestCase):
         results = get_test_results(parsed, False)
         stats = get_stats(results)
         md = get_long_summary_md(stats)
-        self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s :stopwatch:\n'
+        self.assertEqual(md, (f'5 {all_tests_label_md}   5 {passed_tests_label_md}  4s {duration_label_md}\n'
                               f'4 suites  0 {skipped_tests_label_md}\n'
                               f'1 files    0 {failed_tests_label_md}\n'
                               f'\n'

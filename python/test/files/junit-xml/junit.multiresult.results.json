@@ -1,6 +1,6 @@
 {
   "title": "1 errors, 1 fail, 1 skipped, 1 pass in 1s",
-  "summary": "1 files  1 suites   1s :stopwatch:\n4 tests 1 :white_check_mark: 1 :zzz: 1 :x: 1 :fire:\n4 runs  -2 :white_check_mark: 3 :zzz: 2 :x: 1 :fire:\n\nResults for commit commit s.\n",
+  "summary": "1 files  1 suites   1s ⏱️\n4 tests 1 ✅ 1 💤 1 ❌ 1 🔥\n4 runs  -2 ✅ 3 💤 2 ❌ 1 🔥\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,

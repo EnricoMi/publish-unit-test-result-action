@@ -1,6 +1,6 @@
 {
   "title": "All 5 tests pass in 4s",
-  "summary": "5 tests   5 :white_check_mark:  4s :stopwatch:\n4 suites  0 :zzz:\n1 files    0 :x:\n\nResults for commit commit s.\n",
+  "summary": "5 tests   5 ✅  4s ⏱️\n4 suites  0 💤\n1 files    0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,

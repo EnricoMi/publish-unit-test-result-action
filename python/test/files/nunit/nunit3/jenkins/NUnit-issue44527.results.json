@@ -1,6 +1,6 @@
 {
   "title": "140 fail, 6 pass in 14m 11s",
-  "summary": "  1 files  155 suites   14m 11s :stopwatch:\n146 tests   6 :white_check_mark: 0 :zzz: 140 :x:\n150 runs    6 :white_check_mark: 0 :zzz: 144 :x:\n\nResults for commit commit s.\n",
+  "summary": "  1 files  155 suites   14m 11s ⏱️\n146 tests   6 ✅ 0 💤 140 ❌\n150 runs    6 ✅ 0 💤 144 ❌\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,
