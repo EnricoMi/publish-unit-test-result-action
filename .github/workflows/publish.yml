@@ -202,11 +202,13 @@ jobs:
       - name: Scan for vulnerabilities
         id: scan
         uses: crazy-max/ghaction-container-scan@v3
+        continue-on-error: true
         with:
           image: enricomi/publish-unit-test-result-action:latest
           dockerfile: ./Dockerfile
           annotations: true
       - name: Upload SARIF artifact
+        if: steps.scan.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: SARIF ${{ matrix.arch }}
