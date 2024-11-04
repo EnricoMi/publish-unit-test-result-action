@@ -307,9 +307,6 @@ jobs:
           - os: macos-latest
             os-label: macOS
             python: "installed"
-          - os: macos-12
-            os-label: macOS 12
-            python: "installed"
           - os: macos-13
             os-label: macOS 13
             python: "installed"

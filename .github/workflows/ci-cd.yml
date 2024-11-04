@@ -38,12 +38,10 @@ jobs:
     name: "Test macOS"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["macos-12", "macos-13", "macos-14", "macos-15"]'
+      os: '["macos-13", "macos-14", "macos-15"]'
       python-version: '["3.10", "3.11", "3.12", "3.13", "installed"]'
       include: >
         [
-          {"os": "macos-12", "python-version": "3.8"},
-          {"os": "macos-12", "python-version": "3.9"},
           {"os": "macos-13", "python-version": "3.8"},
           {"os": "macos-13", "python-version": "3.9"},
         ]
