@@ -164,6 +164,7 @@ class Test(unittest.TestCase):
                      api_url='http://github.api.url/',
                      graphql_url='http://github.graphql.url/',
                      retries=2,
+                     ssl_verify: bool | str=True,
                      event={},
                      event_file=None,
                      event_name='event name',
@@ -210,6 +211,7 @@ class Test(unittest.TestCase):
             api_url=api_url,
             graphql_url=graphql_url,
             api_retries=retries,
+            ssl_verify=ssl_verify,
             event=event.copy(),
             event_file=event_file,
             event_name=event_name,
@@ -301,6 +303,16 @@ class Test(unittest.TestCase):
                 with self.assertRaises(RuntimeError) as re:
                     self.do_test_get_settings(GITHUB_RETRIES=retries, expected=None)
                 self.assertIn(f'GITHUB_RETRIES must be a positive integer or 0: {retries}', re.exception.args)
+
+    def test_get_settings_github_ssl_verify(self):
+        self.do_test_get_settings(SSL_VERIFY='true', expected=self.get_settings(ssl_verify=True))
+        self.do_test_get_settings(SSL_VERIFY='True', expected=self.get_settings(ssl_verify=True))
+        self.do_test_get_settings(SSL_VERIFY='TrUe', expected=self.get_settings(ssl_verify=True))
+        self.do_test_get_settings(SSL_VERIFY='false', expected=self.get_settings(ssl_verify=False))
+        self.do_test_get_settings(SSL_VERIFY='False', expected=self.get_settings(ssl_verify=False))
+        self.do_test_get_settings(SSL_VERIFY='FaLsE', expected=self.get_settings(ssl_verify=False))
+        self.do_test_get_settings(SSL_VERIFY='/path/to/cert', expected=self.get_settings(ssl_verify='/path/to/cert'))
+        self.do_test_get_settings(SSL_VERIFY=None, expected=self.get_settings(ssl_verify=True))
 
     def test_get_settings_any_files(self):
         for files in [None, 'file']:

@@ -15,6 +15,10 @@ inputs:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
     default: '10'
     required: false
+  ssl_verify:
+    description: 'Either "true" or "false", in which case it controls whether to verify the Github server’s TLS certificate, or a string, in which case it must be a path to a CA bundle to use. Default is "true".'
+    default: true
+    required: false
   commit:
     description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
     required: false
@@ -257,6 +261,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
         GITHUB_RETRIES: ${{ inputs.github_retries }}
+        SSL_VERIFY: ${{ inputs.ssl_verify }}
         COMMIT: ${{ inputs.commit }}
         CHECK_NAME: ${{ inputs.check_name }}
         COMMENT_TITLE: ${{ inputs.comment_title }}
