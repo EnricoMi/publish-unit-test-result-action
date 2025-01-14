@@ -680,11 +680,11 @@ jobs:
       actions: read
 
     steps:
-       - name: Download and Extract Artifacts
-         uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
-         with:
-            run_id: ${{ github.event.workflow_run.id }}
-            path: artifacts
+      - name: Download and Extract Artifacts
+        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
+        with:
+           run_id: ${{ github.event.workflow_run.id }}
+           path: artifacts
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
