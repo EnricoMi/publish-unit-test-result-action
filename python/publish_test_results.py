@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -40,6 +42,7 @@ def get_conclusion(parsed: ParsedUnitTestResults, fail_on_failures, fail_on_erro
 
 def get_github(auth: github.Auth,
                url: str,
+               verify: bool | str,
                retries: int,
                backoff_factor: float,
                seconds_between_requests: Optional[float],
@@ -51,6 +54,7 @@ def get_github(auth: github.Auth,
     return github.Github(auth=auth,
                          base_url=url,
                          per_page=100,
+                         verify=verify,
                          retry=retry,
                          seconds_between_requests=seconds_between_requests,
                          seconds_between_writes=seconds_between_writes)
@@ -262,6 +266,7 @@ def main(settings: Settings, gha: GithubAction) -> None:
     gh = get_github(auth=github.Auth.Token(settings.token),
                     url=settings.api_url,
                     retries=settings.api_retries,
+                    verify=settings.ssl_verify,
                     backoff_factor=backoff_factor,
                     seconds_between_requests=settings.seconds_between_github_reads,
                     seconds_between_writes=settings.seconds_between_github_writes,
@@ -409,6 +414,11 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
 
     api_url = options.get('GITHUB_API_URL') or github.Consts.DEFAULT_BASE_URL
     graphql_url = options.get('GITHUB_GRAPHQL_URL') or f'{github.Consts.DEFAULT_BASE_URL}/graphql'
+    ssl_verify_str = get_var('SSL_VERIFY', options) or 'True'
+    if ssl_verify_str.lower() in ['true', 'false']:
+        ssl_verify = ssl_verify_str.lower() == 'true'
+    else:
+        ssl_verify = ssl_verify_str
     test_changes_limit = get_var('TEST_CHANGES_LIMIT', options) or '10'
     check_var_condition(test_changes_limit.isnumeric(), f'TEST_CHANGES_LIMIT must be a positive integer or 0: {test_changes_limit}')
 
@@ -451,6 +461,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         actor=get_var('GITHUB_TOKEN_ACTOR', options) or 'github-actions',
         api_url=api_url,
         graphql_url=graphql_url,
+        ssl_verify=ssl_verify,
         api_retries=int(retries),
         event=event,
         event_file=event_file,

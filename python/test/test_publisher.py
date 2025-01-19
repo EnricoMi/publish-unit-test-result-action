@@ -102,6 +102,7 @@ class TestPublisher(unittest.TestCase):
             api_url='https://the-github-api-url',
             graphql_url='https://the-github-graphql-url',
             api_retries=1,
+            ssl_verify=True,
             event=event,
             event_file=None,
             event_name=event_name,
