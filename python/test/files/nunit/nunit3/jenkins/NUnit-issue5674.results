@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=3,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -23,6 +27,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=3,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -32,6 +38,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -44,6 +52,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("IE")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -57,6 +67,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("FireFox")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -70,6 +82,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.AnotherTest("Safari")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -83,6 +97,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("IE")',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
         'C:\\Users\\Samw\\Documents\\Visual Studio '
@@ -99,6 +115,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("FireFox")',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
         'C:\\Users\\Samw\\Documents\\Visual Studio '
@@ -115,6 +133,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.FailTest("Safari")',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content='at GetBrowsersTest.BrowserNamesTest1.FailTest(String browser) in '
         'C:\\Users\\Samw\\Documents\\Visual Studio '
@@ -131,6 +151,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("IE")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -144,6 +166,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("FireFox")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -157,6 +181,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='GetBrowsersTest.BrowserNamesTest1.ShowBrowsers("Safari")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

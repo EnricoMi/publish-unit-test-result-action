@@ -8,12 +8,12 @@
       'title': '3 fail, 1 skipped, 1 pass in 8s',
       'summary':
         '1 files\u2004\u20032 suites\u2004\u2003\u20028s ⏱️\n5 tests\u20031 ✅\u2003'
-        '1 💤\u20033 ❌\n7 runs\u200a\u20033 ✅\u20031 💤\u20033 ❌\n\nResults for '
-        'commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
-        'yKuW1QSRZcJsaKh0hh1Fd29Scxs998b5p18hm2yvGdVwbj14ALUBKNH6cBowo6QDu45Ne'
-        '8erFcqPkaxwvETs4SNhEhiQjRIpiSDXj+9Ns43JxJ/tcBZLHDeUmbfwRHExewi+XUDvcl'
-        'Zbt0AAAA=\n',
+        '1 💤\u20033 ❌\u20031 💤\n7 runs\u200a\u20033 ✅\u20031 💤\u20033 ❌\n\n'
+        'Results for commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12Nyw6EIAxFf'
+        '4WwduEjZib+jCGImUYUU2BhzPz7VKyvWXHPabldZQ/WeNmIIhPSRwgJSoIuogrgJsI3IQ'
+        '3CNqqP3PqoNX9kMcD8EL0CS6I6hUF0SCa/VqwaFjYYp+3Ci+NxoDr56k98q098b98X/sp'
+        'bNPSw0G4cIRBwEv6j5PcH23ZtOREBAAA=\n',
       'annotations': [
         {
           'path': '[genericTestClass]',

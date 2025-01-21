@@ -8,12 +8,12 @@
       'title': 'All 183 tests pass in 0s',
       'summary':
         '\u2007\u20071 files\u2004\u2003102 suites\u2004\u2003\u20020s ⏱️\n'
-        '183 tests\u2003183 ✅\u20030 💤\u20030 ❌\n218 runs\u200a\u2003218 ✅\u2003'
-        '0 💤\u20030 ❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MSw6AIAwFr'
-        '0JYu/CzMV7GEITY+MGUsjLe3YoY0V1nXjq7tDAbLztRFUL6AHRDWTMOARWBW1mUjDxRHN'
-        'vmod4Hrf9qgi3/6K2C+SMMosNkMKxXs67aBE8yN28xchaMnPe0WxYghnQJPyp5nNtosNP'
-        'nAAAA\n',
+        '183 tests\u2003183 ✅\u20030 💤\u20030 ❌\u20030 💤\n218 runs\u200a\u2003'
+        '218 ✅\u20030 💤\u20030 ❌\n\nResults for commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NOw6AIAxAr'
+        '0KYHfwsxssQghgbUUyBwRjvbkWM6ETfa8nb+QBGO96xqmDcBfA3lDVhH1B6sAuJkpBWPi'
+        '7b5iHhglJ/NcGa/xCDBPMRGtHi98TIaUsGw3JV6qpN8ERy8zYiZ4nIeeE++AUEanqSUHa'
+        'ewROkiblR8uMEaulSXBsBAAA=\n',
       'annotations': [
         {
           'path': '.github',

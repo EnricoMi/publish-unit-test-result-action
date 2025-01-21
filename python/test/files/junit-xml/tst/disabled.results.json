@@ -1,6 +1,6 @@
 {
   "title": "1 errors, 19 fail, 5 skipped, 6 pass in 0s",
-  "summary": " 1 files   2 suites   0s ⏱️\n31 tests  6 ✅ 5 💤 19 ❌ 1 🔥\n31 runs  11 ✅ 0 💤 19 ❌ 1 🔥\n\nResults for commit commit s.\n",
+  "summary": " 1 files   2 suites   0s ⏱️\n31 tests  6 ✅ 5 💤 19 ❌ 1 🔥 5 💤\n31 runs  11 ✅ 0 💤 19 ❌ 1 🔥\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,
@@ -12,11 +12,14 @@
     "tests_skip": 5,
     "tests_fail": 19,
     "tests_error": 1,
+    "tests_flaky": 0,
     "runs": 31,
     "runs_succ": 11,
     "runs_skip": 0,
     "runs_fail": 19,
     "runs_error": 1,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -231,11 +234,14 @@
       "tests_skip": "5",
       "tests_fail": "19",
       "tests_error": "1",
+      "tests_flaky": "0",
       "runs": "31",
       "runs_succ": "11",
       "runs_skip": "0",
       "runs_fail": "19",
       "runs_error": "1",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

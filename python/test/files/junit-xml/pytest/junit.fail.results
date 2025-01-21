@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=1,
   suite_failures=1,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=2,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=1,
       failures=1,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test.test_spark.SparkTests',
       test_name='test_check_shape_compatibility',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test.test_spark.SparkTests',
       test_name='test_get_available_devices',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message='get_available_devices only supported in Spark 3.0 and above',
       content='/horovod/test/test_spark.py:1642: get_available_devices only\n        '
         '        supported in Spark 3.0 and above\n            ',
@@ -53,6 +61,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test.test_spark.SparkTests',
       test_name='test_get_col_info',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -66,6 +76,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test.test_spark.SparkTests',
       test_name='test_rsh_events',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='self = <test_spark.SparkTests testMethod=test_rsh_events>      def '
         'test_rsh_events(self): >       self.do_test_rsh_events(3)  '
         'test_spark.py:821:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ '
@@ -93,6 +105,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test.test_spark.SparkTests',
       test_name='test_rsh_with_non_zero_exit_code',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

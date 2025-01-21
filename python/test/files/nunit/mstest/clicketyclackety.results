@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=10,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=1,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -23,6 +27,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=1,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -32,6 +38,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=5,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -41,6 +49,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -50,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -59,6 +71,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=3,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -68,6 +82,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -77,6 +93,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -89,6 +107,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='BakeDrawings',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.InvalidOperationException : Assert.Equals should not be used. '
         'Use Assert.AreEqual instead.',
       content='   at NUnit.Framework.Assert.Equals(Object a, Object b)\n   at '
@@ -104,6 +124,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='SilentRun',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.NullReferenceException : Object reference not set to an '
         'instance of an object.',
       content='   at '
@@ -119,6 +141,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='DeleteMyProjectObjectEventFlagTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -132,6 +156,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='DiscardDrawingTests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message="System.IO.DirectoryNotFoundException : Could not find a part of the "
         "path "
         "'C:\\Users\\USER\\actions-runner\\_work\\MyProject\\MyProject\\SC\\f4a8fa46-2"
@@ -155,6 +181,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='LoadDrawingsEventFlagTests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='  Expected: 3\n  But was:  0\n',
       content='   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()\n',
       stdout=None,
@@ -168,6 +196,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='ModifyNewObjectUniqueIdEventFlagTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -181,6 +211,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='MoveControlPointEventFlagTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -194,6 +226,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='ResetProjectEventFlagTests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.NullReferenceException : Object reference not set to an '
         'instance of an object.',
       content='   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()',
@@ -208,6 +242,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='SetupLayersEventFlagTests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message="om.Exceptions.DocumentException : Document should be initlised, but "
         "isn't!",
       content='   at MyProject.Runtime.Events.SetupLayers.Execute()\n   at '
@@ -223,6 +259,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='SetupPipeEventFlagTests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.NullReferenceException : Object reference not set to an '
         'instance of an object.',
       content='   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()',
@@ -237,6 +275,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UpdateDrawingsPanelEventFlagTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -250,6 +290,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UpdatePropertiesPanelEventFlagTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -263,6 +305,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='EventRegisterTests',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -276,6 +320,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='Test',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -289,6 +335,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='DisplayGraphicConstants',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -302,6 +350,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='DrawingConstants',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.NullReferenceException : Object reference not set to an '
         'instance of an object.',
       content='   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()',
@@ -316,6 +366,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='FileConstants',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.NullReferenceException : Object reference not set to an '
         'instance of an object.',
       content='   at MyProject.Tests.Real.RuntimeTests.FileConstants()',
@@ -330,6 +382,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='ObjectConstants',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -343,6 +397,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='PluginConstants',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message="System.MissingMethodException : Method not found: 'System.Object "
         "MyProject.MyProjectPlugIn.get_Instance()'.",
       content='   at MyProject.Tests.Real.RuntimeTests.PluginConstants()',
@@ -357,6 +413,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UIPanelConstants',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -370,6 +428,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UIPropertyConstants',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -383,6 +443,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='Test',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -396,6 +458,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='LoadedDrawings',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

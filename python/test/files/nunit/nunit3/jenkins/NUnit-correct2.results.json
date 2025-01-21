@@ -1,6 +1,6 @@
 {
   "title": "All 183 tests pass in 0s",
-  "summary": "  1 files  102 suites   0s ⏱️\n183 tests 183 ✅ 0 💤 0 ❌\n218 runs  218 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
+  "summary": "  1 files  102 suites   0s ⏱️\n183 tests 183 ✅ 0 💤 0 ❌ 0 💤\n218 runs  218 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,
@@ -12,11 +12,14 @@
     "tests_skip": 0,
     "tests_fail": 0,
     "tests_error": 0,
+    "tests_flaky": 0,
     "runs": 218,
     "runs_succ": 218,
     "runs_skip": 0,
     "runs_fail": 0,
     "runs_error": 0,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -42,11 +45,14 @@
       "tests_skip": "0",
       "tests_fail": "0",
       "tests_error": "0",
+      "tests_flaky": "0",
       "runs": "218",
       "runs_succ": "218",
       "runs_skip": "0",
       "runs_fail": "0",
       "runs_error": "0",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

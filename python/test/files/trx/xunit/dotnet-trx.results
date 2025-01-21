@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=1,
   suite_failures=5,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=1,
       failures=5,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Timeout_Test',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Passing_Test',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -52,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Should be even number(i: 3)',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
       content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
         'DotnetTests.XUnitTests.CalculatorTests.Theory_With_Custom_Name(Int32 '
@@ -69,6 +79,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Skipped_Test',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -82,6 +94,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Custom Name',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -95,6 +109,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Should be even number(i: 2)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -108,6 +124,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Exception_In_TargetTest',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.DivideByZeroException : Attempted to divide by zero.',
       content='System.DivideByZeroException : Attempted to divide by zero.   at '
         'DotnetTests.Unit.Calculator.Div(Int32 a, Int32 b) in '
@@ -127,6 +145,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Exception_In_Test',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.Exception : Test',
       content='System.Exception : Test   at '
         'DotnetTests.XUnitTests.CalculatorTests.Exception_In_Test() in '
@@ -143,6 +163,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Failing_Test',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2',
       content='Assert.Equal() Failure\r\nExpected: 3\r\nActual:   2   at '
         'DotnetTests.XUnitTests.CalculatorTests.Failing_Test() in '
@@ -159,6 +181,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Is_Even_Number(i: 2)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -172,6 +196,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='DotnetTests.XUnitTests.CalculatorTests',
       test_name='Is_Even_Number(i: 3)',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
       content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
         'DotnetTests.XUnitTests.CalculatorTests.Is_Even_Number(Int32 i) in '

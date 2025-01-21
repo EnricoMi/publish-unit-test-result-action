@@ -8,11 +8,12 @@
       'title': 'All 1 tests pass in 0s',
       'summary':
         '1 files\u2004\u20031 suites\u2004\u2003\u20020s ⏱️\n1 tests\u20031 ✅\u2003'
-        '0 💤\u20030 ❌\n3 runs\u200a\u20031 ✅\u20031 💤\u20031 ❌\n\nResults for '
-        'commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
-        '0KoLTR2XoYQhLiRj1mWynh3UZBgN29m8k5uwOrIFzYNjMcE1GBNKAmCzzhmzAN905tFTE'
-        'r9ix2O/i2MBPsrNGLA2mDyj2+usdcVLrbGVda4d6ngHFCGmljcJL9uwvXP6N0AAAA=\n',
+        '0 💤\u20030 ❌\u20030 💤\n3 runs\u200a\u20031 ✅\u20031 💤\u20031 ❌\n\n'
+        'Results for commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NwQ6EIAxEf'
+        '4Vw9rDGmz9DCIuxEWVT4GCM/26VSmBPnTedzBxyAmeDHEXfCRkSxALfhDqC3wg/hPSI7+'
+        'vRKiRjWmOBX51WkwbXGBbRYxtxetnZwbTdCwPLeiBz7i/M9YXr9hz4K1do6bBh/LpCJGA'
+        'lwqzleQH9al3fEQEAAA==\n',
       'annotations': [
         {
           'path': '.github',

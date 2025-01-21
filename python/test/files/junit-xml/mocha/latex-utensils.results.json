@@ -1,6 +1,6 @@
 {
   "title": "All 101 tests pass in 0s",
-  "summary": "  1 files    1 suites   0s ⏱️\n101 tests 101 ✅ 0 💤 0 ❌\n109 runs  109 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
+  "summary": "  1 files    1 suites   0s ⏱️\n101 tests 101 ✅ 0 💤 0 ❌ 0 💤\n109 runs  109 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,
@@ -12,11 +12,14 @@
     "tests_skip": 0,
     "tests_fail": 0,
     "tests_error": 0,
+    "tests_flaky": 0,
     "runs": 109,
     "runs_succ": 109,
     "runs_skip": 0,
     "runs_fail": 0,
     "runs_error": 0,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -42,11 +45,14 @@
       "tests_skip": "0",
       "tests_fail": "0",
       "tests_error": "0",
+      "tests_flaky": "0",
       "runs": "109",
       "runs_succ": "109",
       "runs_skip": "0",
       "runs_fail": "0",
       "runs_error": "0",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

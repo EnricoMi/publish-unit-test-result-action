@@ -8,12 +8,12 @@
       'title': '1 errors, 19 fail, 5 skipped, 6 pass in 0s',
       'summary':
         '\u20071 files\u2004\u2003\u20072 suites\u2004\u2003\u20020s ⏱️\n31 '
-        'tests\u2003\u20076 ✅\u20035 💤\u200319 ❌\u20031 🔥\n31 runs\u200a\u2003'
+        'tests\u2003\u20076 ✅\u20035 💤\u200319 ❌\u20031 🔥\u20035 💤\n31 runs\u200a\u2003'
         '11 ✅\u20030 💤\u200319 ❌\u20031 🔥\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02NQQqAIBBFr'
-        'yKuW2RRUJcJsaIhyxh1Fd29sdLczXsf3px8Bj1Z3jNRMG49uAcqgtGjdGB2wpKQBhemWk'
-        'QYrFeKTPuLFQ4STRKzBB3aXTITosHvHfo9FcMdg+IXb7CMnPcekeeU2TZwBN/F7CL5dQP'
-        'prhoZ4gAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12N0Q6DIAxFf'
+        '4XwvAfZMhP9GUMYZo0oS4GHZdm/r2jB6VN7T296PnIEZ4PshboIGRLENVwpPBLqCH6h2F'
+        'CkQ8ynmyphCMkYIu0OJngRuFcwanD5d1eJRfTIOu44Pb1ZgmmpjrwXhdrBpijlg2EF/4K'
+        'tcfo/oKXBwPh5hkiBNxGeWn5/HKV4WBYBAAA=\n',
       'annotations': [
         {
           'path': '/',

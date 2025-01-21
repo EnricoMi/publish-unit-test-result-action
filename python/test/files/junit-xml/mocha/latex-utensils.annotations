@@ -8,11 +8,12 @@
       'title': 'All 101 tests pass in 0s',
       'summary':
         '\u2007\u20071 files\u2004\u2003\u2007\u20071 suites\u2004\u2003\u2002'
-        '0s ⏱️\n101 tests\u2003101 ✅\u20030 💤\u20030 ❌\n109 runs\u200a\u2003'
+        '0s ⏱️\n101 tests\u2003101 ✅\u20030 💤\u20030 ❌\u20030 💤\n109 runs\u200a\u2003'
         '109 ✅\u20030 💤\u20030 ❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12MMQ6AIBAEv'
-        '0KoLaDUzxCCEC8imAMq498liIJ2N7O5OagBqwOdCB8IDQniC3NCGcG7jCxjHmKZGH9IhK'
-        'TUX62w9x/CSLAfoRE9VoPJ3c2xQks204qFu2Dhvqf8tkHMUC8SFknPC30yEpLlAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NMQ6AIAwAv'
+        '0KYHXTUzxCCGBtQTIHBGP9ugyjoRO9acgefwGrPB9Y1jPsI4YUxogzgVsKWkBYhrdruIe'
+        'GjUn9lYKt/iEmC/QiN6PB7YqXZs8G43pU+Q4kUUxqJq0TiunAf/AICNT1ZKLcsEAjyxPw'
+        's+XkBTI4J7RkBAAA=\n',
       'annotations': [
         {
           'path': '.github',

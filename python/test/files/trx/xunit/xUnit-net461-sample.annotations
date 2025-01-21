@@ -10,10 +10,10 @@
         '6 tests\u2002\u2003\u20032 ✅\u2003\u20030s ⏱️\n1 suites\u2003\u20031 '
         '💤\n1 files\u2004\u2002\u2003\u20033 ❌\n\nResults for commit commit '
         's.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBAFr'
-        '0KoLfwkFl7GEJS4UcEsUBnv7spH6N7MZufmCo7V8ol1DePWg/th8SgcGE3YEtLBfacx79'
-        'l6KUn0RexwpecolICDxPCLFdFgCqLXuffNOhe51AJXscB1S5rzBEeQFrOb4M8LVJ41VN0'
-        'AAAA=\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6EIAxFr'
+        '0JYu5jRxIWXIQQhNqJMCiyM8e4WQSWz4r/X8rtzA1Z7PrBvw7iPEB4YI8oAbiX8ENIgpF'
+        'F/Z+GjUiTaV8zwK5+zMBIsie4RGtFhXSiMlfNWDMb1vpBifSDz239xVX9x3Z4X/soFanq'
+        'KUG5ZIBCUxPwk+XEC7JGuJhEBAAA=\n',
       'annotations': [
         {
           'path': 'SampleProject.xUnit.TestServiceTests',

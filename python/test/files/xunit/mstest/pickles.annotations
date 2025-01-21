@@ -8,12 +8,12 @@
       'title': '1 fail, 2 pass in 0s',
       'summary':
         '1 files\u2004\u20031 suites\u2004\u2003\u20020s ⏱️\n3 tests\u20032 ✅\u2003'
-        '0 💤\u20031 ❌\n4 runs\u200a\u20033 ✅\u20030 💤\u20031 ❌\n\nResults for '
-        'commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBBEr'
-        '0KoLVSsvIwhqHEjH7NAZby7qwLSzZuZvJOvoBfPR9Y1jPsIocAcUQZwlrAlpCE8k8h58l'
-        'EpKvq/2OGo39MqQSfbVyyIDtMFo318Q4pZJwr/tpcr2cu1SzljIBCkxPwm+XUDYSIL8t0'
-        'AAAA=\n',
+        '0 💤\u20031 ❌\u20030 💤\n4 runs\u200a\u20033 ✅\u20030 💤\u20031 ❌\n\n'
+        'Results for commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NwQ6DIBBEf'
+        '4Vw7qFWT/4MIYhxI4JZ4NA0/feuugr1tPNmJzMfOYKzUfaieQgZM6QLhow6QfCET0J6pO'
+        '3VnlrFbAwZr2LMsNZpNWpw3HYYFjHgf8Tp+c0OZr8tdCzPgfbi0r9zVb9z3X4EbuUKLR0'
+        '2TFgWSASsRJy0/P4AV3WWjxEBAAA=\n',
       'annotations': [
         {
           'path': 'Pickles.TestHarness.xUnit.AdditionFeature',

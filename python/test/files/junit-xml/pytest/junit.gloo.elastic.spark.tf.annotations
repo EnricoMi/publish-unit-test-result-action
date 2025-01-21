@@ -10,10 +10,10 @@
         '22 tests\u2002\u2003\u200320 ✅\u2003\u200310m 27s ⏱️\n\u20071 suites\u2003'
         '\u2003\u20072 💤\n\u20071 files\u2004\u2002\u2003\u2003\u20070 ❌\n\n'
         'Results for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMMQ6AIAxFr'
-        '0KYHZRBEy9jCGpsFDAFJuPdLaigW9/7zTv4DNvkeM+ainEXwGcYA0oP1hC2oiNBk4+jEC'
-        '8MLigVTV3MCns0WcwSNhLlY0K0+BgMJhfj/QveovQSf3KJvzVltQZP8FzMLZKfF82Ojyn'
-        'jAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6DIBBFr'
+        '0JYu7AsNPEyhlCIE1GaARZN07t3QATtaua9P5n/4Qas9nxij45xHyFUeEaUAdxOOIiRBE'
+        'UhhUKcMPuoVDJ9Myu8kqnCSLAk2oVGdHgzxsr1XQzGvXak/VZxiNaQ+VKQ+fr/OPh7P6O'
+        'mUYRy2waBoGzML5J/f6gkPmAXAQAA\n',
       'annotations': [
         {
           'path': '.github',

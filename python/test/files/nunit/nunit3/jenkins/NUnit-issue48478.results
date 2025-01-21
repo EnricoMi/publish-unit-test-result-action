@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=0,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=17,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -23,6 +27,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -35,6 +41,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestAllRawData',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout='Connecting to Wombat Database\n    Project Filename : '
@@ -50,6 +58,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestFirst10RawData',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout='Connecting to Wombat Database\n    Project Filename : '
@@ -65,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestAllInfo',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout='Connecting to Wombat Database\n    Project Filename : '

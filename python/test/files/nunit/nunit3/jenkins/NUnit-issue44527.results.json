@@ -1,6 +1,6 @@
 {
   "title": "140 fail, 6 pass in 14m 11s",
-  "summary": "  1 files  155 suites   14m 11s ⏱️\n146 tests   6 ✅ 0 💤 140 ❌\n150 runs    6 ✅ 0 💤 144 ❌\n\nResults for commit commit s.\n",
+  "summary": "  1 files  155 suites   14m 11s ⏱️\n146 tests   6 ✅ 0 💤 140 ❌ 0 💤\n150 runs    6 ✅ 0 💤 144 ❌\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,
@@ -12,11 +12,14 @@
     "tests_skip": 0,
     "tests_fail": 140,
     "tests_error": 0,
+    "tests_flaky": 0,
     "runs": 150,
     "runs_succ": 6,
     "runs_skip": 0,
     "runs_fail": 144,
     "runs_error": 0,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -1302,11 +1305,14 @@
       "tests_skip": "0",
       "tests_fail": "140",
       "tests_error": "0",
+      "tests_flaky": "0",
       "runs": "150",
       "runs_succ": "6",
       "runs_skip": "0",
       "runs_fail": "144",
       "runs_error": "0",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

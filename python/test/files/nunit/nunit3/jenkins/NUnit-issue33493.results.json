@@ -1,6 +1,6 @@
 {
   "title": "All 1 tests pass, 1 skipped in 6s",
-  "summary": "1 files  2 suites   6s ⏱️\n2 tests 1 ✅ 1 💤 0 ❌\n2 runs  2 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
+  "summary": "1 files  2 suites   6s ⏱️\n2 tests 1 ✅ 1 💤 0 ❌ 1 💤\n2 runs  2 ✅ 0 💤 0 ❌\n\nResults for commit commit s.\n",
   "conclusion": "success",
   "stats": {
     "files": 1,
@@ -12,11 +12,14 @@
     "tests_skip": 1,
     "tests_fail": 0,
     "tests_error": 0,
+    "tests_flaky": 0,
     "runs": 2,
     "runs_succ": 2,
     "runs_skip": 0,
     "runs_fail": 0,
     "runs_error": 0,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -51,11 +54,14 @@
       "tests_skip": "1",
       "tests_fail": "0",
       "tests_error": "0",
+      "tests_flaky": "0",
       "runs": "2",
       "runs_succ": "2",
       "runs_skip": "0",
       "runs_fail": "0",
       "runs_error": "0",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

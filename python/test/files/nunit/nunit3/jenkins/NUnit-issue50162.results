@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=3,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=2,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -23,6 +27,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=3,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -35,6 +41,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestWithParameters("Foo")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -48,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestWithParameters("Bar")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -61,6 +71,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestWithParameters("Ä")',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='  Expected: greater than 2\n  But was:  1\n',
       content='   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in '
         'C:\\Program Files '
@@ -77,6 +89,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='TestWithParameters("Ö")',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='  Expected: greater than 2\n  But was:  1\n',
       content='   bei UnitTests.HelloWorldTests.TestWithParameters(String param) in '
         'C:\\Program Files '
@@ -93,6 +107,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='DoATest',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -106,6 +122,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='FailThisTest',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Oh no the test failed!',
       content='   bei UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files '
         '(x86)\\Jenkins\\workspace\\Build-VS-project\\HelloWorld\\UnitTests\\HelloWo'
