@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=2,
   suite_failures=1,
   suite_errors=1,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=2,
       failures=1,
       errors=1,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Test with "quotes" in the test name',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message='A message with "quotes"',
       content='Content with "quotes"',
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name="Test with 'apostrophe' in the test name",
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message="A message with 'apostrophes'",
       content="Content with 'apostrophes'",
       stdout=None,
@@ -52,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Test with & in the test name',
       result='error',
+      is_flaky=False,
+      is_rerun=False,
       message='A message with &',
       content='Content with &',
       stdout=None,
@@ -65,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Test with < and > in the test name',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message='A message with < and >',
       content='Content with < and >',
       stdout=None,

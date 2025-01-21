@@ -10,9 +10,10 @@
         '1 files\u2004\u20031 suites\u2004\u2003\u20021s ⏱️\n4 tests\u20031 ✅\u2003'
         '1 💤\u20031 ❌\u20031 🔥\n4 runs\u200a\u2003-2 ✅\u20033 💤\u20032 ❌\u2003'
         '1 🔥\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
-        '0KotfBTeRlCEONGPmYXKuPdlQhEujdvkrn4BkYTX9jQMU4RQoU1ogzgXcZXhKTmsgVFpf'
-        '5S0AFnc2wSTHNoRI/5wehKL82S68d6fLmpcK5V/48pby2EF/JitEt+P6y+BE/eAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NwQ6DIBBEf'
+        '4VwromtnvwZQijEjSjNLhyapv/uGoGIp515s5n5SQfekpzE8yEkJYjVvBPqCGHLloN4RG'
+        'PRipIx11DRAp8GOA2+ARYxYPvi9fJl0jPBtJWFQ5aB7lXBOTAUn/trfq0/H27tCi2fDEx'
+        'YV4hsshI0a/nfARsS8Y4SAQAA\n',
       'annotations': [
         {
           'path': 'test class',

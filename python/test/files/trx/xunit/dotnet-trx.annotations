@@ -10,10 +10,10 @@
         '11 tests\u2002\u2003\u20035 ✅\u2003\u20030s ⏱️\n\u20071 suites\u2003\u2003'
         '1 💤\n\u20071 files\u2004\u2002\u2003\u20035 ❌\n\nResults for commit '
         'commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
-        '0KoLaSw8TKGIMaNfMwClfHuroCK3byZ3XfwBYwOfGSiYzwkiC/MCWUE7wh7QhpinsQDU0'
-        'hKUTN8xQZ7/S7FIsH8LjSix2rE5F7hnVtf4U+XubFlbmXKWwuRoCYWVsnPC2b3Tg/fAAA'
-        'A\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6EIAxFr'
+        '0JYuxgWbrwMIQiZRpRJgYUx3t0OIDKzou+1/H9wC84EPjExMB4SxAZzQhXBb4QvQlrEvB'
+        'I3yJC0JjM+YoFP/V2EVeB+Lgyixz5RWqeWvRpMW6v4zn1D4acgc5efuY8vB3/pEg09VWi'
+        '/rhAJ6sTCW/HzAvea+dcTAQAA\n',
       'annotations': [
         {
           'path': 'DotnetTests.XUnitTests.CalculatorTests',

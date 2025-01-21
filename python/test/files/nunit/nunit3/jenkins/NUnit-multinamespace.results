@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=0,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -23,6 +27,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -35,6 +41,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UnitTests.MainClassTest.TestPropertyValue',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -48,6 +56,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UnitTests.MainClassTest.TestMethodUpdateValue',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -61,6 +71,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='UnitTests.MainClassTest.TestFailure',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -74,6 +86,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='AnotherNS.OtherMainClassTest.TestPropertyValueAgain',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

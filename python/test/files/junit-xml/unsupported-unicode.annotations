@@ -10,10 +10,10 @@
         '7 tests\u2002\u2003\u20031 ✅\u2003\u20038s ⏱️\n1 suites\u2003\u20032 '
         '💤\n1 files\u2004\u2002\u2003\u20032 ❌\u2003\u20032 🔥\n\nResults for '
         'commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMMQ6AIAxFr'
-        '0KYXXTReBlDUGIjgikwGe9uQVDc/ntt3skV6MXxkbUN4y6Af2EOKDxYQzgQ0sHHU1/25I'
-        'KU+TeLDQ4S3SuUAP0TC6LFbDCY0ouzzj381RJXscR1S9p9B0+QF3Or4NcNSlhwMN0AAAA'
-        '=\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ5AMBBFr'
+        '9J0bYENcRlpqmKiVKbtQsTdTSnKav57M/mz8R60srxhRca49eAe6DwKB2YmrAlp4cKqun'
+        'NrvZTxNooRFhLlI3oB+iMUosHviRbjSiYng36+P4SYPrj47T85qT85bb8OfuUtKhpRSDN'
+        'N4AhiYnYQfD8Arma2eREBAAA=\n',
       'annotations': [
         {
           'path': 'test/test-4.py',

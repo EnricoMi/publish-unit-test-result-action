@@ -10,10 +10,10 @@
         '150 tests\u2002\u2003\u2003\u2007\u20076 ✅\u2003\u200314m 11s ⏱️\n'
         '155 suites\u2003\u2003\u2007\u20070 💤\n\u2007\u20071 files\u2004\u2002\u2003\u2003'
         '144 ❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
-        'yKuWxRoRJcJsaKh0hh1Fd29MStr53t/fDsfYRkcb1lVMO4C+ARSEvYBlQdrSDQy7jT6NJ'
-        'cPdS5oTarOYoaNRL4YFSzxkxCvGhAt3kcYTG5G+CYT5+LFv+Blvj1t1xU8wf1iblL8OAG'
-        'dmqg66QAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6DIBBFr'
+        '0JYu2gTaUwvYwhCnIjSDLBojHd3ECraFfPe/+Sv3IDVnr/Zs2HcRwgZhCAcIsoAbiHRiZ'
+        'RTGHL8+FHvo1KkXlVM8CFRG0aCTZ/a9lQa0eG9ZOX0LQbjUlcSXEcy142DbxOHuS7kyt9'
+        'Aj5qeIpSbZwgE5WJ+lHzbASiAt5cdAQAA\n',
       'annotations': [
         {
           'path': 'MyCompanyUiSettings.Tl.My_Tasks._My_Requests.Grid.GridValidation',
@@ -2162,10 +2162,10 @@
         '150 tests\u2002\u2003\u2003\u2007\u20076 ✅\u2003\u200314m 11s ⏱️\n'
         '155 suites\u2003\u2003\u2007\u20070 💤\n\u2007\u20071 files\u2004\u2002\u2003\u2003'
         '144 ❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
-        'yKuWxRoRJcJsaKh0hh1Fd29MStr53t/fDsfYRkcb1lVMO4C+ARSEvYBlQdrSDQy7jT6NJ'
-        'cPdS5oTarOYoaNRL4YFSzxkxCvGhAt3kcYTG5G+CYT5+LFv+Blvj1t1xU8wf1iblL8OAG'
-        'dmqg66QAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6DIBBFr'
+        '0JYu2gTaUwvYwhCnIjSDLBojHd3ECraFfPe/+Sv3IDVnr/Zs2HcRwgZhCAcIsoAbiHRiZ'
+        'RTGHL8+FHvo1KkXlVM8CFRG0aCTZ/a9lQa0eG9ZOX0LQbjUlcSXEcy142DbxOHuS7kyt9'
+        'Aj5qeIpSbZwgE5WJ+lHzbASiAt5cdAQAA\n',
       'annotations': [
         {
           'path':
@@ -4136,10 +4136,10 @@
         '150 tests\u2002\u2003\u2003\u2007\u20076 ✅\u2003\u200314m 11s ⏱️\n'
         '155 suites\u2003\u2003\u2007\u20070 💤\n\u2007\u20071 files\u2004\u2002\u2003\u2003'
         '144 ❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMQQqAIBBFr'
-        'yKuWxRoRJcJsaKh0hh1Fd29MStr53t/fDsfYRkcb1lVMO4C+ARSEvYBlQdrSDQy7jT6NJ'
-        'cPdS5oTarOYoaNRL4YFSzxkxCvGhAt3kcYTG5G+CYT5+LFv+Blvj1t1xU8wf1iblL8OAG'
-        'dmqg66QAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6DIBBFr'
+        '0JYu2gTaUwvYwhCnIjSDLBojHd3ECraFfPe/+Sv3IDVnr/Zs2HcRwgZhCAcIsoAbiHRiZ'
+        'RTGHL8+FHvo1KkXlVM8CFRG0aCTZ/a9lQa0eG9ZOX0LQbjUlcSXEcy142DbxOHuS7kyt9'
+        'Aj5qeIpSbZwgE5WJ+lHzbASiAt5cdAQAA\n',
       'annotations': [
         {
           'path':
