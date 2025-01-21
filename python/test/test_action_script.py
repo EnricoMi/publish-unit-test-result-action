@@ -33,7 +33,7 @@ event = dict(pull_request=dict(head=dict(sha='event_sha')))
 
 
 class Test(unittest.TestCase):
-    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, False, False, 'std-out', 'std-err')]
 
     def test_get_conclusion_success(self):
         for fail_on_errors in [True, False]:
@@ -47,6 +47,8 @@ class Test(unittest.TestCase):
                         suite_skipped=1,
                         suite_failures=0,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=10,
                         suite_details=self.details,
                         cases=[]
@@ -65,6 +67,8 @@ class Test(unittest.TestCase):
                         suite_skipped=1,
                         suite_failures=1,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=10,
                         suite_details=self.details,
                         cases=[]
@@ -83,6 +87,8 @@ class Test(unittest.TestCase):
                         suite_skipped=1,
                         suite_failures=0,
                         suite_errors=1,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=10,
                         suite_details=self.details,
                         cases=[]
@@ -101,6 +107,8 @@ class Test(unittest.TestCase):
                         suite_skipped=0,
                         suite_failures=0,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=0,
                         suite_details=self.details,
                         cases=[]
@@ -119,6 +127,8 @@ class Test(unittest.TestCase):
                         suite_skipped=1,
                         suite_failures=0,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=10,
                         suite_details=self.details,
                         cases=[]
