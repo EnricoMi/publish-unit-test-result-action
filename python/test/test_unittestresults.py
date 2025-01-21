@@ -64,7 +64,7 @@ def create_unit_test_run_delta_results(files=1, files_delta=-1,
 
 
 class TestUnitTestResults(unittest.TestCase):
-    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, False, False, 'std-out', 'std-err')]
 
     def test_parse_error_from_xml_parse_error(self):
         error = XmlParseError('xml parse error')

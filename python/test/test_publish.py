@@ -27,7 +27,7 @@ errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"
 
 class PublishTest(unittest.TestCase):
     old_locale = None
-    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, False, False, 'std-out', 'std-err')]
 
     def test_get_json_path(self):
         detail = {'a': 'A', 'b': 'B', 'c': ['d'], 'e': {}, 'f': None}

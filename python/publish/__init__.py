@@ -62,6 +62,7 @@ pull_request_build_modes = [
 ]
 
 all_tests_list = 'all tests'
+flaky_tests_list = 'flaky tests'
 skipped_tests_list = 'skipped tests'
 none_annotations = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, none_annotations]
@@ -450,6 +451,7 @@ passed_tests_label_md = '✅'
 skipped_tests_label_md = '💤'
 failed_tests_label_md = '❌'
 test_errors_label_md = '🔥'
+flaky_tests_label_md = '❄'
 duration_label_md = '⏱️'
 
 
@@ -567,7 +569,8 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         stats.runs_succ == stats.tests_succ and \
         stats.runs_skip == stats.tests_skip and \
         stats.runs_fail == stats.tests_fail and \
-        stats.runs_error == stats.tests_error
+        stats.runs_error == stats.tests_error and \
+        stats.runs_flaky == stats.tests_flaky
 
     if trivial_runs:
         return get_long_summary_without_runs_md(stats, details_url, test_changes, test_list_changes_limit)
@@ -613,6 +616,7 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     skip_digits, skip_delta_digits = get_formatted_digits(stats.tests_skip, stats.runs_skip)
     fail_digits, fail_delta_digits = get_formatted_digits(stats.tests_fail, stats.runs_fail)
     error_digits, error_delta_digits = get_formatted_digits(stats.tests_error, stats.runs_error)
+    flaky_digits, flaky_delta_digits = get_formatted_digits(stats.tests_flaky, stats.runs_flaky)
 
     errors = len(stats.errors)
     misc_line = '{files} {errors}{suites}  {duration}\n'.format(
@@ -625,23 +629,32 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     tests_error_part = ' {tests_error}'.format(
         tests_error=as_stat_number(stats.tests_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.tests_error) else ''
-    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part}\n'.format(
+    tests_line = '{tests} {tests_succ} {tests_skip} {tests_fail}{tests_error_part} {tests_skip}\n'.format(
         tests=as_stat_number(stats.tests, files_digits, files_delta_digits, all_tests_label_md),
         tests_succ=as_stat_number(stats.tests_succ, success_digits, success_delta_digits, passed_tests_label_md),
         tests_skip=as_stat_number(stats.tests_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
         tests_fail=as_stat_number(stats.tests_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
+        tests_flaky=as_stat_number(stats.tests_flaky, flaky_digits, flaky_delta_digits, flaky_tests_label_md),
         tests_error_part=tests_error_part
     )
 
     runs_error_part = ' {runs_error}'.format(
         runs_error=as_stat_number(stats.runs_error, error_digits, error_delta_digits, test_errors_label_md)
     ) if get_magnitude(stats.runs_error) else ''
-    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}\n'.format(
+    runs_flaky_part = ' {runs_flaky}'.format(
+        runs_flaky=as_stat_number(stats.runs_flaky, flaky_digits, flaky_delta_digits, flaky_tests_label_md)
+    ) if get_magnitude(stats.runs_flaky) else ''
+    runs_rerun_part = ' {runs_rerun}'.format(
+        runs_rerun=as_stat_number(stats.runs_rerun, label=flaky_tests_label_md)
+    ) if get_magnitude(stats.runs_rerun) else ''
+    runs_line = '{runs} {runs_succ} {runs_skip} {runs_fail}{runs_error_part}{runs_flaky_part}{runs_rerun_part}\n'.format(
         runs=as_stat_number(stats.runs, files_digits, files_delta_digits, 'runs '),
         runs_succ=as_stat_number(stats.runs_succ, success_digits, success_delta_digits, passed_tests_label_md),
         runs_skip=as_stat_number(stats.runs_skip, skip_digits, skip_delta_digits, skipped_tests_label_md),
         runs_fail=as_stat_number(stats.runs_fail, fail_digits, fail_delta_digits, failed_tests_label_md),
         runs_error_part=runs_error_part,
+        runs_flaky_part=runs_flaky_part,
+        runs_rerun_part=runs_rerun_part,
     )
 
     details_line = get_details_line_md(stats, details_url)
@@ -687,6 +700,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     passs = as_stat_number(stats.tests_succ, passs_digits, passs_delta_digits, passed_tests_label_md)
     skips = as_stat_number(stats.tests_skip, passs_digits, passs_delta_digits, skipped_tests_label_md)
     fails = as_stat_number(stats.tests_fail, passs_digits, passs_delta_digits, failed_tests_label_md)
+    flaky = (sep + as_stat_number(stats.tests_flaky, passs_digits, passs_delta_digits, flaky_tests_label_md)) if stats.tests_flaky else ""
 
     duration = as_stat_duration(stats.duration, duration_label_md)
     errors = sep + as_stat_number(stats.tests_error, label=test_errors_label_md) if get_magnitude(stats.tests_error) else ''
@@ -696,7 +710,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
 
     return '{tests}{sep}{passs}{sep}{duration}\n' \
-           '{suites}{sep}{skips}\n' \
+           '{suites}{sep}{skips}{flaky}\n' \
            '{files}{sep}{fails}{errors}\n' \
            '{parse_errors}{details}{commit}{test_changes_details}'.format(
                 sep=sep,
@@ -705,6 +719,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
                 duration=duration,
                 suites=suites,
                 skips=skips,
+                flaky=flaky,
                 files=files,
                 fails=fails,
                 errors=errors,
@@ -926,6 +941,14 @@ def get_all_tests_list(cases: UnitTestCaseResults) -> List[str]:
             for (file_name, class_name, test_name) in cases.keys()]
 
 
+def get_flaky_tests_list(cases: UnitTestCaseResults) -> List[str]:
+    if not cases:
+        return []
+    return [get_test_name(file_name, class_name, test_name)
+            for (file_name, class_name, test_name), result in cases.items()
+            if any([case.is_flaky for cases in result.values() for case in cases])]
+
+
 def get_skipped_tests_list(cases: UnitTestCaseResults) -> List[str]:
     if not cases:
         return []
@@ -936,6 +959,10 @@ def get_skipped_tests_list(cases: UnitTestCaseResults) -> List[str]:
 
 def get_all_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
     return get_test_list_annotation(restrict_unicode_list(get_all_tests_list(cases)), 'test', max_chunk_size)
+
+
+def get_flaky_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
+    return get_test_list_annotation(restrict_unicode_list(get_flaky_tests_list(cases)), 'flaky test', max_chunk_size)
 
 
 def get_skipped_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:

@@ -14,6 +14,8 @@ class UnitTestCase:
     class_name: Optional[str]
     test_name: Optional[str]
     result: str
+    is_flaky: bool
+    is_rerun: bool
     message: Optional[str]
     content: Optional[str]
     stdout: Optional[str]
@@ -72,6 +74,8 @@ class ParsedUnitTestResults:
     suite_skipped: int
     suite_failures: int
     suite_errors: int
+    suite_flaky: int
+    suite_rerun: int
     suite_time: int
     suite_details: List['UnitTestSuite']
     cases: List[UnitTestCase]
@@ -85,6 +89,8 @@ class ParsedUnitTestResults:
             self.suite_skipped,
             self.suite_failures,
             self.suite_errors,
+            self.suite_flaky,
+            self.suite_rerun,
             self.suite_time,
             self.suite_details,
             self.cases,
@@ -100,12 +106,15 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
                    cases_skipped: int,
                    cases_failures: int,
                    cases_errors: int,
+                   cases_flaky: int,
+                   cases_rerun: int,
                    cases_time: float,
                    case_results: UnitTestCaseResults,
                    tests: int,
                    tests_skipped: int,
                    tests_failures: int,
-                   tests_errors: int) -> 'UnitTestResults':
+                   tests_errors: int,
+                   tests_flaky: int) -> 'UnitTestResults':
         return UnitTestResults(
             files=self.files,
             errors=self.errors,
@@ -114,6 +123,8 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             suite_skipped=self.suite_skipped,
             suite_failures=self.suite_failures,
             suite_errors=self.suite_errors,
+            suite_flaky=self.suite_flaky,
+            suite_rerun=self.suite_rerun,
             suite_time=self.suite_time,
             suite_details=self.suite_details,
             commit=self.commit,
@@ -122,13 +133,16 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             cases_skipped=cases_skipped,
             cases_failures=cases_failures,
             cases_errors=cases_errors,
+            cases_flaky=cases_flaky,
+            cases_rerun=cases_rerun,
             cases_time=cases_time,
             case_results=case_results,
 
             tests=tests,
             tests_skipped=tests_skipped,
             tests_failures=tests_failures,
-            tests_errors=tests_errors
+            tests_errors=tests_errors,
+            tests_flaky=tests_flaky
         )
 
     def without_cases(self):
@@ -139,6 +153,8 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             cases_skipped=self.suite_skipped,
             cases_failures=self.suite_failures,
             cases_errors=self.suite_errors,
+            cases_flaky=self.suite_flaky,
+            cases_rerun=self.suite_rerun,
             cases_time=self.suite_time,
             case_results=create_unit_test_case_results(),
 
@@ -146,6 +162,7 @@ class ParsedUnitTestResultsWithCommit(ParsedUnitTestResults):
             tests_skipped=self.suite_skipped,
             tests_failures=self.suite_failures,
             tests_errors=self.suite_errors,
+            tests_flaky=self.suite_flaky,
         )
 
 
@@ -156,6 +173,8 @@ class UnitTestSuite:
     skipped: int
     failures: int
     errors: int
+    flaky: int
+    rerun: int
     stdout: Optional[str]
     stderr: Optional[str]
 
@@ -166,6 +185,8 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
     cases_skipped: int
     cases_failures: int
     cases_errors: int
+    cases_flaky: int
+    cases_rerun: int
     cases_time: float
     case_results: UnitTestCaseResults
 
@@ -173,6 +194,7 @@ class UnitTestResults(ParsedUnitTestResultsWithCommit):
     tests_skipped: int
     tests_failures: int
     tests_errors: int
+    tests_flaky: int
 
 
 @dataclass(frozen=True)
@@ -189,12 +211,15 @@ class UnitTestRunResults:
     tests_skip: int
     tests_fail: int
     tests_error: int
+    tests_flaky: int
 
     runs: int
     runs_succ: int
     runs_skip: int
     runs_fail: int
     runs_error: int
+    runs_flaky: int
+    runs_rerun: int
 
     commit: str
 
@@ -252,12 +277,16 @@ class UnitTestRunResults:
             tests_skip=self.tests_skip,
             tests_fail=self.tests_fail,
             tests_error=self.tests_error,
+            tests_flaky=self.tests_flaky,
+            tests_rerun=self.tests_rerun,
 
             runs=self.runs,
             runs_succ=self.runs_succ,
             runs_skip=self.runs_skip,
             runs_fail=self.runs_fail,
             runs_error=self.runs_error,
+            runs_flaky=self.runs_flaky,
+            runs_rerun=self.runs_rerun,
 
             commit=self.commit
         )
@@ -291,12 +320,15 @@ class UnitTestRunResults:
             tests_skip=values.get('tests_skip'),
             tests_fail=values.get('tests_fail'),
             tests_error=values.get('tests_error'),
+            tests_flaky=values.get('tests_flaky'),
 
             runs=values.get('runs'),
             runs_succ=values.get('runs_succ'),
             runs_skip=values.get('runs_skip'),
             runs_fail=values.get('runs_fail'),
             runs_error=values.get('runs_error'),
+            runs_flaky=values.get('runs_flaky'),
+            runs_rerun=values.get('runs_rerun'),
 
             commit=values.get('commit'),
         )
@@ -319,12 +351,15 @@ class UnitTestRunDeltaResults:
     tests_skip: Numeric
     tests_fail: Numeric
     tests_error: Numeric
+    tests_flaky: Numeric
 
     runs: Numeric
     runs_succ: Numeric
     runs_skip: Numeric
     runs_fail: Numeric
     runs_error: Numeric
+    runs_flaky: Numeric
+    runs_rerun: Numeric
 
     commit: str
 
@@ -390,6 +425,7 @@ UnitTestRunResultsOrDeltaResults = Union[UnitTestRunResults, UnitTestRunDeltaRes
 def aggregate_states(states: AbstractSet[str]) -> str:
     return 'error' if 'error' in states else \
            'failure' if 'failure' in states else \
+           'flaky' if 'flaky' in states else \
            'success' if 'success' in states else \
            'skipped'
 
@@ -413,6 +449,8 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
     cases_skipped = [case for case in cases if case.result in ['skipped', 'disabled']]
     cases_failures = [case for case in cases if case.result == 'failure']
     cases_errors = [case for case in cases if case.result == 'error']
+    cases_flaky = [case for case in cases if case.is_flaky]
+    cases_rerun = [case for case in cases if case.is_rerun]
     cases_time = sum([case.time or 0 for case in cases])
 
     # index cases by tests and state
@@ -427,12 +465,19 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
         # collect cases of test and state
         cases_results[test][state].append(case)
 
+        # count flakiness and rerun cases as special states
+        if case.is_flaky:
+            cases_results[test]['flaky'].append(case)
+        if case.is_rerun:
+            cases_results[test]['rerun'].append(case)
+
     test_results = dict()
     for test, states in cases_results.items():
         test_results[test] = aggregate_states(states.keys())
 
     tests = len(test_results)
     tests_skipped = len([test for test, state in test_results.items() if state in ['skipped', 'disabled']])
+    tests_flaky = len([test for test, state in test_results.items() if state == 'flaky'])
     tests_failures = len([test for test, state in test_results.items() if state == 'failure'])
     tests_errors = len([test for test, state in test_results.items() if state == 'error'])
 
@@ -441,6 +486,8 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
         cases_skipped=len(cases_skipped),
         cases_failures=len(cases_failures),
         cases_errors=len(cases_errors),
+        cases_flaky=len(cases_flaky),
+        cases_rerun=len(cases_rerun),
         cases_time=cases_time,
         case_results=cases_results,
 
@@ -449,6 +496,7 @@ def get_test_results(parsed_results: ParsedUnitTestResultsWithCommit,
         tests_skipped=tests_skipped,
         tests_failures=tests_failures,
         tests_errors=tests_errors,
+        tests_flaky=tests_flaky,
     )
 
 
@@ -470,12 +518,15 @@ def get_stats(test_results: UnitTestResults) -> UnitTestRunResults:
         tests_skip=test_results.tests_skipped,
         tests_fail=test_results.tests_failures,
         tests_error=test_results.tests_errors,
+        tests_flaky=test_results.tests_flaky,
 
         runs=test_results.suite_tests,
         runs_succ=runs_succ,
         runs_skip=test_results.suite_skipped,
         runs_fail=test_results.suite_failures,
         runs_error=test_results.suite_errors,
+        runs_flaky=test_results.suite_flaky,
+        runs_rerun=test_results.suite_rerun,
 
         commit=test_results.commit
     )
@@ -510,12 +561,15 @@ def get_stats_delta(stats: UnitTestRunResults,
         tests_skip=get_diff_value(stats.tests_skip, reference_stats.tests_skip),
         tests_fail=get_diff_value(stats.tests_fail, reference_stats.tests_fail),
         tests_error=get_diff_value(stats.tests_error, reference_stats.tests_error),
+        tests_flaky=get_diff_value(stats.tests_flaky, reference_stats.tests_flaky),
 
         runs=get_diff_value(stats.runs, reference_stats.runs),
         runs_succ=get_diff_value(stats.runs_succ, reference_stats.runs_succ),
         runs_skip=get_diff_value(stats.runs_skip, reference_stats.runs_skip),
         runs_fail=get_diff_value(stats.runs_fail, reference_stats.runs_fail),
         runs_error=get_diff_value(stats.runs_error, reference_stats.runs_error),
+        runs_flaky=get_diff_value(stats.runs_flaky, reference_stats.runs_flaky),
+        runs_rerun=get_diff_value(stats.runs_rerun, reference_stats.runs_rerun),
 
         commit=stats.commit,
 

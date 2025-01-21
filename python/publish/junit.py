@@ -4,7 +4,8 @@ from collections import defaultdict
 from typing import Optional, Iterable, Union, List, Dict, Callable, Tuple
 
 import junitparser
-from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
+from junitparser import Element, JUnitXmlError, Skipped
+from junitparser.xunit2 import JUnitXml, TestCase, TestSuite
 from junitparser.junitparser import etree
 
 from publish.unittestresults import ParsedUnitTestResults, UnitTestSuite, UnitTestCase, ParseError
@@ -218,6 +219,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
     suite_skipped = sum([suite.skipped + suite.disabled for result_file, suite in suites if suite.skipped and not math.isnan(suite.skipped)])
     suite_failures = sum([suite.failures for result_file, suite in suites if suite.failures and not math.isnan(suite.failures)])
     suite_errors = sum([suite.errors for result_file, suite in suites if suite.errors and not math.isnan(suite.errors)])
+    suite_flaky = len([case for result_file, suite in suites for case in suite if case.is_flaky])
+    suite_rerun = len([case for result_file, suite in suites for case in suite if case.is_rerun])
     suite_time = int(sum([suite.time for result_file, suite in suites
                           if suite.time and not math.isnan(suite.time)]) * time_factor)
 
@@ -271,6 +274,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
             leaf_suite.skipped,
             leaf_suite.failures,
             leaf_suite.errors,
+            len([case for case in leaf_suite if case.is_flaky]),
+            len([case for case in leaf_suite if case.is_rerun]),
             get_text(leaf_suite._elem, 'system-out'),
             get_text(leaf_suite._elem, 'system-err'),
         )
@@ -287,6 +292,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
             class_name=case.classname,
             test_name=case.name,
             result=get_result(results),
+            is_flaky=case.is_flaky,
+            is_rerun=case.is_rerun,
             message=get_message(results),
             content=get_content(results),
             stdout=case.system_out,
@@ -309,6 +316,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
         suite_skipped=suite_skipped,
         suite_failures=suite_failures,
         suite_errors=suite_errors,
+        suite_flaky=suite_flaky,
+        suite_rerun=suite_rerun,
         suite_time=suite_time,
         suite_details=suite_details,
         # test cases

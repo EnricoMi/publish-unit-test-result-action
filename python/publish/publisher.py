@@ -18,8 +18,8 @@ from publish import __version__, get_json_path, comment_mode_off, digest_prefix,
     comment_mode_failures, comment_mode_errors, \
     get_stats_from_digest, digest_header, get_short_summary, get_long_summary_md, \
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, get_suite_annotations, \
-    get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
-    get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
+    get_all_tests_list_annotation, get_flaky_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
+    get_skipped_tests_list, all_tests_list, flaky_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
     Annotation, SomeTestChanges
 from publish import logger
 from publish.github_action import GithubAction
@@ -548,9 +548,11 @@ class Publisher:
     def get_test_list_annotations(self, cases: UnitTestCaseResults, max_chunk_size: int = 64000) -> List[Annotation]:
         all_tests = get_all_tests_list_annotation(cases, max_chunk_size) \
             if all_tests_list in self._settings.check_run_annotation else []
+        flaky_tests = get_flaky_tests_list_annotation(cases, max_chunk_size) \
+            if flaky_tests_list in self._settings.check_run_annotation else []
         skipped_tests = get_skipped_tests_list_annotation(cases, max_chunk_size) \
             if skipped_tests_list in self._settings.check_run_annotation else []
-        return [annotation for annotation in skipped_tests + all_tests if annotation]
+        return [annotation for annotation in flaky_tests + skipped_tests + all_tests if annotation]
 
     def publish_comment(self,
                         title: str,

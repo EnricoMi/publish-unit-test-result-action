@@ -301,6 +301,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                 suite_skipped=0,
                 suite_failures=0,
                 suite_errors=0,
+                suite_flaky=0,
+                suite_rerun=0,
                 suite_time=0,
                 suite_details=[],
                 cases=[]
@@ -424,13 +426,39 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                         suite_time=2,
                         suite_details=[],
                         cases=[
-                            UnitTestCase(result_file=result_file, test_file=test_file, line=1412, class_name='test.test_spark.SparkTests', test_name='test_check_shape_compatibility', result='success', message=None, content=None, stdout=None, stderr=None, time=6.435),
-                            UnitTestCase(result_file=result_file, test_file=test_file, line=1641, class_name='test.test_spark.SparkTests', test_name='test_get_available_devices', result='skipped', message='get_available_devices only supported in Spark 3.0 and above', content='/horovod/test/test_spark.py:1642: get_available_devices only\n                supported in Spark 3.0 and above\n            ', stdout=None, stderr=None, time=0.001),
-                            UnitTestCase(result_file=result_file, test_file=test_file, line=1102, class_name='test.test_spark.SparkTests', test_name='test_get_col_info', result='success', message=None, content=None, stdout=None, stderr=None, time=6.417),
-                            UnitTestCase(result_file=result_file, test_file=test_file, line=819, class_name='test.test_spark.SparkTests', test_name='test_rsh_events', result='failure', message='self = <test_spark.SparkTests testMethod=test_rsh_events>      def test_rsh_events(self): >       self.do_test_rsh_events(3)  test_spark.py:821:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  test_spark.py:836: in do_test_rsh_events     self.do_test_rsh(command, 143, events=events) test_spark.py:852: in do_test_rsh     self.assertEqual(expected_result, res) E   AssertionError: 143 != 0', content='self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n                def test_rsh_events(self):\n                > self.do_test_rsh_events(3)\n\n                test_spark.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test_spark.py:836: in do_test_rsh_events\n                self.do_test_rsh(command, 143, events=events)\n                test_spark.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            ', stdout=None, stderr=None, time=7.541),
-                            UnitTestCase(result_file=result_file, test_file=test_file, line=813, class_name='test.test_spark.SparkTests', test_name='test_rsh_with_non_zero_exit_code', result='success', message=None, content=None, stdout=None, stderr=None, time=1.514)
+                            UnitTestCase(result_file=result_file, test_file=test_file, line=1412, class_name='test.test_spark.SparkTests', test_name='test_check_shape_compatibility', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=6.435),
+                            UnitTestCase(result_file=result_file, test_file=test_file, line=1641, class_name='test.test_spark.SparkTests', test_name='test_get_available_devices', result='skipped', is_flaky=False, is_rerun=False, message='get_available_devices only supported in Spark 3.0 and above', content='/horovod/test/test_spark.py:1642: get_available_devices only\n                supported in Spark 3.0 and above\n            ', stdout=None, stderr=None, time=0.001),
+                            UnitTestCase(result_file=result_file, test_file=test_file, line=1102, class_name='test.test_spark.SparkTests', test_name='test_get_col_info', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=6.417),
+                            UnitTestCase(result_file=result_file, test_file=test_file, line=819, class_name='test.test_spark.SparkTests', test_name='test_rsh_events', result='failure', is_flaky=False, is_rerun=False, message='self = <test_spark.SparkTests testMethod=test_rsh_events>      def test_rsh_events(self): >       self.do_test_rsh_events(3)  test_spark.py:821:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  test_spark.py:836: in do_test_rsh_events     self.do_test_rsh(command, 143, events=events) test_spark.py:852: in do_test_rsh     self.assertEqual(expected_result, res) E   AssertionError: 143 != 0', content='self = <test_spark.SparkTests testMethod=test_rsh_events>\n\n                def test_rsh_events(self):\n                > self.do_test_rsh_events(3)\n\n                test_spark.py:821:\n                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n                test_spark.py:836: in do_test_rsh_events\n                self.do_test_rsh(command, 143, events=events)\n                test_spark.py:852: in do_test_rsh\n                self.assertEqual(expected_result, res)\n                E AssertionError: 143 != 0\n            ', stdout=None, stderr=None, time=7.541),
+                            UnitTestCase(result_file=result_file, test_file=test_file, line=813, class_name='test.test_spark.SparkTests', test_name='test_rsh_with_non_zero_exit_code', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=1.514)
                         ]
                     ))
+
+    def test_process_parse_junit_xml_files_with_flaky_rerun(self):
+        self.maxDiff = None
+        result_files = [
+            str(test_files_path / 'flaky-results.xml'),
+            str(test_files_path / 'rerun-results.xml')
+        ]
+        self.assertEqual(
+            str(process_junit_xml_elems(parse_junit_xml_files(result_files, False, False))),
+            str(ParsedUnitTestResults(
+                files=2,
+                errors=[],
+                suites=2,
+                suite_tests=2,
+                suite_skipped=0,
+                suite_failures=1,
+                suite_errors=0,
+                suite_flaky=1,
+                suite_rerun=1,
+                suite_time=0,
+                suite_details=[],
+                cases=[
+                    UnitTestCase(result_file=result_files[0], test_file=None, line=None, class_name='class', test_name='flaky-test', result='flaky', message=None, content=None, stdout='success', stderr=None, time=0.1),
+                    UnitTestCase(result_file=result_files[1], test_file=None, line=None, class_name='class', test_name='fail-test', result='failure', message='message', content='first failure stack trace', stdout='first failure', stderr=None, time=0.1),
+                ]
+            )))
 
     def test_get_results(self):
         success = TestElement('success')
