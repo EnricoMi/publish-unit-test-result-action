@@ -337,6 +337,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                         suite_skipped=0,
                         suite_failures=0,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=int(2.222 * time_factor),
                         suite_details=[],
                         cases=[
@@ -347,6 +349,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 line=None,
                                 test_name='diff options with empty diff column name',
                                 result='success',
+                                is_flaky=False,
+                                is_rerun=False,
                                 message=None,
                                 content=None,
                                 stdout=None,
@@ -360,6 +364,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
+                                is_flaky=False,
+                                is_rerun=False,
                                 message=None,
                                 content=None,
                                 stdout=None,
@@ -373,6 +379,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
+                                is_flaky=False,
+                                is_rerun=False,
                                 message=None,
                                 content=None,
                                 stdout=None,
@@ -386,6 +394,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
+                                is_flaky=False,
+                                is_rerun=False,
                                 message=None,
                                 content=None,
                                 stdout=None,
@@ -399,6 +409,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                                 test_file=None,
                                 line=None,
                                 result='success',
+                                is_flaky=False,
+                                is_rerun=False,
                                 message=None,
                                 content=None,
                                 stdout=None,
@@ -423,6 +435,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                         suite_skipped=1,
                         suite_failures=1,
                         suite_errors=0,
+                        suite_flaky=0,
+                        suite_rerun=0,
                         suite_time=2,
                         suite_details=[],
                         cases=[
@@ -455,8 +469,8 @@ class TestJunit(unittest.TestCase, JUnitXmlParseTest):
                 suite_time=0,
                 suite_details=[],
                 cases=[
-                    UnitTestCase(result_file=result_files[0], test_file=None, line=None, class_name='class', test_name='flaky-test', result='flaky', message=None, content=None, stdout='success', stderr=None, time=0.1),
-                    UnitTestCase(result_file=result_files[1], test_file=None, line=None, class_name='class', test_name='fail-test', result='failure', message='message', content='first failure stack trace', stdout='first failure', stderr=None, time=0.1),
+                    UnitTestCase(result_file=result_files[0], test_file=None, line=None, class_name='class', test_name='flaky-test', result='flaky', is_flaky=False, is_rerun=False, message=None, content=None, stdout='success', stderr=None, time=0.1),
+                    UnitTestCase(result_file=result_files[1], test_file=None, line=None, class_name='class', test_name='fail-test', result='failure', is_flaky=False, is_rerun=False, message='message', content='first failure stack trace', stdout='first failure', stderr=None, time=0.1),
                 ]
             )))
 
