@@ -36,7 +36,7 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners that support Docker:
 
 See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
-Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners:
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners (no Docker needed):
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -48,10 +48,22 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
       test-results/**/*.json
 ```
 
-… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners (no Docker needed):
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/windows@v2
+  if: always()
+  with:
+    files: |
+      test-results\**\*.xml
+      test-results\**\*.trx
+      test-results\**\*.json
+```
+
+For Windows **without PowerShell** installed, there is the Bash shell variant:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
   if: always()
   with:
     files: |
