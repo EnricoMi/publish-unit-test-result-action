@@ -42,10 +42,7 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
   uses: EnricoMi/publish-unit-test-result-action/macos@v2
   if: always()
   with:
-    files: |
-      test-results/**/*.xml
-      test-results/**/*.trx
-      test-results/**/*.json
+    files: …
 ```
 
 … and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners (no Docker needed):
@@ -54,10 +51,7 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
   uses: EnricoMi/publish-unit-test-result-action/windows@v2
   if: always()
   with:
-    files: |
-      test-results\**\*.xml
-      test-results\**\*.trx
-      test-results\**\*.json
+    files: …
 ```
 
 For Windows **without PowerShell** installed, there is the Bash shell variant:
@@ -66,10 +60,7 @@ For Windows **without PowerShell** installed, there is the Bash shell variant:
   uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
   if: always()
   with:
-    files: |
-      test-results\**\*.xml
-      test-results\**\*.trx
-      test-results\**\*.json
+    files: …
 ```
 
 For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
@@ -78,10 +69,7 @@ For **self-hosted** Linux GitHub Actions runners **without Docker** installed, p
   uses: EnricoMi/publish-unit-test-result-action/linux@v2
   if: always()
   with:
-    files: |
-      test-results/**/*.xml
-      test-results/**/*.trx
-      test-results/**/*.json
+    files: …
 ```
 
 See the [notes on running this action as a non-Docker action](#running-as-a-non-docker-action).
