@@ -21,7 +21,7 @@ class TestGitHub(unittest.TestCase):
 
     base_url = f'http://localhost:12380/api'
     auth = github.Auth.Token('login or token')
-    gh = get_github(auth, base_url, retries=1, backoff_factor=0.1, seconds_between_requests=None, seconds_between_writes=None, secondary_rate_wait=3)
+    gh = get_github(auth, base_url, verify=True, retries=1, backoff_factor=0.1, seconds_between_requests=None, seconds_between_writes=None, secondary_rate_wait=3)
 
     @classmethod
     def start_api(cls, app: Flask) -> Process:
