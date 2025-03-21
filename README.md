@@ -36,28 +36,31 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners that support Docker:
 
 See the [notes on running this action with absolute paths](#running-with-absolute-paths) if you cannot use relative test result file paths.
 
-Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners:
+Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runners (no Docker needed):
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/macos@v2
   if: always()
   with:
-    files: |
-      test-results/**/*.xml
-      test-results/**/*.trx
-      test-results/**/*.json
+    files: …
 ```
 
-… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners:
+… and ![Windows](misc/badge-windows.svg) (e.g. `runs-on: windows-latest`) runners (no Docker needed):
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/windows@v2
   if: always()
   with:
-    files: |
-      test-results\**\*.xml
-      test-results\**\*.trx
-      test-results\**\*.json
+    files: …
+```
+
+For Windows **without PowerShell** installed, there is the Bash shell variant:
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
+  if: always()
+  with:
+    files: …
 ```
 
 For **self-hosted** Linux GitHub Actions runners **without Docker** installed, please use:
@@ -66,10 +69,7 @@ For **self-hosted** Linux GitHub Actions runners **without Docker** installed, p
   uses: EnricoMi/publish-unit-test-result-action/linux@v2
   if: always()
   with:
-    files: |
-      test-results/**/*.xml
-      test-results/**/*.trx
-      test-results/**/*.json
+    files: …
 ```
 
 See the [notes on running this action as a non-Docker action](#running-as-a-non-docker-action).
@@ -870,3 +870,26 @@ is **deprecated**, please use an action appropriate for your operating system an
 - Windows (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2`
 
 These are non-Docker variations of this action. For details, see section ["Running as a non-Docker action"](#running-as-a-non-docker-action) above.
+
+The composite action was able to run on any operating system, as long as Bash shell is installed.
+The same behaviour can be achieved with multiple steps, each for a specific operating system:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/linux@2
+  if: runner.os == 'Linux'
+  with:
+    files: test-results/**/*.xml
+
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/macos@2
+  if: runner.os == 'macOS'
+  with:
+    files: test-results/**/*.xml
+
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/windows/bash@2
+  if: runner.os == 'Windows'
+  with:
+    files: test-results/**/*.xml
+```

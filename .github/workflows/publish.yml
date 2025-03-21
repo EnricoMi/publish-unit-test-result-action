@@ -466,7 +466,7 @@ jobs:
         id: test-results
         uses: ./composite
         with:
-          check_name: Test Results (${{ matrix.os-label }} composite python ${{ matrix.python }})
+          check_name: Test Results (${{ matrix.os-label }} composite)
           files: |
             artifacts/**/*.xml
             artifacts\**\*.xml
