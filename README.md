@@ -876,19 +876,19 @@ The same behaviour can be achieved with multiple steps, each for a specific oper
 
 ```yaml
 - name: Publish Test Results
-  uses: ./linux
+  uses: EnricoMi/publish-unit-test-result-action/linux@2
   if: runner.os == 'Linux'
   with:
     files: test-results/**/*.xml
 
 - name: Publish Test Results
-  uses: ./macos
+  uses: EnricoMi/publish-unit-test-result-action/macos@2
   if: runner.os == 'macOS'
   with:
     files: test-results/**/*.xml
 
 - name: Publish Test Results
-  uses: ./windows/bash
+  uses: EnricoMi/publish-unit-test-result-action/windows/bash@2
   if: runner.os == 'Windows'
   with:
     files: test-results/**/*.xml
