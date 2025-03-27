@@ -1592,6 +1592,56 @@ class TestPublisher(unittest.TestCase):
         )
         self.assertEqual(expected, actual)
 
+    def test_get_publish_data_with_pull_request_base_stats(self):
+        earlier_commit = 'base'
+        event = {'before': 'before', 'pull_request': {'base': {'ref': 'main', 'sha': 'base'}}}
+        digest = self.base_digest
+        stats = self.base_stats
+
+        settings = self.create_settings(event=event, event_name='pull_request')
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=digest, check_names=[settings.check_name])
+        publisher = Publisher(settings, gh, gha)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = publisher.get_publish_data(stats.with_errors(errors), self.cases, 'conclusion')
+
+        repo.get_commit.assert_called_once_with(earlier_commit)
+        error_annotations = [get_error_annotation(error) for error in errors]
+        summary_errors = f'{len(errors)} errors\u2004\u2003' if len(errors) > 0 else ''
+        summary = (
+            f'\u20071 files\u2004 ±0\u2002\u2003\u2007{summary_errors}2 suites\u2004 ±0\u2002\u2003\u20023s {duration_label_md} ±0s\n'
+            f'21 {all_tests_label_md} ±0\u2002\u200312 {passed_tests_label_md} ±0\u2002\u20034 {skipped_tests_label_md} ±0\u2002\u20032 {failed_tests_label_md} ±0\u2002\u20033 {test_errors_label_md} ±0\u2002\n'
+            f'37 runs\u200a ±0\u2002\u200325 {passed_tests_label_md} ±0\u2002\u20037 {skipped_tests_label_md} ±0\u2002\u20034 {failed_tests_label_md} ±0\u2002\u20031 {test_errors_label_md} ±0\u2002\n'
+            f'\n'
+            f'Results for commit base.\u2003± Comparison against earlier commit {earlier_commit}.\n'
+        )
+        summary_with_digest = (summary + '\n'
+                                         '[test-results]:data:application/gzip;base64,'
+                                         'H4sIAAAAAAAC/0WOSQ6AIAwAv2J69iJqTPyMQcSkccEUOBn/bk'
+                                         'HAW2dKJ9yw4q4tjFVTV2A9ugiCYfEkHZqTsWXkhYurJsNkvVLh'
+                                         'Uvxmw4tNV8QqcU+9T2giQylJ/gzFdkhzDoq+iK9XHqRclznXwp'
+                                         '+UOQ50DDBLq+F5AXu//vXbAAAA\n'
+                               )
+        expected = PublishData(
+            title='{}3 errors, 2 fail, 4 skipped, 12 pass in 3s'.format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
+            summary=summary,
+            summary_with_digest=summary_with_digest,
+            conclusion='conclusion',
+            stats=stats.with_errors(errors),
+            stats_with_delta=get_stats_delta(stats.with_errors(errors), stats, "earlier"),
+            before_stats=stats,
+            annotations=error_annotations + [
+                Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result file [took 1s]', title='1 out of 2 runs failed: test (class)', raw_details='message\ncontent\nstdout\nstderr'),
+                Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result file [took 1s]', title='1 out of 2 runs with error: test2 (class)', raw_details='error message\nerror content\nerror stdout\nerror stderr'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class ‑ test3'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\nclass ‑ test2\nclass ‑ test3'),
+            ],
+            check_url=None,
+            cases=self.cases,
+        )
+        self.assertEqual(expected, actual)
+
     def do_test_publish_check_with_base_stats(self, errors: List[ParseError]):
         earlier_commit = 'past'
         settings = self.create_settings(event={'before': earlier_commit})
