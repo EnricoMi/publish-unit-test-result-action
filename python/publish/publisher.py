@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses
 import json
 import logging
@@ -34,6 +36,7 @@ class Settings:
     api_url: str
     graphql_url: str
     api_retries: int
+    ssl_verify: bool | str
     event: dict
     event_file: Optional[str]
     event_name: str
