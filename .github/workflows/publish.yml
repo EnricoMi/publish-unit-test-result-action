@@ -242,9 +242,6 @@ jobs:
           - os: ubuntu-latest
             os-label: Linux
             python: "installed"
-          - os: ubuntu-20.04
-            os-label: Linux 20.04
-            python: "installed"
           - os: ubuntu-24.04
             os-label: Linux 24.04
             python: "installed"
