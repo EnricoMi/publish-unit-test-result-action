@@ -1,0 +1,173 @@
+# See https://github.com/typesafegithub/github-actions-typing/
+inputs:
+  github_token:
+    type: string
+
+  github_token_actor:
+    type: string
+
+  github_retries:
+    type: integer
+
+  ssl_verify:
+    type: boolean
+
+  commit:
+    type: string
+
+  check_name:
+    type: string
+
+  comment_title:
+    type: string
+
+  comment_mode:
+    type: enum
+    allowed-values:
+      - always
+      - changes
+      - changes in failures
+      - changes in errors
+      - failures
+      - errors
+      - off
+
+  fail_on:
+    type: enum
+    allowed-values:
+      - nothing
+      - errors
+      - test failures
+
+  action_fail:
+    type: boolean
+
+  action_fail_on_inconclusive:
+    type: boolean
+
+  files:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+
+  junit_files:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+
+  nunit_files:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+
+  xunit_files:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+
+  trx_files:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+
+  time_unit:
+    type: enum
+    allowed-values:
+      - seconds
+      - milliseconds
+
+  test_file_prefix:
+    type: string
+
+  report_individual_runs:
+    type: boolean
+
+  report_suite_logs:
+    type: enum
+    allowed-values:
+      - info
+      - error
+      - any
+      - none
+
+  deduplicate_classes_by_file_name:
+    type: boolean
+
+  large_files:
+    type: boolean
+
+  ignore_runs:
+    type: boolean
+
+  check_run:
+    type: boolean
+
+  job_summary:
+    type: boolean
+
+  compare_to_earlier_commit:
+    type: boolean
+
+  pull_request_build:
+    type: enum
+    allowed-values:
+      - commit
+      - merge
+
+  event_file:
+    type: string
+
+  event_name:
+    type: string
+
+  test_changes_limit:
+    type: integer
+
+  check_run_annotations:
+    type: list
+    separator: ','
+    list-item:
+      type: enum
+      allowed-values:
+        - all tests
+        - skipped tests
+        - none
+
+  check_run_annotations_branch:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+
+  seconds_between_github_reads:
+    type: float
+
+  seconds_between_github_writes:
+    type: float
+
+  secondary_rate_limit_wait_seconds:
+    type: float
+
+  json_file:
+    type: string
+
+  json_thousands_separator:
+    type: string
+
+  json_suite_details:
+    type: boolean
+
+  json_test_case_results:
+    type: boolean
+
+  search_pull_requests:
+    type: boolean
+
+outputs:
+  json:
+    type: string
