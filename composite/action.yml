@@ -223,7 +223,7 @@ runs:
 
     - name: Restore PIP packages cache
       uses: actions/cache/restore@v4
-      if: success() && inputs.use_pip_cache
+      if: success() && inputs.use_pip_cache == 'true'
       id: cache
       continue-on-error: true
       with:
@@ -340,7 +340,7 @@ runs:
 
     - name: Save PIP packages cache
       uses: actions/cache/save@v4
-      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit && inputs.use_pip_cache
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit && inputs.use_pip_cache == 'true'
       continue-on-error: true
       with:
         path: ${{ steps.os.outputs.pip-cache }}
