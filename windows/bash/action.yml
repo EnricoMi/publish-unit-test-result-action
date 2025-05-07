@@ -146,6 +146,10 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
+  use_pip_cache:
+    description: 'Use the pip cache task, for self-hosted runners with persistent storage you might want to disbale this.'
+    default: 'true'
+    required: false
 
 outputs:
   json:
@@ -195,6 +199,7 @@ runs:
 
     - name: Restore PIP packages cache
       uses: actions/cache/restore@v4
+      if: success() && inputs.use_pip_cache
       id: cache
       continue-on-error: true
       with:
@@ -304,7 +309,7 @@ runs:
 
     - name: Save PIP packages cache
       uses: actions/cache/save@v4
-      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
+      if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit && inputs.use_pip_cache
       continue-on-error: true
       with:
         path: '~\AppData\Local\pip\Cache'
