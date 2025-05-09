@@ -20,7 +20,7 @@ runs:
       jq .conclusion "${{ inputs.json_file }}"
 
   - name: JSON output
-    if: always()
+    if: '!cancelled()'
     env:
       TITLE: ${{ fromJSON( inputs.json ).title }}
       SUMMARY: ${{ fromJSON( inputs.json ).summary }}
