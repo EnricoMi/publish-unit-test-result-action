@@ -458,7 +458,6 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
 
     settings = Settings(
         token=get_var('GITHUB_TOKEN', options),
-        actor=get_var('GITHUB_TOKEN_ACTOR', options) or 'github-actions',
         api_url=api_url,
         graphql_url=graphql_url,
         ssl_verify=ssl_verify,
