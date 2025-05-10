@@ -78,8 +78,7 @@ class TestPublisher(unittest.TestCase):
         return pr
 
     @staticmethod
-    def create_settings(actor='actor',
-                        comment_mode=comment_mode_always,
+    def create_settings(comment_mode=comment_mode_always,
                         check_run=True,
                         job_summary=True,
                         compare_earlier=True,
@@ -98,7 +97,6 @@ class TestPublisher(unittest.TestCase):
                         search_pull_requests: bool = False):
         return Settings(
             token=None,
-            actor=actor,
             api_url='https://the-github-api-url',
             graphql_url='https://the-github-graphql-url',
             api_retries=1,
@@ -2383,7 +2381,7 @@ class TestPublisher(unittest.TestCase):
                          '    pullRequest(number: 1234) {'
                          '      comments(last: 100) {'
                          '        nodes {'
-                         '          id, databaseId, author { login }, body, isMinimized'
+                         '          id, databaseId, viewerDidAuthor, body, isMinimized'
                          '        }'
                          '      }'
                          '    }'
@@ -2402,7 +2400,7 @@ class TestPublisher(unittest.TestCase):
                          '    pullRequest(number: 1234) {'
                          '      comments(last: 100, orderBy: { direction: ASC, field: UPDATED_AT }) {'
                          '        nodes {'
-                         '          id, databaseId, author { login }, body, isMinimized'
+                         '          id, databaseId, viewerDidAuthor, body, isMinimized'
                          '        }'
                          '      }'
                          '    }'
@@ -2414,14 +2412,14 @@ class TestPublisher(unittest.TestCase):
     comments = [
         {
             'id': 'comment one',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': '## Comment Title\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
         {
             'id': 'comment two',
-            'author': {'login': 'someone else'},
+            'viewerDidAuthor': False,
             'body': '## Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
@@ -2429,7 +2427,7 @@ class TestPublisher(unittest.TestCase):
         },
         {
             'id': 'comment three',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': '## Wrong Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
@@ -2437,7 +2435,7 @@ class TestPublisher(unittest.TestCase):
         },
         {
             'id': 'comment four',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': '## Comment Title\n'
                     'more body\n'
                     'no Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
@@ -2445,7 +2443,7 @@ class TestPublisher(unittest.TestCase):
         },
         {
             'id': 'comment five',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': '## Comment Title\n'
                     'more body\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
@@ -2453,14 +2451,14 @@ class TestPublisher(unittest.TestCase):
         },
         {
             'id': 'comment six',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': 'comment',
             'isMinimized': True
         },
         # earlier version of comments with lower case result and comparison
         {
             'id': 'comment seven',
-            'author': {'login': 'github-actions'},
+            'viewerDidAuthor': True,
             'body': '## Comment Title\n'
                     'results for commit dee59820\u2003± comparison against base commit 70b5dd18\n',
             'isMinimized': False
@@ -2468,24 +2466,15 @@ class TestPublisher(unittest.TestCase):
         # comment of different actor
         {
             'id': 'comment eight',
-            'author': {'login': 'other-actor'},
+            'viewerDidAuthor': False,
             'body': '## Comment Title\n'
                     'Results for commit dee59820.\u2003± Comparison against base commit 70b5dd18.\n',
             'isMinimized': False
         },
-        # malformed comments
-        {
-            'id': 'comment nine',
-            'author': None,
-        },
-        {
-            'id': 'comment ten',
-            'author': {},
-        },
     ]
 
     def test_get_action_comments(self):
-        settings = self.create_settings(actor='github-actions')
+        settings = self.create_settings()
         gh, gha, req, repo, commit = self.create_mocks()
         publisher = Publisher(settings, gh, gha)
 
@@ -2496,20 +2485,8 @@ class TestPublisher(unittest.TestCase):
         self.assertEqual(3, len(expected))
         self.assertEqual(expected, actual)
 
-    def test_get_action_comments_other_actor(self):
-        settings = self.create_settings(actor='other-actor')
-        gh, gha, req, repo, commit = self.create_mocks()
-        publisher = Publisher(settings, gh, gha)
-
-        expected = [comment
-                    for comment in self.comments
-                    if comment.get('id') == 'comment eight']
-        actual = publisher.get_action_comments(self.comments, is_minimized=None)
-        self.assertEqual(1, len(expected))
-        self.assertEqual(expected, actual)
-
     def test_get_action_comments_not_minimized(self):
-        settings = self.create_settings(actor='github-actions')
+        settings = self.create_settings()
         gh, gha, req, repo, commit = self.create_mocks()
         publisher = Publisher(settings, gh, gha)
 
