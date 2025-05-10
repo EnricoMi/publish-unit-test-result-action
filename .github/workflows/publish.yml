@@ -107,7 +107,6 @@ jobs:
             -e "INPUT_LOG_LEVEL" \
             -e "INPUT_ROOT_LOG_LEVEL" \
             -e "INPUT_GITHUB_TOKEN" \
-            -e "INPUT_GITHUB_TOKEN_ACTOR" \
             -e "INPUT_GITHUB_RETRIES" \
             -e "INPUT_SSL_VERIFY" \
             -e "INPUT_COMMIT" \
