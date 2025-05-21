@@ -259,7 +259,7 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
 
     def get_text(elem, tag):
         child = elem.find(tag)
-        if child is not None:
+        if child is not None and child.text is not None:
             text = child.text.strip()
             return text if text else None
         return None
