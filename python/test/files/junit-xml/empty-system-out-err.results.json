@@ -1,0 +1,53 @@
+{
+  "title": "All 1 tests pass in 1s",
+  "summary": "1 tests   1 ✅  1s ⏱️\n1 suites  0 💤\n1 files    0 ❌\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 1,
+    "tests": 1,
+    "tests_succ": 1,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "runs": 1,
+    "runs_succ": 1,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There is 1 test, see \"Raw output\" for the name of the test.",
+      "title": "1 test found",
+      "raw_details": "Suite ‑ test"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "1",
+      "tests": "1",
+      "tests_succ": "1",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "runs": "1",
+      "runs_succ": "1",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

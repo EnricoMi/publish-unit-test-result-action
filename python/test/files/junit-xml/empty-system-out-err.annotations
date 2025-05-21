@@ -1,0 +1,29 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 1 tests pass in 1s',
+      'summary':
+        '1 tests\u2002\u2003\u20031 ✅\u2003\u20031s ⏱️\n1 suites\u2003\u20030 '
+        '💤\n1 files\u2004\u2002\u2003\u20030 ❌\n\nResults for commit commit '
+        's.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
+        '0KoLbT1MoYgxI18zC5UxruLiAjdm3nJnFyDUcRnNg2MU4RQYY0oAnhXMB2B2r1QlLIXOx'
+        'xJjFVoAaYTCtFjMRjd13tmm3v5r2VuYpnblvTWQkhQFqNN8OsG6gUbdt0AAAA=\n',
+      'annotations': [
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There is 1 test, see "Raw output" for the name of the test.',
+          'title': '1 test found',
+          'raw_details': 'Suite ‑ test'
+        }
+      ]
+    }
+  }
+]
