@@ -8,8 +8,8 @@ inputs:
     default: ${{ github.token }}
     required: false
   github_token_actor:
-    description: 'The name of the GitHub app that owns the GitHub API Access Token (see github_token). Used to identify pull request comments created by this action during earlier runs. Has to be set when `github_token` is set to a GitHub app installation token (other than GitHub actions). Otherwise, existing comments will not be updated, but new comments created. Note: this does not change the bot name of the pull request comments. Defaults to "github-actions".'
-    default: 'github-actions'
+    description: '[deprecated] This is not needed any more as this is detected automatically.'
+    deprecationMessage: 'This is not needed any more as this is detected automatically.'
     required: false
   github_retries:
     description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
@@ -261,7 +261,6 @@ runs:
         echo '::endgroup::'
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
-        GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
         GITHUB_RETRIES: ${{ inputs.github_retries }}
         SSL_VERIFY: ${{ inputs.ssl_verify }}
         COMMIT: ${{ inputs.commit }}
