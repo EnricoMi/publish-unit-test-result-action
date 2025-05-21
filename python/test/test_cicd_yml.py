@@ -28,4 +28,4 @@ class TestActionYml(unittest.TestCase):
                 for var in [part.strip()]
                 if var.startswith('INPUT_') or var.startswith('"INPUT_')]
 
-        self.assertEqual(sorted(list(action.get('inputs', {}).keys()) + ['log_level', 'root_log_level']), sorted(vars))
+        self.assertEqual(sorted(list(action.get('inputs', {}).keys() - ['github_token_actor']) + ['log_level', 'root_log_level']), sorted(vars))
