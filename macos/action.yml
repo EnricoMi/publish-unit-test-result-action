@@ -50,15 +50,19 @@ inputs:
     required: false
   junit_files:
     description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
     required: false
   nunit_files:
     description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
     required: false
   xunit_files:
     description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
     required: false
   trx_files:
     description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
     required: false
   time_unit:
     description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
