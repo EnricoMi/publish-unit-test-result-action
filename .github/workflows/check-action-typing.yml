@@ -1,0 +1,31 @@
+name: Check Action Typing
+
+on:
+  push:
+    branches:
+      - 'master*'
+      - 'devel-*'
+    tags:
+      - '*'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-action-typing:
+    name: Check Action Typing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Action Typing
+        uses: typesafegithub/github-actions-typing@0dc5690c35c564d354dc0c23c56559f0813ed3ac  # v2.2.0
+        with:
+          ignored-action-files: |-
+            .github/actions/test/action.yml
+            misc/action/fetch-workflows/action.yml
+            misc/action/find-workflows/action.yml
+            misc/action/json-output/action.yml
+            misc/action/package-downloads/action.yml

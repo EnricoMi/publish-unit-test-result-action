@@ -86,6 +86,9 @@ Otherwise, the multiple runs overwrite each other's results.
 The action that executed the tests should fail on test failure. The published results however indicate failure if tests fail or errors occur,
 which can be [configured](#configuration) via `fail_on`.*
 
+Thanks to the provided [typings](action-types.yml), it is possible to use this action in a type-safe way using
+[GitHub Workflows Kt](https://github.com/typesafegithub/github-workflows-kt), which allows writing workflow files using a type-safe Kotlin DSL.
+
 ## Permissions
 
 Minimal [workflow job permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs#example-setting-permissions-for-a-specific-job)
