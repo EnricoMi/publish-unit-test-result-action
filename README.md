@@ -26,7 +26,7 @@ or ![ARM Linux](misc/badge-arm.svg) self-hosted runners that support Docker:
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
-  if: always()
+  if: '!cancelled()'
   with:
     files: |
       test-results/**/*.xml
@@ -40,7 +40,7 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/macos@v2
-  if: always()
+  if: '!cancelled()'
   with:
     files: …
 ```
@@ -49,7 +49,7 @@ Use this for ![macOS](misc/badge-macos.svg) (e.g. `runs-on: macos-latest`) runne
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/windows@v2
-  if: always()
+  if: '!cancelled()'
   with:
     files: …
 ```
@@ -58,7 +58,7 @@ For Windows **without PowerShell** installed, there is the Bash shell variant:
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
-  if: always()
+  if: '!cancelled()'
   with:
     files: …
 ```
@@ -67,7 +67,7 @@ For **self-hosted** Linux GitHub Actions runners **without Docker** installed, p
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action/linux@v2
-  if: always()
+  if: '!cancelled()'
   with:
     files: …
 ```
@@ -77,7 +77,8 @@ See the [notes on running this action as a non-Docker action](#running-as-a-non-
 If you see the `"Resource not accessible by integration"` error, you have to grant additional [permissions](#permissions), or
 [setup the support for pull requests from fork repositories and branches created by Dependabot](#support-fork-repositories-and-dependabot-branches).
 
-The `if: always()` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail.
+The `if: '!cancelled()'` clause guarantees that this action always runs, even if earlier steps (e.g., the test step) in your workflow fail,
+but not if the workflow was cancelled.
 
 When run multiple times in one workflow, the [option](#configuration) `check_name` has to be set to a unique value for each instance.
 Otherwise, the multiple runs overwrite each other's results.
@@ -366,7 +367,7 @@ The `json` output of the action can be accessed through the expression `steps.<i
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
-  if: always()
+  if: '!cancelled()'
   with:
     files: "test-results/**/*.xml"
 
@@ -546,7 +547,7 @@ jobs:
         run: python -m pytest test --junit-xml pytest.xml
 
       - name: Upload Test Results
-        if: always()
+        if: '!cancelled()'
         uses: actions/upload-artifact@v4
         with:
           name: Test Results (Python ${{ matrix.python-version }})
@@ -567,7 +568,7 @@ jobs:
 
       # only needed for private repository
       issues: read
-    if: always()
+    if: '!cancelled()'
 
     steps:
       - name: Download Artifacts
@@ -623,7 +624,7 @@ Adjust the value of `path` to fit your setup:
 
 ```yaml
 - name: Upload Test Results
-  if: always()
+  if: '!cancelled()'
   uses: actions/upload-artifact@v4
   with:
     name: Test Results
@@ -722,7 +723,7 @@ Add the event name to `check_name` to avoid different event types overwriting ea
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
-  if: always()
+  if: '!cancelled()'
   with:
     check_name: "Test Results (${{ github.event.workflow_run.event || github.event_name }})"
     files: "test-results/**/*.xml"
@@ -735,7 +736,7 @@ Disabling the pull request comment mode (`"off"`) for events other than `pull_re
 ```yaml
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
-  if: always()
+  if: '!cancelled()'
   with:
     # set comment_mode to "always" for pull_request event, set to "off" for all other event types
     comment_mode: ${{ (github.event.workflow_run.event == 'pull_request' || github.event_name == 'pull_request') && 'always' || 'off' }}
@@ -757,7 +758,7 @@ steps:
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
   id: test-results
-  if: always()
+  if: '!cancelled()'
   with:
     files: "test-results/**/*.xml"
 
@@ -818,14 +819,14 @@ you have to copy files to a relative path first, and then use the relative path:
 
 ```yaml
 - name: Copy Test Results
-  if: always()
+  if: '!cancelled()'
   run: |
     cp -Lpr /tmp/test-results test-results
   shell: bash
 
 - name: Publish Test Results
   uses: EnricoMi/publish-unit-test-result-action@v2
-  if: always()
+  if: '!cancelled()'
   with:
      files: |
         test-results/**/*.xml

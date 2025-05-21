@@ -149,7 +149,7 @@ runs:
       shell: bash
   
     - name: Upload Test Results
-      if: always()
+      if: '!cancelled()'
       uses: actions/upload-artifact@v4
       with:
         name: Test Results (python-${{ inputs.python-version }}, ${{ inputs.os }})
