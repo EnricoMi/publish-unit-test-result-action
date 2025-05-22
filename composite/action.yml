@@ -152,7 +152,7 @@ inputs:
     required: false
   pip_cache_path:
     description: 'Path to a PIP cache exclusively used by this action.'
-    default: ''
+    default: 'enricomi-publish-action-cache'
     required: false
 
 outputs:
@@ -356,10 +356,10 @@ runs:
       run: |
         # Clean up
         echo '::group::Clean up'
-        find "${{ steps.os.outputs.pip-cache }}"
+        find enricomi-publish-action-cache
         rm -rf "enricomi-publish-action-venv"
-        rm -rfv "${{ steps.os.outputs.pip-cache }}"
-        find "${{ steps.os.outputs.pip-cache }}"
+        rm -rfv "enricomi-publish-action-cache"
+        find "enricomi-publish-action-cache"
         echo '::endgroup::'
       shell: bash
 

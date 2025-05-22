@@ -152,7 +152,7 @@ inputs:
     required: false
   pip_cache_path:
     description: 'Path to a PIP cache exclusively used by this action.'
-    default: '~/Library/Caches/pip-enricomi-publish-action'
+    default: 'enricomi-publish-action-cache'
     required: false
 
 outputs:
