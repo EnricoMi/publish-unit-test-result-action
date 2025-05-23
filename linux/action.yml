@@ -202,7 +202,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: .pip-enricomi-publish-action
+        path: .enricomi-publish-action-pip
         key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
 
     - name: Create virtualenv
@@ -218,7 +218,7 @@ runs:
         if ! "$PYTHON_BIN" -m virtualenv .enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv .enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          if ! "$PYTHON_BIN" -m pip --cache-dir .pip-enricomi-publish-action install virtualenv
+          if ! "$PYTHON_BIN" -m pip --cache-dir .enricomi-publish-action-pip install virtualenv
           then
             echo "::error::Installing virtualenv package failed"
             exit 1
@@ -244,7 +244,7 @@ runs:
       run: |
         # Install Python dependencies
         echo '::group::Install Python dependencies'
-        "$PYTHON_VENV" -m pip --cache-dir .pip-enricomi-publish-action install -r "$GITHUB_ACTION_PATH/../python/requirements-$DEPENDENCIES_VERSION.txt"
+        "$PYTHON_VENV" -m pip --cache-dir .enricomi-publish-action-pip install -r "$GITHUB_ACTION_PATH/../python/requirements-$DEPENDENCIES_VERSION.txt"
         echo '::endgroup::'
       shell: bash
 
@@ -307,7 +307,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: .pip-enricomi-publish-action
+        path: .enricomi-publish-action-pip
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:

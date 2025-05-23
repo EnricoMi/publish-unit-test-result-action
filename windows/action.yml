@@ -202,7 +202,7 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: .pip-enricomi-publish-action
+        path: .enricomi-publish-action-pip
         key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
 
     - name: Create virtualenv
@@ -217,9 +217,9 @@ runs:
           Write-Output "Creating virtual environment"
           if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m virtualenv .enricomi-publish-action-venv" 2> $null) -And -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m venv .enricomi-publish-action-venv" 2> $null) ) {
             Write-Output "Looks like there is neither virtualenv nor venv package installed"
-            if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip --cache-dir .pip-enricomi-publish-action install --user virtualenv" 2> $null) ) {
+            if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip --cache-dir .enricomi-publish-action-pip install --user virtualenv" 2> $null) ) {
               Write-Output "Installing virtualenv package with PIP option '--user' failed, now trying without"
-              if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip --cache-dir .pip-enricomi-publish-action install virtualenv" 2> $null) ) {
+              if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m pip --cache-dir .enricomi-publish-action-pip install virtualenv" 2> $null) ) {
                 Write-Output "::error::Installing virtualenv package failed"
                 Exit 1
               }
@@ -245,7 +245,7 @@ runs:
         # Install Python dependencies
         Write-Output "::group::Install Python dependencies"
         try {
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip --cache-dir .pip-enricomi-publish-action install -r '$env:GITHUB_ACTION_PATH\..\python\requirements-$env:DEPENDENCIES_VERSION.txt'"
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip --cache-dir .enricomi-publish-action-pip install -r '$env:GITHUB_ACTION_PATH\..\python\requirements-$env:DEPENDENCIES_VERSION.txt'"
         } finally {
           Write-Output "::endgroup::"
         }
@@ -313,7 +313,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: .pip-enricomi-publish-action
+        path: .enricomi-publish-action-pip
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
