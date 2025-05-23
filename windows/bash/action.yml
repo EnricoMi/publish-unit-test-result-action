@@ -202,8 +202,8 @@ runs:
       id: cache
       continue-on-error: true
       with:
-        path: '~\AppData\Local\pip\Cache'
-        key: enricomi-publish-action-${{ runner.os }}-${{ runner.arch }}-pip-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
+        path: .enricomi-publish-action-pip
+        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
 
     - name: Create virtualenv
       id: venv
@@ -215,20 +215,20 @@ runs:
         echo "Python that creates venv: $PYTHON_BIN"
 
         echo "Creating virtual environment"
-        if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv enricomi-publish-action-venv
+        if ! "$PYTHON_BIN" -m virtualenv .enricomi-publish-action-venv && ! "$PYTHON_BIN" -m venv .enricomi-publish-action-venv
         then
           echo "Looks like there is neither virtualenv nor venv package installed"
-          if ! "$PYTHON_BIN" -m pip install --user virtualenv
+          if ! "$PYTHON_BIN" -m pip --cache-dir .enricomi-publish-action-pip install --user virtualenv
           then
             echo "Installing virtualenv package with PIP options '--user' failed, now trying without"
-            if ! "$PYTHON_BIN" -m pip install virtualenv
+            if ! "$PYTHON_BIN" -m pip --cache-dir .enricomi-publish-action-pip install virtualenv
             then
               echo "::error::Installing virtualenv package failed"
               exit 1
             fi
           fi
 
-          if ! "$PYTHON_BIN" -m virtualenv enricomi-publish-action-venv
+          if ! "$PYTHON_BIN" -m virtualenv .enricomi-publish-action-venv
           then
             echo "::error::Cannot create venv after installing virtualenv package"
             exit 1
@@ -236,7 +236,7 @@ runs:
         fi
 
         echo "Finding Python interpreter in venv"
-        PYTHON_VENV="enricomi-publish-action-venv\\Scripts\\python"
+        PYTHON_VENV=".enricomi-publish-action-venv\\Scripts\\python"
         PYTHON_VENV="$("$PYTHON_VENV" -c 'import sys; print(sys.executable)')"
         echo "Python in venv: $PYTHON_VENV"
         echo "PYTHON_VENV=$PYTHON_VENV" >> "$GITHUB_ENV"
@@ -248,7 +248,7 @@ runs:
       run: |
         # Install Python dependencies
         echo '::group::Install Python dependencies'
-        "$PYTHON_VENV" -m pip install -r "$GITHUB_ACTION_PATH/../../python/requirements-$DEPENDENCIES_VERSION.txt"
+        "$PYTHON_VENV" -m pip --cache-dir .enricomi-publish-action-pip install -r "$GITHUB_ACTION_PATH/../../python/requirements-$DEPENDENCIES_VERSION.txt"
         echo '::endgroup::'
       shell: bash
 
@@ -311,7 +311,7 @@ runs:
       if: ( success() || failure() ) && ! steps.cache.outputs.cache-hit
       continue-on-error: true
       with:
-        path: '~\AppData\Local\pip\Cache'
+        path: .enricomi-publish-action-pip
         key: ${{ steps.cache.outputs.cache-primary-key }}
 
 branding:
