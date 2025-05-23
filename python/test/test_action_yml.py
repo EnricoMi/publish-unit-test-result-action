@@ -50,10 +50,6 @@ class TestActionYml(unittest.TestCase):
         dockerfile_action_wo_runs = {k: v for k, v in dockerfile_action.items() if k != 'runs'}
         composite_action_wo_runs = {k: v for k, v in composite_action.items() if k != 'runs'}
 
-        # composite action has inputs.pip_cache_path, which does not exist for dockerfile action
-        self.assertIn('pip_cache_path', composite_action.get('inputs', {}))
-        del composite_action.get('inputs', {})['pip_cache_path']
-
         # composite action has outputs.json.value, which does not exist for dockerfile action
         self.assertIn('value', composite_action.get('outputs', {}).get('json', {}))
         del composite_action.get('outputs', {}).get('json', {})['value']
