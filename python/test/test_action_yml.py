@@ -61,6 +61,7 @@ class TestActionYml(unittest.TestCase):
         # check inputs forwarded to action
         # these are not documented in the action.yml files but still needs to be forwarded
         extra_inputs = ['files', 'root_log_level', 'log_level']
+        # these are documented in the action.yml files but not forwarded to docker
         obsolete_inputs = ['github_token_actor']
         expected = {key.upper(): f'${{{{ inputs.{key} }}}}'
                     for key in list(composite_action.get('inputs', {}).keys() - obsolete_inputs) + extra_inputs}
