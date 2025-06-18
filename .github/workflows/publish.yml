@@ -370,9 +370,6 @@ jobs:
           - os: windows-latest
             os-label: Windows
             python: "venv"
-          - os: windows-2019
-            os-label: Windows 2019
-            python: "installed"
 
     steps:
       - name: Checkout
