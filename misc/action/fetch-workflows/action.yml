@@ -1,6 +1,6 @@
 name: 'Fetch workflows'
 author: 'EnricoMi'
-description: 'A GitHub Action to find workflows matching a query'
+description: 'A GitHub Action to fetc number of dependent workflows'
 
 outputs:
   total_workflows:
@@ -16,9 +16,10 @@ runs:
       run: |
         for i in {1..60}
         do
-          workflows=$(curl -s https://github.com/EnricoMi/publish-unit-test-result-action | (grep "Used by" || true) | sed -e "s/.*title=//" -e 's/["]//g' | cut -d " " -f 1)
-          if [ -n "$workflows" ]
+          content=$(curl -s https://github.com/EnricoMi/publish-unit-test-result-action/network/dependents | grep -B1 Repositories | tr '\n' ' ' | sed -E -e "s/ +/ /g")
+          if [[ $content =~ ([0-9,]+)( Repositories) ]]
           then
+            workflows="${BASH_REMATCH[1]}"
             echo "total=$workflows" >> $GITHUB_OUTPUT
             exit 0
           fi
