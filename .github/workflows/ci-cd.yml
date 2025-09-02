@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Check requirements.txt
         run: |
           (diff -w <(grep -v -e "python_version >  '3.7'" -e "python_version == '3.8'" -e "python_version >  '3.8'" python/requirements.txt | sed -e "s/;.*//") python/requirements-3.7.txt || true) | (! grep -e "^<")
@@ -92,7 +92,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Extract action image and version
         # we deploy from a specific commit on master (the one that mentions a new version the first time)
