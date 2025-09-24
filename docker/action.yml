@@ -185,7 +185,7 @@ runs:
           -e "INPUT_JSON_TEST_CASE_RESULTS" \
           -e "INPUT_LOG_LEVEL" \
           -e "INPUT_ROOT_LOG_LEVEL" \
-          -e "INPUT_GITHUB_TOKEN" \
+          -e "INPUT_GITHUB_TOKEN=${{ inputs.github_token }}" \
           -e "INPUT_GITHUB_RETRIES" \
           -e "INPUT_SSL_VERIFY" \
           -e "INPUT_COMMIT" \
@@ -194,7 +194,7 @@ runs:
           -e "INPUT_FAIL_ON" \
           -e "INPUT_ACTION_FAIL" \
           -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
-          -e "INPUT_FILES" \
+          -e "INPUT_FILES=${{ inputs.files }}" \
           -e "INPUT_JUNIT_FILES" \
           -e "INPUT_NUNIT_FILES" \
           -e "INPUT_XUNIT_FILES" \
