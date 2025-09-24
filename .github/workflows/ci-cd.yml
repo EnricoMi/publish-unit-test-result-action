@@ -40,7 +40,10 @@ jobs:
           curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs
+            https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs \
+            -o logs.zip
+          unzip logs.zip
+          find . -name '*.txt' | while read file; do echo "$file"; cat "$file"; done
         shell: bash
 
   publish-docker-action:
