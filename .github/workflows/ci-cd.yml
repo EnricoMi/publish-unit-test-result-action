@@ -42,7 +42,8 @@ jobs:
             -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
             https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs \
             -o logs.zip
-          unzip logs.zip
+          zip -FF logs.zip --out logs_fixed.zip
+          unzip logs_fixed
           find . -name '*.txt' | while read file; do echo "$file"; cat "$file"; done
         shell: bash
 
