@@ -1,0 +1,273 @@
+name: 'Publish Test Results'
+author: 'EnricoMi'
+description: 'Publishes JUnit, NUnit, XUnit, TRX, JSON test results on GitHub for .NET, Dart, Java, JS, Jest, Mocha, Python, Scala, …'
+
+inputs:
+  github_token:
+    description: 'GitHub API Access Token.'
+    default: ${{ github.token }}
+    required: false
+  github_token_actor:
+    description: '[deprecated] This is not needed any more as this is detected automatically.'
+    deprecationMessage: 'This is not needed any more as this is detected automatically.'
+    required: false
+  github_retries:
+    description: 'Requests to the GitHub API are retried this number of times. The value must be a positive integer or zero.'
+    default: '10'
+    required: false
+  ssl_verify:
+    description: 'Either "true" or "false", in which case it controls whether to verify the Github server’s TLS certificate, or a string, in which case it must be a path to a CA bundle to use. Default is "true".'
+    default: true
+    required: false
+  commit:
+    description: 'Commit SHA to which test results are published. Only needed if the value of GITHUB_SHA does not work for you.'
+    required: false
+  check_name:
+    description: 'Name of the created check run.'
+    default: 'Test Results'
+    required: false
+  comment_title:
+    description: 'An alternative title for the pull request comment. Defaults to value of check_name input.'
+    required: false
+  comment_mode:
+    description: 'The action posts comments to pull requests that are associated with the commit. Set to "always" - always comment, "changes" - comment when changes w.r.t. the target branch exist, "changes in failures" - when changes in the number of failures and errors exist, "changes in errors" - when changes in the number of (only) errors exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments.'
+    default: 'always'
+    required: false
+  fail_on:
+    description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
+    default: 'test failures'
+    required: false
+  action_fail:
+    description: 'When set "true", the action itself fails when tests have failed (see option fail_on).'
+    default: 'false'
+    required: false
+  action_fail_on_inconclusive:
+    description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
+    default: 'false'
+    required: false
+  files:
+    description: 'File patterns of test result files. Relative paths are known to work best, while the non-Docker action also works with absolute paths. Supports "*", "**", "?", and "[]" character ranges. Use multiline string for multiple patterns. Patterns starting with "!" exclude the matching files. There have to be at least one pattern starting without a "!".'
+    required: false
+  junit_files:
+    description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
+    required: false
+  nunit_files:
+    description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
+    required: false
+  xunit_files:
+    description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
+    required: false
+  trx_files:
+    description: 'Deprecated, use "files" option instead.'
+    deprecationMessage: 'Use "files" option instead.'
+    required: false
+  time_unit:
+    description: 'Time values in the test result files have this unit. Supports "seconds" and "milliseconds".'
+    default: 'seconds'
+    required: false
+  test_file_prefix:
+    description: 'Paths in the test result files should be relative to the git repository for annotations to work best. This prefix is added to (if starting with "+"), or remove from (if starting with "-") test file paths. Examples: "+src/" or "-/opt/actions-runner".'
+    required: false
+  report_individual_runs:
+    description: 'Individual runs of the same test may see different failures. Reports all individual failures when set "true" or the first only otherwise.'
+    required: false
+  report_suite_logs:
+    description: 'In addition to reporting regular test logs, also report test suite logs. These are logs provided on suite level, not individual test level. Set to "info" for normal output, "error" for error output, "any" for both, or "none" for no suite logs at all. Defaults to "none".'
+    default: 'none'
+    required: false
+  deduplicate_classes_by_file_name:
+    description: 'De-duplicates classes with same name by their file name when set "true", combines test results for those classes otherwise.'
+    required: false
+  large_files:
+    description: 'Support for large files is enabled when set to "true". Defaults to "false", unless ignore_runs is "true".'
+    required: false
+  ignore_runs:
+    description: 'Does not collect test run information from the test result files, which is useful for very large files. This disables any check run annotations.'
+    default: 'false'
+    required: false
+  check_run:
+    description: 'Set to "true", the results are published as a check run, but it may not be associated with the workflow that ran this action.'
+    default: 'true'
+    required: false
+  job_summary:
+    description: 'Set to "true", the results are published as part of the job summary page of the workflow run.'
+    default: 'true'
+    required: false
+  compare_to_earlier_commit:
+    description: 'Test results are compared to results of earlier commits to highlight changes: "false" - disable comparison, "true" - compare across commits.'
+    default: 'true'
+    required: false
+  pull_request_build:
+    description: 'As part of pull requests, GitHub builds a merge commit, which combines the commit and the target branch. If tests ran on the actual pushed commit, then set this to "commit". Defaults to "merge".'
+    default: 'merge'
+    required: false
+  event_file:
+    description: 'An alternative event file to use. Useful to replace a "workflow_run" event file with the actual source event file.'
+    required: false
+  event_name:
+    description: 'An alternative event name to use. Useful to replace a "workflow_run" event name with the actual source event name: github.event.workflow_run.event.'
+    required: false
+  test_changes_limit:
+    description: 'Limits the number of removed or skipped tests reported on pull request comments. This report can be disabled with a value of 0. The default is 10.'
+    required: false
+  check_run_annotations:
+    description: 'Adds additional information to the check run. This is a comma-separated list of any of the following values: "all tests" - list all found tests, "skipped tests" - list all skipped tests. Set to "none" to add no extra annotations at all.'
+    default: 'all tests, skipped tests'
+    required: false
+  check_run_annotations_branch:
+    description: 'Adds check run annotations only on given branches. Comma-separated list of branch names allowed, asterisk "*" matches all branches. Defaults to event.repository.default_branch or "main, master".'
+    required: false
+  seconds_between_github_reads:
+    description: 'Sets the number of seconds the action waits between concurrent read requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
+    default: '0.25'
+    required: false
+  seconds_between_github_writes:
+    description: 'Sets the number of seconds the action waits between concurrent write requests to the GitHub API. This throttles the API usage to avoid abuse rate limits: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#abuse-rate-limits.'
+    default: '2.0'
+    required: false
+  secondary_rate_limit_wait_seconds:
+    description: 'Sets the number of seconds to wait before retrying secondary rate limit errors. If not set, the default defined in the PyGithub library is used (currently 60 seconds).'
+    required: false
+  json_file:
+    description: 'Results are written to this JSON file.'
+    required: false
+  json_thousands_separator:
+    description: 'Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).'
+    default: ' '
+    required: false
+  json_suite_details:
+    description: 'Write out all suite details to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
+    default: 'false'
+    required: false
+  json_test_case_results:
+    description: 'Write out all individual test case results to the JSON file. Setting this to "true" can greatly increase the size of the output. Defaults to "false".'
+    default: 'false'
+    required: false
+  search_pull_requests:
+    description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
+    default: 'false'
+    required: false
+  docker_platform:
+    description: 'The platform to use when pulling the docker image'
+    required: false
+  docker_registry:
+    description: 'The docker registry to pull the pre-built action from. Defaults to the Github registry ghcr.io'
+    default: 'ghcr.io'
+    required: false
+  docker_image:
+    description: 'The docker image name to pull the pre-built action from. Defaults to enricomi/publish-unit-test-result-action'
+    default: 'enricomi/publish-unit-test-result-action'
+    required: false
+
+outputs:
+  json:
+    description: "Test results as JSON"
+    value: ${{ steps.test-results.outputs.json }}
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Publish Test Results
+    run: |
+      docker run --platform ${{ inputs.docker_platform }} \
+        --workdir $GITHUB_WORKSPACE \
+        --rm \
+        -e "INPUT_CHECK_NAME" \
+        -e "INPUT_JSON_FILE" \
+        -e "INPUT_JSON_SUITE_DETAILS" \
+        -e "INPUT_JSON_TEST_CASE_RESULTS" \
+        -e "INPUT_LOG_LEVEL" \
+        -e "INPUT_ROOT_LOG_LEVEL" \
+        -e "INPUT_GITHUB_TOKEN" \
+        -e "INPUT_GITHUB_RETRIES" \
+        -e "INPUT_SSL_VERIFY" \
+        -e "INPUT_COMMIT" \
+        -e "INPUT_COMMENT_TITLE" \
+        -e "INPUT_COMMENT_MODE" \
+        -e "INPUT_FAIL_ON" \
+        -e "INPUT_ACTION_FAIL" \
+        -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
+        -e "INPUT_FILES" \
+        -e "INPUT_JUNIT_FILES" \
+        -e "INPUT_NUNIT_FILES" \
+        -e "INPUT_XUNIT_FILES" \
+        -e "INPUT_TRX_FILES" \
+        -e "INPUT_TIME_UNIT" \
+        -e "INPUT_TEST_FILE_PREFIX" \
+        -e "INPUT_REPORT_INDIVIDUAL_RUNS" \
+        -e "INPUT_REPORT_SUITE_LOGS" \
+        -e "INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME" \
+        -e "INPUT_LARGE_FILES" \
+        -e "INPUT_IGNORE_RUNS" \
+        -e "INPUT_CHECK_RUN" \
+        -e "INPUT_JOB_SUMMARY" \
+        -e "INPUT_COMPARE_TO_EARLIER_COMMIT" \
+        -e "INPUT_PULL_REQUEST_BUILD" \
+        -e "INPUT_EVENT_FILE" \
+        -e "INPUT_EVENT_NAME" \
+        -e "INPUT_TEST_CHANGES_LIMIT" \
+        -e "INPUT_CHECK_RUN_ANNOTATIONS" \
+        -e "INPUT_CHECK_RUN_ANNOTATIONS_BRANCH" \
+        -e "INPUT_SECONDS_BETWEEN_GITHUB_READS" \
+        -e "INPUT_SECONDS_BETWEEN_GITHUB_WRITES" \
+        -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
+        -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
+        -e "INPUT_SEARCH_PULL_REQUESTS" \
+        -e "HOME" \
+        -e "GITHUB_JOB" \
+        -e "GITHUB_REF" \
+        -e "GITHUB_SHA" \
+        -e "GITHUB_REPOSITORY" \
+        -e "GITHUB_REPOSITORY_OWNER" \
+        -e "GITHUB_RUN_ID" \
+        -e "GITHUB_RUN_NUMBER" \
+        -e "GITHUB_RETENTION_DAYS" \
+        -e "GITHUB_RUN_ATTEMPT" \
+        -e "GITHUB_ACTOR" \
+        -e "GITHUB_TRIGGERING_ACTOR" \
+        -e "GITHUB_WORKFLOW" \
+        -e "GITHUB_HEAD_REF" \
+        -e "GITHUB_BASE_REF" \
+        -e "GITHUB_EVENT_NAME" \
+        -e "GITHUB_SERVER_URL" \
+        -e "GITHUB_API_URL" \
+        -e "GITHUB_GRAPHQL_URL" \
+        -e "GITHUB_REF_NAME" \
+        -e "GITHUB_REF_PROTECTED" \
+        -e "GITHUB_REF_TYPE" \
+        -e "GITHUB_WORKSPACE" \
+        -e "GITHUB_ACTION" \
+        -e "GITHUB_EVENT_PATH" \
+        -e "GITHUB_ACTION_REPOSITORY" \
+        -e "GITHUB_ACTION_REF" \
+        -e "GITHUB_PATH" \
+        -e "GITHUB_ENV" \
+        -e "GITHUB_STEP_SUMMARY" \
+        -e "GITHUB_STATE" \
+        -e "GITHUB_OUTPUT" \
+        -e "RUNNER_OS" \
+        -e "RUNNER_ARCH" \
+        -e "RUNNER_NAME" \
+        -e "RUNNER_TOOL_CACHE" \
+        -e "RUNNER_TEMP" \
+        -e "RUNNER_WORKSPACE" \
+        -e "ACTIONS_RUNTIME_URL" \
+        -e "ACTIONS_RUNTIME_TOKEN" \
+        -e "ACTIONS_CACHE_URL" \
+        -e GITHUB_ACTIONS=true \
+        -e CI=true \
+        -v "$RUNNER_TEMP":"$RUNNER_TEMP" \
+        -v "/var/run/docker.sock":"/var/run/docker.sock" \
+        -v "/home/runner/work/_temp/_github_home":"/github/home" \
+        -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
+        -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
+        -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
+        docker://${{ inputs.docker_registry }}/${{ inputs.docker_image }}:v2.20.0
+    shell: bash
+
+branding:
+  icon: 'check-circle'
+  color: 'green'
