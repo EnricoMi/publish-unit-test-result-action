@@ -171,9 +171,11 @@ runs:
   using: 'composite'
   steps:
   - name: Publish Test Results
+    id: test-results
     run: |
+      # Publish Test Results
       platform="${{ inputs.docker_platform }}"
-      docker run ${platform$:+--platform $platform} \
+      docker run ${platform:+--platform $platform} \
         --workdir $GITHUB_WORKSPACE \
         --rm \
         -e "INPUT_CHECK_NAME" \
