@@ -11,16 +11,11 @@ on:
   schedule:
     - cron: '10 9 1 * *'
   workflow_dispatch:
-permissions: {}
 
 jobs:
   publish-docker-v2:
     name: Publish Test Results (Docker v2)
     runs-on: ubuntu-latest
-    permissions:
-      checks: write
-      pull-requests: write
-      actions: read
 
     steps:
       - name: Env
