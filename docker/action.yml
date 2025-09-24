@@ -172,7 +172,8 @@ runs:
   steps:
   - name: Publish Test Results
     run: |
-      docker run --platform ${{ inputs.docker_platform }} \
+      platform="${{ inputs.docker_platform }}"
+      docker run ${platform$:+--platform $platform} \
         --workdir $GITHUB_WORKSPACE \
         --rm \
         -e "INPUT_CHECK_NAME" \
