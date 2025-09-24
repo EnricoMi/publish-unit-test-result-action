@@ -34,11 +34,9 @@ jobs:
           report_suite_logs: "any"
           log_level: DEBUG
 
-      - name: JSON output
-        uses: ./misc/action/json-output
-        with:
-          json: '${{ steps.test-results.outputs.json }}'
-          json_file: 'tests.json'
+      - name: Env
+        run: env
+        shell: bash
 
   dependencies:
     name: Test python/requirements.txt
