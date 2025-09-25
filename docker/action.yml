@@ -172,9 +172,49 @@ runs:
   steps:
     - name: Publish Test Results
       id: test-results
+      env:
+        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        INPUT_GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
+        INPUT_GITHUB_RETRIES: ${{ inputs.github_retries }}
+        INPUT_SSL_VERIFY: ${{ inputs.ssl_verify }}
+        INPUT_COMMIT: ${{ inputs.commit }}
+        INPUT_CHECK_NAME: ${{ inputs.check_name }}
+        INPUT_COMMENT_TITLE: ${{ inputs.comment_title }}
+        INPUT_COMMENT_MODE: ${{ inputs.comment_mode }}
+        INPUT_FAIL_ON: ${{ inputs.fail_on }}
+        INPUT_ACTION_FAIL: ${{ inputs.action_fail }}
+        INPUT_ACTION_FAIL_ON_INCONCLUSIVE: ${{ inputs.action_fail_on_inconclusive }}
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_JUNIT_FILES: ${{ inputs.junit_files }}
+        INPUT_NUNIT_FILES: ${{ inputs.nunit_files }}
+        INPUT_XUNIT_FILES: ${{ inputs.xunit_files }}
+        INPUT_TRX_FILES: ${{ inputs.trx_files }}
+        INPUT_TIME_UNIT: ${{ inputs.time_unit }}
+        INPUT_TEST_FILE_PREFIX: ${{ inputs.test_file_prefix }}
+        INPUT_REPORT_INDIVIDUAL_RUNS: ${{ inputs.report_individual_runs }}
+        INPUT_REPORT_SUITE_LOGS: ${{ inputs.report_suite_logs }}
+        INPUT_DEDUPLICATE_CLASSES_BY_FILE_NAME: ${{ inputs.deduplicate_classes_by_file_name }}
+        INPUT_LARGE_FILES: ${{ inputs.large_files }}
+        INPUT_IGNORE_RUNS: ${{ inputs.ignore_runs }}
+        INPUT_CHECK_RUN: ${{ inputs.check_run }}
+        INPUT_JOB_SUMMARY: ${{ inputs.job_summary }}
+        INPUT_COMPARE_TO_EARLIER_COMMIT: ${{ inputs.compare_to_earlier_commit }}
+        INPUT_PULL_REQUEST_BUILD: ${{ inputs.pull_request_build }}
+        INPUT_EVENT_FILE: ${{ inputs.event_file }}
+        INPUT_EVENT_NAME: ${{ inputs.event_name }}
+        INPUT_TEST_CHANGES_LIMIT: ${{ inputs.test_changes_limit }}
+        INPUT_CHECK_RUN_ANNOTATIONS: ${{ inputs.check_run_annotations }}
+        INPUT_CHECK_RUN_ANNOTATIONS_BRANCH: ${{ inputs.check_run_annotations_branch }}
+        INPUT_SECONDS_BETWEEN_GITHUB_READS: ${{ inputs.seconds_between_github_reads }}
+        INPUT_SECONDS_BETWEEN_GITHUB_WRITES: ${{ inputs.seconds_between_github_writes }}
+        INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS: ${{ inputs.secondary_rate_limit_wait_seconds }}
+        INPUT_JSON_FILE: ${{ inputs.json_file }}
+        INPUT_JSON_THOUSANDS_SEPARATOR: ${{ inputs.json_thousands_separator }}
+        INPUT_JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
+        INPUT_JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
+        INPUT_SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
       run: |
         # Publish Test Results
-        env
         platform="${{ inputs.docker_platform }}"
         docker run ${platform:+--platform $platform} \
           --workdir $GITHUB_WORKSPACE \
@@ -185,7 +225,7 @@ runs:
           -e "INPUT_JSON_TEST_CASE_RESULTS" \
           -e "INPUT_LOG_LEVEL" \
           -e "INPUT_ROOT_LOG_LEVEL" \
-          -e "INPUT_GITHUB_TOKEN=${{ inputs.github_token }}" \
+          -e "INPUT_GITHUB_TOKEN" \
           -e "INPUT_GITHUB_RETRIES" \
           -e "INPUT_SSL_VERIFY" \
           -e "INPUT_COMMIT" \
@@ -194,7 +234,7 @@ runs:
           -e "INPUT_FAIL_ON" \
           -e "INPUT_ACTION_FAIL" \
           -e "INPUT_ACTION_FAIL_ON_INCONCLUSIVE" \
-          -e "INPUT_FILES=${{ inputs.files }}" \
+          -e "INPUT_FILES" \
           -e "INPUT_JUNIT_FILES" \
           -e "INPUT_NUNIT_FILES" \
           -e "INPUT_XUNIT_FILES" \
@@ -268,7 +308,7 @@ runs:
           -v "/home/runner/work/_temp/_github_home":"/github/home" \
           -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
           -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
-          -v "/home/runner/work/publish-unit-test-result-action/publish-unit-test-result-action":"$GITHUB_WORKSPACE" \
+          -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" \
           ${{ inputs.docker_registry }}/${{ inputs.docker_image }}:v2.20.0
       shell: bash
 
