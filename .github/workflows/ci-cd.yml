@@ -13,40 +13,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-docker-v2:
-    name: Publish Test Results (Docker v2)
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-
-    steps:
-      - name: Env
-        run: env
-        shell: bash
-
-      - name: Create GitHub App token
-        uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          permission-actions: read
-
-      - name: Log
-        run: |
-          echo https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs
-          bash -c "echo https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs"
-          echo https://api.github.com/repos/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}/logs
-          curl -L \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/logs \
-            -o logs.zip
-          zip -FF logs.zip --out logs_fixed.zip
-          unzip logs_fixed
-          find . -name '*.txt' | while read file; do echo "$file"; cat "$file"; done
-        shell: bash
-
   publish-docker-action:
     name: Publish Test Results (Docker action)
     runs-on: ubuntu-latest
