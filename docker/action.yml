@@ -217,6 +217,10 @@ runs:
         INPUT_JSON_SUITE_DETAILS: ${{ inputs.json_suite_details }}
         INPUT_JSON_TEST_CASE_RESULTS: ${{ inputs.json_test_case_results }}
         INPUT_SEARCH_PULL_REQUESTS: ${{ inputs.search_pull_requests }}
+        # not documented
+        INPUT_LOG_LEVEL: ${{ inputs.log_level }}
+        # not documented
+        INPUT_ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
       run: |
         # Publish Test Results
         platform="${{ inputs.docker_platform }}"

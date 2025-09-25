@@ -171,29 +171,6 @@ jobs:
         env:
           DOCKER_BUILD_RECORD_UPLOAD: false
 
-  publish-docker-action:
-    name: Publish Test Results (Docker action)
-    runs-on: ubuntu-latest
-    permissions:
-      checks: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Publish Test Results
-        id: test-results
-        uses: ./docker
-        with:
-          check_name: Test Results (Docker action)
-          files: "artifacts/**/*.xml"
-          json_file: "tests.json"
-          json_suite_details: true
-          json_test_case_results: true
-          report_suite_logs: "any"
-          log_level: DEBUG
-
   event_file:
     name: "Event File"
     runs-on: ubuntu-latest
