@@ -150,14 +150,6 @@ inputs:
     description: 'Prior to v2.6.0, the action used the "/search/issues" REST API to find pull requests related to a commit. If you need to restore that behaviour, set this to "true". Defaults to "false".'
     default: 'false'
     required: false
-  docker_registry:
-    description: 'The docker registry to pull the pre-built action from. Defaults to the Github registry ghcr.io'
-    default: 'ghcr.io'
-    required: false
-  docker_image:
-    description: 'The docker image name to pull the pre-built action from. Defaults to enricomi/publish-unit-test-result-action'
-    default: 'enricomi/publish-unit-test-result-action'
-    required: false
 
 outputs:
   json:
@@ -165,7 +157,7 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://${{ inputs.docker_registry }}/${{ inputs.docker_image }}:v2.20.0'
+  image: 'docker://ghcr.io/enricomi/publish-unit-test-result-action:v2.20.0'
 
 branding:
   icon: 'check-circle'
