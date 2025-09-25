@@ -161,6 +161,10 @@ inputs:
     description: 'The docker image name to pull the pre-built action from. Defaults to enricomi/publish-unit-test-result-action'
     default: 'enricomi/publish-unit-test-result-action'
     required: false
+  docker_tag:
+    description: 'The docker tag pull the pre-built action from.'
+    default: 'v2.20.0'
+    required: false
 
 outputs:
   json:
@@ -309,7 +313,7 @@ runs:
           -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
           -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
           -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" \
-          ${{ inputs.docker_registry }}/${{ inputs.docker_image }}:v2.20.0
+          ${{ inputs.docker_registry }}/${{ inputs.docker_image }}:${{ inputs.docker_tag }}
       shell: bash
 
 branding:
