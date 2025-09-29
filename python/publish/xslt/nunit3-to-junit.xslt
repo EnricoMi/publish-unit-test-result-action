@@ -75,7 +75,7 @@
   </xsl:template>
 
   <xsl:template match="test-case">
-    <testcase name="{@name}" classname="{classname}">
+    <testcase name="{@name}" classname="{@classname}">
       <xsl:if test="@result">
         <xsl:attribute name="status"><xsl:value-of select="@result"/></xsl:attribute>
       </xsl:if>
