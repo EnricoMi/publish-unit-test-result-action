@@ -78,8 +78,15 @@ runs:
         python -m pip cache list || true
 
         # install dependencies
-        python_minor_version="$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
-        python -m pip install --force -r python/requirements-$python_minor_version.txt
+        PYTHON_VERSION="$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        if [[ "$PYTHON_VERSION" == "3.7" ]]; then
+          DEPENDENCIES_VERSION=3.7
+        elif [[ "$PYTHON_VERSION" == "3.8" ]]; then
+          DEPENDENCIES_VERSION=3.8
+        else
+          DEPENDENCIES_VERSION=post-3.8
+        fi
+        python -m pip install --force -r python/requirements-$DEPENDENCIES_VERSION.txt
         python -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
 
         # inspect pip cache
