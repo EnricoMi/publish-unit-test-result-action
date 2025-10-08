@@ -178,7 +178,6 @@ runs:
       id: test-results
       env:
         INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
-        INPUT_GITHUB_TOKEN_ACTOR: ${{ inputs.github_token_actor }}
         INPUT_GITHUB_RETRIES: ${{ inputs.github_retries }}
         INPUT_SSL_VERIFY: ${{ inputs.ssl_verify }}
         INPUT_COMMIT: ${{ inputs.commit }}

@@ -22,6 +22,7 @@ class TestActionYml(unittest.TestCase):
         self.assertTrue(image.startswith('docker://'), image)
         version = image.split(':')[-1]
         self.assertEqual(__version__, version, 'version in action.yml must match __version__ in python/publish/__init__.py')
+        #TODO: check default value of docker_tag in docker/action.yml
 
     def test_composite_action(self):
         self.do_test_composite_action('composite')
@@ -87,11 +88,48 @@ class TestActionYml(unittest.TestCase):
                 self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
                                                                 'to update the MD5 hash in composite/action.yaml')
 
+    def test_docker_action(self):
+        with open(project_root / 'action.yml', encoding='utf-8') as r:
+            base_action = yaml.safe_load(r)
+        expected_inputs = list(base_action.get('inputs', {}).keys() - ['github_token_actor']) + ['log_level', 'root_log_level']
+
+        with open(project_root / 'docker' / 'action.yml', encoding='utf-8') as r:
+            docker_action = yaml.safe_load(r)
+
+        docker_action_steps = docker_action.get('runs', {}).get('steps', [])
+        self.assertEqual(len(docker_action_steps), 1)
+        docker_action_step = docker_action_steps[0]
+
+        docker_image_env = docker_action_step.get('env', {})
+        self.assertTrue(docker_image_env)
+        envs = [var[6:].lower() for var in docker_image_env.keys()]
+        self.assertEqual(sorted(expected_inputs), sorted(envs))
+        expected_env_vals = ["inputs." + env for env in envs]
+        actual_env_vals = [val[3:][:-2].strip() for val in docker_image_env.values() if val.startswith('${{') and val.endswith('}}')]
+        self.assertEqual(expected_env_vals, actual_env_vals)
+
+        docker_image_run = docker_action_step.get('run', {})
+        self.assertTrue(docker_image_run)
+        vars = [var[7:-1].lower() if var.startswith('"') and var.endswith('"') else var[6:].lower()
+                for line in docker_image_run.split('\n')
+                for part in line.split(' ')
+                for var in [part.strip()]
+                if var.startswith('INPUT_') or var.startswith('"INPUT_')]
+        self.assertEqual(sorted(expected_inputs), sorted(vars))
+
     def test_action_types(self):
         self.do_test_action_types('.')
 
     def test_composite_action_types(self):
         self.do_test_action_types('composite')
+
+    def test_docker_action_types(self):
+        self.do_test_action_types('docker', extra_inputs={
+            'docker_platform': {'type': 'string'},
+            'docker_registry': {'type': 'string'},
+            'docker_image': {'type': 'string'},
+            'docker_tag': {'type': 'string'},
+        })
 
     def test_linux_action_types(self):
         self.do_test_action_types('linux')
@@ -105,9 +143,11 @@ class TestActionYml(unittest.TestCase):
     def test_windows_bash_action_types(self):
         self.do_test_action_types('windows/bash')
 
-    def do_test_action_types(self, subaction: str):
+    def do_test_action_types(self, subaction: str, extra_inputs: dict = None):
         with open(project_root / 'action-types.yml', encoding='utf-8') as r:
             root_action_types = yaml.safe_load(r)
+        if extra_inputs:
+            root_action_types.get('inputs', {}).update(extra_inputs)
 
         with open(project_root / f'{subaction}/action.yml', encoding='utf-8') as r:
             action = yaml.safe_load(r)

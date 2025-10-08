@@ -168,6 +168,18 @@ inputs:
   search_pull_requests:
     type: boolean
 
+  docker_platform:
+    type: string
+
+  docker_registry:
+    type: string
+
+  docker_image:
+    type: string
+
+  docker_tag:
+    type: string
+
 outputs:
   json:
     type: string
