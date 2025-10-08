@@ -1056,12 +1056,13 @@ class Test(unittest.TestCase):
             gha = GithubAction(file=string)
             with mock.patch('publish.github_action.logger') as m:
                 log_parse_errors(actual.errors, gha)
+            is_windows = sys.platform == 'win32'
             expected = [
                 # these occur twice, once from FILES and once from *_FILES options
                 "::error::lxml.etree.XMLSyntaxError: Premature end of data in tag skipped line 9, line 11, column 22",
                 "::error file=corrupt-xml.xml::Error processing result file: Premature end of data in tag skipped line 9, line 11, column 22 (corrupt-xml.xml, line 11)",
-                "::error::lxml.etree.XMLSyntaxError: Char 0x0 out of allowed range, line 33, column 16",
-                "::error file=NUnit-issue17521.xml::Error processing result file: Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)",
+                "::error::lxml.etree.XMLSyntaxError: " + ("Char 0x0 out of allowed range, line 33, column 16" if is_windows else "Invalid character: Char 0x0 out of allowed range"),
+                "::error file=NUnit-issue17521.xml::Error processing result file: " + ("Char 0x0 out of allowed range, line 33, column 16 (NUnit-issue17521.xml, line 33)" if is_windows else "Invalid character: Char 0x0 out of allowed range"),
                 "::error::lxml.etree.XMLSyntaxError: attributes construct error, line 5, column 109",
                 "::error file=NUnit-issue47367.xml::Error processing result file: attributes construct error, line 5, column 109 (NUnit-issue47367.xml, line 5)",
                 "::error file=NUnit-sec1752-file.xml::Error processing result file: Entity 'xxe' not defined, line 17, column 51 (NUnit-sec1752-file.xml, line 17)",
