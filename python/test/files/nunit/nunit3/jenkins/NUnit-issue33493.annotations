@@ -24,7 +24,7 @@
             'There is 1 skipped test, see "Raw output" for the name of the '
             'skipped test.',
           'title': '1 skipped test found',
-          'raw_details': 'AddTwoNumbers'
+          'raw_details': 'Automation.Features.CMFeature ‑ AddTwoNumbers'
         },
         {
           'path': '.github',
@@ -34,7 +34,8 @@
           'message': 'There are 2 tests, see "Raw output" for the full list of tests.',
           'title': '2 tests found',
           'raw_details':
-            'AddTwoNumbers\n'
+            'Automation.Features.CMFeature ‑ AddTwoNumbers\n'
+            'Automation.Features.SubFeature ‑ '
             'SubSmokeTest("Geo","Geonw","dev1234567",System.String[])'
         }
       ]

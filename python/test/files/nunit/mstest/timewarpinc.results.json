@@ -21,12 +21,12 @@
   },
   "annotations": [
     {
-      "path": "/",
+      "path": "MP.Tests.AssetValidatorTest",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/timewarpinc.xml [took 2s]",
-      "title": "ValidateSceneContainer(\"Assets/Scenes/Grid/GridTest.unity\") failed",
+      "title": "ValidateSceneContainer(\"Assets/Scenes/Grid/GridTest.unity\") (MP.Tests.AssetValidatorTest) failed",
       "raw_details": "Zenject.ZenjectException : Zenject Validation Failed!  See errors below for details.\n  at Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () [0x0009c] in /github/workspace/Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:82\n  at MP.Tests.AssetValidatorTest.ValidateSceneContainer (System.String scenePath) [0x00009] in /github/workspace/Assets/Tests/EditorMode/AssetValidatorTest.cs:58\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <b67d2f60bf2548a58dc569b37fe71c3d>:0\nAssertionException: Could not find a tilemap tagged with LevelBounds.\nAssertion failure. Value was Null\nExpected: Value was not Null\nUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertBase.cs:29)\nUnityEngine.Assertions.Assert.IsNotNull (UnityEngine.Object value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:58)\nUnityEngine.Assertions.Assert.IsNotNull[T] (T value, System.String message) (at /home/bokken/buildslave/unity/build/Runtime/Export/Assertions/Assert/AssertNull.cs:46)\nMP.Gameplay.Level.LevelInstaller.InstallBindings () (at Assets/Scripts/Gameplay/Level/LevelInstaller.cs:30)\nZenject.CompositeMonoInstaller.InstallBindings () (at Assets/ThirdParty/Zenject/Source/Install/CompositeMonoInstaller.cs:25)\nZenject.Context.InstallInstallers (System.Collections.Generic.List`1[T] normalInstallers, System.Collections.Generic.List`1[T] normalInstallerTypes, System.Collections.Generic.List`1[T] scriptableObjectInstallers, System.Collections.Generic.List`1[T] installers, System.Collections.Generic.List`1[T] installerPrefabs) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:218)\nZenject.Context.InstallInstallers () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/Context.cs:139)\nZenject.SceneContext.InstallBindings (System.Collections.Generic.List`1[T] injectableMonoBehaviours) (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:346)\nZenject.SceneContext.Install () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:265)\nZenject.SceneContext.Validate () (at Assets/ThirdParty/Zenject/Source/Install/Contexts/SceneContext.cs:121)\nZenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup () (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:67)\nUnityEngine.Debug:LogException(Exception)\nModestTree.Log:ErrorException(Exception) (at Assets/ThirdParty/Zenject/Source/Internal/Log.cs:60)\nZenject.Internal.ZenUnityEditorUtil:ValidateCurrentSceneSetup() (at Assets/ThirdParty/Zenject/Source/Editor/ZenUnityEditorUtil.cs:72)\nMP.Tests.AssetValidatorTest:ValidateSceneContainer(String) (at Assets/Tests/EditorMode/AssetValidatorTest.cs:58)\nSystem.Reflection.MethodBase:Invoke(Object, Object[])\nNUnit.Framework.Internal.Reflect:InvokeMethod(MethodInfo, Object, Object[])\nNUnit.Framework.Internal.MethodWrapper:Invoke(Object, Object[])\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod(ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod(ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:Execute(ITestExecutionContext)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /home/bokken/buildslave/unity/build/Editor/Mono/EditorApplication.cs:359)"
     },
     {
@@ -36,7 +36,7 @@
       "annotation_level": "notice",
       "message": "There is 1 test, see \"Raw output\" for the name of the test.",
       "title": "1 test found",
-      "raw_details": "ValidateSceneContainer(\"Assets/Scenes/Grid/GridTest.unity\")"
+      "raw_details": "MP.Tests.AssetValidatorTest ‑ ValidateSceneContainer(\"Assets/Scenes/Grid/GridTest.unity\")"
     }
   ],
   "check_url": "html",
