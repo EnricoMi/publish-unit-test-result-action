@@ -880,19 +880,19 @@ The same behaviour can be achieved with multiple steps, each for a specific oper
 
 ```yaml
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/linux@2
+  uses: EnricoMi/publish-unit-test-result-action/linux@v2
   if: runner.os == 'Linux'
   with:
     files: test-results/**/*.xml
 
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/macos@2
+  uses: EnricoMi/publish-unit-test-result-action/macos@v2
   if: runner.os == 'macOS'
   with:
     files: test-results/**/*.xml
 
 - name: Publish Test Results
-  uses: EnricoMi/publish-unit-test-result-action/windows/bash@2
+  uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2
   if: runner.os == 'Windows'
   with:
     files: test-results/**/*.xml
