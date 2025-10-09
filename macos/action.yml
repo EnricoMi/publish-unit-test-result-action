@@ -203,7 +203,7 @@ runs:
       continue-on-error: true
       with:
         path: .enricomi-publish-action-pip
-        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-b0048519e3287ae9cfc634aeda40cbfe
+        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-cc226b680143b014d26e2c7e6eee8327
 
     - name: Create virtualenv
       id: venv

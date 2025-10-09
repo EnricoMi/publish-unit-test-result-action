@@ -465,7 +465,7 @@
     <testcase classname="FluentValidation.Tests.AbstractValidatorTester" name="Uses_named_parameters_to_validate_ruleset" time="0.0003616"/>
     <testcase classname="FluentValidation.Tests.NotEmptyTester" name="When_validation_fails_error_should_be_set" time="0.0002777"/>
     <testcase classname="FluentValidation.Tests.ConditionTests" name="Sync_condition_is_applied_to_async_validators" time="0.0006349"/>
-    <testcase classname="FluentValidation.Tests.EmailValidatorTests" name="Valid_email_addresses_aspnetcore_compatible(email: &quot;someName@someDomain&#xFFEF;.com&quot;)" time="0.0000157"/>
+    <testcase classname="FluentValidation.Tests.EmailValidatorTests" name="Valid_email_addresses_aspnetcore_compatible(email: &quot;someName@someDomain￯.com&quot;)" time="0.0000157"/>
     <testcase classname="FluentValidation.Tests.EqualValidatorTests" name="Should_store_property_to_compare" time="0.0003283"/>
     <testcase classname="FluentValidation.Tests.LanguageManagerTests" name="Gets_translation_for_bosnian_latin_culture(cultureName: &quot;bs-Latn&quot;)" time="0.0000627"/>
     <testcase classname="FluentValidation.Tests.ValidatorTesterTester" name="TestValidate_runs_async_throws" time="0.000854"/>
@@ -702,7 +702,7 @@
     <testcase classname="FluentValidation.Tests.ValidatorTesterTester" name="ShouldHaveValidationError_should_throw_when_there_are_not_validation_errors__WhenAsyn_Is_Used(age: 17, cardNumber: &quot;cardNumber&quot;)" time="0.0006412"/>
     <testcase classname="FluentValidation.Tests.StringEnumValidatorTests" name="IsValidTests_CaseSensitive_CaseCorrect" time="0.0012556"/>
     <testcase classname="FluentValidation.Tests.RegularExpressionValidatorTests" name="Can_access_expression_in_message_lambda" time="0.0002801"/>
-    <testcase classname="FluentValidation.Tests.EmailValidatorTests" name="Valid_email_addresses_aspnetcore_compatible(email: &quot;&#xA0;@someDomain.com&quot;)" time="0.0000173"/>
+    <testcase classname="FluentValidation.Tests.EmailValidatorTests" name="Valid_email_addresses_aspnetcore_compatible(email: &quot; @someDomain.com&quot;)" time="0.0000173"/>
     <testcase classname="FluentValidation.Tests.RuleDependencyTests" name="Async_inside_dependent_rules_when_parent_rule_not_async" time="0.9925303"/>
     <testcase classname="FluentValidation.Tests.AbstractValidatorTester" name="WhenPreValidationReturnsFalse_ResultReturnToUserImmediatly_Validate(preValidationResult: AnotherInt Test Message)" time="0.0000628"/>
     <testcase classname="FluentValidation.Tests.RuleBuilderTests" name="Adding_a_validator_should_return_builder" time="0.0000714"/>
