@@ -37,13 +37,9 @@ jobs:
     name: "Test macOS"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["macos-13", "macos-14", "macos-15"]'
+      os: '["macos-14", "macos-15", "macos-26"]'
       python-version: '["3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
-      include: >
-        [
-          {"os": "macos-13", "python-version": "3.8"},
-          {"os": "macos-13", "python-version": "3.9"},
-        ]
+      include: '[]'
 
   test-lnx:
     name: "Test Ubuntu"
