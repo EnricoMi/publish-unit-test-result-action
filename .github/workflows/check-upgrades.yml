@@ -1,0 +1,39 @@
+name: Check Upgrades
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+jobs:
+  check:
+    name: Check (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(inputs.python-version) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Check for dependency updates
+        continue-on-error: true
+        run: |
+          pip install tox
+          tox
+          git diff | tee diff
+          if [ -s "diff" ]; then
+            echo 'Dependencies can be upgraded' >> $GITHUB_STEP_SUMMARY
+            echo '```diff' >> $GITHUB_STEP_SUMMARY
+            cat diff >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        shell: bash
+
