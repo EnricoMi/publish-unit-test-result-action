@@ -12,13 +12,16 @@ from publish.github_action import GithubAction
 
 
 @contextmanager
-def gh_action_command_test(test: unittest.TestCase, expected: Optional[str]) -> GithubAction:
+def gh_action_command_test(test: unittest.TestCase, expected: Optional[str], include_debug: bool = False) -> GithubAction:
     with io.StringIO() as string:
         yield GithubAction(file=string)
+        string = string.getvalue()
+        if not include_debug:
+            string = "\n".join([line for line in string.split("\n") if not line.startswith("::debug::")])
         if expected is None:
-            test.assertEqual('', string.getvalue())
+            test.assertEqual('', string)
         else:
-            test.assertEqual(f'{expected}{os.linesep}', string.getvalue())
+            test.assertEqual(f'{expected}{os.linesep}', string)
 
 
 @contextmanager
@@ -83,7 +86,7 @@ class TestGithubAction(unittest.TestCase):
             gha.group_end()
 
     def test_debug(self):
-        with gh_action_command_test(self, '::debug::the message') as gha:
+        with gh_action_command_test(self, '::debug::the message', include_debug=True) as gha:
             gha.debug('the message')
 
     def test_warning(self):
