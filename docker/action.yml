@@ -224,7 +224,7 @@ runs:
         # Publish Test Results
         platform="${{ inputs.docker_platform }}"
         docker run ${platform:+--platform $platform} \
-          --workdir $GITHUB_WORKSPACE \
+          --workdir "/github/workspace" \
           --rm \
           -e "INPUT_CHECK_NAME" \
           -e "INPUT_JSON_FILE" \
@@ -267,7 +267,7 @@ runs:
           -e "INPUT_SECONDARY_RATE_LIMIT_WAIT_SECONDS" \
           -e "INPUT_JSON_THOUSANDS_SEPARATOR" \
           -e "INPUT_SEARCH_PULL_REQUESTS" \
-          -e "HOME" \
+          -e "HOME=/github/home" \
           -e "GITHUB_JOB" \
           -e "GITHUB_REF" \
           -e "GITHUB_SHA" \
@@ -289,7 +289,7 @@ runs:
           -e "GITHUB_REF_NAME" \
           -e "GITHUB_REF_PROTECTED" \
           -e "GITHUB_REF_TYPE" \
-          -e "GITHUB_WORKSPACE" \
+          -e "GITHUB_WORKSPACE=/github/workspace" \
           -e "GITHUB_ACTION" \
           -e "GITHUB_EVENT_PATH" \
           -e "GITHUB_ACTION_REPOSITORY" \
@@ -313,9 +313,7 @@ runs:
           -v "$RUNNER_TEMP":"$RUNNER_TEMP" \
           -v "/var/run/docker.sock":"/var/run/docker.sock" \
           -v "/home/runner/work/_temp/_github_home":"/github/home" \
-          -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
-          -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
-          -v "$GITHUB_WORKSPACE":"$GITHUB_WORKSPACE" \
+          -v "$GITHUB_WORKSPACE":"/github/workspace" \
           ${{ inputs.docker_registry }}/${{ inputs.docker_image }}:${{ inputs.docker_tag }}
       shell: bash
 
