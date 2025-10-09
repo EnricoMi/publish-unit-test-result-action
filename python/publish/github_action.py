@@ -176,7 +176,6 @@ class GithubAction:
             return False
 
         try:
-            self.debug(f'Writing to environment file {env_file_var_name} ({filename})')
             with open(filename, 'a', encoding='utf-8') as file:
                 file.write(content)
         except Exception as e:
