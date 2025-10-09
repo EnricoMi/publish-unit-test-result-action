@@ -22,7 +22,13 @@ class TestActionYml(unittest.TestCase):
         self.assertTrue(image.startswith('docker://'), image)
         version = image.split(':')[-1]
         self.assertEqual(__version__, version, 'version in action.yml must match __version__ in python/publish/__init__.py')
-        #TODO: check default value of docker_tag in docker/action.yml
+
+        with open(project_root / 'docker' / 'action.yml', encoding='utf-8') as r:
+            docker_action = yaml.safe_load(r)
+
+        default_docker_tag = docker_action.get('inputs', {}).get('docker_tag', {}).get('default')
+        self.assertEqual(default_docker_tag, version, 'version in docker/action.yml must match __version__ in python/publish/__init__.py')
+
 
     def test_composite_action(self):
         self.do_test_composite_action('composite')
