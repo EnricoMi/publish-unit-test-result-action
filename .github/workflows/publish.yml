@@ -295,17 +295,11 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         include:
-          - os: macos-13
-            os-label: macOS
-            python: "3.8"
           - os: macos-latest
             os-label: macOS
             python: "venv"
           - os: macos-latest
             os-label: macOS
-            python: "installed"
-          - os: macos-13
-            os-label: macOS 13
             python: "installed"
 
     steps:
