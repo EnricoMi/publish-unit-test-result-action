@@ -356,6 +356,28 @@ and removal, and `skipped tests` to detect new skipped and un-skipped tests, as 
 `check_run_annotations_branch` to contain your default branch.
 </details>
 
+<details>
+<summary>Options related to Docker</summary>
+
+You can control the Docker image used for the action as below. For this, you need to run the action as follows:
+
+```yaml
+- name: Publish Test Results
+  uses: EnricoMi/publish-unit-test-result-action/docker@v2
+  if: (!cancelled())
+  with:
+    docker_registry: ghcr.io
+    files: …
+```
+
+| Option            |               Default Value                | Description                                                                                                      |
+|:------------------|:------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------|
+| `docker_registry` |                 `ghcr.io`                  | The docker registry to pull the pre-built action from. Defaults to the Github registry `ghcr.io`.                |
+| `docker_image`    | `enricomi/publish-unit-test-result-action` | The docker image name to pull the pre-built action from. Defaults to `enricomi/publish-unit-test-result-action`. |
+| `docker_tag`      |      *The same version as in `uses:`*      | The docker tag to pull the pre-built action from. This is usually not needed.                                    |
+| `docker_platform` |                                            | The platform to use when pulling the docker image.                                                               |
+</details>
+
 ## JSON result
 
 The gathered test information are accessible as JSON via [GitHub Actions steps outputs](https://docs.github.com/en/actions/learn-github-actions/contexts#steps-context) string or JSON file.
