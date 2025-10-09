@@ -5,18 +5,33 @@ import time
 import unittest
 from datetime import datetime, timezone
 from json import JSONDecodeError
-from multiprocessing import Process
+from threading import Thread
 from typing import Union, Tuple, Optional
 
 import github.GithubException
 import mock
 import requests.exceptions
-from flask import Flask, Response
+from flask import Flask, Response, request
+from werkzeug.serving import make_server
 
 from publish_test_results import get_github
 
 
-@unittest.skipIf(sys.platform != 'linux', 'Pickling the mock REST endpoint only works Linux')
+class FlaskThread(Thread):
+    def __init__(self, app: Flask):
+        Thread.__init__(self, daemon=True)
+        self.server = make_server('localhost', 12380, app)
+        self.ctx = app.app_context()
+        self.ctx.push()
+
+    def run(self):
+        self.server.serve_forever()
+
+    def shutdown(self):
+        self.server.shutdown()
+
+
+@unittest.skipUnless(sys.platform != 'win32', 'Stopping the server is slow on Windows')
 class TestGitHub(unittest.TestCase):
 
     base_url = f'http://localhost:12380/api'
@@ -24,11 +39,8 @@ class TestGitHub(unittest.TestCase):
     gh = get_github(auth, base_url, verify=True, retries=1, backoff_factor=0.1, seconds_between_requests=None, seconds_between_writes=None, secondary_rate_wait=3)
 
     @classmethod
-    def start_api(cls, app: Flask) -> Process:
-        def run():
-            app.run(host='localhost', port=12380)
-
-        server = Process(target=run)
+    def start_api(cls, app: Flask) -> FlaskThread:
+        server = FlaskThread(app)
         server.start()
         attempt = 0
         while attempt < 100:
@@ -44,8 +56,8 @@ class TestGitHub(unittest.TestCase):
         raise RuntimeError('Failed to start mock api server, could not connect to health endpoint')
 
     @staticmethod
-    def stop_api(server: Process) -> None:
-        server.terminate()
+    def stop_api(server: FlaskThread) -> None:
+        server.shutdown()
         server.join(2)
 
     @contextlib.contextmanager
@@ -56,6 +68,7 @@ class TestGitHub(unittest.TestCase):
                    pulls_response: Optional[Union[Tuple[str, int], Response]] = None,
                    issues_response: Optional[Union[Tuple[str, int], Response]] = None,
                    graphql_response: Optional[Union[Tuple[str, int], Response]] = None):
+
         app = Flask(app_name)
 
         @app.route('/health')

@@ -11,7 +11,7 @@
         <testsuite tests="3" failures="0" skipped="0" time="17.833314" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat">
           <testsuite tests="3" failures="0" skipped="0" time="17.833307" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat.TestIntegration">
             <testsuite tests="2" failures="0" skipped="0" time="11.630328" timestamp="2017-12-15 18:14:36Z" name="NS.APP.Wombat.TestIntegration.TestGetData">
-              <testcase name="TestAllRawData" classname="" status="Passed" time="11.129426">
+              <testcase name="TestAllRawData" classname="NS.APP.Wombat.TestIntegration.TestGetData" status="Passed" time="11.129426">
                 <system-out>Connecting to Wombat Database
     Project Filename : C:\Data\example.dat
     Licence Server   : LICSERVER
@@ -20,7 +20,7 @@
 Checking 241 log ids
 </system-out>
               </testcase>
-              <testcase name="TestFirst10RawData" classname="" status="Passed" time="0.482340">
+              <testcase name="TestFirst10RawData" classname="NS.APP.Wombat.TestIntegration.TestGetData" status="Passed" time="0.482340">
                 <system-out>Connecting to Wombat Database
     Project Filename : C:\Data\example.dat
     Licence Server   : LICSERVER
@@ -31,7 +31,7 @@ Checking 10 log ids
               </testcase>
             </testsuite>
             <testsuite tests="1" failures="0" skipped="0" time="6.196414" timestamp="2017-12-15 18:14:48Z" name="NS.APP.Wombat.TestIntegration.TestGetCurveInfo">
-              <testcase name="TestAllInfo" classname="" status="Passed" time="6.195858">
+              <testcase name="TestAllInfo" classname="NS.APP.Wombat.TestIntegration.TestGetCurveInfo" status="Passed" time="6.195858">
                 <system-out>Connecting to Wombat Database
     Project Filename : C:\Data\example.dat
     Licence Server   : LICSERVER

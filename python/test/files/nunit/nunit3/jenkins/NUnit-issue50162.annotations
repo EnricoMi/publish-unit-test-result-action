@@ -16,12 +16,12 @@
         'AAAA=\n',
       'annotations': [
         {
-          'path': '/',
+          'path': 'UnitTests.HelloWorldTests',
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
-          'title': 'TestWithParameters("Ä") failed',
+          'title': 'TestWithParameters("Ä") (UnitTests.HelloWorldTests) failed',
           'raw_details':
             '  Expected: greater than 2\n  But was:  1\n   bei '
             'UnitTests.HelloWorldTests.TestWithParameters(String param) in '
@@ -30,12 +30,12 @@
             'WorldTests.cs:Zeile 27.'
         },
         {
-          'path': '/',
+          'path': 'UnitTests.HelloWorldTests',
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
-          'title': 'TestWithParameters("Ö") failed',
+          'title': 'TestWithParameters("Ö") (UnitTests.HelloWorldTests) failed',
           'raw_details':
             '  Expected: greater than 2\n  But was:  1\n   bei '
             'UnitTests.HelloWorldTests.TestWithParameters(String param) in '
@@ -44,12 +44,12 @@
             'WorldTests.cs:Zeile 27.'
         },
         {
-          'path': '/',
+          'path': 'UnitTests.HelloWorldTests',
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'nunit3/jenkins/NUnit-issue50162.xml\u2003[took 0s]',
-          'title': 'FailThisTest failed',
+          'title': 'FailThisTest (UnitTests.HelloWorldTests) failed',
           'raw_details':
             'Oh no the test failed!\n   bei '
             'UnitTests.HelloWorldTests.FailThisTest() in C:\\Program Files '
@@ -64,8 +64,11 @@
           'message': 'There are 6 tests, see "Raw output" for the full list of tests.',
           'title': '6 tests found',
           'raw_details':
-            'DoATest\nFailThisTest\nTestWithParameters("Bar")\n'
-            'TestWithParameters("Foo")\nTestWithParameters("Ä")\n'
+            'UnitTests.HelloWorldTests ‑ DoATest\nUnitTests.HelloWorldTests ‑ '
+            'FailThisTest\nUnitTests.HelloWorldTests ‑ '
+            'TestWithParameters("Bar")\nUnitTests.HelloWorldTests ‑ '
+            'TestWithParameters("Foo")\nUnitTests.HelloWorldTests ‑ '
+            'TestWithParameters("Ä")\nUnitTests.HelloWorldTests ‑ '
             'TestWithParameters("Ö")'
         }
       ]

@@ -1199,7 +1199,7 @@ class Test(unittest.TestCase):
                 self.assertEqual(147, results.files)
                 self.assertEqual(733, results.suites)
                 self.assertEqual(733, len(results.suite_details))
-                self.assertEqual(1812, len(cases))
+                self.assertEqual(1817, len(cases))
                 self.assertEqual('failure', conclusion)
 
     def test_main_fork_pr_check_wo_summary(self):

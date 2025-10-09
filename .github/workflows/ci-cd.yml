@@ -15,43 +15,38 @@ permissions: {}
 
 jobs:
   dependencies:
-    name: Test python/requirements.txt
+    name: Check python/requirements.txt
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Check requirements.txt
         run: |
           (diff -w <(grep -v -e "python_version >  '3.7'" -e "python_version == '3.8'" -e "python_version >  '3.8'" python/requirements.txt | sed -e "s/;.*//") python/requirements-3.7.txt || true) | (! grep -e "^<")
           (diff -w <(grep -v -e "python_version <= '3.7'" -e "python_version >  '3.8'" python/requirements.txt | sed -e "s/;.*//") python/requirements-3.8.txt || true) | (! grep -e "^<")
           (diff -w <(grep -v -e "python_version <= '3.7'" -e "python_version == '3.8'" python/requirements.txt | sed -e "s/;.*//") python/requirements-post-3.8.txt || true) | (! grep -e "^<")
         shell: bash
-      - name: Check for dependency updates
-        continue-on-error: true
-        run: |
-          pip install tox
-          tox
-          git diff --exit-code
-        shell: bash
+
+  upgrade:
+    name: Check Upgrades
+    uses: "./.github/workflows/check-upgrades.yml"
+    with:
+      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]'
 
   test-mac:
     name: "Test macOS"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["macos-13", "macos-14", "macos-15"]'
-      python-version: '["3.10", "3.11", "3.12", "3.13", "installed"]'
-      include: >
-        [
-          {"os": "macos-13", "python-version": "3.8"},
-          {"os": "macos-13", "python-version": "3.9"},
-        ]
+      os: '["macos-14", "macos-15", "macos-26"]'
+      python-version: '["3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
+      include: '[]'
 
   test-lnx:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["ubuntu-22.04", "ubuntu-24.04"]'
-      python-version: '["3.9", "3.10", "3.11", "3.12", "3.13", "installed"]'
+      python-version: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
       include: >
         [
           {"os": "ubuntu-22.04", "python-version": "3.8"},
@@ -62,7 +57,7 @@ jobs:
     uses: "./.github/workflows/test-os.yml"
     with:
       os: '["windows-2022", "windows-2025"]'
-      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "installed"]'
+      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
       include: '[]'
 
   publish:
@@ -92,7 +87,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Extract action image and version
         # we deploy from a specific commit on master (the one that mentions a new version the first time)
