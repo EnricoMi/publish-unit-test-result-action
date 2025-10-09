@@ -1,14 +1,14 @@
 {
-  "title": "10 fail, 12 pass in 0s",
-  "summary": " 1 files   8 suites   0s ⏱️\n22 tests 12 ✅ 0 💤 10 ❌\n23 runs  13 ✅ 0 💤 10 ❌\n\nResults for commit commit s.\n",
+  "title": "10 fail, 13 pass in 0s",
+  "summary": "23 tests   13 ✅  0s ⏱️\n 8 suites   0 💤\n 1 files    10 ❌\n\nResults for commit commit s.\n",
   "conclusion": "failure",
   "stats": {
     "files": 1,
     "errors": [],
     "suites": 8,
     "duration": 0,
-    "tests": 22,
-    "tests_succ": 12,
+    "tests": 23,
+    "tests_succ": 13,
     "tests_skip": 0,
     "tests_fail": 10,
     "tests_error": 0,
@@ -21,93 +21,93 @@
   },
   "annotations": [
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.UserInput.BakeDrawingCommandTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "BakeDrawings failed",
+      "title": "BakeDrawings (MyProject.Tests.Real.UserInput.BakeDrawingCommandTests) failed",
       "raw_details": "System.InvalidOperationException : Assert.Equals should not be used. Use Assert.AreEqual instead.\n   at NUnit.Framework.Assert.Equals(Object a, Object b)\n   at MyProject.Tests.Real.UserInput.BakeDrawingCommandTests.BakeDrawings()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.UserInput.ProjectInitCommandTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "SilentRun failed",
+      "title": "SilentRun (MyProject.Tests.Real.UserInput.ProjectInitCommandTests) failed",
       "raw_details": "System.NullReferenceException : Object reference not set to an instance of an object.\n   at MyProject.Tests.Real.UserInput.ProjectInitCommandTests.SilentRun()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.FlagTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "DiscardDrawingTests failed",
+      "title": "DiscardDrawingTests (MyProject.Tests.Real.FlagTests) failed",
       "raw_details": "System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\\Users\\USER\\actions-runner\\_work\\MyProject\\MyProject\\SC\\f4a8fa46-245d-4cd5-88c1-80fcfbda6369'.\n   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)\n   at System.IO.FileSystemEnumerableIterator`1.CommonInit()\n   at System.IO.FileSystemEnumerableIterator`1..ctor(String path, String originalUserPath, String searchPattern, SearchOption searchOption, SearchResultHandler`1 resultHandler, Boolean checkHost)\n   at System.IO.Directory.GetFiles(String path)\n   at MyProject.Tests.Real.FlagTests.DiscardDrawingTests()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.FlagTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "LoadDrawingsEventFlagTests failed",
+      "title": "LoadDrawingsEventFlagTests (MyProject.Tests.Real.FlagTests) failed",
       "raw_details": "  Expected: 3\n  But was:  0\n   at MyProject.Tests.Real.FlagTests.LoadDrawingsEventFlagTests()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.FlagTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "ResetProjectEventFlagTests failed",
+      "title": "ResetProjectEventFlagTests (MyProject.Tests.Real.FlagTests) failed",
       "raw_details": "System.NullReferenceException : Object reference not set to an instance of an object.\n   at MyProject.Tests.Real.FlagTests.ResetProjectEventFlagTests()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.FlagTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "SetupLayersEventFlagTests failed",
+      "title": "SetupLayersEventFlagTests (MyProject.Tests.Real.FlagTests) failed",
       "raw_details": "om.Exceptions.DocumentException : Document should be initlised, but isn't!\n   at MyProject.Runtime.Events.SetupLayers.Execute()\n   at MyProject.Tests.Real.FlagTests.SetupLayersEventFlagTests()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.FlagTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "SetupPipeEventFlagTests failed",
+      "title": "SetupPipeEventFlagTests (MyProject.Tests.Real.FlagTests) failed",
       "raw_details": "System.NullReferenceException : Object reference not set to an instance of an object.\n   at MyProject.Tests.Real.FlagTests.SetupPipeEventFlagTests()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.RuntimeTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "DrawingConstants failed",
+      "title": "DrawingConstants (MyProject.Tests.Real.RuntimeTests) failed",
       "raw_details": "System.NullReferenceException : Object reference not set to an instance of an object.\n   at MyProject.Tests.Real.RuntimeTests.DrawingConstants()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.RuntimeTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "FileConstants failed",
+      "title": "FileConstants (MyProject.Tests.Real.RuntimeTests) failed",
       "raw_details": "System.NullReferenceException : Object reference not set to an instance of an object.\n   at MyProject.Tests.Real.RuntimeTests.FileConstants()"
     },
     {
-      "path": "/",
+      "path": "MyProject.Tests.Real.RuntimeTests",
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "warning",
       "message": "mstest/clicketyclackety.xml [took 0s]",
-      "title": "PluginConstants failed",
+      "title": "PluginConstants (MyProject.Tests.Real.RuntimeTests) failed",
       "raw_details": "System.MissingMethodException : Method not found: 'System.Object MyProject.MyProjectPlugIn.get_Instance()'.\n   at MyProject.Tests.Real.RuntimeTests.PluginConstants()"
     },
     {
@@ -115,9 +115,9 @@
       "start_line": 0,
       "end_line": 0,
       "annotation_level": "notice",
-      "message": "There are 22 tests, see \"Raw output\" for the full list of tests.",
-      "title": "22 tests found",
-      "raw_details": "BakeDrawings\nDeleteMyProjectObjectEventFlagTests\nDiscardDrawingTests\nDisplayGraphicConstants\nDrawingConstants\nEventRegisterTests\nFileConstants\nLoadDrawingsEventFlagTests\nLoadedDrawings\nModifyNewObjectUniqueIdEventFlagTests\nMoveControlPointEventFlagTests\nObjectConstants\nPluginConstants\nResetProjectEventFlagTests\nSetupLayersEventFlagTests\nSetupPipeEventFlagTests\nSilentRun\nTest\nUIPanelConstants\nUIPropertyConstants\nUpdateDrawingsPanelEventFlagTests\nUpdatePropertiesPanelEventFlagTests"
+      "message": "There are 23 tests, see \"Raw output\" for the full list of tests.",
+      "title": "23 tests found",
+      "raw_details": "MyProject.Tests.Real.FlagTests ‑ DeleteMyProjectObjectEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ DiscardDrawingTests\nMyProject.Tests.Real.FlagTests ‑ LoadDrawingsEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ ModifyNewObjectUniqueIdEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ MoveControlPointEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ ResetProjectEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ SetupLayersEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ SetupPipeEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ UpdateDrawingsPanelEventFlagTests\nMyProject.Tests.Real.FlagTests ‑ UpdatePropertiesPanelEventFlagTests\nMyProject.Tests.Real.NewDocumentTests ‑ EventRegisterTests\nMyProject.Tests.Real.PipeTests ‑ Test\nMyProject.Tests.Real.RuntimeTests ‑ DisplayGraphicConstants\nMyProject.Tests.Real.RuntimeTests ‑ DrawingConstants\nMyProject.Tests.Real.RuntimeTests ‑ FileConstants\nMyProject.Tests.Real.RuntimeTests ‑ ObjectConstants\nMyProject.Tests.Real.RuntimeTests ‑ PluginConstants\nMyProject.Tests.Real.RuntimeTests ‑ UIPanelConstants\nMyProject.Tests.Real.RuntimeTests ‑ UIPropertyConstants\nMyProject.Tests.Real.SwitchingTests ‑ Test\nMyProject.Tests.Real.Tests.RuntimeConstants ‑ LoadedDrawings\nMyProject.Tests.Real.UserInput.BakeDrawingCommandTests ‑ BakeDrawings\nMyProject.Tests.Real.UserInput.ProjectInitCommandTests ‑ SilentRun"
     }
   ],
   "check_url": "html",
@@ -127,8 +127,8 @@
       "errors": [],
       "suites": "8",
       "duration": "0",
-      "tests": "22",
-      "tests_succ": "12",
+      "tests": "23",
+      "tests_succ": "13",
       "tests_skip": "0",
       "tests_fail": "10",
       "tests_error": "0",

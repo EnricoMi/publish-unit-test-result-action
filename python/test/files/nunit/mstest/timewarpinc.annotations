@@ -15,12 +15,14 @@
         'lFX4sNjl+hBZjfi0J0mE8w2uJ7Yqt7udoSN7LErUu6fYdAkBPzq+DXDXGDl7HdAAAA\n',
       'annotations': [
         {
-          'path': '/',
+          'path': 'MP.Tests.AssetValidatorTest',
           'start_line': 0,
           'end_line': 0,
           'annotation_level': 'warning',
           'message': 'mstest/timewarpinc.xml\u2003[took 2s]',
-          'title': 'ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity") failed',
+          'title':
+            'ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity") '
+            '(MP.Tests.AssetValidatorTest) failed',
           'raw_details':
             'Zenject.ZenjectException : Zenject Validation Failed!  See errors '
             'below for details.\n  at '
@@ -104,7 +106,9 @@
           'annotation_level': 'notice',
           'message': 'There is 1 test, see "Raw output" for the name of the test.',
           'title': '1 test found',
-          'raw_details': 'ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity")'
+          'raw_details':
+            'MP.Tests.AssetValidatorTest ‑ '
+            'ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity")'
         }
       ]
     }

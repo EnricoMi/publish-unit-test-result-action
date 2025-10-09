@@ -32,7 +32,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result_file='nunit3/jenkins/NUnit-issue33493.xml',
       test_file=None,
       line=None,
-      class_name='',
+      class_name='Automation.Features.CMFeature',
       test_name='AddTwoNumbers',
       result='skipped',
       message='No matching step definition found for one or more steps.\nusing '
@@ -72,7 +72,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result_file='nunit3/jenkins/NUnit-issue33493.xml',
       test_file=None,
       line=None,
-      class_name='',
+      class_name='Automation.Features.SubFeature',
       test_name='SubSmokeTest("Geo","Geonw","dev1234567",System.String[])',
       result='success',
       message=None,

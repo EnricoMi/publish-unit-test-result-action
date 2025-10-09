@@ -27,7 +27,7 @@
       "annotation_level": "notice",
       "message": "There is 1 skipped test, see \"Raw output\" for the name of the skipped test.",
       "title": "1 skipped test found",
-      "raw_details": "AddTwoNumbers"
+      "raw_details": "Automation.Features.CMFeature ‑ AddTwoNumbers"
     },
     {
       "path": ".github",
@@ -36,7 +36,7 @@
       "annotation_level": "notice",
       "message": "There are 2 tests, see \"Raw output\" for the full list of tests.",
       "title": "2 tests found",
-      "raw_details": "AddTwoNumbers\nSubSmokeTest(\"Geo\",\"Geonw\",\"dev1234567\",System.String[])"
+      "raw_details": "Automation.Features.CMFeature ‑ AddTwoNumbers\nAutomation.Features.SubFeature ‑ SubSmokeTest(\"Geo\",\"Geonw\",\"dev1234567\",System.String[])"
     }
   ],
   "check_url": "html",

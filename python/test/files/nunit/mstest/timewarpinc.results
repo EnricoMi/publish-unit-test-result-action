@@ -23,7 +23,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result_file='mstest/timewarpinc.xml',
       test_file=None,
       line=None,
-      class_name='',
+      class_name='MP.Tests.AssetValidatorTest',
       test_name='ValidateSceneContainer("Assets/Scenes/Grid/GridTest.unity")',
       result='failure',
       message='Zenject.ZenjectException : Zenject Validation Failed!  See errors '

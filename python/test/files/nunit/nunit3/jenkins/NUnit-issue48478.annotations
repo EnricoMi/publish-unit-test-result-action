@@ -22,7 +22,10 @@
           'annotation_level': 'notice',
           'message': 'There are 3 tests, see "Raw output" for the full list of tests.',
           'title': '3 tests found',
-          'raw_details': 'TestAllInfo\nTestAllRawData\nTestFirst10RawData'
+          'raw_details':
+            'NS.APP.Wombat.TestIntegration.TestGetCurveInfo ‑ TestAllInfo\n'
+            'NS.APP.Wombat.TestIntegration.TestGetData ‑ TestAllRawData\n'
+            'NS.APP.Wombat.TestIntegration.TestGetData ‑ TestFirst10RawData'
         }
       ]
     }
