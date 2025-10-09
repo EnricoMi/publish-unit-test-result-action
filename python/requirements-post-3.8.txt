@@ -6,7 +6,7 @@ PyGithub==2.8.1
   PyNaCl==1.6.0
     cffi==2.0.0
       pycparser==2.23
-  requests==2.32.5
+  requests==2.32.4
     charset-normalizer==3.4.3
     idna==3.10
     urllib3==2.5.0
