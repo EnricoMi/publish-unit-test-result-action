@@ -19,7 +19,7 @@ Actual:   1   at [testClassForStackTrace].FailByAssertion() in [fileLocation]:li
       </testcase>
       <testcase name="Pass" time="1.234" classname="[testClass]"/>
       <testcase name="Skip" time="1.234" classname="[testClass]">
-        <skipped message="&#x26A0; Skipped with attribute."/>
+        <skipped message="⚠ Skipped with attribute."/>
       </testcase>
     </testsuite>
   </testsuite>
