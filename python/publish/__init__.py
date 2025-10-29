@@ -10,7 +10,7 @@ from typing import List, Any, Union, Optional, Tuple, Mapping, Iterator, Set, It
 from publish.unittestresults import Numeric, UnitTestSuite, UnitTestCaseResults, UnitTestRunResults, \
     UnitTestRunDeltaResults, UnitTestRunResultsOrDeltaResults, ParseError
 
-# keep the version in sync with action.yml
+# keep the version in sync with action.yml and docker/action.yml
 __version__ = 'v2.20.0'
 
 logger = logging.getLogger('publish')
