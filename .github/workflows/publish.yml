@@ -116,7 +116,7 @@ jobs:
           annotations: true
       - name: Upload SARIF artifact
         if: steps.scan.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: SARIF ${{ matrix.arch }}
           path: ${{ steps.scan.outputs.sarif }}
