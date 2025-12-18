@@ -9,8 +9,8 @@ PyGithub==2.8.1
   requests==2.32.5
     charset-normalizer==3.4.4
     idna==3.11
-    urllib3==2.6.2
+    urllib3==2.6.0
     certifi==2025.11.12
   PyJWT==2.10.1
   typing_extensions==4.15.0
-  urllib3==2.6.2
+  urllib3==2.6.0
