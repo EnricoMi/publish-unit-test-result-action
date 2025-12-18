@@ -89,7 +89,7 @@ jobs:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["ubuntu-22.04", "ubuntu-24.04"]'
+      os: '["ubuntu-22.04", "ubuntu-24.04", "ubuntu-slim"]'
       python-version: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
       include: >
         [
