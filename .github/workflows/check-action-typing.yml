@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Check Action Typing
-        uses: typesafegithub/github-actions-typing@0dc5690c35c564d354dc0c23c56559f0813ed3ac  # v2.2.0
+        uses: typesafegithub/github-actions-typing@184d97003b1300f6a10e286eb98c191e416ff02b  # v2.2.1
         with:
           ignored-action-files: |-
             .github/actions/test/action.yml
