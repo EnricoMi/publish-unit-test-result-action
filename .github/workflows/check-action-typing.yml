@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Check Action Typing
-        uses: typesafegithub/github-actions-typing@0dc5690c35c564d354dc0c23c56559f0813ed3ac  # v2.2.0
+        uses: typesafegithub/github-actions-typing@9ddf35b71a482be7d8922b28e8d00df16b77e315  # v2.2.2
         with:
           ignored-action-files: |-
             .github/actions/test/action.yml

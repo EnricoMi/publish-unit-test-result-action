@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Get package downloads
         id: downloads
@@ -25,7 +25,7 @@ jobs:
           package: publish-unit-test-result-action
 
       - name: Create badge
-        uses: emibcn/badge-action@4209421db54c8764d8932070ffd0f81715a629bf
+        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
         with:
           label: Docker pulls
           status: ${{ steps.downloads.outputs.total_downloads }} (${{ steps.downloads.outputs.recent_downloads_per_day }}/d)
@@ -37,14 +37,14 @@ jobs:
           echo '{"subject": "Docker pulls", "status": "${{ steps.downloads.outputs.total_downloads }} (${{ steps.downloads.outputs.recent_downloads_per_day }}/d)", "color": "blue"}' > downloads.json
 
       - name: Upload badge to Gist
-        uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+        uses: andymckay/append-gist-action@ab30bf28df67017c7ad696500b218558c7c04db3  # v0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
           file: downloads.svg
 
       - name: Upload JSON to Gist
-        uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+        uses: andymckay/append-gist-action@ab30bf28df67017c7ad696500b218558c7c04db3  # v0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
@@ -58,14 +58,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Fetch workflows
         id: workflows
         uses: ./misc/action/fetch-workflows
 
       - name: Create badge
-        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8
+        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
         with:
           label: GitHub Workflows
           status: ${{ steps.workflows.outputs.total_workflows }}
@@ -77,14 +77,14 @@ jobs:
           echo '{"subject": "GitHub Workflows", "status": "${{ steps.workflows.outputs.total_workflows }}", "color": "blue"}' > workflows.json
 
       - name: Upload badge to Gist
-        uses: andymckay/append-gist-action@6e8d64427fe47cbacf4ab6b890411f1d67c07f3e
+        uses: andymckay/append-gist-action@ab30bf28df67017c7ad696500b218558c7c04db3  # v0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
           file: workflows.svg
 
       - name: Upload JSON to Gist
-        uses: andymckay/append-gist-action@6e8d64427fe47cbacf4ab6b890411f1d67c07f3e
+        uses: andymckay/append-gist-action@ab30bf28df67017c7ad696500b218558c7c04db3  # v0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395

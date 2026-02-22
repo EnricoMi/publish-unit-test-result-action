@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Download and Extract Artifacts
-        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
+        uses: dawidd6/action-download-artifact@fe9d59ce33ce92db8a6ac90b2c8be6b6d90417c8  # v15
         with:
           run_id: ${{ github.event.workflow_run.id }}
           path: artifacts
@@ -53,7 +53,7 @@ jobs:
 
       - name: Create badge
         if: github.event.workflow_run.event != 'schedule'
-        uses: emibcn/badge-action@4209421db54c8764d8932070ffd0f81715a629bf
+        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3  # v2.0.3
         with:
           label: Tests
           status: '${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'
@@ -64,7 +64,7 @@ jobs:
         # Upload only for master branch and not for scheduled event
         if: >
           github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'master' && github.event.workflow_run.event != 'schedule'
-        uses: andymckay/append-gist-action@1fbfbbce708a39bd45846f0955ed5521f2099c6d
+        uses: andymckay/append-gist-action@ab30bf28df67017c7ad696500b218558c7c04db3  # v0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gistURL: https://gist.githubusercontent.com/EnricoMi/612cb538c14731f1a8fefe504f519395
