@@ -108,7 +108,7 @@ jobs:
 
       - name: Scan for vulnerabilities
         id: scan
-        uses: crazy-max/ghaction-container-scan@v3
+        uses: crazy-max/ghaction-container-scan@v4
         continue-on-error: true
         with:
           image: local/enricomi/publish-unit-test-result-action:latest
@@ -122,7 +122,7 @@ jobs:
           path: ${{ steps.scan.outputs.sarif }}
       - name: Upload SARIF file
         if: (!cancelled() && steps.scan.outputs.sarif != '')
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
