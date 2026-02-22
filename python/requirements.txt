@@ -1,9 +1,10 @@
 humanize==4.6.0; python_version <= '3.7'
 humanize==4.10.0; python_version == '3.8'
-humanize==4.13.0; python_version >  '3.8'
+humanize==4.13.0; python_version == '3.9'
+humanize==4.15.0; python_version >  '3.9'
 junitparser==4.0.2
 lxml==5.4.0; python_version <= '3.7'
 lxml==6.0.2; python_version >  '3.7'
-psutil==7.1.0
+psutil==7.2.2
 PyGithub==2.3.0; python_version <= '3.7'
 PyGithub==2.8.1; python_version >  '3.7'
