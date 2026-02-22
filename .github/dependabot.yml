@@ -1,6 +1,34 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "docker/"
+      - "composite/"
+      - "macos/"
+      - "linux/"
+      - "misc/action/package-downloads/"
+      - "misc/action/fetch-workflows/"
+      - "misc/action/json-output/"
+      - "misc/action/find-workflows/"
+      - "windows/bash/"
+      - "windows/"
+    schedule:
+      interval: "monthly"
+
+  - package-ecosystem: "pip"
+    directories:
+      - "python/"
+      - "python/test/"
+      - "misc/"
+    exclude-paths:
+      - "python/requirements-3.7.txt"
+      - "python/requirements-3.8.txt"
+      - "python/requirements-3.9.txt"
+      - "python/requirements-3.10.txt"
+      - "python/requirements-3.11.txt"
+      - "python/requirements-3.12.txt"
+      - "python/requirements-3.13.txt"
+      - "python/requirements-3.14.txt"
     schedule:
       interval: "monthly"
