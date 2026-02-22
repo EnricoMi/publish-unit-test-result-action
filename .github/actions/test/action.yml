@@ -27,7 +27,7 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Detect OS
       id: os
@@ -121,7 +121,7 @@ runs:
       shell: bash
     - name: Upload changed expectation files
       if: steps.changes.outcome == 'failure'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Changed expectations (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: changed-expectations.zip
@@ -157,7 +157,7 @@ runs:
   
     - name: Upload Test Results
       if: (!cancelled())
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Test Results (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: |
