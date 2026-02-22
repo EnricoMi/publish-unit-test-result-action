@@ -11,6 +11,6 @@ PyGithub==2.8.1
     certifi==2026.1.4
     charset-normalizer==3.4.4
     idna==3.11
-    urllib3==2.2.3
+    urllib3==2.6.3
   typing_extensions==4.13.2
-  urllib3==2.2.3
+  urllib3==2.6.3
