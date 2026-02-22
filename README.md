@@ -560,10 +560,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -572,7 +572,7 @@ jobs:
 
       - name: Upload Test Results
         if: (!cancelled())
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
@@ -596,7 +596,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
@@ -637,7 +637,7 @@ event_file:
   runs-on: ubuntu-latest
   steps:
   - name: Upload
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@v6
     with:
       name: Event File
       path: ${{ github.event_path }}
@@ -649,7 +649,7 @@ Adjust the value of `path` to fit your setup:
 ```yaml
 - name: Upload Test Results
   if: (!cancelled())
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v6
   with:
     name: Test Results
     path: |
@@ -875,7 +875,7 @@ Self-hosted runners may require setting up a Python environment first:
 
 ```yaml
 - name: Setup Python
-  uses: actions/setup-python@v5
+  uses: actions/setup-python@v6
   with:
     python-version: 3.8
 ```
