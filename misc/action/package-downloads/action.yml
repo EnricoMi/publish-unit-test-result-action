@@ -37,9 +37,13 @@ runs:
 
     - name: Get download info
       id: downloads
+      env:
+        SCRIPT_URL: ${{ inputs.url }}
+        SCRIPT_REPO: ${{ inputs.repo }}
+        SCRIPT_PACKAGE: ${{ inputs.package }}
       shell: bash
       run: |
-        python ${{ github.action_path }}/script.py ${{ inputs.url }} ${{ inputs.repo }} ${{ inputs.package }}
+        python ${{ github.action_path }}/script.py "$SCRIPT_URL" "$SCRIPT_REPO" "$SCRIPT_PACKAGE"
 
 branding:
   icon: 'download-cloud'
