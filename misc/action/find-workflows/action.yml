@@ -33,9 +33,11 @@ runs:
       id: workflows
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        SCRIPT_URL: ${{ inputs.url }}
+        SCRIPT_QUERY: ${{ inputs.query }}
       shell: bash
       run: |
-        python ${{ github.action_path }}/script.py ${{ inputs.url }} ${{ inputs.query }}
+        python "${{ github.action_path }}/script.py" "$SCRIPT_URL" "$SCRIPT_QUERY"
 
 branding:
   icon: 'download-cloud'
