@@ -220,9 +220,14 @@ runs:
         INPUT_LOG_LEVEL: ${{ inputs.log_level }}
         # not documented
         INPUT_ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
+      env:
+        DOCKER_PLATFORM: ${{ inputs.docker_platform }}
+        DOCKER_REGISTRY: ${{ inputs.docker_registry }}
+        DOCKER_IMAGE: ${{ inputs.docker_image }}
+        DOCKER_TAG: ${{ inputs.docker_tag }}
       run: |
         # Publish Test Results
-        platform="${{ inputs.docker_platform }}"
+        platform="$DOCKER_PLATFORM"
         docker run ${platform:+--platform $platform} \
           --workdir "/github/workspace" \
           --rm \
@@ -314,7 +319,7 @@ runs:
           -v "/var/run/docker.sock":"/var/run/docker.sock" \
           -v "/home/runner/work/_temp/_github_home":"/github/home" \
           -v "$GITHUB_WORKSPACE":"/github/workspace" \
-          ${{ inputs.docker_registry }}/${{ inputs.docker_image }}:${{ inputs.docker_tag }}
+          "$DOCKER_REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG"
       shell: bash
 
 branding:
