@@ -22,7 +22,7 @@ from publish import __version__, get_json_path, comment_mode_off, digest_prefix,
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, get_suite_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
     get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
-    Annotation, SomeTestChanges
+    Annotation, SomeTestChanges, deserialize_test_names
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
@@ -407,7 +407,7 @@ class Publisher:
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
         if annotation is None or not annotation.raw_details:
             return None
-        return annotation.raw_details.split('\n')
+        return deserialize_test_names(annotation.raw_details)
 
     def get_publish_data(self,
                          stats: UnitTestRunResults,
