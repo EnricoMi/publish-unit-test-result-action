@@ -353,11 +353,11 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
         publisher = Publisher(settings, gh, None)
-        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=42)
+        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=48)
 
         self.assertEqual([
-            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class ‑ test efgh\nclass ‑ test ijkl'),
-            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class ‑ test abcd\nclass ‑ test efgh'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class ‑ test efgh\ue000\nclass ‑ test ijkl'),
+            Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class ‑ test abcd\ue000\nclass ‑ test efgh'),
             Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='class ‑ test ijkl')
         ], annotations)
 
@@ -371,7 +371,7 @@ class TestPublisher(unittest.TestCase):
         settings = self.create_settings(check_run_annotation=[all_tests_list, skipped_tests_list])
         gh = mock.MagicMock()
         publisher = Publisher(settings, gh, None)
-        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=42)
+        annotations = publisher.get_test_list_annotations(cases, max_chunk_size=48)
 
         self.assertEqual([
             Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the list of skipped tests 1 to 1.', title='2 skipped tests found (test 1 to 1)', raw_details='class ‑ test \\U0001d483'),
@@ -1445,7 +1445,7 @@ class TestPublisher(unittest.TestCase):
             ] if skipped_tests_list in annotations else []
         ) + (
             [
-                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\nclass ‑ test2\nclass ‑ test3')
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\ue000\nclass ‑ test2\ue000\nclass ‑ test3')
             ] if all_tests_list in annotations else []
         )
 
@@ -1584,7 +1584,7 @@ class TestPublisher(unittest.TestCase):
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result file [took 1s]', title='1 out of 2 runs failed: test (class)', raw_details='message\ncontent\nstdout\nstderr'),
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result file [took 1s]', title='1 out of 2 runs with error: test2 (class)', raw_details='error message\nerror content\nerror stdout\nerror stderr'),
                 Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class ‑ test3'),
-                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\nclass ‑ test2\nclass ‑ test3'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\ue000\nclass ‑ test2\ue000\nclass ‑ test3'),
             ],
             check_url=None,
             cases=self.cases,
@@ -1688,7 +1688,7 @@ class TestPublisher(unittest.TestCase):
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result file [took 1s]', title='1 out of 2 runs failed: test (class)', raw_details='message\ncontent\nstdout\nstderr'),
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result file [took 1s]', title='1 out of 2 runs with error: test2 (class)', raw_details='error message\nerror content\nerror stdout\nerror stderr'),
                 Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class ‑ test3'),
-                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\nclass ‑ test2\nclass ‑ test3'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class ‑ test\ue000\nclass ‑ test2\ue000\nclass ‑ test3'),
             ]
             expected = PublishData(
                 title=f"7 errors, 6 fail, 5 skipped, 4 pass in 57m 36s",
