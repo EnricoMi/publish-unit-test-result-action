@@ -10,7 +10,7 @@ PyGithub==2.8.1
       pycparser==3.0; python_version > '3.9'
   requests==2.32.5
     charset-normalizer==3.4.4
-    idna==3.11
+    idna==3.15
     urllib3==2.6.3
     certifi==2026.1.4
   PyJWT==2.11.0
