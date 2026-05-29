@@ -274,8 +274,12 @@ class TestGitHub(unittest.TestCase):
                         self.assertIn(f"Caused by ResponseError('too many {status} error responses'", context.exception.args[0].args[0])
 
                         pr = repo.get_pull(1)
-                        expected = {'id': 12345, 'number': 1, 'issue_url': 'http://localhost:12380/api/repos/owner/repo/issues/1'}
-                        self.assertEqual(expected, pr.raw_data)
+                        expected = {'id': 12345, 'number': 1, 'url': 'pull url', 'issue_url': 'http://localhost:12380/api/repos/owner/repo/issues/1'}
+                        actual = pr.raw_data
+                        # since PyGitub 2.9.0 (Python > 3.8), field 'url' exists in actual
+                        # overwriting here to have this test work with Python <= 3.8
+                        actual['url'] = 'pull url'
+                        self.assertEqual(expected, actual)
 
                         with self.assertRaises(requests.exceptions.RetryError) as context:
                             pr.create_issue_comment('issue comment body')
