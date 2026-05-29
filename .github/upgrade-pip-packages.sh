@@ -4,7 +4,7 @@ set -euo pipefail
 base="$(dirname "$0")"
 python_minor_version="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
 
-pip install --upgrade --force pip==24.0.0
+pip install --upgrade --force "pip==24.0.0; python_version <= '3.7'" "pip==25.0.1; python_version == '3.8'" "pip==26.0.1; python_version == '3.9'" "pip==26.1.1; python_version > '3.9'"
 pip install --upgrade --upgrade-strategy eager -r "$base/../python/requirements.txt"
 
 pip install pipdeptree
