@@ -90,7 +90,7 @@ class TestActionYml(unittest.TestCase):
                               for step in composite_action.get('runs', {}).get('steps', [])
                               if step.get('uses', '').startswith('actions/cache/restore@'))
             self.assertEqual(expected_hash, cache_hash, msg='Changing python/requirements.txt requires '
-                                                            'to update the MD5 hash in composite/action.yaml')
+                                                            f'to update the MD5 hash in {action}/action.yml')
 
     def test_docker_action(self):
         with open(project_root / 'action.yml', encoding='utf-8') as r:

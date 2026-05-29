@@ -8,7 +8,7 @@ pip install --upgrade --force pip==24.0.0
 pip install --upgrade --upgrade-strategy eager -r "$base/../python/requirements.txt"
 
 pip install pipdeptree
-pipdeptree --packages="$(sed -e "s/;.*//" -e "s/=.*//g" "$base/../python/requirements.txt" | paste -s -d ,)" --freeze > "$base/../python/requirements-$python_minor_version.txt"
+pipdeptree --packages="$(sed -e "s/;.*//" -e "s/=.*//g" "$base/../python/requirements.txt" | sort | uniq | grep -v "^$" | paste -s -d ,)" --freeze > "$base/../python/requirements-$python_minor_version.txt"
 
 git diff "$base/../python/requirements-$python_minor_version.txt"
 

@@ -195,8 +195,10 @@ runs:
           echo "DEPENDENCIES_VERSION=3.7" >> "$GITHUB_ENV"
         elif [[ "$PYTHON_VERSION" == "3.8" ]]; then
           echo "DEPENDENCIES_VERSION=3.8" >> "$GITHUB_ENV"
+        elif [[ "$PYTHON_VERSION" == "3.9" ]]; then
+          echo "DEPENDENCIES_VERSION=3.9" >> "$GITHUB_ENV"
         else
-          echo "DEPENDENCIES_VERSION=post-3.8" >> "$GITHUB_ENV"
+          echo "DEPENDENCIES_VERSION=post-3.9" >> "$GITHUB_ENV"
         fi
         echo "version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -209,7 +211,7 @@ runs:
       continue-on-error: true
       with:
         path: .enricomi-publish-action-pip
-        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-a5497e3be8fe59259cccb1cb1eb058c2
+        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-68522748e1f6be59932663d60e323a39
 
     - name: Create virtualenv
       id: venv

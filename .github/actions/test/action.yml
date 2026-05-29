@@ -83,8 +83,10 @@ runs:
           DEPENDENCIES_VERSION=3.7
         elif [[ "$PYTHON_VERSION" == "3.8" ]]; then
           DEPENDENCIES_VERSION=3.8
+        elif [[ "$PYTHON_VERSION" == "3.9" ]]; then
+          DEPENDENCIES_VERSION=3.9
         else
-          DEPENDENCIES_VERSION=post-3.8
+          DEPENDENCIES_VERSION=post-3.9
         fi
         python -m pip install --force -r python/requirements-$DEPENDENCIES_VERSION.txt
         python -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
