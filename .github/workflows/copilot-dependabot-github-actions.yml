@@ -1,0 +1,38 @@
+name: Copilot Dependabot GitHub Actions
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+permissions: {}
+
+jobs:
+  enhance-dependabot-pr:
+    name: Enhance Dependabot PR
+    if: >
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      startsWith(github.event.pull_request.head.ref, 'dependabot/github_actions/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: GitHub Copilot coding agent
+        uses: github/copilot-actions/coding-agent@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            This pull request was opened by Dependabot for a GitHub Actions version upgrade.
+
+            Please enhance this pull request by:
+            1. Updating references to the same upgraded GitHub Action in README.md workflow examples so users see up-to-date usage.
+            2. Summarizing code changes between the previous and new action versions by inspecting code diffs (not changelog text), with focus on:
+               - security risks
+               - malicious code indicators
+               - exploitable bugs
+               Also include manageable functional changes.
+            3. Summarizing dependency changes and their security implications.
+
+            For synchronize events (for example after rebases), refresh and update the pull request so it stays aligned with the latest branch state.
