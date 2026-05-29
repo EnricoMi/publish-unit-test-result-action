@@ -12,7 +12,10 @@ jobs:
     name: Enhance Dependabot PR
     if: >
       github.event.pull_request.user.login == 'dependabot[bot]' &&
-      startsWith(github.event.pull_request.head.ref, 'dependabot/github_actions/')
+      startsWith(github.event.pull_request.head.ref, 'dependabot/github_actions/') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.repo.fork == false &&
+      github.event.sender.login != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
