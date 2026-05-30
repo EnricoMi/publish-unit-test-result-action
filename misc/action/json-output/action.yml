@@ -38,6 +38,7 @@ runs:
       COMMIT: ${{ fromJSON( inputs.json ).stats.commit }}
       REFERENCE: ${{ fromJSON( inputs.json ).stats_with_delta.reference_commit }}
       ANNOTATIONS: ${{ fromJSON( inputs.json ).annotations }}
+      JSON: ${{ inputs.json }}
     shell: bash
     run: |
       echo "title=$TITLE"
@@ -53,9 +54,7 @@ runs:
 
       echo
       echo "JSON output:"
-      cat <<EOF
-      ${{ inputs.json }}
-      EOF
+      echo "$JSON"
       echo
 
       if [[ "$CONCLUSION" != "success" ]]
