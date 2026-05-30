@@ -106,10 +106,10 @@ class TestActionYml(unittest.TestCase):
 
         docker_image_env = docker_action_step.get('env', {})
         self.assertTrue(docker_image_env)
-        envs = [var[6:].lower() for var in docker_image_env.keys()]
+        envs = [var[6:].lower() for var in docker_image_env.keys() if var.startswith("INPUT_")]
         self.assertEqual(sorted(expected_inputs), sorted(envs))
         expected_env_vals = ["inputs." + env for env in envs]
-        actual_env_vals = [val[3:][:-2].strip() for val in docker_image_env.values() if val.startswith('${{') and val.endswith('}}')]
+        actual_env_vals = [val[3:][:-2].strip() for env, val in docker_image_env.items() if env.startswith("INPUT_") and val.startswith('${{') and val.endswith('}}')]
         self.assertEqual(expected_env_vals, actual_env_vals)
 
         docker_image_run = docker_action_step.get('run', {})

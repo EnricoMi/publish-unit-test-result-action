@@ -220,7 +220,7 @@ runs:
         INPUT_LOG_LEVEL: ${{ inputs.log_level }}
         # not documented
         INPUT_ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
-      env:
+        # Docker related inputs
         DOCKER_PLATFORM: ${{ inputs.docker_platform }}
         DOCKER_REGISTRY: ${{ inputs.docker_registry }}
         DOCKER_IMAGE: ${{ inputs.docker_image }}
