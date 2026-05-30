@@ -942,12 +942,32 @@ def get_skipped_tests_list_annotation(cases: UnitTestCaseResults, max_chunk_size
     return get_test_list_annotation(restrict_unicode_list(get_skipped_tests_list(cases)), 'skipped test', max_chunk_size)
 
 
+# Separator between test names in annotation raw_details.
+# Uses a Unicode Private Use Area character (U+E000) followed by a newline so that:
+# - splitting on this separator preserves literal newlines inside test names
+# - the newline keeps one-test-per-line readability in the GitHub "Raw output" UI
+# - U+E000 cannot appear in test names from any test framework
+# Old annotations used plain '\n'; the reader detects the format by checking for U+E000.
+test_list_separator = '\ue000\n'
+
+
+def deserialize_test_names(raw_details: str) -> List[str]:
+    """Deserialize test names from raw_details, handling both old and new formats.
+
+    New format: test names separated by U+E000 + newline.
+    Old format: test names separated by plain newline.
+    """
+    if '\ue000' in raw_details:
+        return raw_details.split(test_list_separator)
+    return raw_details.split('\n')
+
+
 def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int = 64000) -> List[Annotation]:
     if len(tests) == 0:
         return []
 
     # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
-    test_chunks = chunk_test_list(sorted(tests), '\n', max_chunk_size)
+    test_chunks = chunk_test_list(sorted(tests), test_list_separator, max_chunk_size)
 
     if len(test_chunks) == 1:
         if len(tests) == 1:
@@ -957,7 +977,7 @@ def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int =
             title = f'{len(tests)} {label}s found'
             message = f'There are {len(tests)} {label}s, see "Raw output" for the full list of {label}s.'
 
-        return [create_tests_list_annotation(title=title, message=message, raw_details='\n'.join(test_chunks[0]))]
+        return [create_tests_list_annotation(title=title, message=message, raw_details=test_list_separator.join(test_chunks[0]))]
 
     first = 1
     annotations = []
@@ -965,7 +985,7 @@ def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int =
         last = first + len(chunk) - 1
         title = f'{len(tests)} {label}s found (test {first} to {last})'
         message = f'There are {len(tests)} {label}s, see "Raw output" for the list of {label}s {first} to {last}.'
-        annotation = create_tests_list_annotation(title=title, message=message, raw_details='\n'.join(chunk))
+        annotation = create_tests_list_annotation(title=title, message=message, raw_details=test_list_separator.join(chunk))
         annotations.append(annotation)
         first = last + 1
 
