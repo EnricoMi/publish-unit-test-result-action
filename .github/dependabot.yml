@@ -22,9 +22,6 @@ updates:
       - "python/test/"
       - "misc/"
     exclude-paths:
-      - "python/requirements-3.7.txt"
-      - "python/requirements-3.8.txt"
-      - "python/requirements-3.9.txt"
       - "python/requirements-3.10.txt"
       - "python/requirements-3.11.txt"
       - "python/requirements-3.12.txt"
