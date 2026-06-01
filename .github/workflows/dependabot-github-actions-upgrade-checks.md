@@ -3,12 +3,19 @@ description: |
   This workflow is run after a dependabot pull request is created or rebased, to investigate the changes and enrich the pull request.
 
 on:
-  workflow_run:
-    workflows: ["CI/CD"]
+  pull_request:
     types:
-      - requested
+      - opened
+      - synchronize
+      - reopened
     branches:
       - dependabot/github_actions/*
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'pull request #'
+        required: true
+        type: number
 
 permissions:
   contents: read
@@ -32,17 +39,17 @@ safe-outputs:
 
 # Github Actions Dependabot pull-request enhancement workflow
 
-Enhance a pull-request createdby dependabot that aims at upgrading Github Actions in this repository.
-This workflow is triggered when the CI/CD workflow is started. Only enhance the corresponding pull-request
+Enhance a dependabot pull-request that upgrades Github Actions in this repository.
+This workflow is either triggered by the `pull_request` event, or via `workflow_dispatch`.
+The former provides an associated pull request, the latter provides the number of the pull request as an input.
 
 ## Check event that triggered this workflow
 
-- Only run for pull-request creation or rebase
-- Only run when triggering workflow was triggered by dependabot
-- Only run for Github Action upgrades
-- Be very restrictive in hardening the condition that allows running this workflow, especially consider
-  fork repositories and attacks with malicious pull request content
-
+- The `pull_request` event is only executed when triggered by dependabot on a Github Actions dependency upgrade.
+- The `workflow_dispatch` is always executed.
+- Only run for Github Action upgrade pull requests.
+- Be very restrictive when hardening the condition that allows running this workflow, especially consider
+  fork repositories and attacks with malicious pull request content.
 
 ## What to enhance
 
@@ -55,8 +62,8 @@ Enhance the respective pull request by:
 
 ## Process
 
-1. Identify the respctive pull request
-2. Check it is a Github Actions version upgrade
+1. Identify the respctive pull request, use the pr-number input when run via workflow_run to determine the pull request to check
+2. Check it is a dependabot Github Actions version upgrade, create by the respective bot
 3. Update README.md if needed
 4. Inspect code changes and summarize findings (create new pull request comment)
 5. Inspect dependency changes and summarize findings (create separate pull request comment)
