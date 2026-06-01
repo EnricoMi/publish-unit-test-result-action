@@ -802,7 +802,7 @@ steps:
     esac
 
 - name: Create badge
-  uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
+  uses: emibcn/badge-action@f9150fde070fcca0c4e832437611b44838fcd325  # v2.0.4
   with:
     label: Tests
     status: '${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.tests }} tests, ${{ fromJSON( steps.test-results.outputs.json ).formatted.stats.runs }} runs: ${{ fromJSON( steps.test-results.outputs.json ).conclusion }}'

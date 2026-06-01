@@ -25,7 +25,7 @@ jobs:
           package: publish-unit-test-result-action
 
       - name: Create badge
-        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
+        uses: emibcn/badge-action@f9150fde070fcca0c4e832437611b44838fcd325  # v2.0.4
         with:
           label: Docker pulls
           status: ${{ steps.downloads.outputs.total_downloads }} (${{ steps.downloads.outputs.recent_downloads_per_day }}/d)
@@ -65,7 +65,7 @@ jobs:
         uses: ./misc/action/fetch-workflows
 
       - name: Create badge
-        uses: emibcn/badge-action@808173dd03e2f30c980d03ee49e181626088eee8  # v2.0.3
+        uses: emibcn/badge-action@f9150fde070fcca0c4e832437611b44838fcd325  # v2.0.4
         with:
           label: GitHub Workflows
           status: ${{ steps.workflows.outputs.total_workflows }}
