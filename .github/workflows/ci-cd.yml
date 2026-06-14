@@ -90,7 +90,7 @@ jobs:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["ubuntu-22.04", "ubuntu-24.04", "ubuntu-slim"]'
+      os: '["ubuntu-22.04", "ubuntu-22.04-arm", "ubuntu-24.04", "ubuntu-24.04-arm", "ubuntu-26.04", "ubuntu-26.04-arm", "ubuntu-slim"]'
       python-version: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
       include: >
         [
@@ -101,7 +101,7 @@ jobs:
     name: "Test Windows"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["windows-2022", "windows-2025"]'
+      os: '["windows-11-arm", "windows-2022", "windows-2025"]'
       python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "installed"]'
       include: '[]'
 
