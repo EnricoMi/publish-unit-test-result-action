@@ -16,6 +16,12 @@ updates:
     schedule:
       interval: "monthly"
 
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+    schedule:
+      interval: "monthly"
+
   - package-ecosystem: "pip"
     directories:
       - "python/"
