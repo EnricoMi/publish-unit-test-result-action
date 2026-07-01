@@ -1,4 +1,4 @@
-FROM python:3.12.13-alpine3.24@sha256:dbb1970cc04ce7d381c65efe8309c0c03d463e5b35c88f14d721796ad24cfbfd
+FROM python:3.14.6-alpine3.24@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92
 
 LABEL repository="https://github.com/EnricoMi/publish-unit-test-result-action"
 LABEL homepage="https://github.com/EnricoMi/publish-unit-test-result-action"
