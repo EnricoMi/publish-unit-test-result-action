@@ -1,31 +1,76 @@
-name: Check Action Typing
+name: DevOps AI Live Detection Test
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - 'master*'
-      - 'devel-*'
-    tags:
-      - '*'
-  pull_request:
-
-permissions:
-  contents: read
+      - devops-ai-live-test
 
 jobs:
-  check-action-typing:
-    name: Check Action Typing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
-      - name: Check Action Typing
-        uses: typesafegithub/github-actions-typing@9ddf35b71a482be7d8922b28e8d00df16b77e315  # v2.2.2
-        with:
-          ignored-action-files: |-
-            .github/actions/test/action.yml
-            misc/action/fetch-workflows/action.yml
-            misc/action/find-workflows/action.yml
-            misc/action/json-output/action.yml
-            misc/action/package-downloads/action.yml
+  normal-test:
+    name: Normal Application Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate normal logs
+        run: |
+          echo "INFO Application started"
+          echo "INFO Loading configuration"
+          echo "INFO Database connection established"
+          echo "INFO Unit tests started"
+          echo "INFO Test 1 passed"
+          echo "INFO Test 2 passed"
+          echo "INFO Test 3 passed"
+          echo "INFO Unit tests completed successfully"
+          echo "INFO Deployment validation completed"
+
+
+  warning-test:
+    name: Warning and Recovery Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate warning logs
+        run: |
+          echo "INFO Worker started"
+          echo "INFO Connecting to cache"
+          echo "WARNING Cache miss detected"
+          echo "WARNING Retry attempt 1"
+          sleep 2
+          echo "WARNING Retry attempt 2"
+          sleep 2
+          echo "INFO Retry succeeded"
+          echo "INFO Cache connection restored"
+          echo "INFO Request completed successfully"
+
+
+  dependency-failure-test:
+    name: Dependency Failure Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate dependency failure
+        run: |
+          echo "INFO Starting dependency installation"
+          echo "INFO Checking package requirements"
+          python -m pip install --disable-pip-version-check --no-cache-dir definitely-nonexistent-package-devops-ai-test-987654321
+          echo "ERROR Dependency installation failed"
+
+
+  intentional-failure-test:
+    name: Intentional Integration Failure Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate integration failure
+        run: |
+          echo "INFO Starting deployment validation"
+          echo "INFO Starting integration tests"
+          echo "INFO Connecting to production API"
+          echo "INFO API connection established"
+          echo "INFO Sending test request"
+          echo "ERROR Integration test failed: expected status 200, received 500"
+          echo "ERROR Deployment validation failed"
+          echo "ERROR Pipeline execution aborted"
+          exit 1
