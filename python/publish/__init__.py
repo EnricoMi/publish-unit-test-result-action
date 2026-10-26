@@ -66,6 +66,7 @@ skipped_tests_list = 'skipped tests'
 none_annotations = 'none'
 available_annotations = [all_tests_list, skipped_tests_list, none_annotations]
 default_annotations = [all_tests_list, skipped_tests_list]
+test_list_json_suffix = ' (JSON Lines)'
 
 
 class CaseMessages(defaultdict):
@@ -554,8 +555,10 @@ def get_test_changes_md(summary: str, list_limit: Optional[int], *tests: Iterabl
 def get_test_changes_list_md(tests: List[str], limit: Optional[int]) -> str:
     if limit:
         tests = tests[:limit] + (['…'] if len(tests) > limit else [])
-    tests = '\n'.join(tests)
-    return f'```\n{tests}\n```\n'
+    tests = '\n'.join(test.replace('\r', r'\r').replace('\n', r'\n') for test in tests)
+    fence_length = max([3] + [len(run) + 1 for run in re.findall(r'`+', tests)])
+    fence = '`' * fence_length
+    return f'{fence}\n{tests}\n{fence}\n'
 
 
 def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
@@ -946,8 +949,14 @@ def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int =
     if len(tests) == 0:
         return []
 
-    # the max_chunk_size must not be larger than the abbreviate_bytes limit in Annotation.to_dict
-    test_chunks = chunk_test_list(sorted(tests), '\n', max_chunk_size)
+    # Preserve the legacy format for ordinary names. Mark encoded lists explicitly:
+    # a literal backslash-n or JSON-looking legacy name must never be unescaped.
+    encoded = any('\n' in test or '\r' in test for test in tests)
+    title_suffix = test_list_json_suffix if encoded else ''
+    test_lines = [json.dumps(test, ensure_ascii=False) if encoded else test for test in sorted(tests)]
+    # Chunk after encoding so escaping expansion counts towards the byte limit.
+    # The max_chunk_size must not exceed the abbreviate_bytes limit in Annotation.to_dict.
+    test_chunks = chunk_test_list(test_lines, '\n', max_chunk_size)
 
     if len(test_chunks) == 1:
         if len(tests) == 1:
@@ -957,7 +966,7 @@ def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int =
             title = f'{len(tests)} {label}s found'
             message = f'There are {len(tests)} {label}s, see "Raw output" for the full list of {label}s.'
 
-        return [create_tests_list_annotation(title=title, message=message, raw_details='\n'.join(test_chunks[0]))]
+        return [create_tests_list_annotation(title=title + title_suffix, message=message, raw_details='\n'.join(test_chunks[0]))]
 
     first = 1
     annotations = []
@@ -965,7 +974,7 @@ def get_test_list_annotation(tests: List[str], label: str, max_chunk_size: int =
         last = first + len(chunk) - 1
         title = f'{len(tests)} {label}s found (test {first} to {last})'
         message = f'There are {len(tests)} {label}s, see "Raw output" for the list of {label}s {first} to {last}.'
-        annotation = create_tests_list_annotation(title=title, message=message, raw_details='\n'.join(chunk))
+        annotation = create_tests_list_annotation(title=title + title_suffix, message=message, raw_details='\n'.join(chunk))
         annotations.append(annotation)
         first = last + 1
 
@@ -989,7 +998,9 @@ def chunk_test_list(tests: List[str], delimiter: str, max_chunk_size: int) -> Li
     while tests:
         size = 0
         length = 0
-        while length < len(tests) and size + sizes[length] < max_chunk_size:
+        # Every individual line was checked above. Always consume the first one,
+        # including a line exactly at the limit, while preserving legacy chunking.
+        while length < len(tests) and (length == 0 or size + sizes[length] < max_chunk_size):
             size = size + sizes[length]
             length = length + 1
 

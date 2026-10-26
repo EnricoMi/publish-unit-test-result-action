@@ -22,7 +22,7 @@ from publish import __version__, get_json_path, comment_mode_off, digest_prefix,
     get_long_summary_with_digest_md, get_error_annotations, get_case_annotations, get_suite_annotations, \
     get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_all_tests_list, \
     get_skipped_tests_list, all_tests_list, skipped_tests_list, pull_request_build_mode_merge, \
-    Annotation, SomeTestChanges
+    Annotation, SomeTestChanges, test_list_json_suffix
 from publish import logger
 from publish.github_action import GithubAction
 from publish.unittestresults import UnitTestCaseResults, UnitTestRunResults, UnitTestRunDeltaResults, \
@@ -407,7 +407,22 @@ class Publisher:
     def get_test_list_from_annotation(annotation: CheckRunAnnotation) -> Optional[List[str]]:
         if annotation is None or not annotation.raw_details:
             return None
-        return annotation.raw_details.split('\n')
+        title = re.fullmatch(r'(\d+) (?:skipped )?tests? found(?: \(test (\d+) to (\d+)\))?'
+                             + '(?:' + re.escape(test_list_json_suffix) + ')?', annotation.title or '')
+        if title is None:
+            return None
+        tests = annotation.raw_details.split('\n')
+        if annotation.title.endswith(test_list_json_suffix):
+            try:
+                tests = [json.loads(test) for test in tests]
+            except ValueError:
+                return None
+            if not all(isinstance(test, str) for test in tests):
+                return None
+        expected_count = int(title[3]) - int(title[2]) + 1 if title[2] else int(title[1])
+        # Older raw_details containing embedded newlines cannot be reconstructed.
+        # Do not report invented additions/removals from a corrupted baseline.
+        return tests if len(tests) == expected_count else None
 
     def get_publish_data(self,
                          stats: UnitTestRunResults,
@@ -510,8 +525,9 @@ class Publisher:
         if check_run is None:
             return None, None
 
-        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(test \d+ to \d+\))?$')
-        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(test \d+ to \d+\))?$')
+        encoding_suffix = '(?:' + re.escape(test_list_json_suffix) + ')?$'
+        all_tests_title_regexp = re.compile(r'^\d+ test(s)? found( \(test \d+ to \d+\))?' + encoding_suffix)
+        skipped_tests_title_regexp = re.compile(r'^\d+ skipped test(s)? found( \(test \d+ to \d+\))?' + encoding_suffix)
 
         all_tests_message_regexp = re.compile(
             r'^(There is 1 test, see "Raw output" for the name of the test)|'
@@ -534,13 +550,15 @@ class Publisher:
         test_annotations: List[CheckRunAnnotation] = []
 
         for annotation in annotations:
-            if annotation and annotation.title and annotation.message and annotation.raw_details and \
+            if annotation and annotation.title and annotation.message and \
                     title_regexp.match(annotation.title) and \
                     message_regexp.match(annotation.message):
                 test_annotations.append(annotation)
 
         test_lists = [Publisher.get_test_list_from_annotation(test_annotation)
                       for test_annotation in test_annotations]
+        if any(test_list is None for test_list in test_lists):
+            return []
         test_list = [test
                      for test_list in test_lists
                      if test_list
