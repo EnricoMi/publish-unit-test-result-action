@@ -197,8 +197,10 @@ runs:
           echo "DEPENDENCIES_VERSION=3.8" >> "$GITHUB_ENV"
         elif [[ "$PYTHON_VERSION" == "3.9" ]]; then
           echo "DEPENDENCIES_VERSION=3.9" >> "$GITHUB_ENV"
+        elif [[ "$PYTHON_VERSION" == "3.10" ]]; then
+          echo "DEPENDENCIES_VERSION=3.10" >> "$GITHUB_ENV"
         else
-          echo "DEPENDENCIES_VERSION=post-3.9" >> "$GITHUB_ENV"
+          echo "DEPENDENCIES_VERSION=post-3.10" >> "$GITHUB_ENV"
         fi
         echo "version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
 

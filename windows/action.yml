@@ -190,8 +190,10 @@ runs:
             "DEPENDENCIES_VERSION=3.8" | Out-File -FilePath $env:GITHUB_ENV -Append
           } elseif ( $PYTHON_VERSION -eq "3.9" ) {
             "DEPENDENCIES_VERSION=3.9" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } elseif ( $PYTHON_VERSION -eq "3.10" ) {
+            "DEPENDENCIES_VERSION=3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
           } else {
-            "DEPENDENCIES_VERSION=post-3.9" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=post-3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
           }
           "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         } finally {
