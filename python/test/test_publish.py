@@ -14,7 +14,7 @@ from publish import Annotation, UnitTestSuite, UnitTestRunResults, UnitTestRunDe
     get_long_summary_without_runs_md,  get_long_summary_with_digest_md, get_test_changes_md, get_test_changes_list_md,  \
     get_test_changes_summary_md, get_case_annotations, get_case_annotation, get_suite_annotations, \
     get_suite_annotations_for_suite, get_all_tests_list_annotation, get_skipped_tests_list_annotation, get_case_messages, \
-    chunk_test_list, message_is_contained_in_content
+    chunk_test_list, message_is_contained_in_content, test_list_separator, deserialize_test_names
 from publish.junit import parse_junit_xml_files, process_junit_xml_elems
 from publish.unittestresults import get_stats, UnitTestCase, ParseError, get_test_results, create_unit_test_case_results
 from test_utils import temp_locale, d, n
@@ -1916,7 +1916,7 @@ class PublishTest(unittest.TestCase):
         })
 
         self.assertEqual([], get_all_tests_list_annotation(create_unit_test_case_results()))
-        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2\nfile ‑ class1 ‑ test2')], get_all_tests_list_annotation(results))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the full list of tests.', title='3 tests found', raw_details='class1 ‑ test1\ue000\nclass1 ‑ test2\ue000\nfile ‑ class1 ‑ test2')], get_all_tests_list_annotation(results))
         del results[(None, 'class1', 'test1')]
         del results[('file', 'class1', 'test2')]
         self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 test, see "Raw output" for the name of the test.', title='1 test found', raw_details='class1 ‑ test2')], get_all_tests_list_annotation(results))
@@ -1946,10 +1946,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual([], get_all_tests_list_annotation(create_unit_test_case_results()))
         self.assertEqual(
             [
-                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class1 ‑ test1\nclass1 ‑ test2'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 1 to 2.', title='3 tests found (test 1 to 2)', raw_details='class1 ‑ test1\ue000\nclass1 ‑ test2'),
                 Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 tests, see "Raw output" for the list of tests 3 to 3.', title='3 tests found (test 3 to 3)', raw_details='file ‑ class1 ‑ test2')
             ],
-            get_all_tests_list_annotation(results, max_chunk_size=40)
+            get_all_tests_list_annotation(results, max_chunk_size=43)
         )
 
     def test_get_skipped_tests_list_annotation(self):
@@ -1977,7 +1977,7 @@ class PublishTest(unittest.TestCase):
         self.assertEqual([], get_skipped_tests_list_annotation(create_unit_test_case_results()))
         self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There is 1 skipped test, see "Raw output" for the name of the skipped test.', title='1 skipped test found', raw_details='class1 ‑ test2')], get_skipped_tests_list_annotation(results))
         del results[(None, 'class1', 'test1')]['success']
-        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\nclass1 ‑ test2')], get_skipped_tests_list_annotation(results))
+        self.assertEqual([Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 2 skipped tests, see "Raw output" for the full list of skipped tests.', title='2 skipped tests found', raw_details='class1 ‑ test1\ue000\nclass1 ‑ test2')], get_skipped_tests_list_annotation(results))
 
     def test_get_skipped_tests_list_annotation_chunked(self):
         results = create_unit_test_case_results({
@@ -2001,10 +2001,10 @@ class PublishTest(unittest.TestCase):
         self.assertEqual([], get_skipped_tests_list_annotation(create_unit_test_case_results()))
         self.assertEqual(
             [
-                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 skipped tests, see "Raw output" for the list of skipped tests 1 to 2.', title='3 skipped tests found (test 1 to 2)', raw_details='class1 ‑ test1\nclass1 ‑ test2'),
+                Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 skipped tests, see "Raw output" for the list of skipped tests 1 to 2.', title='3 skipped tests found (test 1 to 2)', raw_details='class1 ‑ test1\ue000\nclass1 ‑ test2'),
                 Annotation(path='.github', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='notice', message='There are 3 skipped tests, see "Raw output" for the list of skipped tests 3 to 3.', title='3 skipped tests found (test 3 to 3)', raw_details='file ‑ class1 ‑ test2')
             ],
-            get_skipped_tests_list_annotation(results, max_chunk_size=40)
+            get_skipped_tests_list_annotation(results, max_chunk_size=43)
         )
 
     def test_chunk(self):
@@ -2172,6 +2172,48 @@ class PublishTest(unittest.TestCase):
                                  ('the  message', '\tthe message in the content')]:
             with self.subTest(message=message, content=content):
                 self.assertTrue(message_is_contained_in_content(message, content))
+
+
+    def test_get_all_tests_list_annotation_with_newline_in_name(self):
+        results = create_unit_test_case_results({
+            (None, 'class1', 'normal test'): {
+                'success': [
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='normal test', result='success', message=None, content=None, stdout=None, stderr=None, time=1.0)
+                ],
+            },
+            (None, 'class1', 'test with\nnewline'): {
+                'success': [
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test with\nnewline', result='success', message=None, content=None, stdout=None, stderr=None, time=1.0)
+                ],
+            },
+        })
+
+        annotations = get_all_tests_list_annotation(results)
+        self.assertEqual(1, len(annotations))
+        # newline in test name is preserved verbatim; separator is U+E000 + newline
+        self.assertEqual('class1 ‑ normal test\ue000\nclass1 ‑ test with\nnewline', annotations[0].raw_details)
+
+    def test_deserialize_new_format(self):
+        raw = 'class ‑ test with\nnewline\ue000\nclass ‑ normal'
+        self.assertEqual(['class ‑ test with\nnewline', 'class ‑ normal'], deserialize_test_names(raw))
+
+    def test_deserialize_old_format(self):
+        # Old format without U+E000: plain split on newline
+        raw = 'class ‑ test1\nclass ‑ test2'
+        self.assertEqual(['class ‑ test1', 'class ‑ test2'], deserialize_test_names(raw))
+
+    def test_deserialize_old_format_with_backslash_n(self):
+        # Old annotation with a test name containing literal backslash-n (two chars).
+        # Must NOT be corrupted -- plain split preserves it as-is.
+        raw = 'class ‑ test\\npath\nclass ‑ other'
+        result = deserialize_test_names(raw)
+        self.assertEqual(['class ‑ test\\npath', 'class ‑ other'], result)
+
+    def test_deserialize_old_format_with_restrict_unicode(self):
+        # Old annotation with restrict_unicode output (backslash-U sequences)
+        raw = 'class ‑ test \\U0001d483\nclass ‑ test \\U0001d484'
+        result = deserialize_test_names(raw)
+        self.assertEqual(['class ‑ test \\U0001d483', 'class ‑ test \\U0001d484'], result)
 
 
 if __name__ == '__main__':
