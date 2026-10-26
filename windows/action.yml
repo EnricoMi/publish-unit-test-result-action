@@ -190,8 +190,10 @@ runs:
             "DEPENDENCIES_VERSION=3.8" | Out-File -FilePath $env:GITHUB_ENV -Append
           } elseif ( $PYTHON_VERSION -eq "3.9" ) {
             "DEPENDENCIES_VERSION=3.9" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } elseif ( $PYTHON_VERSION -eq "3.10" ) {
+            "DEPENDENCIES_VERSION=3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
           } else {
-            "DEPENDENCIES_VERSION=post-3.9" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=post-3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
           }
           "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         } finally {
@@ -205,7 +207,7 @@ runs:
       continue-on-error: true
       with:
         path: .enricomi-publish-action-pip
-        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-68522748e1f6be59932663d60e323a39
+        key: enricomi-publish-action-pip-${{ runner.os }}-${{ runner.arch }}-${{ steps.python.outputs.version }}-37ecc3c630595669a3eb4452b7c1fdde
 
     - name: Create virtualenv
       id: venv
