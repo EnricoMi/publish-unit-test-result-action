@@ -957,7 +957,7 @@ def deserialize_test_names(raw_details: str) -> List[str]:
     New format: test names separated by U+E000 + newline.
     Old format: test names separated by plain newline.
     """
-    if '\ue000' in raw_details:
+    if test_list_separator in raw_details:
         return raw_details.split(test_list_separator)
     return raw_details.split('\n')
 
