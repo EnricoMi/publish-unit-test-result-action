@@ -103,14 +103,14 @@ runs:
           exit 1
         fi
       shell: bash
-  
+
     - name: Update expectation files
       id: changes
       continue-on-error: true
       run: |
         python/test/files/update_expectations.sh
         git status
-  
+
         if ! git diff --exit-code || [[ $(git ls-files -o --exclude-standard | wc -l) -gt 0 ]]
         then
           # we only upload the changed files if we can find zip
@@ -128,7 +128,11 @@ runs:
         name: Changed expectations (python-${{ inputs.python-version }}, ${{ inputs.os }})
         path: changed-expectations.zip
         if-no-files-found: error
-  
+    - name: Restore changed expectation files
+      if: steps.changes.outcome == 'failure'
+      run: git restore .
+      shell: bash
+
     - name: PyTest
       env:
         PYTHONPATH: ..
@@ -136,7 +140,7 @@ runs:
         cd python/test
         python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest.xml
       shell: bash
-  
+
     - name: PyTest (EST)
       env:
         TZ: US/Eastern
@@ -146,7 +150,7 @@ runs:
         cd python/test
         python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-est.xml
       shell: bash
-  
+
     - name: PyTest (CET)
       env:
         TZ: Europe/Berlin
@@ -156,7 +160,7 @@ runs:
         cd python/test
         python -m pytest --capture=tee-sys --continue-on-collection-errors --junit-xml ../../test-results/pytest-cet.xml
       shell: bash
-  
+
     - name: Upload Test Results
       if: (!cancelled())
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
