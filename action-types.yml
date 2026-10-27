@@ -38,6 +38,7 @@ inputs:
       - nothing
       - errors
       - test failures
+      - regression
 
   action_fail:
     type: boolean

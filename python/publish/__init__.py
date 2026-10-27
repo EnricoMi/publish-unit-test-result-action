@@ -41,10 +41,12 @@ comment_modes = [
 fail_on_mode_nothing = 'nothing'
 fail_on_mode_errors = 'errors'
 fail_on_mode_failures = 'test failures'
+fail_on_mode_regression = 'regression'
 fail_on_modes = [
     fail_on_mode_nothing,
     fail_on_mode_errors,
-    fail_on_mode_failures
+    fail_on_mode_failures,
+    fail_on_mode_regression
 ]
 
 report_suite_out_log = 'info'

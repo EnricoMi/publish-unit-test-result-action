@@ -17,7 +17,7 @@ from github.GithubRetry import DEFAULT_SECONDARY_RATE_WAIT
 import publish.github_action
 from publish import __version__, available_annotations, default_annotations, none_annotations, \
     report_suite_out_log, report_suite_err_log, report_suite_logs, default_report_suite_logs, available_report_suite_logs, \
-    pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, \
+    pull_request_build_modes, fail_on_modes, fail_on_mode_errors, fail_on_mode_failures, fail_on_mode_regression, \
     comment_mode_always, comment_modes, punctuation_space
 from publish.github_action import GithubAction
 from publish.junit import JUnitTree, parse_junit_xml_files, parse_junit_xml_file, process_junit_xml_elems, \
@@ -271,7 +271,9 @@ def main(settings: Settings, gha: GithubAction) -> None:
                     seconds_between_requests=settings.seconds_between_github_reads,
                     seconds_between_writes=settings.seconds_between_github_writes,
                     secondary_rate_wait=settings.secondary_rate_limit_wait_seconds)
-    Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+    # the published conclusion may differ from the derived one (see fail_on=regression)
+    data = Publisher(settings, gh, gha).publish(stats, results.case_results, conclusion)
+    conclusion = data.conclusion
 
     if action_fail_required(conclusion, settings.action_fail, settings.action_fail_on_inconclusive):
         status = f"{conclusion} / inconclusive" if conclusion == "neutral" else conclusion
@@ -444,7 +446,9 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
     fail_on = get_var('FAIL_ON', options) or 'test failures'
     check_var(fail_on, 'FAIL_ON', 'Check fail mode', fail_on_modes)
     # here we decide that we want to fail on errors when we fail on test failures, like log level escalation
-    fail_on_failures = fail_on == fail_on_mode_failures
+    # failing on regression falls back to failing on test failures when there are no earlier results to compare with
+    fail_on_regression = fail_on == fail_on_mode_regression
+    fail_on_failures = fail_on == fail_on_mode_failures or fail_on_regression
     fail_on_errors = fail_on == fail_on_mode_errors or fail_on_failures
 
     retries = get_var('GITHUB_RETRIES', options) or '10'
@@ -474,6 +478,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         json_test_case_results=get_bool_var('JSON_TEST_CASE_RESULTS', options, default=False),
         fail_on_errors=fail_on_errors,
         fail_on_failures=fail_on_failures,
+        fail_on_regression=fail_on_regression,
         action_fail=get_bool_var('ACTION_FAIL', options, default=False),
         action_fail_on_inconclusive=get_bool_var('ACTION_FAIL_ON_INCONCLUSIVE', options, default=False),
         files_glob=get_var('FILES', options) or default_files_glob,
