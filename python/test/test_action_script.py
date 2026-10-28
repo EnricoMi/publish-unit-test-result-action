@@ -15,7 +15,7 @@ import mock
 from packaging.version import Version
 
 from publish import __version__, pull_request_build_mode_merge, fail_on_mode_failures, fail_on_mode_errors, \
-    fail_on_mode_nothing, comment_modes, comment_mode_always, report_suite_out_log, report_suite_err_log, \
+    fail_on_mode_nothing, fail_on_mode_regression, comment_modes, comment_mode_always, report_suite_out_log, report_suite_err_log, \
     report_suite_logs, report_no_suite_logs, default_report_suite_logs, \
     default_annotations, all_tests_list, skipped_tests_list, none_annotations, \
     pull_request_build_modes, punctuation_space
@@ -174,6 +174,7 @@ class Test(unittest.TestCase):
                      commit='commit',
                      fail_on_errors=True,
                      fail_on_failures=True,
+                     fail_on_regression=False,
                      action_fail=False,
                      action_fail_on_inconclusive=False,
                      files_glob='all-files',
@@ -224,6 +225,7 @@ class Test(unittest.TestCase):
             json_test_case_results=json_test_case_results,
             fail_on_errors=fail_on_errors,
             fail_on_failures=fail_on_failures,
+            fail_on_regression=fail_on_regression,
             action_fail=action_fail,
             action_fail_on_inconclusive=action_fail_on_inconclusive,
             files_glob=files_glob,
@@ -393,10 +395,11 @@ class Test(unittest.TestCase):
         self.assertEqual('Commit SHA must be provided via action input or environment variable COMMIT, GITHUB_SHA or event file', str(re.exception))
 
     def test_get_settings_fail_on(self):
-        self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
-        self.do_test_get_settings(FAIL_ON=fail_on_mode_failures, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True))
-        self.do_test_get_settings(FAIL_ON=fail_on_mode_errors, expected=self.get_settings(fail_on_errors=True, fail_on_failures=False))
-        self.do_test_get_settings(FAIL_ON=fail_on_mode_nothing, expected=self.get_settings(fail_on_errors=False, fail_on_failures=False))
+        self.do_test_get_settings(FAIL_ON=None, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True, fail_on_regression=False))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_failures, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True, fail_on_regression=False))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_errors, expected=self.get_settings(fail_on_errors=True, fail_on_failures=False, fail_on_regression=False))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_nothing, expected=self.get_settings(fail_on_errors=False, fail_on_failures=False, fail_on_regression=False))
+        self.do_test_get_settings(FAIL_ON=fail_on_mode_regression, expected=self.get_settings(fail_on_errors=True, fail_on_failures=True, fail_on_regression=True))
 
     def test_get_settings_action_fail_on(self):
         warning = 'Option action_fail has to be boolean, so either "true" or "false": foo'
@@ -1201,6 +1204,45 @@ class Test(unittest.TestCase):
                 self.assertEqual(733, len(results.suite_details))
                 self.assertEqual(1817, len(cases))
                 self.assertEqual('failure', conclusion)
+
+    def test_main_action_fail_uses_published_conclusion(self):
+        # with fail_on=regression, the conclusion derived from the files may be changed by the publisher
+        for published_conclusion, expect_exit in [('failure', True), ('success', False)]:
+            with self.subTest(published_conclusion=published_conclusion):
+                with tempfile.TemporaryDirectory() as path:
+                    filepath = os.path.join(path, 'file')
+                    with open(filepath, 'wt', encoding='utf-8') as file:
+                        file.write('{}')
+
+                    gha = mock.MagicMock()
+                    settings = get_settings(dict(
+                        COMMIT='commit',
+                        GITHUB_TOKEN='********',
+                        GITHUB_EVENT_PATH=file.name,
+                        GITHUB_EVENT_NAME='push',
+                        GITHUB_REPOSITORY='repo',
+                        EVENT_FILE=None,
+                        JUNIT_FILES=str(test_files_path / 'junit-xml' / 'pytest' / 'junit.fail.xml'),
+                        FAIL_ON=fail_on_mode_regression,
+                        ACTION_FAIL='true'
+                    ), gha)
+
+                    with mock.patch('publish_test_results.get_github'), \
+                         mock.patch('publish.publisher.Publisher.publish') as m:
+                        m.return_value = mock.MagicMock(conclusion=published_conclusion)
+
+                        if expect_exit:
+                            with self.assertRaises(SystemExit) as e:
+                                main(settings, gha)
+                            self.assertEqual(1, e.exception.code)
+                            gha.error.assert_called_once_with('This action finished successfully, but test results have status failure.')
+                        else:
+                            main(settings, gha)
+                            gha.error.assert_not_called()
+
+                        # the conclusion derived from the files is passed to the publisher
+                        self.assertEqual(1, len(m.call_args_list))
+                        self.assertEqual('failure', m.call_args_list[0].args[2])
 
     def test_main_fork_pr_check_wo_summary(self):
         with tempfile.TemporaryDirectory() as path:
