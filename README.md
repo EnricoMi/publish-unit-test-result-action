@@ -613,6 +613,14 @@ together with your matrix strategy.
 ## Support fork repositories and dependabot branches
 [comment]: <> (This heading is linked to from main method in publish_unit_test_results.py)
 
+On direct `pull_request` events from forks, disabling the job summary with
+`job_summary: false` does not disable `action_fail` or `action_fail_on_inconclusive`.
+When either enforcement option is enabled, reports are parsed and the existing
+`fail_on` and inconclusive rules determine the action's exit status locally.
+This path makes no GitHub API calls and produces no summary, JSON file or action
+outputs. If both enforcement options are disabled, the existing no-op is retained.
+Publishing checks and pull request comments still requires the setup below.
+
 Getting test results of pull requests created by contributors from fork repositories or by
 [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
 requires some additional setup. Without this, the action will fail with the
