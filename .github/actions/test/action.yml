@@ -91,7 +91,6 @@ runs:
           DEPENDENCIES_VERSION=post-3.10
         fi
         python -m pip install --force -r python/requirements-$DEPENDENCIES_VERSION.txt
-        python -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
 
         # inspect pip cache
         python -m pip freeze | sort
@@ -104,6 +103,9 @@ runs:
           echo "Dependency whl files have been built"
           exit 1
         fi
+
+        # install test dependencies, which we do not require to not build whl files
+        python -m pip install --force -r python/test/requirements.txt -c python/test/constraints.txt
       shell: bash
 
     - name: Update expectation files
