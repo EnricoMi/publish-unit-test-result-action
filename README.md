@@ -273,12 +273,36 @@ The symbols have the following meaning:
 |Symbol|Meaning|
 |:----:|-------|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/2714.png" height="20"/>  :white_check_mark:|A successful test or run|
+|❄️|An eventually successful flaky test (included in the successful test count)|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a4.png" height="20"/>|A skipped test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/274c.png" height="20"/>|A failed test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/1f525.png" height="20"/>|An erroneous test or run|
 |<img src="https://github.githubassets.com/images/icons/emoji/unicode/23f1.png" height="20"/>|The duration of all tests or runs|
 
 ***Note:*** For simplicity, "disabled" tests count towards "skipped" tests.
+
+### Maven Surefire retries
+
+JUnit reports containing Surefire's `flakyFailure` or `flakyError` elements identify
+tests that passed after retries. These tests remain successful and are also shown
+as a ❄️ subset in summaries, with notice annotations containing the failed attempts'
+messages, stack traces and output. Multiple attempts do not add tests or runs, and
+the reported test duration remains the terminal duration from the XML.
+
+Tests with terminal `failure` or `error` elements remain failures or errors,
+including exhausted `rerunFailure` and `rerunError` retries. A failure for the same
+test identity in another report retains precedence over a successful flaky report.
+The action does not infer flakiness from independent pass/fail records.
+
+The existing suite counters and check conclusions are unchanged. In particular,
+inconsistent suite totals that include failed retry attempts are not normalized
+by this feature. `ignore_runs: true` drops individual test cases, so flaky details
+are unavailable in that mode.
+
+JSON includes `tests_flaky` and case-level `flaky_results` only when flakes are
+observed. Older digests and reports without observed flakes omit these optional
+fields. Flaky counts do not have historical deltas; an absent field is not a known
+zero baseline. Existing test identity annotations are unchanged.
 
 ## Configuration
 
