@@ -165,6 +165,9 @@ runs:
         # Check for Python3
         Write-Output "::group::Check for Python3"
         try {
+          # Windows PowerShell turns stderr of native commands into errors, which must not terminate this step
+          $ErrorActionPreference = 'Continue'
+
           # we check version here just to execute `python3` with an argument
           # on Windows, there is a `python3.exe` that is a proxy to trigger installation from app store
           # command `which python3` finds that, but `python3 -V` does not return the version on stdout
@@ -179,27 +182,27 @@ runs:
             $PYTHON_BIN = python3 -c "import sys; print(sys.executable)"
           }
           Write-Output "Python that creates venv: $PYTHON_BIN"
-          "PYTHON_BIN=$PYTHON_BIN" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "PYTHON_BIN=$PYTHON_BIN" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           $PYTHON_VERSION = Invoke-Expression -Command "& '$PYTHON_BIN' -c 'import sys; print(sys.version_info.major, sys.version_info.minor, sep=chr(46))'"
           Write-Output "Python version: $PYTHON_VERSION"
 
           if ( $PYTHON_VERSION -eq "3.7" ) {
-            "DEPENDENCIES_VERSION=3.7" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=3.7" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           } elseif ( $PYTHON_VERSION -eq "3.8" ) {
-            "DEPENDENCIES_VERSION=3.8" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=3.8" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           } elseif ( $PYTHON_VERSION -eq "3.9" ) {
-            "DEPENDENCIES_VERSION=3.9" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=3.9" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           } elseif ( $PYTHON_VERSION -eq "3.10" ) {
-            "DEPENDENCIES_VERSION=3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=3.10" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           } else {
-            "DEPENDENCIES_VERSION=post-3.10" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DEPENDENCIES_VERSION=post-3.10" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           }
-          "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "version=$PYTHON_VERSION" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         } finally {
           Write-Output "::endgroup::"
         }
-      shell: pwsh
+      shell: powershell
 
     - name: Restore PIP packages cache
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
@@ -218,6 +221,8 @@ runs:
         try {
           Write-Output "Python that creates venv: $env:PYTHON_BIN"
 
+          # Windows PowerShell turns stderr of native commands into errors, which must not terminate this step
+          $ErrorActionPreference = 'Continue'
           Write-Output "Creating virtual environment"
           if ( -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m virtualenv .enricomi-publish-action-venv" 2> $null) -And -Not (Invoke-Expression -Command "& '$env:PYTHON_BIN' -m venv .enricomi-publish-action-venv" 2> $null) ) {
             Write-Output "Looks like there is neither virtualenv nor venv package installed"
@@ -235,25 +240,29 @@ runs:
             }
           }
 
+          $ErrorActionPreference = 'Stop'
           Write-Output "Finding Python interpreter in venv"
           $PYTHON_VENV = .enricomi-publish-action-venv\Scripts\python -c "import sys; print(sys.executable)"
           Write-Output "Python in venv: $PYTHON_VENV"
-          "PYTHON_VENV=$PYTHON_VENV" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "PYTHON_VENV=$PYTHON_VENV" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         } finally {
           Write-Output "::endgroup::"
         }
-      shell: pwsh
+      shell: powershell
 
     - name: Install Python dependencies
       run: |
         # Install Python dependencies
         Write-Output "::group::Install Python dependencies"
         try {
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip --cache-dir .enricomi-publish-action-pip install -r '$env:GITHUB_ACTION_PATH\..\..\python\requirements-$env:DEPENDENCIES_VERSION.txt'"
+          # Windows PowerShell turns stderr of native commands into errors, which must not terminate this step
+          $ErrorActionPreference = 'Continue'
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip --cache-dir .enricomi-publish-action-pip install -r '$env:GITHUB_ACTION_PATH\..\..\python\requirements-$env:DEPENDENCIES_VERSION.txt'" 2>&1 | ForEach-Object { "$_" }
+          if ( $LASTEXITCODE -ne 0 ) { Exit 1 }
         } finally {
           Write-Output "::endgroup::"
         }
-      shell: pwsh
+      shell: powershell
 
     - name: Publish Test Results
       id: test-results
@@ -261,7 +270,10 @@ runs:
         # Publish Test Results
         Write-Output "::group::Publish Test Results"
         try {
-          Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\..\python\publish_test_results.py'"
+          # Windows PowerShell turns stderr of native commands into errors, which must not terminate this step
+          $ErrorActionPreference = 'Continue'
+          Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\..\python\publish_test_results.py'" 2>&1 | ForEach-Object { "$_" }
+          if ( $LASTEXITCODE -ne 0 ) { Exit 1 }
         } finally {
           Write-Output "::endgroup::"
         }
@@ -309,7 +321,7 @@ runs:
         ROOT_LOG_LEVEL: ${{ inputs.root_log_level }}
         # not documented
         LOG_LEVEL: ${{ inputs.log_level }}
-      shell: pwsh
+      shell: powershell
 
     - name: Save PIP packages cache
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
