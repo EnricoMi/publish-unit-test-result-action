@@ -235,10 +235,9 @@ def action_fail_required(conclusion: str, action_fail: bool, action_fail_on_inco
 
 
 def main(settings: Settings, gha: GithubAction) -> None:
-    fork_without_summary = settings.is_fork and not settings.job_summary
-    if fork_without_summary and not (settings.action_fail or settings.action_fail_on_inconclusive):
+    if settings.is_fork and not (settings.job_summary or settings.action_fail or settings.action_fail_on_inconclusive):
         gha.warning(f'This action is running on a pull_request event for a fork repository. '
-                    f'The only useful thing it can do in this situation is creating a job summary, which is disabled in settings. '
+                    f'The only useful thing it can do in this situation is creating a job summary, or fail the action based on the test results, all of which is disabled in settings. '
                     f'To fully run the action on fork repository pull requests, see '
                     f'https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}/README.md#support-fork-repositories-and-dependabot-branches')
         return
@@ -262,8 +261,8 @@ def main(settings: Settings, gha: GithubAction) -> None:
     # derive check run conclusion from files
     conclusion = get_conclusion(parsed, fail_on_failures=settings.fail_on_failures, fail_on_errors=settings.fail_on_errors)
 
-    # Fork runs without summaries still enforce local results, without API access or output publishing.
-    if not fork_without_summary:
+    # No need to run this if we are not going to publish anything (due to restricted permission on a fork and publish settings)
+    if not settings.is_fork or settings.job_summary:
         # publish the delta stats
         backoff_factor = max(settings.seconds_between_github_reads, settings.seconds_between_github_writes)
         gh = get_github(auth=github.Auth.Token(settings.token),

@@ -77,8 +77,8 @@ def test_real_event_and_xml_enforcement_matrix(tmp_path, monkeypatch, event_kind
     settings, gha, commands = settings_for(tmp_path, outcome, event_kind, summary,
                                            action_fail, inconclusive, fail_on)
     assert settings.is_fork == (event_kind == 'fork')
-    no_op = settings.is_fork and not summary and not action_fail and not inconclusive
-    publishes = not (settings.is_fork and not summary)
+    no_op = settings.is_fork and not (summary or action_fail or inconclusive)
+    publishes = not settings.is_fork or summary
     conclusion = expected_conclusion(outcome, fail_on)
     must_exit = not no_op and ((action_fail and conclusion == 'failure') or
                               (inconclusive and conclusion == 'neutral'))
