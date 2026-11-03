@@ -45,6 +45,9 @@ class TestActionYml(unittest.TestCase):
     def test_windows_bash_action(self):
         self.do_test_composite_action('windows/bash')
 
+    def test_windows_powershell_action(self):
+        self.do_test_composite_action('windows/powershell')
+
     def do_test_composite_action(self, action: str):
         with open(project_root / 'action.yml', encoding='utf-8') as r:
             dockerfile_action = yaml.safe_load(r)
@@ -146,6 +149,9 @@ class TestActionYml(unittest.TestCase):
 
     def test_windows_bash_action_types(self):
         self.do_test_action_types('windows/bash')
+
+    def test_windows_powershell_action_types(self):
+        self.do_test_action_types('windows/powershell')
 
     def do_test_action_types(self, subaction: str, extra_inputs: dict = None):
         with open(project_root / 'action-types.yml', encoding='utf-8') as r:
