@@ -105,7 +105,7 @@ def test_real_event_and_xml_enforcement_matrix(tmp_path, monkeypatch, event_kind
         assert gh.mock_calls == []
         assert '::set-output' not in commands.getvalue()
     else:
-        content = json.loads((tmp_path / 'results.json').read_text())
+        content = json.loads((tmp_path / 'results.json').read_text(encoding='utf-8'))
         assert content['conclusion'] == conclusion
         assert len(content['stats']['errors']) == int(outcome == 'malformed')
         if settings.is_fork:
