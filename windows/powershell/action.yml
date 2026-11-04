@@ -259,6 +259,10 @@ runs:
           $ErrorActionPreference = 'Continue'
           Invoke-Expression -Command "& '$env:PYTHON_VENV' -m pip --cache-dir .enricomi-publish-action-pip install -r '$env:GITHUB_ACTION_PATH\..\..\python\requirements-$env:DEPENDENCIES_VERSION.txt' 2>&1" | ForEach-Object { "$_" }
           if ( $LASTEXITCODE -ne 0 ) { Exit 1 }
+        } catch {
+          # errors that leave the try block, e.g. when python cannot be started, would not fail this step otherwise
+          Write-Output "::error::$_"
+          Exit 1
         } finally {
           Write-Output "::endgroup::"
         }
@@ -274,6 +278,10 @@ runs:
           $ErrorActionPreference = 'Continue'
           Invoke-Expression -Command "& '$env:PYTHON_VENV' '$env:GITHUB_ACTION_PATH\..\..\python\publish_test_results.py' 2>&1" | ForEach-Object { "$_" }
           if ( $LASTEXITCODE -ne 0 ) { Exit 1 }
+        } catch {
+          # errors that leave the try block, e.g. when python cannot be started, would not fail this step otherwise
+          Write-Output "::error::$_"
+          Exit 1
         } finally {
           Write-Output "::endgroup::"
         }
