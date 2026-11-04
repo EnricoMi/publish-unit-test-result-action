@@ -42,7 +42,7 @@ inputs:
     default: 'false'
     required: false
   action_fail_on_inconclusive:
-    description: 'When set "true", the action itself fails when tests are inconclusive (no test results).'
+    description: 'When set "true", the action itself fails when no result files are found (the neutral/inconclusive conclusion). Valid result files containing no tests are not currently inconclusive; see issue #664.'
     default: 'false'
     required: false
   files:
