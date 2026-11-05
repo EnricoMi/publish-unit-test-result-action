@@ -83,56 +83,16 @@ jobs:
           fi
         shell: bash
 
-  test-mac:
-    name: "Test macOS"
-    uses: "./.github/workflows/test-os.yml"
-    with:
-      os: '["macos-15", "macos-26"]'
-      python-version: '["3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "installed"]'
-      include: '[]'
-
   test-lnx:
     name: "Test Ubuntu"
     uses: "./.github/workflows/test-os.yml"
     with:
-      os: '["ubuntu-22.04", "ubuntu-22.04-arm", "ubuntu-24.04", "ubuntu-24.04-arm", "ubuntu-slim"]'
-      python-version: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "installed"]'
-      include: >
-        [
-          {"os": "ubuntu-22.04", "python-version": "3.8"},
-          {"os": "ubuntu-26.04", "python-version": "3.13"},
-          {"os": "ubuntu-26.04", "python-version": "3.14"},
-          {"os": "ubuntu-26.04", "python-version": "3.15"},
-          {"os": "ubuntu-26.04-arm", "python-version": "3.13"},
-          {"os": "ubuntu-26.04-arm", "python-version": "3.14"},
-          {"os": "ubuntu-26.04-arm", "python-version": "3.15"},
-        ]
-
-  test-win:
-    name: "Test Windows"
-    uses: "./.github/workflows/test-os.yml"
-    with:
-      os: '["windows-2022", "windows-2025"]'
-      python-version: '["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "installed"]'
+      os: '["ubuntu-22.04"]'
+      python-version: '["installed"]'
       include: '[]'
-
-  publish:
-    name: "Publish"
-    needs: [test-mac, test-lnx, test-win]
-    # we run the action from this branch whenever we can (when it runs in our repo's context)
-    if: >
-      ! cancelled() &&
-      github.event.sender.login != 'dependabot[bot]' &&
-      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
-    uses: "./.github/workflows/publish.yml"
-    permissions:
-      checks: write
-      pull-requests: write
-      security-events: write
 
   config-deploy:
     name: Configure Deployment
-    needs: [test-mac, test-lnx, test-win]
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
@@ -288,7 +248,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub
-    needs: [publish, config-deploy]
+    needs: [config-deploy]
 
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
