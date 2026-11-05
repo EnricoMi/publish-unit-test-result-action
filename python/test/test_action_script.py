@@ -1229,8 +1229,8 @@ class Test(unittest.TestCase):
 
             gha.warning.assert_has_calls([
                 mock.call('This action is running on a pull_request event for a fork repository. '
-                          'The only useful thing it can do in this situation is creating a job summary, '
-                          'which is disabled in settings. To fully run the action on fork repository pull requests, '
+                          'The only useful thing it can do in this situation is creating a job summary, or fail the action based on the test results, '
+                          'all of which is disabled in settings. To fully run the action on fork repository pull requests, '
                           f'see https://github.com/EnricoMi/publish-unit-test-result-action/blob/{__version__}'
                           '/README.md#support-fork-repositories-and-dependabot-branches'),
                 mock.call('At least one of the FILES, JUNIT_FILES, NUNIT_FILES, XUNIT_FILES, '
