@@ -6,7 +6,7 @@ published, so a release takes two commits on `master`. Here, `v2.26.0` is the ne
 
 ## 1. Bump the version
 
-Set the new version in these files and push to `master`:
+Set the new version in these files, use commit message "Building v2.26.0 Docker image", and push to `master`:
 
 | File                         | Value                                                                         |
 |:-----------------------------|:------------------------------------------------------------------------------|
@@ -19,7 +19,7 @@ CI builds and publishes the image as `v2.26.0`, `v2.26` and `v2`. The summary of
 
 ## 2. Pin the digest
 
-Append the digest in these files and push to `master`:
+Append the digest in these files, use commit message "Releasing v2.26.0", and push to `master`:
 
 | File                | Value                                                                                 |
 |:--------------------|:--------------------------------------------------------------------------------------|
@@ -35,7 +35,7 @@ report on them afterwards.
 ## 3. Tag the pinning commit
 
 ```bash
-git tag v2.26.0 <commit from step 2>
+git tag v2.26.0 <commit sha from step 2>
 git push origin v2.26.0
 ```
 
@@ -44,7 +44,7 @@ CI fails if this commit doesn't pin the image, or if the tag doesn't match the v
 ## 4. Move the major version tag
 
 ```bash
-git tag --force v2 v2.26.0
+git tag --force -a v2 -m "Latest v2 release" v2.26.0
 git push --force origin v2
 ```
 
