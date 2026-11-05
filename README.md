@@ -902,8 +902,8 @@ is **deprecated**, please use an action appropriate for your operating system an
 - Linux (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/linux@v2`
 - macOS (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/macos@v2`
 - Windows (PowerShell v6 or later: `pwsh`): `uses: EnricoMi/publish-unit-test-result-action/windows@v2`
-- Windows (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2`
 - Windows (PowerShell v5.1 or earlier: `powershell`): `uses: EnricoMi/publish-unit-test-result-action/windows/powershell@v2`
+- Windows (Bash shell): `uses: EnricoMi/publish-unit-test-result-action/windows/bash@v2`
 
 These are non-Docker variations of this action. For details, see section ["Running as a non-Docker action"](#running-as-a-non-docker-action) above.
 
