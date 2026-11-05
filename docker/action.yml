@@ -162,7 +162,7 @@ inputs:
     default: 'enricomi/publish-unit-test-result-action'
     required: false
   docker_tag:
-    description: 'The docker tag to pull the pre-built action from.'
+    description: 'The docker tag to pull the pre-built action from, optionally with a digest (tag@sha256:digest).'
     default: 'v2.25.0'
     required: false
 

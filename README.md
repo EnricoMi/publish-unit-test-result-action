@@ -385,6 +385,9 @@ You can control the Docker image used for the action as below. For this, you nee
 | `docker_image`    | `enricomi/publish-unit-test-result-action` | The docker image name to pull the pre-built action from. Defaults to `enricomi/publish-unit-test-result-action`. |
 | `docker_tag`      |      *The same version as in `uses:`*      | The docker tag to pull the pre-built action from. This is usually not needed.                                    |
 | `docker_platform` |                                            | The platform to use when pulling the docker image.                                                               |
+
+The default `docker_tag` of a release includes the image digest (`vX.Y.Z@sha256:…`), which identifies the exact image regardless of the tag.
+If you pull from a registry or image where that digest does not exist, for example an image you built yourself, also set `docker_tag`.
 </details>
 
 ## JSON result

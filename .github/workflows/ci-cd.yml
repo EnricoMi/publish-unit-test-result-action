@@ -138,7 +138,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.action.outputs.image }}
+      image-digest: ${{ steps.action.outputs.digest }}
       image-exists: ${{ steps.image.outputs.exists }}
+      image-pinned: ${{ steps.action.outputs.pinned }}
       image-version: ${{ steps.action.outputs.version }}
 
     steps:
@@ -151,21 +153,138 @@ jobs:
         id: action
         run: |
           image=$(grep -A 10 "^runs:" action.yml | grep -E "^\s+image:\s" | sed -E -e "s/^\s+image:\s*'//" -e "s/docker:\/\///" -e "s/'\s*$//")
-          version=$(cut -d : -f 2 <<< "$image")
+          digest=""
+          pinned=false
+          if [[ "$image" =~ ^[^:@]+:(v[0-9]+\.[0-9]+\.[0-9]+)(@(sha256:[0-9a-f]{64}))?$ ]]
+          then
+            # releases first publish the image from a commit with ':vX.Y.Z',
+            # then pin the image with a commit with ':vX.Y.Z@sha256:…'
+            version="${BASH_REMATCH[1]}"
+            digest="${BASH_REMATCH[3]}"
+            if [[ -n "$digest" ]]; then pinned=true; fi
+          elif [[ "$image" == "Dockerfile" ]]
+          then
+            version="$image"
+          else
+            echo "::error file=action.yml::Image must look like 'docker://name:vX.Y.Z' or 'docker://name:vX.Y.Z@sha256:<digest>', or be 'Dockerfile': $image"
+            exit 1
+          fi
           echo "image=$image" >>$GITHUB_OUTPUT
           echo "version=$version" >>$GITHUB_OUTPUT
+          echo "digest=$digest" >>$GITHUB_OUTPUT
+          echo "pinned=$pinned" >>$GITHUB_OUTPUT
         shell: bash
 
       - name: Check action image existence
         id: image
+        if: steps.action.outputs.pinned != 'true'
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
+          IMAGE: ${{ steps.action.outputs.image }}
         run: |
-          if docker manifest inspect '${{ steps.action.outputs.image }}'
+          if docker manifest inspect "$IMAGE"
           then
             echo "exists=true" >>$GITHUB_OUTPUT
           fi
         shell: bash
+
+      - name: Check pinned image digest matches its tag
+        if: steps.action.outputs.pinned == 'true'
+        env:
+          IMAGE: ${{ steps.action.outputs.image }}
+          DIGEST: ${{ steps.action.outputs.digest }}
+        run: |
+          tagged="${IMAGE%@*}"
+          actual=$(docker buildx imagetools inspect "$tagged" --format '{{json .Manifest}}' | jq -r .digest)
+          if [[ "$actual" != "$DIGEST" ]]
+          then
+            echo "::error file=action.yml::Digest in action.yml does not match image $tagged: expected $DIGEST, found $actual"
+            exit 1
+          fi
+          echo "$tagged has digest $actual"
+        shell: bash
+
+      - name: Check git tag matches the pinned image
+        if: startsWith(github.ref, 'refs/tags/v') && steps.action.outputs.image != 'Dockerfile'
+        env:
+          PINNED: ${{ steps.action.outputs.pinned }}
+          VERSION: ${{ steps.action.outputs.version }}
+        run: |
+          if [[ "$PINNED" != "true" ]]
+          then
+            echo "::error file=action.yml::Git tag $GITHUB_REF_NAME must point to a commit that pins the image by digest"
+            exit 1
+          fi
+          if [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ && "$GITHUB_REF_NAME" != "$VERSION" ]]
+          then
+            echo "::error file=action.yml::Git tag $GITHUB_REF_NAME does not match image version $VERSION in action.yml"
+            exit 1
+          fi
+        shell: bash
+
+  test-published-image:
+    name: Test Published Image (${{ matrix.arch }})
+    needs: config-deploy
+    # the publish workflow tests images built from this commit, here we test the image users get;
+    # the condition is on the job, as a Docker action's image may be pulled even if its step is skipped
+    if: >
+      needs.config-deploy.outputs.image-pinned == 'true' &&
+      github.event.sender.login != 'dependabot[bot]' &&
+      ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
+    runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            os: ubuntu-latest
+          - arch: arm64
+            os: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Copy test junit xml files
+        run: cp -rv python/test/files/junit-xml test-files
+        shell: bash
+
+      - name: Publish Test Results (Docker action)
+        id: action
+        uses: ./
+        with:
+          check_name: Test Results (Published Image ${{ matrix.arch }}, Docker action)
+          comment_mode: "off"
+          fail_on: nothing
+          files: "test-files/pytest/junit.gloo.standalone.xml"
+          json_file: "tests-action.json"
+
+      - name: Assert JSON output (Docker action)
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.action.outputs.json }}'
+          json_file: 'tests-action.json'
+
+      - name: Publish Test Results (composite docker action)
+        id: docker
+        if: (!cancelled())
+        uses: ./docker
+        with:
+          check_name: Test Results (Published Image ${{ matrix.arch }}, composite docker action)
+          comment_mode: "off"
+          fail_on: nothing
+          files: "test-files/pytest/junit.gloo.standalone.xml"
+          json_file: "tests-docker.json"
+
+      - name: Assert JSON output (composite docker action)
+        if: (!cancelled())
+        uses: ./misc/action/json-output
+        with:
+          json: '${{ steps.docker.outputs.json }}'
+          json_file: 'tests-docker.json'
 
   deploy:
     name: Deploy to GitHub
@@ -174,6 +293,16 @@ jobs:
     # do not build or deploy on forked repositories
     if: github.repository_owner == 'EnricoMi'
     runs-on: ubuntu-latest
+    env:
+      # deploy image actions from commits pushed to master, unless action.yml pins the image by digest, and
+      # deploy Dockerfile actions from pushed version tags (no major versions)
+      PUSH_IMAGE: >-
+        ${{
+          github.event_name == 'push' && (
+            needs.config-deploy.outputs.image != 'Dockerfile' && startsWith(github.ref, 'refs/heads/master') && needs.config-deploy.outputs.image-pinned != 'true' && needs.config-deploy.outputs.image-exists != 'true' ||
+            needs.config-deploy.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
+          )
+        }}
     steps:
       - name: Docker meta
         id: docker-meta
@@ -204,23 +333,32 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7.4.0
         with:
           tags: ${{ steps.docker-meta.outputs.tags }}
           labels: ${{ steps.docker-meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
           pull: true
-          # deploy image actions from commits pushed to master and
-          # deploy Dockerfile actions from pushed version tags (no major versions)
-          push: |
-            ${{
-              github.event_name == 'push' && (
-                needs.config-deploy.outputs.image != 'Dockerfile' && startsWith(github.ref, 'refs/heads/master') && needs.config-deploy.outputs.image-exists != 'true' ||
-                needs.config-deploy.outputs.image == 'Dockerfile' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
-              )
-            }}
+          push: ${{ env.PUSH_IMAGE }}
         env:
           DOCKER_BUILD_RECORD_UPLOAD: false
+
+      - name: Print pinned image reference
+        if: env.PUSH_IMAGE == 'true' && needs.config-deploy.outputs.image != 'Dockerfile'
+        env:
+          IMAGE: ${{ needs.config-deploy.outputs.image }}
+          VERSION: ${{ needs.config-deploy.outputs.image-version }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          {
+            echo "### Pin the published image"
+            echo
+            echo "\`action.yml\`: \`image: 'docker://$IMAGE@$DIGEST'\`"
+            echo
+            echo "\`docker/action.yml\`: \`default: '$VERSION@$DIGEST'\`"
+          } >>"$GITHUB_STEP_SUMMARY"
+        shell: bash
 
   event_file:
     name: "Event File"
