@@ -34,7 +34,7 @@ inputs:
     default: 'always'
     required: false
   fail_on:
-    description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
+    description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors", fails only when the number of failed tests or test errors increased compared to the earlier commit when set to "regression" (see option compare_to_earlier_commit). Default is "test failures".'
     default: 'test failures'
     required: false
   action_fail:

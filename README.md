@@ -344,7 +344,7 @@ The list of most notable options:
 |`json_thousands_separator`|`" "`|Formatted numbers in JSON use this character to separate groups of thousands. Common values are "," or ".". Defaults to punctuation space (\u2008).|
 |`json_suite_details`|`false`|Write out all suite details to the JSON file. Setting this to `true` can greatly increase the size of the output. Defaults to `false`.|
 |`json_test_case_results`|`false`|Write out all individual test case results to the JSON file. Setting this to `true` can greatly increase the size of the output. Defaults to `false`.|
-|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`.|
+|`fail_on`|`"test failures"`|Configures the state of the created test result check run. With `"test failures"` it fails if any test fails or test errors occur. It never fails when set to `"nothing"`, and fails only on errors when set to `"errors"`. With `"regression"` it fails only when the number of failed tests or test errors increased compared to the results of the earlier commit (see `compare_to_earlier_commit`). When there are no earlier results to compare with, it behaves like `"test failures"`.|
 |`action_fail`|`false`|When set `true`, the action itself fails when tests have failed (see `fail_on`).|
 |`action_fail_on_inconclusive`|`false`|When set `true`, the action itself fails when tests are inconclusive (no test results).|
 

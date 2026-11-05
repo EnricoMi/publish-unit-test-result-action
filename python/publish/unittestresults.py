@@ -354,6 +354,11 @@ class UnitTestRunDeltaResults:
         return self._has_changes([self.tests_error, self.runs_error])
 
     @property
+    def has_regressions(self) -> bool:
+        # more failures or errors than in the reference results
+        return any([field.get('delta', 0) > 0 for field in [self.tests_fail, self.tests_error, self.runs_fail, self.runs_error]])
+
+    @property
     def has_failures(self):
         return self.tests_fail.get('number') > 0 or self.runs_fail.get('number') > 0
 

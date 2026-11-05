@@ -48,6 +48,7 @@ class Settings:
     json_test_case_results: bool
     fail_on_errors: bool
     fail_on_failures: bool
+    fail_on_regression: bool
     action_fail: bool
     action_fail_on_inconclusive: bool
     # one of these *files_glob must be set
@@ -202,6 +203,14 @@ class PublishData:
         return data
 
 
+def get_regression_conclusion(conclusion: str, stats_with_delta: UnitTestRunDeltaResults) -> str:
+    # a failure conclusion only persists when failures or errors increased compared to the reference results,
+    # a neutral conclusion (no files) and parse errors are not subject to this comparison
+    if conclusion != 'failure' or len(stats_with_delta.errors) > 0:
+        return conclusion
+    return 'failure' if stats_with_delta.has_regressions else 'success'
+
+
 class Publisher:
 
     def __init__(self, settings: Settings, gh: Github, gha: GithubAction):
@@ -214,7 +223,7 @@ class Publisher:
     def publish(self,
                 stats: UnitTestRunResults,
                 cases: UnitTestCaseResults,
-                conclusion: str):
+                conclusion: str) -> PublishData:
         logger.info(f'Publishing {conclusion} results for commit {self._settings.commit}')
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'Publishing {stats}')
@@ -252,6 +261,8 @@ class Publisher:
                     logger.info(f'There is no pull request for commit {self._settings.commit}')
             else:
                 logger.info('Commenting on pull requests disabled')
+
+        return data
 
     def get_pull_from_event(self) -> Optional[PullRequest]:
         number = get_json_path(self._settings.event, 'pull_request.number')
@@ -422,6 +433,14 @@ class Publisher:
             before_stats = self.get_stats_from_check_run(before_check_run) if before_check_run is not None else None
         stats_with_delta = get_stats_delta(stats, before_stats, 'earlier') if before_stats is not None else stats
         logger.debug(f'stats with delta: {stats_with_delta}')
+
+        # with fail_on=regression, the conclusion depends on the earlier results
+        if self._settings.fail_on_regression and before_stats is not None:
+            regression_conclusion = get_regression_conclusion(conclusion, stats_with_delta)
+            if regression_conclusion != conclusion:
+                logger.info(f'Changing conclusion from {conclusion} to {regression_conclusion} '
+                            f'as failures and errors did not increase compared to earlier commit {before_stats.commit}')
+                conclusion = regression_conclusion
 
         error_annotations = get_error_annotations(stats.errors)
         case_annotations = get_case_annotations(cases, self._settings.report_individual_runs)

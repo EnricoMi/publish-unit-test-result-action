@@ -22,7 +22,7 @@ from publish import __version__, get_json_path, comment_mode_off, comment_mode_a
     duration_label_md, digit_space, pull_request_build_mode_merge, punctuation_space, \
     get_long_summary_with_digest_md
 from publish.github_action import GithubAction
-from publish.publisher import Publisher, Settings, PublishData
+from publish.publisher import Publisher, Settings, PublishData, get_regression_conclusion
 from publish.unittestresults import UnitTestSuite, UnitTestCase, ParseError, UnitTestRunResults, UnitTestCaseResults, \
     create_unit_test_case_results, get_test_results, get_stats, ParsedUnitTestResultsWithCommit, UnitTestRunDeltaResults, \
     get_stats_delta
@@ -94,7 +94,8 @@ class TestPublisher(unittest.TestCase):
                         json_test_case_results: bool = False,
                         pull_request_build: str = pull_request_build_mode_merge,
                         test_changes_limit: Optional[int] = 5,
-                        search_pull_requests: bool = False):
+                        search_pull_requests: bool = False,
+                        fail_on_regression: bool = False):
         return Settings(
             token=None,
             api_url='https://the-github-api-url',
@@ -113,6 +114,7 @@ class TestPublisher(unittest.TestCase):
             json_test_case_results=json_test_case_results,
             fail_on_errors=True,
             fail_on_failures=True,
+            fail_on_regression=fail_on_regression,
             action_fail=False,
             action_fail_on_inconclusive=False,
             files_glob='*.xml',
@@ -1663,6 +1665,76 @@ class TestPublisher(unittest.TestCase):
             '}'
             '}'
         )
+
+    def test_get_regression_conclusion(self):
+        for label, conclusion, stats_with_delta, expected in [
+            ('neutral', 'neutral', get_stats_delta(self.stats, self.past_stats, 'earlier'), 'neutral'),
+            ('success', 'success', get_stats_delta(self.past_stats, self.stats, 'earlier'), 'success'),
+            ('failure with regressions', 'failure', get_stats_delta(self.stats, self.past_stats, 'earlier'), 'failure'),
+            ('failure without regressions', 'failure', get_stats_delta(self.past_stats, self.stats, 'earlier'), 'success'),
+            ('failure without changes', 'failure', get_stats_delta(self.stats, self.stats, 'earlier'), 'success'),
+            ('failure with parse errors', 'failure', get_stats_delta(self.past_stats.with_errors(errors), self.stats, 'earlier'), 'failure'),
+        ]:
+            with self.subTest(msg=label):
+                self.assertEqual(expected, get_regression_conclusion(conclusion, stats_with_delta))
+
+    def test_get_publish_data_with_fail_on_regression(self):
+        earlier_commit = 'past'
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            digest = get_digest_from_stats(self.stats)
+
+        # past stats have 2 failed tests, 3 test errors, 4 failed runs and 1 run error
+        fewer_stats = dataclasses.replace(self.stats, tests_fail=1, tests_error=1, runs_fail=1, runs_error=1)
+        for label, stats, conclusion, expected in [
+            ('more failures and errors', self.stats, 'failure', 'failure'),
+            ('fewer failures and errors', fewer_stats, 'failure', 'success'),
+            ('same failures and errors', self.stats, 'failure', 'success'),
+            ('parse errors', fewer_stats.with_errors(errors), 'failure', 'failure'),
+            ('no files', fewer_stats, 'neutral', 'neutral'),
+        ]:
+            with self.subTest(msg=label):
+                settings = self.create_settings(event={'before': earlier_commit}, fail_on_regression=True)
+                # compare against the past stats, except for the 'same' case, which compares against self.stats
+                past_digest = digest if label.startswith('same') else self.past_digest
+                gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=past_digest, check_names=[settings.check_name])
+                publisher = Publisher(settings, gh, gha)
+
+                actual = publisher.get_publish_data(stats, self.cases, conclusion)
+
+                repo.get_commit.assert_called_once_with(earlier_commit)
+                self.assertEqual(expected, actual.conclusion)
+                self.assertIsNotNone(actual.before_stats)
+
+    def test_get_publish_data_with_fail_on_regression_without_earlier_results(self):
+        # without earlier results, the conclusion is not changed
+        for label, settings in [
+            ('no earlier commit', self.create_settings(event={}, fail_on_regression=True)),
+            ('no compare', self.create_settings(event={'before': 'past'}, compare_earlier=False, fail_on_regression=True)),
+        ]:
+            with self.subTest(msg=label):
+                gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=None, check_names=[])
+                publisher = Publisher(settings, gh, gha)
+
+                actual = publisher.get_publish_data(self.stats, self.cases, 'failure')
+
+                self.assertEqual('failure', actual.conclusion)
+                self.assertIsNone(actual.before_stats)
+
+    def test_get_publish_data_without_fail_on_regression(self):
+        # without fail_on=regression, the conclusion is not changed even though failures and errors decreased
+        earlier_commit = 'past'
+        fewer_stats = dataclasses.replace(self.stats, tests_fail=1, tests_error=1, runs_fail=1, runs_error=1)
+        settings = self.create_settings(event={'before': earlier_commit}, fail_on_regression=False)
+        gh, gha, req, repo, commit = self.create_mocks(commit=mock.Mock(), digest=self.past_digest, check_names=[settings.check_name])
+        publisher = Publisher(settings, gh, gha)
+
+        # makes gzipped digest deterministic
+        with mock.patch('gzip.time.time', return_value=0):
+            actual = publisher.get_publish_data(fewer_stats, self.cases, 'failure')
+
+        self.assertEqual('failure', actual.conclusion)
+        self.assertEqual(self.past_stats, actual.before_stats)
 
     def test_get_publish_data_without_compare_or_check_run(self):
         for compare_earlier, check_run in [(False, True), (True, False), (False, False)]:
