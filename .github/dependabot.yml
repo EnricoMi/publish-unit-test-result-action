@@ -12,6 +12,7 @@ updates:
       - "misc/action/json-output/"
       - "misc/action/find-workflows/"
       - "windows/bash/"
+      - "windows/powershell/"
       - "windows/"
     schedule:
       interval: "monthly"
