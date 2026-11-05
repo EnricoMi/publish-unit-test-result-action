@@ -211,9 +211,6 @@ jobs:
           - os: macos-latest
             os-label: macOS
             python: "installed"
-          - os: macos-14
-            os-label: macOS 14
-            python: "installed"
           - os: macos-26
             os-label: macOS 26
             python: "installed"
