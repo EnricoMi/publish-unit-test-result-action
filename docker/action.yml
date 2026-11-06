@@ -163,7 +163,7 @@ inputs:
     required: false
   docker_tag:
     description: 'The docker tag to pull the pre-built action from, optionally with a digest (tag@sha256:digest).'
-    default: 'v2.25.0@sha256:c94dd210d38e0b4cbed1e3812faf17893823a3dd6385759252af3bbe152a810d'
+    default: 'v2.26.0'
     required: false
 
 outputs:
