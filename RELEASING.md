@@ -1,8 +1,8 @@
 # Releasing
 
-Releases pin the Docker image by digest, because Docker tags can be moved. A commit that
-pins the action then also pins the image. The digest only exists after the image has been
-published, so a release takes two commits on `master`. Here, `v2.26.0` is the new version.
+Releases pin the Docker image by digest, because Docker tags can be moved.
+The digest only exists after the image has been published and tagged, so a
+release takes two commits on `master`. Here, `v2.26.0` is the new version.
 
 ## 1. Bump the version
 
