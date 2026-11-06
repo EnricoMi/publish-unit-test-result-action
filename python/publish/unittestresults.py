@@ -7,6 +7,15 @@ from xml.etree.ElementTree import ParseError as XmlParseError
 
 
 @dataclass(frozen=True)
+class UnitTestCaseRetry:
+    result: str
+    message: Optional[str]
+    content: Optional[str]
+    stdout: Optional[str]
+    stderr: Optional[str]
+
+
+@dataclass(frozen=True)
 class UnitTestCase:
     result_file: str
     test_file: Optional[str]
@@ -19,6 +28,7 @@ class UnitTestCase:
     stdout: Optional[str]
     stderr: Optional[str]
     time: Optional[float]
+    flaky_results: Optional[List[UnitTestCaseRetry]] = None
 
 
 UnitTestCaseFileName = str
@@ -197,6 +207,7 @@ class UnitTestRunResults:
     runs_error: int
 
     commit: str
+    tests_flaky: Optional[int] = None
 
     @property
     def is_delta(self) -> bool:
@@ -259,7 +270,8 @@ class UnitTestRunResults:
             runs_fail=self.runs_fail,
             runs_error=self.runs_error,
 
-            commit=self.commit
+            commit=self.commit,
+            tests_flaky=self.tests_flaky
         )
 
     # exceptions can be arbitrary types and might not be serializable
@@ -299,6 +311,7 @@ class UnitTestRunResults:
             runs_error=values.get('runs_error'),
 
             commit=values.get('commit'),
+            tests_flaky=values.get('tests_flaky'),
         )
 
 
@@ -330,6 +343,7 @@ class UnitTestRunDeltaResults:
 
     reference_type: str
     reference_commit: str
+    tests_flaky: Optional[Numeric] = None
 
     @property
     def is_delta(self) -> bool:
@@ -375,7 +389,8 @@ class UnitTestRunDeltaResults:
         return UnitTestRunResults(files=v(self.files), errors=self.errors, suites=v(self.suites), duration=d(self.duration), suite_details=None,
                                   tests=v(self.tests), tests_succ=v(self.tests_succ), tests_skip=v(self.tests_skip), tests_fail=v(self.tests_fail), tests_error=v(self.tests_error),
                                   runs=v(self.runs), runs_succ=v(self.runs_succ), runs_skip=v(self.runs_skip), runs_fail=v(self.runs_fail), runs_error=v(self.runs_error),
-                                  commit=self.commit)
+                                  commit=self.commit,
+                                  tests_flaky=v(self.tests_flaky) if self.tests_flaky is not None else None)
 
     def without_exceptions(self) -> 'UnitTestRunDeltaResults':
         return dataclasses.replace(self, errors=[error.without_exception() for error in self.errors])
@@ -477,7 +492,12 @@ def get_stats(test_results: UnitTestResults) -> UnitTestRunResults:
         runs_fail=test_results.suite_failures,
         runs_error=test_results.suite_errors,
 
-        commit=test_results.commit
+        commit=test_results.commit,
+        # Flaky tests are a subset of aggregate-success identities, not another outcome.
+        # Do not infer retries from independent success and failure records.
+        tests_flaky=sum(1 for states in test_results.case_results.values()
+                        if aggregate_states(states.keys()) == 'success'
+                        and any(case.flaky_results for case in states['success'])) or None
     )
 
 
@@ -520,5 +540,8 @@ def get_stats_delta(stats: UnitTestRunResults,
         commit=stats.commit,
 
         reference_type=reference_type,
-        reference_commit=reference_stats.commit
+        reference_commit=reference_stats.commit,
+        # Older digests and ignore_runs have no flaky information. Report the
+        # current observed count without inventing a historical baseline or delta.
+        tests_flaky=dict(number=stats.tests_flaky) if stats.tests_flaky is not None else None
     )
