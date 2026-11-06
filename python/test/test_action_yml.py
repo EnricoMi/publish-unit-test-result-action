@@ -1,5 +1,6 @@
 import hashlib
 import pathlib
+import re
 import sys
 import unittest
 
@@ -19,15 +20,18 @@ class TestActionYml(unittest.TestCase):
             dockerfile_action = yaml.safe_load(r)
 
         image = dockerfile_action.get('runs', {}).get('image', '')
-        self.assertTrue(image.startswith('docker://'), image)
-        version = image.split(':')[-1]
+        match = re.fullmatch(r'docker://ghcr\.io/enricomi/publish-unit-test-result-action:'
+                             r'(?P<version>v\d+\.\d+\.\d+)(?P<digest>@sha256:[0-9a-f]{64})?', image)
+        self.assertIsNotNone(match, f'image in action.yml must be pinned to a version, optionally with a digest: {image}')
+        version = match.group('version')
+        digest = match.group('digest') or ''
         self.assertEqual(__version__, version, 'version in action.yml must match __version__ in python/publish/__init__.py')
 
         with open(project_root / 'docker' / 'action.yml', encoding='utf-8') as r:
             docker_action = yaml.safe_load(r)
 
         default_docker_tag = docker_action.get('inputs', {}).get('docker_tag', {}).get('default')
-        self.assertEqual(default_docker_tag, version, 'version in docker/action.yml must match __version__ in python/publish/__init__.py')
+        self.assertEqual(default_docker_tag, version + digest, 'version and digest in docker/action.yml must match those in action.yml')
 
 
     def test_composite_action(self):
