@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=1,
   suite_failures=3,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=1,
       failures=3,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='FailTest',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Assert.True() Failure\r\nExpected: True\r\nActual:   False',
       content='Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
         'SampleProject.xUnit.TestServiceTests.FailTest() in '
@@ -42,6 +48,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='TestTheory(expected: False)',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Assert.Equal() Failure\r\nExpected: False\r\nActual:   True',
       content='Assert.Equal() Failure\r\nExpected: False\r\nActual:   True   at '
         'SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) in '
@@ -58,6 +66,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='SkipTest',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -71,6 +81,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='PassingTest',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -84,6 +96,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='TestTheory(expected: True)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -97,6 +111,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='SampleProject.xUnit.TestServiceTests',
       test_name='TestThrowingException',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='System.Exception : Pretty good exception',
       content='System.Exception : Pretty good exception   at '
         'SampleProject.TestService.GetException() in '

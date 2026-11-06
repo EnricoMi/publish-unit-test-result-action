@@ -27,7 +27,7 @@ errors = [ParseError('file', 'error', 1, 2, exception=ValueError("Invalid value"
 
 class PublishTest(unittest.TestCase):
     old_locale = None
-    details = [UnitTestSuite('suite', 7, 3, 2, 1, 'std-out', 'std-err')]
+    details = [UnitTestSuite('suite', 7, 3, 2, 1, False, False, 'std-out', 'std-err')]
 
     def test_get_json_path(self):
         detail = {'a': 'A', 'b': 'B', 'c': ['d'], 'e': {}, 'f': None}
@@ -503,8 +503,8 @@ class PublishTest(unittest.TestCase):
     def test_get_stats_digest_undigest(self):
         digest = get_digest_from_stats(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
             commit='commit'
         ))
         self.assertTrue(isinstance(digest, str))
@@ -512,8 +512,8 @@ class PublishTest(unittest.TestCase):
         stats = get_stats_from_digest(digest)
         self.assertEqual(stats, UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=None,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
             commit='commit'
         ))
 
@@ -532,26 +532,26 @@ class PublishTest(unittest.TestCase):
                                   'PUKOgc5QedXxaOaJq+O+lMT3jdAAAA'),
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=None,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             )
         )
 
     def test_get_short_summary(self):
-        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, errors=[], suites=0, duration=123, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors', get_short_summary(UnitTestRunResults(files=1, errors=errors, suites=0, duration=0, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=4, tests_succ=4, tests_skip=0, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=5, tests_succ=4, tests_skip=1, tests_fail=0, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
-        self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, commit='commit')))
+        self.assertEqual('No tests found', get_short_summary(UnitTestRunResults(files=0, errors=[], suites=0, duration=123, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('10 tests found in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('All 10 tests pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=10, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('All 9 tests pass, 1 skipped in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=9, tests_skip=1, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('2 fail, 1 skipped, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=1, tests_fail=2, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('2 fail, 8 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=8, tests_skip=0, tests_fail=2, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('3 errors, 7 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=1, errors=[], suites=2, duration=123, suite_details=self.details, tests=10, tests_succ=7, tests_skip=0, tests_fail=0, tests_error=3, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('1 parse errors', get_short_summary(UnitTestRunResults(files=1, errors=errors, suites=0, duration=0, suite_details=self.details, tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('1 parse errors, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=4, tests_succ=4, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('1 parse errors, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=5, tests_succ=4, tests_skip=1, tests_fail=0, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('1 parse errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=7, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=0, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
+        self.assertEqual('1 parse errors, 3 errors, 2 fail, 1 skipped, 4 pass in 2m 3s', get_short_summary(UnitTestRunResults(files=2, errors=errors, suites=1, duration=123, suite_details=self.details, tests=10, tests_succ=4, tests_skip=1, tests_fail=2, tests_error=3, tests_flaky=0, runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0, commit='commit')))
 
     def test_label_md(self):
         self.assertEqual(all_tests_label_md, 'tests')
@@ -564,16 +564,16 @@ class PublishTest(unittest.TestCase):
     def test_get_short_summary_md(self):
         self.assertEqual(get_short_summary_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )), (f'4 {all_tests_label_md} 5 {passed_tests_label_md} 6 {skipped_tests_label_md} 7 {failed_tests_label_md} 8 {test_errors_label_md}'))
 
     def test_get_short_summary_md_with_delta(self):
         self.assertEqual(get_short_summary_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
             commit='commit',
             reference_type='type', reference_commit='0123456789abcdef'
         )), (f'4 {all_tests_label_md}  - 5  5 {passed_tests_label_md} +6  6 {skipped_tests_label_md}  - 7  7 {failed_tests_label_md} +8  8 {test_errors_label_md}  - 9 '))
@@ -592,8 +592,8 @@ class PublishTest(unittest.TestCase):
             with self.subTest(fails=fails, errors=errors, parse_errors=parse_errors):
                 stats = UnitTestRunResults(
                     files=1, errors=[None] * parse_errors, suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=4 - 1 - fails - errors, tests_skip=1, tests_fail=fails, tests_error=errors,
-                    runs=4, runs_succ=4 - 1 - fails - errors, runs_skip=1, runs_fail=fails, runs_error=errors,
+                    tests=4, tests_succ=4 - 1 - fails - errors, tests_skip=1, tests_fail=fails, tests_error=errors, tests_flaky=0,
+                    runs=4, runs_succ=4 - 1 - fails - errors, runs_skip=1, runs_fail=fails, runs_error=errors, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
                 actual = get_details_line_md(stats, 'https://details.url/')
@@ -605,16 +605,16 @@ class PublishTest(unittest.TestCase):
     def test_get_commit_line_md(self):
         stats = UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )
         self.assertEqual(get_commit_line_md(stats), 'Results for commit commit.')
 
         stats_with_delta = UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
             commit='commit', reference_type='type', reference_commit='ref'
         )
         self.assertEqual(get_commit_line_md(stats_with_delta), 'Results for commit commit. ± Comparison against type commit ref.')
@@ -623,8 +623,8 @@ class PublishTest(unittest.TestCase):
             with self.subTest(ref_type=ref_type, ref=ref):
                 stats_with_delta = UnitTestRunDeltaResults(
                     files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
                     commit='commit', reference_type=ref_type, reference_commit=ref
                 )
                 self.assertEqual(get_commit_line_md(stats_with_delta), 'Results for commit commit.')
@@ -639,8 +639,8 @@ class PublishTest(unittest.TestCase):
             with mock.patch('publish.get_long_summary_without_runs_md') as wo:
                 stats = UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=cls.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
                 test_changes = mock.Mock()
@@ -654,8 +654,8 @@ class PublishTest(unittest.TestCase):
             with mock.patch('publish.get_long_summary_without_runs_md') as wo:
                 stats = UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=cls.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
                 test_changes = mock.Mock()
@@ -670,8 +670,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
              f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md}\n'
@@ -682,8 +682,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md_with_errors(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )), (f'1 files  {digit_space}2 suites   3s {duration_label_md}\n'
              f'4 {all_tests_label_md} {digit_space}5 {passed_tests_label_md} {digit_space}6 {skipped_tests_label_md} {digit_space}7 {failed_tests_label_md} {digit_space}8 {test_errors_label_md}\n'
@@ -694,8 +694,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_with_runs_md_with_deltas(self):
         self.assertEqual(get_long_summary_with_runs_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+            runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )), (f'1 files  +{digit_space}2  {digit_space}2 suites   - 3   3s {duration_label_md} +4s\n'
              f'4 {all_tests_label_md}  - {digit_space}5  {digit_space}5 {passed_tests_label_md} +{digit_space}6  {digit_space}6 {skipped_tests_label_md}  - {digit_space}7  {digit_space}7 {failed_tests_label_md} +{digit_space}8  {digit_space}8 {test_errors_label_md}  - {digit_space}9 \n'
@@ -707,8 +707,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-                runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/'
@@ -725,8 +725,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/'
@@ -741,8 +741,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_with_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=9, runs_succ=10, runs_skip=11, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/',
@@ -801,8 +801,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
              f'2 suites  6 {skipped_tests_label_md}\n'
@@ -813,8 +813,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_errors(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunResults(
             files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+            tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+            runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8, runs_flaky=0, runs_rerun=0,
             commit='commit'
         )), (f'4 {all_tests_label_md}   5 {passed_tests_label_md}  3s {duration_label_md}\n'
              f'2 suites  6 {skipped_tests_label_md}\n'
@@ -825,8 +825,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_delta(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(0, 0),
-            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(0, 0),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(0, 0), tests_flaky=n(0, 0),
+            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(0, 0), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )), (f'4 {all_tests_label_md}   - 5   5 {passed_tests_label_md} +6   3s {duration_label_md} +4s\n'
              f'2 suites  - 3   6 {skipped_tests_label_md}  - 7 \n'
@@ -837,8 +837,8 @@ class PublishTest(unittest.TestCase):
     def test_get_long_summary_without_runs_md_with_errors_and_deltas(self):
         self.assertEqual(get_long_summary_without_runs_md(UnitTestRunDeltaResults(
             files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9),
+            tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+            runs=n(4, -5), runs_succ=n(5, 6), runs_skip=n(6, -7), runs_fail=n(7, 8), runs_error=n(8, -9), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
             commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
         )), (f'4 {all_tests_label_md}   - 5   5 {passed_tests_label_md} +6   3s {duration_label_md} +4s\n'
              f'2 suites  - 3   6 {skipped_tests_label_md}  - 7 \n'
@@ -850,8 +850,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/'
@@ -868,8 +868,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/'
@@ -884,8 +884,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0,
-                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0,
+                tests=4, tests_succ=5, tests_skip=6, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=4, runs_succ=5, runs_skip=6, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/',
@@ -941,8 +941,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=0, errors=[], suites=0, duration=0, suite_details=self.details,
-                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
-                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
+                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/',
@@ -961,8 +961,8 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(get_long_summary_without_runs_md(
             UnitTestRunResults(
                 files=2, errors=[], suites=0, duration=0, suite_details=self.details,
-                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0,
-                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0,
+                tests=0, tests_succ=0, tests_skip=0, tests_fail=0, tests_error=0, tests_flaky=0,
+                runs=0, runs_succ=0, runs_skip=0, runs_fail=0, runs_error=0, runs_flaky=0, runs_rerun=0,
                 commit='commit'
             ),
             'https://details.url/',
@@ -983,8 +983,8 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1007,8 +1007,8 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0,
-                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=0, tests_flaky=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=0, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1031,8 +1031,8 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1055,8 +1055,8 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunResults(
                     files=1, errors=errors, suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=9, runs_succ=10, runs_skip=11, runs_fail=12, runs_error=13, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1079,13 +1079,13 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunDeltaResults(
                     files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
                 ), UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1108,13 +1108,13 @@ class PublishTest(unittest.TestCase):
             actual = get_long_summary_with_digest_md(
                 UnitTestRunDeltaResults(
                     files=n(1, 2), errors=errors, suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                    tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+                    runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
                     commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
                 ), UnitTestRunResults(
                     files=1, errors=[], suites=2, duration=3, suite_details=self.details,
-                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8,
-                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8,
+                    tests=4, tests_succ=5, tests_skip=6, tests_fail=7, tests_error=8, tests_flaky=0,
+                    runs=4, runs_succ=5, runs_skip=6, runs_fail=7, runs_error=8, runs_flaky=0, runs_rerun=0,
                     commit='commit'
                 )
             )
@@ -1135,8 +1135,8 @@ class PublishTest(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             get_long_summary_with_digest_md(UnitTestRunDeltaResults(
                 files=n(1, 2), errors=[], suites=n(2, -3), duration=d(3, 4), suite_details=self.details,
-                tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9),
-                runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14),
+                tests=n(4, -5), tests_succ=n(5, 6), tests_skip=n(6, -7), tests_fail=n(7, 8), tests_error=n(8, -9), tests_flaky=n(0, 0),
+                runs=n(9, 10), runs_succ=n(10, -11), runs_skip=n(11, 12), runs_fail=n(12, -13), runs_error=n(13, 14), runs_flaky=n(0, 0), runs_rerun=n(0, 0),
                 commit='123456789abcdef0', reference_type='type', reference_commit='0123456789abcdef'
             ))
         self.assertIn('stats must be UnitTestRunResults when no digest_stats is given', context.exception.args)
@@ -1460,34 +1460,34 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
                 ],
                 'failure': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
                 ],
                 'error': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
                 ],
             },
             (None, 'class2', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'failure': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'error': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
             }
         })
@@ -1496,52 +1496,52 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', defaultdict(list, [
                     ('content1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.0),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content='content1', stdout='stdout1', stderr='stderr1', time=1.1),
                     ])),
                     ('content2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=1.2),
                     ]))
                 ])),
                 ('skipped', defaultdict(list, [
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message2', content='content2', stdout='stdout2', stderr='stderr2', time=None),
                     ])),
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message3', content='content3', stdout='stdout3', stderr='stderr3', time=None),
                     ]))
                 ])),
                 ('failure', defaultdict(list, [
                     ('content4', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.23),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4', stdout='stdout4', stderr='stderr4', time=1.234),
                     ])),
                 ])),
                 ('error', defaultdict(list, [
                     ('content5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=1, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='message5', content='content5', stdout='stdout5', stderr='stderr5', time=1.2345),
                     ])),
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('skipped', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('failure', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('error', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
             ]))
@@ -1586,49 +1586,49 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('skipped', dict([
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message2', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content='content3', stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message3', content='content3', stdout=None, stderr=None, time=1.0)
                     ])),
                     ('message4', list([
-                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.1', stdout=None, stderr=None, time=1.0),
-                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content='content4.2', stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4.1', stdout=None, stderr=None, time=1.0),
+                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content='content4.2', stdout=None, stderr=None, time=1.0)
                     ])),
                 ])),
                 # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content='content5', stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='actual message', content='content5', stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
             ])),
             ((None, 'class2', 'test2'), dict([
                 ('success', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('skipped', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('failure', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
                 ('error', dict([
                     (None, list([
-                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                     ])),
                 ])),
             ]))
@@ -1649,27 +1649,27 @@ class PublishTest(unittest.TestCase):
             ((None, 'class1', 'test1'), dict([
                 ('success', dict([
                     ('message1', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='message1', content=None, stdout=None, stderr=None, time=1.0)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='message1', content=None, stdout=None, stderr=None, time=1.0)
                     ]))
                 ])),
                 ('skipped', dict([
                     ('message2', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='message2', content=None, stdout=None, stderr=None, time=None)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='message2', content=None, stdout=None, stderr=None, time=None)
                     ]))
                 ])),
                 ('failure', dict([
                     ('message3', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', message='message3', content=None, stdout=None, stderr=None, time=1.23)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message3', content=None, stdout=None, stderr=None, time=1.23)
                     ])),
                     ('message4', list([
-                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, stdout=None, stderr=None, time=1.234),
-                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='message4', content=None, stdout=None, stderr=None, time=1.234)
+                        UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content=None, stdout=None, stderr=None, time=1.234),
+                        UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='message4', content=None, stdout=None, stderr=None, time=1.234)
                     ])),
                 ])),
                 # the actual case message is taken, rather than the message given to get_case_annotation
                 ('error', dict([
                     ('message5', list([
-                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='actual message', content=None, stdout=None, stderr=None, time=1.2345)
+                        UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='actual message', content=None, stdout=None, stderr=None, time=1.2345)
                     ]))
                 ])),
             ]))
@@ -1685,32 +1685,32 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ],
                 'failure': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
-                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
-                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 3', content='fail content 3', stdout='fail stdout 3', stderr='fail stderr 3', time=1.234)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
+                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
+                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 3', content='fail content 3', stdout='fail stdout 3', stderr='fail stderr 3', time=1.234)
                 ],
                 'error': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=1.2345)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=1.2345)
                 ],
             },
             (None, 'class2', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='success', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='skipped', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'failure': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='failure', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
                 'error': [
-                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', message=None, content=None, stdout=None, stderr=None, time=None)
+                    UnitTestCase(result_file='result-file1', test_file=None, line=None, class_name='class2', test_name='test2', result='error', is_flaky=False, is_rerun=False, message=None, content=None, stdout=None, stderr=None, time=None)
                 ],
             }
         })
@@ -1767,18 +1767,18 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ],
                 'failure': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
-                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
-                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.234)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 1', content='fail content 1', stdout='fail stdout 1', stderr='fail stderr 1', time=1.2),
+                    UnitTestCase(result_file='result-file2', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.23),
+                    UnitTestCase(result_file='result-file3', test_file='file1', line=123, class_name='class1', test_name='test1', result='failure', is_flaky=False, is_rerun=False, message='fail message 2', content='fail content 2', stdout='fail stdout 2', stderr='fail stderr 2', time=1.234)
                 ],
                 'error': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=0.1)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='error', is_flaky=False, is_rerun=False, message='error message', content='error content', stdout='error stdout', stderr='error stderr', time=0.1)
                 ],
             }
         })
@@ -1837,12 +1837,12 @@ class PublishTest(unittest.TestCase):
         whitespaces2 = '\n\t '
 
         suites = [
-            UnitTestSuite('no logs', 0, 0, 0, 0, None, None),
-            UnitTestSuite('out logs', 0, 0, 0, 0, out_log, None),
-            UnitTestSuite('err logs', 0, 0, 0, 0, None, err_log),
-            UnitTestSuite('both logs', 0, 0, 0, 0, multiline_out_log, multiline_err_log),
-            UnitTestSuite('empty string logs', 0, 0, 0, 0, empty_string, empty_string),
-            UnitTestSuite('whitespace logs', 0, 0, 0, 0, whitespaces, whitespaces2),
+            UnitTestSuite('no logs', 0, 0, 0, 0, 0, 0, None, None),
+            UnitTestSuite('out logs', 0, 0, 0, 0, 0, 0, out_log, None),
+            UnitTestSuite('err logs', 0, 0, 0, 0, 0, 0, None, err_log),
+            UnitTestSuite('both logs', 0, 0, 0, 0, 0, 0, multiline_out_log, multiline_err_log),
+            UnitTestSuite('empty string logs', 0, 0, 0, 0, 0, 0, empty_string, empty_string),
+            UnitTestSuite('whitespace logs', 0, 0, 0, 0, 0, 0, whitespaces, whitespaces2),
         ]
 
         def create_annotation(name: str, source: str, log: str) -> Annotation:
@@ -1897,20 +1897,20 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             },
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ],
             },
             ('file', 'class1', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             }
         })
@@ -1925,20 +1925,20 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             },
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ],
             },
             ('file', 'class1', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             }
         })
@@ -1956,20 +1956,20 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test2'): {
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             },
             (None, 'class1', 'test1'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name=None, test_name='test1', result='skipped', is_flaky=False, is_rerun=False, message='skip message', content='skip content', stdout='skip stdout', stderr='skip stderr', time=None)
                 ],
             },
             ('file', 'class1', 'test2'): {
                 'success': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             }
         })
@@ -1983,17 +1983,17 @@ class PublishTest(unittest.TestCase):
         results = create_unit_test_case_results({
             (None, 'class1', 'test2'): {
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             },
             (None, 'class1', 'test1'): {
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test1', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             },
             ('file', 'class1', 'test2'): {
                 'skipped': [
-                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
+                    UnitTestCase(result_file='result-file1', test_file='file1', line=123, class_name='class1', test_name='test2', result='success', is_flaky=False, is_rerun=False, message='success message', content='success content', stdout='success stdout', stderr='success stderr', time=1.0)
                 ],
             }
         })

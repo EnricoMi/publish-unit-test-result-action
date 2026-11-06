@@ -156,12 +156,15 @@ class TestPublisher(unittest.TestCase):
         tests_skip=5,
         tests_fail=6,
         tests_error=7,
+        tests_flaky=0,
 
         runs=38,
         runs_succ=8,
         runs_skip=9,
         runs_fail=10,
         runs_error=11,
+        runs_flaky=0,
+        runs_rerun=0,
 
         commit='commit'
     )
@@ -179,12 +182,15 @@ class TestPublisher(unittest.TestCase):
         tests_skip=5,
         tests_fail=6,
         tests_error=7,
+        tests_flaky=0,
 
         runs=48,
         runs_succ=18,
         runs_skip=9,
         runs_fail=10,
         runs_error=11,
+        runs_flaky=0,
+        runs_rerun=0,
 
         commit='past'
     )
@@ -225,8 +231,9 @@ class TestPublisher(unittest.TestCase):
             success=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
-                    class_name='class', test_name='test',
-                    result='success', message=None, content=None,
+                    class_name='class', test_name='test', result='success',
+                    is_flaky=False, is_rerun=False,
+                    message=None, content=None,
                     stdout=None, stderr=None,
                     time=1.2
                 )
@@ -234,8 +241,9 @@ class TestPublisher(unittest.TestCase):
             failure=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
-                    class_name='class', test_name='test',
-                    result='failure', message='message', content='content',
+                    class_name='class', test_name='test', result='failure',
+                    is_flaky=False, is_rerun=False,
+                    message='message', content='content',
                     stdout='stdout', stderr='stderr',
                     time=1.234
                 )
@@ -245,8 +253,9 @@ class TestPublisher(unittest.TestCase):
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
-                    class_name='class', test_name='test2',
-                    result='skipped', message='skipped', content=None,
+                    class_name='class', test_name='test2', result='skipped',
+                    is_flaky=False, is_rerun=False,
+                    message='skipped', content=None,
                     stdout=None, stderr=None,
                     time=None
                 )
@@ -254,8 +263,9 @@ class TestPublisher(unittest.TestCase):
             error=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
-                    class_name='class', test_name='test2',
-                    result='error', message='error message', content='error content',
+                    class_name='class', test_name='test2', result='error',
+                    is_flaky=False, is_rerun=False,
+                    message='error message', content='error content',
                     stdout='error stdout', stderr='error stderr',
                     time=1.2345
                 )
@@ -265,8 +275,9 @@ class TestPublisher(unittest.TestCase):
             skipped=[
                 UnitTestCase(
                     result_file='result file', test_file='test file', line=0,
-                    class_name='class', test_name='test3',
-                    result='skipped', message='skipped', content=None,
+                    class_name='class', test_name='test3', result='skipped',
+                    is_flaky=False, is_rerun=False,
+                    message='skipped', content=None,
                     stdout=None, stderr=None,
                     time=None
                 )
@@ -302,12 +313,15 @@ class TestPublisher(unittest.TestCase):
             tests_skip=4,
             tests_fail=2,
             tests_error=3,
+            tests_flaky=0,
 
             runs=37,
             runs_succ=25,
             runs_skip=7,
             runs_fail=4,
             runs_error=1,
+            runs_flaky=0,
+            runs_rerun=0,
 
             commit=base
         )
@@ -677,7 +691,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_compare_earlier(self):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         bcr = mock.MagicMock()
-        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
+        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 0, 3, 1, 2, 0, 0, 0, 0, 'commit')
         stats = self.stats
         cases = create_unit_test_case_results(self.cases)
         settings = self.create_settings(compare_earlier=True)
@@ -740,7 +754,7 @@ class TestPublisher(unittest.TestCase):
     def test_publish_comment_compare_earlier_with_restricted_unicode(self):
         pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
         bcr = mock.MagicMock()
-        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 3, 1, 2, 0, 0, 'commit')
+        bs = UnitTestRunResults(1, [], 1, 1, [], 3, 1, 2, 0, 0, 0, 3, 1, 2, 0, 0, 0, 0, 'commit')
         stats = self.stats
         # the new test cases with un-restricted unicode, as they come from test result files
         cases = create_unit_test_case_results({
@@ -1458,13 +1472,14 @@ class TestPublisher(unittest.TestCase):
             f'\n'
             f'Results for commit commit.\n'
         )
-        summary_with_digest = summary + "\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WMSw6DMAwFr4Ky7qL5UGgvg1AAySqQyklWiLvzoBh2nnnyLGqgsY/qU2hj3aNQMVM62AC6zG2iMAOtK18w2NKxGoEmZu9h3C2+9IMoLzG0NEJc/03PHBimguE870Fbn7f0bv7n3sJnTT9FSE1rGB+miRJIrnUDujAKa+MAAAA=\n"
+        summary_with_digest = summary + "\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NyQ7CIBRFf6Vh7UKGOv0MIUiTl9JiKCyM8d+9VobE1XvnvOG+2ETebew2cCHVYWBbprSzANxzNInCCpRqPMFglvapqKC3bC2M6mKmB8TYxGTIQ7R77WIMEebcV7yZnzBHmJjXb4S8lL4mdP4FXCuX/7wet/+ct5W//zo6lCJsWBZKgNq9Pz59j+EXAQAA\n"
+
         expected = PublishData(
             title=f"{title_errors}7 errors, 6 fail, 5 skipped, 4 pass in 57m 36s",
             summary=summary,
             summary_with_digest=summary_with_digest,
             conclusion="conclusion",
-            stats=UnitTestRunResults(files=1234, errors=errors, suites=2, duration=3456, suite_details=[], tests=22, tests_succ=4, tests_skip=5, tests_fail=6, tests_error=7, runs=38, runs_succ=8, runs_skip=9, runs_fail=10, runs_error=11, commit="commit"),
+            stats=UnitTestRunResults(files=1234, errors=errors, suites=2, duration=3456, suite_details=[], tests=22, tests_succ=4, tests_skip=5, tests_fail=6, tests_error=7, tests_flaky=0, runs=38, runs_succ=8, runs_skip=9, runs_fail=10, runs_error=11, runs_flaky=0, runs_rerun=0, commit="commit"),
             stats_with_delta=None,
             before_stats=None,
             annotations=annotations,
@@ -1567,10 +1582,10 @@ class TestPublisher(unittest.TestCase):
         )
         summary_with_digest = (summary + '\n'
             '[test-results]:data:application/gzip;base64,'
-            'H4sIAAAAAAAC/0WMSw6DMAwFr4Ky7qL5UGgvg1AAySqQyklWiL'
-            'vzoBh2nnnyLGqgsY/qU2hj3aNQMVM62AC6zG2iMAOtK18w2NKx'
-            'GoEmZu9h3C2+9IMoLzG0NEJc/03PHBimguE870Fbn7f0bv7n3s'
-            'JnTT9FSE1rGB+miRJIrnUDujAKa+MAAAA=\n'
+            'H4sIAAAAAAAC/12NyQ7CIBRFf6Vh7UKGOv0MIUiTl9JiKCyM8d+9V'
+            'obE1XvnvOG+2ETebew2cCHVYWBbprSzANxzNInCCpRqPMFglvapqK'
+            'C3bC2M6mKmB8TYxGTIQ7R77WIMEebcV7yZnzBHmJjXb4S8lL4mdP4'
+            'FXCuX/7wet/+ct5W//zo6lCJsWBZKgNq9Pz59j+EXAQAA\n'
         )
         expected = PublishData(
             title='{}7 errors, 6 fail, 5 skipped, 4 pass in 57m 36s'.format('{} parse errors, '.format(len(errors)) if len(errors) > 0 else ''),
@@ -1683,7 +1698,7 @@ class TestPublisher(unittest.TestCase):
                 f'\n'
                 f'Results for commit commit.\n'
             )
-            summary_with_digest = summary + "\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/0WMSw6DMAwFr4Ky7qL5UGgvg1AAySqQyklWiLvzoBh2nnnyLGqgsY/qU2hj3aNQMVM62AC6zG2iMAOtK18w2NKxGoEmZu9h3C2+9IMoLzG0NEJc/03PHBimguE870Fbn7f0bv7n3sJnTT9FSE1rGB+miRJIrnUDujAKa+MAAAA=\n"
+            summary_with_digest = summary + "\n[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NyQ7CIBRFf6Vh7UKGOv0MIUiTl9JiKCyM8d+9VobE1XvnvOG+2ETebew2cCHVYWBbprSzANxzNInCCpRqPMFglvapqKC3bC2M6mKmB8TYxGTIQ7R77WIMEebcV7yZnzBHmJjXb4S8lL4mdP4FXCuX/7wet/+ct5W//zo6lCJsWBZKgNq9Pz59j+EXAQAA\n"
             annotations = [
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='warning', message='result file [took 1s]', title='1 out of 2 runs failed: test (class)', raw_details='message\ncontent\nstdout\nstderr'),
                 Annotation(path='test file', start_line=0, end_line=0, start_column=None, end_column=None, annotation_level='failure', message='result file [took 1s]', title='1 out of 2 runs with error: test2 (class)', raw_details='error message\nerror content\nerror stdout\nerror stderr'),
@@ -1702,6 +1717,7 @@ class TestPublisher(unittest.TestCase):
                 check_url=None,
                 cases=self.cases
             )
+            print(actual)
             self.assertEqual(expected, actual, (compare_earlier, check_run))
 
     def test_publish_check_few_annotations(self):
@@ -1791,6 +1807,8 @@ class TestPublisher(unittest.TestCase):
                     line=1,
                     message='message',
                     result='success',
+                    is_flaky=False,
+                    is_rerun=False,
                     result_file='/path/to/test/test.classpath.classname',
                     stderr='stderr',
                     stdout='stdout',
@@ -1825,11 +1843,14 @@ class TestPublisher(unittest.TestCase):
                             "tests_skip": 5,
                             "tests_fail": 6,
                             "tests_error": 7,
+                            "tests_flaky": 0,
                             "runs": 38,
                             "runs_succ": 8,
                             "runs_skip": 9,
                             "runs_fail": 10,
                             "runs_error": 11,
+                            "runs_flaky": 0,
+                            "runs_rerun": 0,
                             "commit": "commit"
                         },
                         "stats_with_delta": {
@@ -1845,11 +1866,14 @@ class TestPublisher(unittest.TestCase):
                             "tests_skip": {"number": 5, "delta": 0},
                             "tests_fail": {"number": 6, "delta": 0},
                             "tests_error": {"number": 7, "delta": 0},
+                            "tests_flaky": {"number": 0, "delta": 0},
                             "runs": {"number": 38, "delta": -10},
                             "runs_succ": {"number": 8, "delta": -10},
                             "runs_skip": {"number": 9, "delta": 0},
                             "runs_fail": {"number": 10, "delta": 0},
                             "runs_error": {"number": 11, "delta": 0},
+                            "runs_flaky": {"number": 0, "delta": 0},
+                            "runs_rerun": {"number": 0, "delta": 0},
                             "commit": "commit",
                             "reference_type": "before",
                             "reference_commit": "past"
@@ -1865,11 +1889,14 @@ class TestPublisher(unittest.TestCase):
                             "tests_skip": 5,
                             "tests_fail": 6,
                             "tests_error": 7,
+                            "tests_flaky": 0,
                             "runs": 48,
                             "runs_succ": 18,
                             "runs_skip": 9,
                             "runs_fail": 10,
                             "runs_error": 11,
+                            "runs_flaky": 0,
+                            "runs_rerun": 0,
                             "commit": "past"
                         },
                         "annotations": [
@@ -1899,6 +1926,8 @@ class TestPublisher(unittest.TestCase):
                                             "class_name": "test.classpath.classname",
                                             "test_name": "casename",
                                             "result": "success",
+                                            "is_flaky": False,
+                                            "is_rerun": False,
                                             "message": "message",
                                             "content": "content",
                                             "stdout": "stdout",
@@ -1923,11 +1952,14 @@ class TestPublisher(unittest.TestCase):
                                 "tests_skip": "5",
                                 "tests_fail": "6",
                                 "tests_error": "7",
+                                "tests_flaky": "0",
                                 "runs": "38",
                                 "runs_succ": "8",
                                 "runs_skip": "9",
                                 "runs_fail": "10",
                                 "runs_error": "11",
+                                "runs_flaky": "0",
+                                "runs_rerun": "0",
                                 "commit": "commit"
                             },
                             "stats_with_delta": {
@@ -1943,11 +1975,14 @@ class TestPublisher(unittest.TestCase):
                                 "tests_skip": {"number": "5", "delta": "0"},
                                 "tests_fail": {"number": "6", "delta": "0"},
                                 "tests_error": {"number": "7", "delta": "0"},
+                                "tests_flaky": {"number": "0", "delta": "0"},
                                 "runs": {"number": "38", "delta": "-10"},
                                 "runs_succ": {"number": "8", "delta": "-10"},
                                 "runs_skip": {"number": "9", "delta": "0"},
                                 "runs_fail": {"number": "10", "delta": "0"},
                                 "runs_error": {"number": "11", "delta": "0"},
+                                "runs_flaky": {"number": "0", "delta": "0"},
+                                "runs_rerun": {"number": "0", "delta": "0"},
                                 "commit": "commit",
                                 "reference_type": "before",
                                 "reference_commit": "past"
@@ -1963,11 +1998,14 @@ class TestPublisher(unittest.TestCase):
                                 "tests_skip": "5",
                                 "tests_fail": "6",
                                 "tests_error": "7",
+                                "tests_flaky": "0",
                                 "runs": "48",
                                 "runs_succ": "18",
                                 "runs_skip": "9",
                                 "runs_fail": "10",
                                 "runs_error": "11",
+                                "runs_flaky": "0",
+                                "runs_rerun": "0",
                                 "commit": "past"
                             },
                         },
@@ -1987,6 +2025,7 @@ class TestPublisher(unittest.TestCase):
                         with_suite_details=json_suite_details,
                         with_cases=json_test_case_results
                     )
+                    self.maxDiff = None
                     self.assertEqual(expected, actual)
 
                     with tempfile.TemporaryDirectory() as path:
@@ -2089,9 +2128,9 @@ class TestPublisher(unittest.TestCase):
         publisher = Publisher(settings, gh, gha)
 
         bs = UnitTestRunResults(
-            files=2, errors=[], suites=3, duration=4, suite_details=[UnitTestSuite('suite', 7, 3, 2, 1, 'stdout', 'stderr')],
-            tests=20, tests_succ=5, tests_skip=4, tests_fail=5, tests_error=6,
-            runs=37, runs_succ=10, runs_skip=9, runs_fail=8, runs_error=7,
+            files=2, errors=[], suites=3, duration=4, suite_details=[UnitTestSuite('suite', 7, 3, 2, 1, 0, 0, 'stdout', 'stderr')],
+            tests=20, tests_succ=5, tests_skip=4, tests_fail=5, tests_error=6, tests_flaky=0,
+            runs=37, runs_succ=10, runs_skip=9, runs_fail=8, runs_error=7, runs_flaky=0, runs_rerun=0,
             commit='before'
         )
         data = PublishData(

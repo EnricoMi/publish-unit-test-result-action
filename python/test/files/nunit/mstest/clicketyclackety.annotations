@@ -10,10 +10,10 @@
         '23 tests\u2002\u2003\u200313 ✅\u2003\u20030s ⏱️\n\u20078 suites\u2003\u2003\u2007'
         '0 💤\n\u20071 files\u2004\u2002\u2003\u200310 ❌\n\nResults for commit '
         'commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMSw6AIAxEr'
-        '0JYu/CzMV6GENTYKGAKrIx3t+AH3PXNTN/BZ9gmxwfWVIy7AD5BTzAGlB6sIawJqfCxar'
-        'sXhAtKxc8iWWEv92KWsMVJTiZEi88Gg/mU8f4Z7yALE5e+FJQ6ZbUGT/BczC2SnxdFoh1'
-        'R4wAAAA==\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12Nyw6DIBBFf'
+        '4WwdlF10/RnCEGME3mYARZN4787IK3YFXPOXOZ++AxGB/5ifcd4SBALPAmmhDKCd4QPQl'
+        'rEvBrGL4iQlMo/G7PC1ubFLMHkyGU0osd7xsj1XQ0m9yvJ863jFFdF4bahiLbgTPzdF6j'
+        'pqUJ5ayES1ImFRfL9AEfrakEXAQAA\n',
       'annotations': [
         {
           'path': 'MyProject.Tests.Real.UserInput.BakeDrawingCommandTests',

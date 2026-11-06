@@ -10,10 +10,10 @@
         '5 tests\u2002\u2003\u20032 ✅\u2003\u200312s ⏱️\n1 suites\u2003\u2003'
         '1 💤\n1 files\u2004\u2002\u2003\u20031 ❌\u2003\u20031 🔥\n\nResults '
         'for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
-        '0KobSSx8TKGoMaNfMwClfHu8hXs3sxm56Y7yM3SmYwDodaD+2D1yB0YHZEFDhcXb1Pdi/'
-        'VCBMGaOOEq31nsHORPbIgGi0Gvay/OPpe51RJ3scR9SxilwAUoi9iD0+cFI3viF94AAAA'
-        '=\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NMQ6AIAxFr'
+        '0KYHdTExcsYghgbUUyBwRjvbhFUdOK/1/K78wG0srxlVcG49eAe6D0KB2YJWBPTxIVZc+'
+        'fOeilJ1K+YYE2/oxgE6I9QiAa/K1pMG5mSDPrlvhBifiDy239xVn9x3h4XfuUdKnqSkGa'
+        'ewRGkxOwo+HECqdB0qRIBAAA=\n',
       'annotations': [
         {
           'path': '/home/runner/work/mocha/mocha/test/unit/runner.spec.js',

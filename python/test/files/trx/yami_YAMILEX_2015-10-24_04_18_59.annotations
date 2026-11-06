@@ -10,10 +10,10 @@
         '25 tests\u2002\u2003\u2003\u20072 ✅\u2003\u200326s ⏱️\n\u20071 '
         'suites\u2003\u200321 💤\n\u20071 files\u2004\u2002\u2003\u2003\u20072 '
         '❌\n\nResults for commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBAFr'
-        '0KoLcRECy9jCErciGAWqIx3d/GD2O3M28zONZjJ856JinEfIWQYI8oAzhI2HTEtIW1N+8'
-        'Lgo1LJfGKBLQmRjZZgfi8TokMyNRmMNhfTXQZvLnqXKHIXlzXl1hUCwXMxP0t+nB5bCu/'
-        'iAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6EIAxFr'
+        '0JYuxhNnMVcxhDE2AhiCiyM8e4WZYCZVftef/oPPoFWjn9Y2zDuAvgMY0Dhwa6E3ZuYLj'
+        '7euv4LgwtSRlPEAlsUbTaTAP0TUYgWybxKRItlTwbDmjviXlc8XDXcoiq4uf7/BP7eD6h'
+        'oJCGtMeAJ0sbcLPh5ATyZDHMWAQAA\n',
       'annotations': [
         {
           'path': 'Prueba_Sistema.SIARAlgorithmTest',

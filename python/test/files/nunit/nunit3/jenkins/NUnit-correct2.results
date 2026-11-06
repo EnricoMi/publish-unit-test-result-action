@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=0,
   suite_errors=0,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -24,6 +28,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -34,6 +40,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -44,6 +52,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -53,6 +63,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -63,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -73,6 +87,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -82,6 +98,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -91,6 +109,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -100,6 +120,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -110,6 +132,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -120,6 +144,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -129,6 +155,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -138,6 +166,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -147,6 +177,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -156,6 +188,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -165,6 +199,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -174,6 +210,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -184,6 +222,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -194,6 +234,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -204,6 +246,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -213,6 +257,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -223,6 +269,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -233,6 +281,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -243,6 +293,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -252,6 +304,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -261,6 +315,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -270,6 +326,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -279,6 +337,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -288,6 +348,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -297,6 +359,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -306,6 +370,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -315,6 +381,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -324,6 +392,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -333,6 +403,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -342,6 +414,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -351,6 +425,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -360,6 +436,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -369,6 +447,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -378,6 +458,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -387,6 +469,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -396,6 +480,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -405,6 +491,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -414,6 +502,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -423,6 +513,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -433,6 +525,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -443,6 +537,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -453,6 +549,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -463,6 +561,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -473,6 +573,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -483,6 +585,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -493,6 +597,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -503,6 +609,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -513,6 +621,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -522,6 +632,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -531,6 +643,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -540,6 +654,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -549,6 +665,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -558,6 +676,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -567,6 +687,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -576,6 +698,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -585,6 +709,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -594,6 +720,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -603,6 +731,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -613,6 +743,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -622,6 +754,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -631,6 +765,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -640,6 +776,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -649,6 +787,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -658,6 +798,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -668,6 +810,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -677,6 +821,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -686,6 +832,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -695,6 +843,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -704,6 +854,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -713,6 +865,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -723,6 +877,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -732,6 +888,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -741,6 +899,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -751,6 +911,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -760,6 +922,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -769,6 +933,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -779,6 +945,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -788,6 +956,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -797,6 +967,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -807,6 +979,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -816,6 +990,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -825,6 +1001,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -834,6 +1012,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -843,6 +1023,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -852,6 +1034,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -861,6 +1045,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -870,6 +1056,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -881,6 +1069,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -891,6 +1081,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -900,6 +1092,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -909,6 +1103,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -919,6 +1115,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -929,6 +1127,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -938,6 +1138,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -947,6 +1149,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     ),
@@ -956,6 +1160,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=0,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -969,6 +1175,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.'
         'should_return_different_object',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -983,6 +1191,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Clone.'
         'should_return_same_value',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -997,6 +1207,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+'
         'MutableComponents.should_return_empty',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1011,6 +1223,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.'
         'should_change_value_in_range(100,-2,8)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1025,6 +1239,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.'
         'should_change_value_in_range(100,-100,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1039,6 +1255,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.'
         'should_change_value_in_range(100,-10,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1053,6 +1271,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.'
         'should_change_value_in_range(1000,1000,321)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1067,6 +1287,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+Nudge.'
         'should_change_value_in_range(100,2,12)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1081,6 +1303,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AmountTests+'
         'RandomizeValues.should_randomize_value_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1095,6 +1319,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.'
         'should_return_different_object',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1109,6 +1335,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AngleTests+Clone.'
         'should_return_same_value',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1123,6 +1351,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AngleTests+'
         'MutableComponents.should_return_empty',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1138,6 +1368,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,'
         '40,False,330)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1153,6 +1385,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,'
         '355,True,5)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1168,6 +1402,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,'
         '6,False,4)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1183,6 +1419,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_wrap_by_a_value_between_1_and_max_value_in_both_directions(10,'
         '40,True,50)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1197,6 +1435,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.AngleTests+RandomizeValue.'
         'should_select_a_value_between_0_and_360',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1211,6 +1451,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.'
         'should_clone_component',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1225,6 +1467,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Clone.'
         'should_copy_values',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1239,6 +1483,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+Constructor.'
         'should_initialize_data',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1253,6 +1499,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+'
         'ImplicitConversionToDrawingColor.should_convert_to_drawing_color',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1267,6 +1515,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+'
         'MutableComponents.should_not_contain_anything',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1281,6 +1531,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeAlpha.'
         'should_randomize_alpha_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1295,6 +1547,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeBlue.'
         'should_randomize_alpha_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1309,6 +1563,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeGreen.'
         'should_randomize_alpha_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1323,6 +1579,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+RandomizeRed.'
         'should_randomize_alpha_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1337,6 +1595,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.ColorTests+'
         'RandomizeValues.should_randomize_colors_in_the_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1351,6 +1611,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.'
         'should_return_different_object',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1365,6 +1627,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Clone.'
         'should_return_same_value',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1379,6 +1643,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+'
         'MutableComponents.should_return_empty',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1393,6 +1659,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.'
         'should_change_value_in_range(100,-100,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1407,6 +1675,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.'
         'should_change_value_in_range(100,10,16)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1421,6 +1691,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.'
         'should_change_value_in_range(100,2,12)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1435,6 +1707,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.'
         'should_change_value_in_range(100,-2,8)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1449,6 +1723,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+Nudge.'
         'should_change_value_in_range(100,-10,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1463,6 +1739,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PenSizeTests+'
         'RandomizeValues.should_randomize_value_in_range',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1477,6 +1755,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.'
         'should_return_different_object',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1491,6 +1771,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Clone.'
         'should_return_same_value',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1505,6 +1787,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+'
         'MutableComponents.should_return_empty',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1519,6 +1803,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.'
         'should_change_value_in_range(10,10,1,True,11,11)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1533,6 +1819,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.'
         'should_change_value_in_range(10,10,100,False,0,0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1547,6 +1835,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.'
         'should_change_value_in_range(10,10,1,False,9,9)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1561,6 +1851,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+Nudge.'
         'should_change_value_in_range(10,10,1000,True,321,654)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1575,6 +1867,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.BuildingBlocks.PositionTests+'
         'RandomizeValues.should_return_value_inside_target_limits',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1588,6 +1882,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.DrawingTest+Clone.should_clone_all_shapes',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1602,6 +1898,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+Clone.'
         'should_clone_inner_components',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1615,6 +1913,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.DrawingTest+Clone.should_copy_properties',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1629,6 +1929,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+Clone.'
         'should_create_clone_of_target',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1642,6 +1944,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.DrawingTest+Constructor.should_keep_data',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1655,6 +1959,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.DrawingTest+Draw.should_draw_all_shapes',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1669,6 +1975,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+Draw.'
         'should_fill_image_with_background_color',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1683,6 +1991,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+Draw.'
         'should_return_correct_size_image',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1697,6 +2007,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+MutableComponents.'
         'should_contain_all_shapes',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1711,6 +2023,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.DrawingTest+MutableComponents.'
         'should_contain_color',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1726,6 +2040,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Area,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1741,6 +2057,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Area,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1756,6 +2074,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Area,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1769,6 +2089,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.AreaTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1783,6 +2105,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.AreaTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1798,6 +2122,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Area,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1813,6 +2139,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Area,imG.'
         'Approx.Components.BuildingBlocks.Angle)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1828,6 +2156,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Area,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1843,6 +2173,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1858,6 +2190,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1873,6 +2207,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1888,6 +2224,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1903,6 +2241,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1918,6 +2258,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Bezier,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1931,6 +2273,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.BezierTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1945,6 +2289,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.BezierTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1960,6 +2306,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1975,6 +2323,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.PenSize)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -1990,6 +2340,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2005,6 +2357,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2020,6 +2374,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2035,6 +2391,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Bezier,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2050,6 +2408,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Blob,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2065,6 +2425,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Blob,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2078,6 +2440,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.BlobTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2092,6 +2456,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.BlobTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2107,6 +2473,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Blob,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2122,6 +2490,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Blob,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2137,6 +2507,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Blob,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2152,6 +2524,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Blob,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2167,6 +2541,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Blob,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2182,6 +2558,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Circle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2197,6 +2575,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Circle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2212,6 +2592,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Circle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2225,6 +2607,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.CircleTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2239,6 +2623,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.CircleTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2254,6 +2640,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Circle,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2269,6 +2657,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Circle,imG.'
         'Approx.Components.BuildingBlocks.Amount)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2284,6 +2674,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Circle,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2298,6 +2690,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.'
         'ShapeFactoryTests+GetShape.should_return_shape',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2312,6 +2706,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.ConcreteFactory.'
         'ShapeFactoryTests+Name.should_return_name_by_default',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2327,6 +2723,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ShapeFactoryCatalogTests+ActiveFactories.'
         'should_return_only_active_factories',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2341,6 +2739,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.'
         'ShapeFactoryCatalogTests+Disable.should_enable_factories_named',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2355,6 +2755,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.'
         'ShapeFactoryCatalogTests+DisableAll.should_disable_all_factories',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2369,6 +2771,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.'
         'ShapeFactoryCatalogTests+Enable.should_enable_factories_named',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2383,6 +2787,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.'
         'ShapeFactoryCatalogTests+EnableAll.should_enable_all_factories',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2397,6 +2803,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.Factories.'
         'ShapeFactoryCatalogTests+Register.should_add_factory',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2412,6 +2820,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'ShapeFactoryCatalogTests+RegisterAllFactories.'
         'should_register_all_factories',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2427,6 +2837,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Line,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2442,6 +2854,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Line,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2457,6 +2871,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Line,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2472,6 +2888,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Line,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2485,6 +2903,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.LineTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2499,6 +2919,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.LineTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2514,6 +2936,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Line,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2529,6 +2953,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Line,imG.'
         'Approx.Components.BuildingBlocks.PenSize)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2544,6 +2970,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Line,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2559,6 +2987,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Line,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2574,6 +3004,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Polygon,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2589,6 +3021,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Polygon,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2602,6 +3036,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.PolygonTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2616,6 +3052,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.PolygonTests+InitializeComponents.'
         'should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2631,6 +3069,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Polygon,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2646,6 +3086,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Polygon,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2661,6 +3103,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Polygon,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2676,6 +3120,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Polygon,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2691,6 +3137,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Polygon,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2706,6 +3154,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Rectangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2721,6 +3171,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Rectangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2736,6 +3188,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Rectangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2751,6 +3205,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Rectangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2764,6 +3220,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.RectangleTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2778,6 +3236,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.RectangleTests+'
         'InitializeComponents.should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2793,6 +3253,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2808,6 +3270,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.'
         'Approx.Components.BuildingBlocks.Amount)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2823,6 +3287,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.'
         'Approx.Components.BuildingBlocks.Amount)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2838,6 +3304,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Rectangle,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2853,6 +3321,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Triangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2868,6 +3338,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Triangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2883,6 +3355,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Triangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2898,6 +3372,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_different_object(System.Func`2[imG.Approx.Components.'
         'Shapes.Triangle,System.Object])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2911,6 +3387,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Components.Shapes.TriangleTests+Draw.should_draw',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2925,6 +3403,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Components.Shapes.TriangleTests+'
         'InitializeComponents.should_randomize_elements',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2940,6 +3420,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Triangle,imG.'
         'Approx.Components.BuildingBlocks.Color)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2955,6 +3437,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Triangle,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2970,6 +3454,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Triangle,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -2985,6 +3471,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_return_components(imG.Approx.Components.Shapes.Triangle,imG.'
         'Approx.Components.BuildingBlocks.Position)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3003,6 +3491,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,0,0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3021,6 +3511,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,6,0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3039,6 +3531,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,0,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3057,6 +3551,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,6,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3075,6 +3571,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,7,0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3093,6 +3591,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'Mutation.IMutable]],Castle.Proxies.IMutationDescriptionProxy,Castle.'
         'Proxies.IMutableProxy,7,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3107,6 +3607,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+ChooseMutation.'
         'should_return_null_if_no_mutation_exists',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3121,6 +3623,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.'
         'should_return_active_and_applicable_and_selectable_mutations',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3135,6 +3639,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.'
         'should_return_empty_if_mutable_is_unknown',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3149,6 +3655,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+GetMutationsFor.'
         'should_return_mutations_recursively',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3163,6 +3671,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.'
         'should_always_have_occasions_to_mutate',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3177,6 +3687,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.'
         'should_always_mutate_without_doing_anything_to_the_target',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3191,6 +3703,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.'
         'should_always_target_IMutableType',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3205,6 +3719,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.'
         'should_be_always_able_to_mutate',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3219,6 +3735,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+NoOpDescription.'
         'should_be_always_active',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3234,6 +3752,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_throw_if_any_component_is_null(null,Castle.Proxies.'
         'IMutableProxy)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3249,6 +3769,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_throw_if_any_component_is_null(imG.Approx.Mutation.Process,'
         'null)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3263,6 +3785,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
         'should_return_a_mutation',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3277,6 +3801,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
         'should_return_matching_selected_mutation',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3291,6 +3817,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutagenTests+SelectMutation.'
         'should_return_the_default_mutation_if_no_mutation_exists',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3305,6 +3833,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+'
         'DeclareMutation.should_add_description_to_catalog',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3320,6 +3850,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'DeclareMutation.'
         'should_throw_when_the_same_description_is_declared_twice',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3339,6 +3871,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'MutationDescription`1[imG.Approx.Tests.Mutation.'
         'MutableAndDescription.Mutable2])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3358,6 +3892,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'MutationDescription`1[imG.Approx.Tests.Mutation.'
         'MutableAndDescription.Mutable3])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3377,6 +3913,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'MutationDescription`1[imG.Approx.Tests.Mutation.'
         'MutableAndDescription.Mutable1])',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3391,6 +3929,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionCatalogTest+For.'
         'should_return_empty_list_for_unknown_mutable_type',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3406,6 +3946,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'RegisterAllMutations.'
         'should_register_all_mutations_declared_by_registrars',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3420,6 +3962,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+CanMutate.'
         'lambda_is_called_when_checking',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3434,6 +3978,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.'
         'should_refuse_odds_that_are_not_positive(-1000)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3448,6 +3994,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.'
         'should_refuse_odds_that_are_not_positive(0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3462,6 +4010,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+Constructor.'
         'should_refuse_odds_that_are_not_positive(-1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3476,6 +4026,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+'
         'GetMutationTargetType.should_return_type_of_generic',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3490,6 +4042,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.MutationDescriptionTests+Mutate.'
         'lambda_is_called_when_mutating',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3506,6 +4060,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,Castle.'
         'Proxies.IShapeFactoryCatalogProxy)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3522,6 +4078,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'IRandomizationProviderProxy,null,Castle.Proxies.ITargetProxy,Castle.'
         'Proxies.IShapeFactoryCatalogProxy)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3539,6 +4097,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'IMutationDescriptionCatalogProxy,null,Castle.Proxies.'
         'IShapeFactoryCatalogProxy)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3555,6 +4115,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'IRandomizationProviderProxy,Castle.Proxies.'
         'IMutationDescriptionCatalogProxy,Castle.Proxies.ITargetProxy,null)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3569,6 +4131,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_always_keep_best_drawing_according_to_distance(False)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3583,6 +4147,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_always_keep_best_drawing_according_to_distance(True)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3597,6 +4163,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_increase_evolutions_when_drawing_is_better',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3611,6 +4179,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_increase_generation_number',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3625,6 +4195,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_trigger_event_when_drawing_is_better',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3639,6 +4211,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+Mutate.'
         'should_trigger_event_when_drawing_is_worse',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3653,6 +4227,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.'
         'should_compute_the_distance_only_the_first_time',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3667,6 +4243,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.'
         'should_create_drawing_based_on_target',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3681,6 +4259,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.ProcessTests+SetupDrawing.'
         'should_create_the_drawing_only_the_first_time',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3695,6 +4275,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.RandomizationProviderTests+Constructor.'
         'should_keep_the_seed',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3709,6 +4291,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.RandomizationProviderTests+Next.'
         'should_return_integer',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3724,6 +4308,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.'
         'Target,System.Object],25)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3739,6 +4325,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_keep_initialized_data(System.Func`2[imG.Approx.Mutation.'
         'Target,System.Object],"data\\\\red.png")',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3754,6 +4342,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_throw_if_dimensions_are_different(imG.Approx.Components.'
         'Drawing)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3769,6 +4359,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_throw_if_dimensions_are_different(imG.Approx.Components.'
         'Drawing)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3784,6 +4376,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_throw_if_dimensions_are_different(imG.Approx.Components.'
         'Drawing)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3798,6 +4392,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+DistanceTo.'
         'should_not_throw_if_dimensions_are_identical',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3813,6 +4409,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimensi'
         'on(100)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3828,6 +4426,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'should_not_resize_if_image_dimensions_are_over_or_equal_to_maxDimensi'
         'on(50)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3842,6 +4442,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_set_ratio_to_correct_value_when_loading(10,0.2f)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3856,6 +4458,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_set_ratio_to_correct_value_when_loading(25,0.5f)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3870,6 +4474,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_set_ratio_to_correct_value_when_loading(99,1.0f)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3884,6 +4490,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_set_ratio_to_correct_value_when_loading(50,1.0f)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3898,6 +4506,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_load_dimensions_from_image',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3912,6 +4522,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_load_image_data',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3926,6 +4538,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Mutation.TargetTests+LoadImageData.'
         'should_resize_if_image_dimensions_are_over_maxDimension',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3939,6 +4553,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='',
       test_name='imG.Approx.Tests.Mutation.TargetTests+Name.should_return_filename',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3953,6 +4569,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_max_value_between_original_and_min_value(1,1,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3967,6 +4585,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_max_value_between_original_and_min_value(1,0,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3981,6 +4601,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_max_value_between_original_and_min_value(1,10,10)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -3995,6 +4617,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_min_value_between_original_and_max_value(1,10,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4009,6 +4633,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_min_value_between_original_and_max_value(1,1,1)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4023,6 +4649,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_return_min_value_between_original_and_max_value(1,0,0)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4037,6 +4665,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Clamp.'
         'should_throw_if_min_is_above_max',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4051,6 +4681,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(-'
         '101,10,20,19)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4065,6 +4697,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(16,'
         '10,25,16)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4079,6 +4713,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(10,'
         '10,25,10)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4093,6 +4729,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(25,'
         '10,25,10)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4107,6 +4745,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.should_wrap_back_to_range(101,'
         '10,20,11)',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -4121,6 +4761,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='imG.Approx.Tests.Tools.TestValues+Wrap.'
         'should_throw_if_min_is_above_max',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
