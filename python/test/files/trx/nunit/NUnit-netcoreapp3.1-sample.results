@@ -31,7 +31,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.NUnit.TestServiceTests.FailTest() in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
         '\\TestServiceTests.cs:line 61\r\n',
-      stdout=None,
+      stdout='Running SampleProject.Tests.NUnit tests\r\nThis test will fail',
       stderr=None,
       time=0.059742
     ),
@@ -44,7 +44,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Ignore test',
       content='Ignore test',
-      stdout=None,
+      stdout='Ignore test',
       stderr=None,
       time=0.000447
     ),
@@ -63,7 +63,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.NUnit.TestServiceTests.TestThrowingException() in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
         '\\TestServiceTests.cs:line 50',
-      stdout=None,
+      stdout='Running SampleProject.Tests.NUnit tests',
       stderr=None,
       time=0.003151
     ),
@@ -79,7 +79,7 @@ publish.unittestresults.ParsedUnitTestResults(
         'SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in '
         'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit'
         '\\TestServiceTests.cs:line 25\r\n',
-      stdout=None,
+      stdout='Running SampleProject.Tests.NUnit tests',
       stderr=None,
       time=0.001997
     ),
@@ -92,7 +92,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
-      stdout=None,
+      stdout='Running SampleProject.Tests.NUnit tests',
       stderr=None,
       time=0.0113449
     ),
@@ -105,7 +105,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
-      stdout=None,
+      stdout='Running SampleProject.Tests.NUnit tests',
       stderr=None,
       time=0.0010839
     )

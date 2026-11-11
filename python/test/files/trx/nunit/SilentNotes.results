@@ -58,7 +58,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'access-token',
       content='Opens the authorization page in the system browse, to get a real '
         'access-token',
-      stdout=None,
+      stdout='Opens the authorization page in the system browse, to get a real '
+        'access-token',
       stderr=None,
       time=8.3e-06
     ),
@@ -206,7 +207,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
-      stdout=None,
+      stdout='Refreshes a real token',
       stderr=None,
       time=1e-06
     ),
@@ -248,7 +249,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
-      stdout=None,
+      stdout='Too many consecutive fails seems to block an FTP server.',
       stderr=None,
       time=1.4e-06
     ),
@@ -627,7 +628,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
-      stdout=None,
+      stdout='Gets a real access-token',
       stderr=None,
       time=0.0004561
     ),
@@ -643,7 +644,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'authorization-code',
       content='Opens the authorization page in the system browse, to get a real '
         'authorization-code',
-      stdout=None,
+      stdout='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
       stderr=None,
       time=1e-06
     ),
@@ -777,7 +779,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
-      stdout=None,
+      stdout='Gets a real access-token',
       stderr=None,
       time=3.1e-06
     ),
@@ -818,7 +820,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Gets a real access-token',
       content='Gets a real access-token',
-      stdout=None,
+      stdout='Gets a real access-token',
       stderr=None,
       time=3.3e-06
     ),
@@ -832,7 +834,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
-      stdout=None,
+      stdout='Refreshes a real token',
       stderr=None,
       time=5.94e-05
     ),
@@ -875,7 +877,8 @@ publish.unittestresults.ParsedUnitTestResults(
         'authorization-code',
       content='Opens the authorization page in the system browse, to get a real '
         'authorization-code',
-      stdout=None,
+      stdout='Opens the authorization page in the system browse, to get a real '
+        'authorization-code',
       stderr=None,
       time=1.2e-06
     ),
@@ -902,7 +905,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
-      stdout=None,
+      stdout='Too many consecutive fails seems to block an FTP server.',
       stderr=None,
       time=1e-06
     ),
@@ -982,7 +985,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Too many consecutive fails seems to block an FTP server.',
       content='Too many consecutive fails seems to block an FTP server.',
-      stdout=None,
+      stdout='Too many consecutive fails seems to block an FTP server.',
       stderr=None,
       time=1.31e-05
     ),
@@ -1062,7 +1065,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message='Refreshes a real token',
       content='Refreshes a real token',
-      stdout=None,
+      stdout='Refreshes a real token',
       stderr=None,
       time=1.2e-06
     ),

@@ -1,0 +1,62 @@
+{
+  "title": "1 fail, 2 pass in 0s",
+  "summary": "3 tests   2 ✅  0s ⏱️\n1 suites  0 💤\n1 files    1 ❌\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 3,
+    "tests_succ": 2,
+    "tests_skip": 0,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 3,
+    "runs_succ": 2,
+    "runs_skip": 0,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "Example.OutputTests",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "stdout-stderr.trx [took 0s]",
+      "title": "Fails_With_Stderr (Example.OutputTests) failed",
+      "raw_details": "Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2   at Example.OutputTests.Fails_With_Stderr() in /src/Example.Tests/OutputTests.cs:line 21\nConnection refused"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 3 tests, see \"Raw output\" for the full list of tests.",
+      "title": "3 tests found",
+      "raw_details": "Example.OutputTests ‑ Fails_With_Stderr\nExample.OutputTests ‑ No_Output\nExample.OutputTests ‑ Writes_To_Stdout_And_Stderr"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "3",
+      "tests_succ": "2",
+      "tests_skip": "0",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "3",
+      "runs_succ": "2",
+      "runs_skip": "0",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

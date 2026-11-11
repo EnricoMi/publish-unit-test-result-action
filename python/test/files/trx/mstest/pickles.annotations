@@ -54,7 +54,14 @@
             'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() '
             'in '
             'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarn'
-            'ess.MSTest\\Addition.feature:line 18'
+            'ess.MSTest\\Addition.feature:line 18\n\n          Given I have '
+            'entered 50 into the calculator\n          -> done: '
+            'Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)\n      '
+            '    And I have entered -1 into the calculator\n          -> done: '
+            'Steps.GivenIHaveEnteredSomethingIntoTheCalculator(-1) (0.0s)\n      '
+            '    When I press add\n          -> done: Steps.WhenIPressAdd() '
+            '(0.0s)\n          Then the result should be -50 on the screen\n     '
+            '     -> error: Assert.NotEqual() Failure'
         },
         {
           'path': '.github',

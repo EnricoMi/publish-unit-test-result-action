@@ -10,6 +10,7 @@ Actual:   False   at DotnetTests.XUnitTests.CalculatorTests.Theory_With_Custom_N
     </testcase>
     <testcase classname="DotnetTests.XUnitTests.CalculatorTests" name="Skipped_Test" time="0.001">
       <skipped message=""/>
+      <system-out>Skipped test</system-out>
     </testcase>
     <testcase classname="DotnetTests.XUnitTests.CalculatorTests" name="Custom Name" time="0.0001371"/>
     <testcase classname="DotnetTests.XUnitTests.CalculatorTests" name="Should be even number(i: 2)" time="0.0000097"/>

@@ -57,6 +57,8 @@
           </xsl:variable>
           <xsl:variable name="message" select="a:Output/a:ErrorInfo/a:Message"/>
           <xsl:variable name="stacktrace" select="a:Output/a:ErrorInfo/a:StackTrace"/>
+          <xsl:variable name="stdout" select="a:Output/a:StdOut"/>
+          <xsl:variable name="stderr" select="a:Output/a:StdErr"/>
           <xsl:for-each select="//a:UnitTest[a:Execution/@id = $executionId]">
             <xsl:variable name="className">
               <xsl:choose>
@@ -104,6 +106,16 @@
                   </xsl:call-template>
                 </error>
               </xsl:if>
+              <xsl:if test="$stdout">
+                <system-out>
+                  <xsl:value-of select="$stdout"/>
+                </system-out>
+              </xsl:if>
+              <xsl:if test="$stderr">
+                <system-err>
+                  <xsl:value-of select="$stderr"/>
+                </system-err>
+              </xsl:if>
             </testcase>
           </xsl:for-each>
         </xsl:for-each>
@@ -150,6 +162,8 @@
           </xsl:variable>
           <xsl:variable name="message" select="b:Output/b:ErrorInfo/b:Message"/>
           <xsl:variable name="stacktrace" select="b:Output/b:ErrorInfo/b:StackTrace"/>
+          <xsl:variable name="stdout" select="b:Output/b:StdOut"/>
+          <xsl:variable name="stderr" select="b:Output/b:StdErr"/>
           <xsl:for-each select="key('unitTests', $testId)">
             <xsl:variable name="className">
               <xsl:choose>
@@ -196,6 +210,16 @@
                     <xsl:with-param name="stacktrace" select="$stacktrace" />
                   </xsl:call-template>
                 </error>
+              </xsl:if>
+              <xsl:if test="$stdout">
+                <system-out>
+                  <xsl:value-of select="$stdout"/>
+                </system-out>
+              </xsl:if>
+              <xsl:if test="$stderr">
+                <system-err>
+                  <xsl:value-of select="$stderr"/>
+                </system-err>
               </xsl:if>
             </testcase>
           </xsl:for-each>

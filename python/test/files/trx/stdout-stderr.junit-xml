@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <testsuite name="MSTestSuite" tests="3" failures="1" errors="0" skipped="0">
+    <testcase classname="Example.OutputTests" name="Writes_To_Stdout_And_Stderr" time="0.0123456">
+      <system-out>Connecting to database&#13;
+Connected</system-out>
+      <system-err>Warning: using default credentials</system-err>
+    </testcase>
+    <testcase classname="Example.OutputTests" name="Fails_With_Stderr" time="0.0045678">
+      <failure message="Assert.Equal() Failure&#13;&#10;Expected: 1&#13;&#10;Actual:   2">Assert.Equal() Failure&#13;
+Expected: 1&#13;
+Actual:   2   at Example.OutputTests.Fails_With_Stderr() in /src/Example.Tests/OutputTests.cs:line 21</failure>
+      <system-err>Connection refused</system-err>
+    </testcase>
+    <testcase classname="Example.OutputTests" name="No_Output" time="0.0001"/>
+  </testsuite>
+</testsuites>

@@ -1,9 +1,42 @@
 <?xml version='1.0' encoding='utf-8'?>
 <testsuites xmlns:a="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <testsuite name="MSTestSuite" tests="4" failures="1" errors="0" skipped="0">
-    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_40" time="0.076891"/>
-    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_60" time="0.0111534"/>
-    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddTwoNumbers" time="0.0055623"/>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_40" time="0.076891">
+      <system-out>
+          Given I have entered 40 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(40) (0.0s)
+          And I have entered 50 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+          When I press add
+          -&gt; done: Steps.WhenIPressAdd() (0.0s)
+          Then the result should be 90 on the screen
+          -&gt; done: Steps.ThenTheResultShouldBePass(90) (0.0s)
+        </system-out>
+    </testcase>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddingSeveralNumbers_60" time="0.0111534">
+      <system-out>
+          Given I have entered 60 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(60) (0.0s)
+          And I have entered 70 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) (0.0s)
+          When I press add
+          -&gt; done: Steps.WhenIPressAdd() (0.0s)
+          Then the result should be 130 on the screen
+          -&gt; done: Steps.ThenTheResultShouldBePass(130) (0.0s)
+        </system-out>
+    </testcase>
+    <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="AddTwoNumbers" time="0.0055623">
+      <system-out>
+          Given I have entered 50 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+          And I have entered 70 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) (0.0s)
+          When I press add
+          -&gt; done: Steps.WhenIPressAdd() (0.0s)
+          Then the result should be 120 on the screen
+          -&gt; done: Steps.ThenTheResultShouldBePass(120) (0.0s)
+        </system-out>
+    </testcase>
     <testcase classname="Pickles.TestHarness.MSTest.AdditionFeature" name="FailToAddTwoNumbers" time="0.0459057">
       <failure message="&#10;            Test method Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw exception:&#10;            Should.Core.Exceptions.NotEqualException: Assert.NotEqual() Failure&#10;          ">
             Test method Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers threw exception:
@@ -20,6 +53,16 @@
             at Pickles.TestHarness.MSTest.AdditionFeature.ScenarioCleanup() in C:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Addition.feature.cs:line 0
             at Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() in c:\dev\pickles-results-harness\Pickles.TestHarness\Pickles.TestHarness.MSTest\Addition.feature:line 18
           </failure>
+      <system-out>
+          Given I have entered 50 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) (0.0s)
+          And I have entered -1 into the calculator
+          -&gt; done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(-1) (0.0s)
+          When I press add
+          -&gt; done: Steps.WhenIPressAdd() (0.0s)
+          Then the result should be -50 on the screen
+          -&gt; error: Assert.NotEqual() Failure
+        </system-out>
     </testcase>
   </testsuite>
 </testsuites>
