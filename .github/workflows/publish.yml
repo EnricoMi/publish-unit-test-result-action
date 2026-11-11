@@ -139,7 +139,7 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             os-label: Linux
             python: "3.8"
           - os: ubuntu-latest
