@@ -1,0 +1,64 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=3,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=0,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name='MSTestSuite',
+      tests=3,
+      skipped=0,
+      failures=1,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='stdout-stderr.trx',
+      test_file=None,
+      line=None,
+      class_name='Example.OutputTests',
+      test_name='Writes_To_Stdout_And_Stderr',
+      result='success',
+      message=None,
+      content=None,
+      stdout='Connecting to database\r\nConnected',
+      stderr='Warning: using default credentials',
+      time=0.0123456
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='stdout-stderr.trx',
+      test_file=None,
+      line=None,
+      class_name='Example.OutputTests',
+      test_name='Fails_With_Stderr',
+      result='failure',
+      message='Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2',
+      content='Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2   at '
+        'Example.OutputTests.Fails_With_Stderr() in '
+        '/src/Example.Tests/OutputTests.cs:line 21',
+      stdout=None,
+      stderr='Connection refused',
+      time=0.0045678
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='stdout-stderr.trx',
+      test_file=None,
+      line=None,
+      class_name='Example.OutputTests',
+      test_name='No_Output',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=0.0001
+    )
+  ]
+)

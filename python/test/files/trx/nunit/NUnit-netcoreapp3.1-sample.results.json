@@ -27,7 +27,7 @@
       "annotation_level": "warning",
       "message": "nunit/NUnit-netcoreapp3.1-sample.trx [took 0s]",
       "title": "FailTest (SampleProject.NUnit.TestServiceTests) failed",
-      "raw_details": "  Expected: True\r\n  But was:  False\r\n   at SampleProject.NUnit.TestServiceTests.FailTest() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 61"
+      "raw_details": "  Expected: True\r\n  But was:  False\r\n   at SampleProject.NUnit.TestServiceTests.FailTest() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 61\nRunning SampleProject.Tests.NUnit tests\r\nThis test will fail"
     },
     {
       "path": "SampleProject.NUnit.TestServiceTests",
@@ -36,7 +36,7 @@
       "annotation_level": "warning",
       "message": "nunit/NUnit-netcoreapp3.1-sample.trx [took 0s]",
       "title": "TestThrowingException (SampleProject.NUnit.TestServiceTests) failed",
-      "raw_details": "System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestService.cs:line 19\r\n   at SampleProject.NUnit.TestServiceTests.TestThrowingException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 50"
+      "raw_details": "System.Exception : Pretty good exception   at SampleProject.TestService.GetException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject\\TestService.cs:line 19\r\n   at SampleProject.NUnit.TestServiceTests.TestThrowingException() in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 50\nRunning SampleProject.Tests.NUnit tests"
     },
     {
       "path": "SampleProject.NUnit.TestServiceTests",
@@ -45,7 +45,7 @@
       "annotation_level": "warning",
       "message": "nunit/NUnit-netcoreapp3.1-sample.trx [took 0s]",
       "title": "TestTheory(False) (SampleProject.NUnit.TestServiceTests) failed",
-      "raw_details": "  Expected: False\r\n  But was:  True\r\n   at SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 25"
+      "raw_details": "  Expected: False\r\n  But was:  True\r\n   at SampleProject.NUnit.TestServiceTests.TestTheory(Boolean expected) in C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.NUnit\\TestServiceTests.cs:line 25\nRunning SampleProject.Tests.NUnit tests"
     },
     {
       "path": ".github",

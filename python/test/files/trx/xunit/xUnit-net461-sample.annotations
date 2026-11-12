@@ -29,7 +29,8 @@
             'SampleProject.xUnit.TestServiceTests.TestTheory(Boolean expected) '
             'in '
             'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
-            'it\\TestServiceTests.cs:line 29'
+            'it\\TestServiceTests.cs:line 29\nRunning SampleProject.Tests.xUnit '
+            'tests'
         },
         {
           'path': 'SampleProject.xUnit.TestServiceTests',
@@ -42,7 +43,8 @@
             'Assert.True() Failure\r\nExpected: True\r\nActual:   False   at '
             'SampleProject.xUnit.TestServiceTests.FailTest() in '
             'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
-            'it\\TestServiceTests.cs:line 65'
+            'it\\TestServiceTests.cs:line 65\nRunning SampleProject.Tests.xUnit '
+            'tests\r\nThis test will fail'
         },
         {
           'path': 'SampleProject.xUnit.TestServiceTests',
@@ -58,7 +60,8 @@
             'ce.cs:line 19\r\n   at '
             'SampleProject.xUnit.TestServiceTests.TestThrowingException() in '
             'C:\\Dev\\LiquidTestReports\\test\\SampleProject\\SampleProject.Tests.xUn'
-            'it\\TestServiceTests.cs:line 54'
+            'it\\TestServiceTests.cs:line 54\nRunning SampleProject.Tests.xUnit '
+            'tests'
         },
         {
           'path': '.github',

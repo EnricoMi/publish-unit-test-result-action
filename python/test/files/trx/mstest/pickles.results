@@ -28,7 +28,14 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
-      stdout=None,
+      stdout='\n          Given I have entered 40 into the calculator\n          '
+        '-> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(40) '
+        '(0.0s)\n          And I have entered 50 into the calculator\n         '
+        ' -> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) '
+        '(0.0s)\n          When I press add\n          -> done: '
+        'Steps.WhenIPressAdd() (0.0s)\n          Then the result should be 90 '
+        'on the screen\n          -> done: '
+        'Steps.ThenTheResultShouldBePass(90) (0.0s)\n        ',
       stderr=None,
       time=0.076891
     ),
@@ -41,7 +48,14 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
-      stdout=None,
+      stdout='\n          Given I have entered 60 into the calculator\n          '
+        '-> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(60) '
+        '(0.0s)\n          And I have entered 70 into the calculator\n         '
+        ' -> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) '
+        '(0.0s)\n          When I press add\n          -> done: '
+        'Steps.WhenIPressAdd() (0.0s)\n          Then the result should be '
+        '130 on the screen\n          -> done: '
+        'Steps.ThenTheResultShouldBePass(130) (0.0s)\n        ',
       stderr=None,
       time=0.0111534
     ),
@@ -54,7 +68,14 @@ publish.unittestresults.ParsedUnitTestResults(
       result='success',
       message=None,
       content=None,
-      stdout=None,
+      stdout='\n          Given I have entered 50 into the calculator\n          '
+        '-> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) '
+        '(0.0s)\n          And I have entered 70 into the calculator\n         '
+        ' -> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(70) '
+        '(0.0s)\n          When I press add\n          -> done: '
+        'Steps.WhenIPressAdd() (0.0s)\n          Then the result should be '
+        '120 on the screen\n          -> done: '
+        'Steps.ThenTheResultShouldBePass(120) (0.0s)\n        ',
       stderr=None,
       time=0.0055623
     ),
@@ -97,7 +118,14 @@ publish.unittestresults.ParsedUnitTestResults(
         'Pickles.TestHarness.MSTest.AdditionFeature.FailToAddTwoNumbers() in '
         'c:\\dev\\pickles-results-harness\\Pickles.TestHarness\\Pickles.TestHarnes'
         's.MSTest\\Addition.feature:line 18\n          ',
-      stdout=None,
+      stdout='\n          Given I have entered 50 into the calculator\n          '
+        '-> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(50) '
+        '(0.0s)\n          And I have entered -1 into the calculator\n         '
+        ' -> done: Steps.GivenIHaveEnteredSomethingIntoTheCalculator(-1) '
+        '(0.0s)\n          When I press add\n          -> done: '
+        'Steps.WhenIPressAdd() (0.0s)\n          Then the result should be '
+        '-50 on the screen\n          -> error: Assert.NotEqual() Failure\n    '
+        '    ',
       stderr=None,
       time=0.0459057
     )

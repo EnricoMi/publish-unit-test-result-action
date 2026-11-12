@@ -71,7 +71,7 @@ publish.unittestresults.ParsedUnitTestResults(
       result='skipped',
       message=None,
       content=None,
-      stdout=None,
+      stdout='Skipped test',
       stderr=None,
       time=0.001
     ),

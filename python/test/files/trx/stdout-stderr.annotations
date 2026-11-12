@@ -1,0 +1,44 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 2 pass in 0s',
+      'summary':
+        '3 tests\u2002\u2003\u20032 ✅\u2003\u20030s ⏱️\n1 suites\u2003\u20030 '
+        '💤\n1 files\u2004\u2002\u2003\u20031 ❌\n\nResults for commit commit '
+        's.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/02MOw6AIBBEr'
+        '0KoLfx0XoYQ1LhRwCxQGe/uykfo5s1M3s03OFfHZzZ0jLsA/ocloPRgDWFPSIP/pqlk4Y'
+        'JSVIy1OOBq32KTcGZbKlZEi/mCwRTfF1td4mqL3Mgity5ltQZPkBNzu+TPC/n9SCLdAAA'
+        'A\n',
+      'annotations': [
+        {
+          'path': 'Example.OutputTests',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'stdout-stderr.trx\u2003[took 0s]',
+          'title': 'Fails_With_Stderr (Example.OutputTests) failed',
+          'raw_details':
+            'Assert.Equal() Failure\r\nExpected: 1\r\nActual:   2   at '
+            'Example.OutputTests.Fails_With_Stderr() in '
+            '/src/Example.Tests/OutputTests.cs:line 21\nConnection refused'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 3 tests, see "Raw output" for the full list of tests.',
+          'title': '3 tests found',
+          'raw_details':
+            'Example.OutputTests ‑ Fails_With_Stderr\nExample.OutputTests ‑ '
+            'No_Output\nExample.OutputTests ‑ Writes_To_Stdout_And_Stderr'
+        }
+      ]
+    }
+  }
+]
