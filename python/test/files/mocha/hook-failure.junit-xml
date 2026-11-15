@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite time="2" timestamp="2026-11-15T16:45:17.298Z" tests="2" failures="1" errors="0" skipped="0">
+  <testcase name="math adds" file="/home/runner/work/project/project/test/hooks.spec.js" time="1"/>
+  <testcase name="db &quot;before all&quot; hook for &quot;reads rows&quot;" file="/home/runner/work/project/project/test/hooks.spec.js">
+    <failure message="cannot connect to db"><![CDATA[cannot connect to db
+Error: cannot connect to db    at Context.<anonymous> (test/hooks.spec.js:3:30)    at process.processImmediate (node:internal/timers:574:21)]]></failure>
+  </testcase>
+</testsuite>

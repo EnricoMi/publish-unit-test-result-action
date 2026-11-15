@@ -1,0 +1,62 @@
+{
+  "title": "1 fail, 1 pass in 2s",
+  "summary": "2 tests   1 ✅  2s ⏱️\n1 suites  0 💤\n1 files    1 ❌\n\nResults for commit commit s.\n",
+  "conclusion": "failure",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 2,
+    "tests": 2,
+    "tests_succ": 1,
+    "tests_skip": 0,
+    "tests_fail": 1,
+    "tests_error": 0,
+    "runs": 2,
+    "runs_succ": 1,
+    "runs_skip": 0,
+    "runs_fail": 1,
+    "runs_error": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "/home/runner/work/project/project/test/hooks.spec.js",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "warning",
+      "message": "hook-failure.json",
+      "title": "db \"before all\" hook for \"reads rows\" failed",
+      "raw_details": "cannot connect to db\nError: cannot connect to db    at Context.<anonymous> (test/hooks.spec.js:3:30)    at process.processImmediate (node:internal/timers:574:21)"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 2 tests, see \"Raw output\" for the full list of tests.",
+      "title": "2 tests found",
+      "raw_details": "db \"before all\" hook for \"reads rows\"\nmath adds"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "2",
+      "tests": "2",
+      "tests_succ": "1",
+      "tests_skip": "0",
+      "tests_fail": "1",
+      "tests_error": "0",
+      "runs": "2",
+      "runs_succ": "1",
+      "runs_skip": "0",
+      "runs_fail": "1",
+      "runs_error": "0",
+      "commit": "commit sha"
+    }
+  }
+}

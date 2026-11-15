@@ -35,7 +35,10 @@ def parse_mocha_json_file(path: str) -> JUnitTree:
     failures = 0
     errors = 0
     skipped = 0
-    for test in results.get('tests', []):
+    # a failing hook is only listed in failures, not in tests
+    test_titles = {test.get('fullTitle') for test in results.get('tests', [])}
+    hook_failures = [failure for failure in results.get('failures', []) if failure.get('fullTitle') not in test_titles]
+    for test in results.get('tests', []) + hook_failures:
         tests = tests + 1
         testcase = etree.Element('testcase',
             attrib={k: str(v) for k, v in dict(

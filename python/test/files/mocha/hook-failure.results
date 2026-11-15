@@ -1,0 +1,51 @@
+publish.unittestresults.ParsedUnitTestResults(
+  files=1,
+  errors=[],
+  suites=1,
+  suite_tests=2,
+  suite_skipped=0,
+  suite_failures=1,
+  suite_errors=0,
+  suite_time=2,
+  suite_details=[
+    publish.unittestresults.UnitTestSuite(
+      name=None,
+      tests=2,
+      skipped=0,
+      failures=1,
+      errors=0,
+      stdout=None,
+      stderr=None
+    )
+  ],
+  cases=[
+    publish.unittestresults.UnitTestCase(
+      result_file='hook-failure.json',
+      test_file='/home/runner/work/project/project/test/hooks.spec.js',
+      line=None,
+      class_name=None,
+      test_name='math adds',
+      result='success',
+      message=None,
+      content=None,
+      stdout=None,
+      stderr=None,
+      time=1.0
+    ),
+    publish.unittestresults.UnitTestCase(
+      result_file='hook-failure.json',
+      test_file='/home/runner/work/project/project/test/hooks.spec.js',
+      line=None,
+      class_name=None,
+      test_name='db "before all" hook for "reads rows"',
+      result='failure',
+      message='cannot connect to db',
+      content='cannot connect to db\nError: cannot connect to db    at '
+        'Context.<anonymous> (test/hooks.spec.js:3:30)    at '
+        'process.processImmediate (node:internal/timers:574:21)',
+      stdout=None,
+      stderr=None,
+      time=None
+    )
+  ]
+)
