@@ -1,0 +1,43 @@
+import sys
+import traceback
+import unittest
+
+from lxml import etree
+
+
+class TestLxml(unittest.TestCase):
+    def test(self):
+        parser = etree.XMLParser(target=etree.TreeBuilder())
+        with self.assertRaises(etree.XMLSyntaxError) as e:
+            try:
+                etree.fromstring('<a><b></b>', parser=parser)
+            except BaseException:
+                try:
+                    a = 10 / 0
+                except BaseException as e2:
+                    te = traceback.TracebackException.from_exception(e2)
+                    print(te)
+                    print('cause relations')
+                    cause = te.__cause__
+                    while cause:
+                        for line in cause.format_exception_only():
+                            print(line)
+                            print()
+                        for line in cause.format():
+                            print(line)
+                        print()
+                        cause = cause.__cause__
+
+                    context = te.__context__
+                    while context:
+                        print('context relations')
+                        print(context)
+                        print()
+                        #for line in context.format():
+                        #    print(line)
+                        #print()
+                        context = context.__context__
+                    print()
+        self.assertEqual('Premature end of data in tag a line 1, line 1, column 11', e.exception.msg)
+
+        etree.XMLSyntaxError("error", 1, 2, 3)

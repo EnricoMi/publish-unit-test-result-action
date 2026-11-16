@@ -1,0 +1,102 @@
+{
+  "title": "All 5 tests pass in 0s",
+  "summary": "5 tests   5 ✅  0s ⏱️\n1 suites  0 💤  5 ❄\n1 files    0 ❌\n\nResults for commit commit s.\n",
+  "conclusion": "success",
+  "stats": {
+    "files": 1,
+    "errors": [],
+    "suites": 1,
+    "duration": 0,
+    "tests": 5,
+    "tests_succ": 5,
+    "tests_skip": 0,
+    "tests_fail": 0,
+    "tests_error": 0,
+    "tests_flaky": 5,
+    "runs": 5,
+    "runs_succ": 5,
+    "runs_skip": 0,
+    "runs_fail": 0,
+    "runs_error": 0,
+    "runs_flaky": 5,
+    "runs_rerun": 0,
+    "commit": "commit sha"
+  },
+  "annotations": [
+    {
+      "path": "class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "flaky-results.xml [took 0s]",
+      "title": "1 out of 2 runs skipped: flaky-test-failure (class)"
+    },
+    {
+      "path": "class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "flaky-results.xml [took 0s]",
+      "title": "1 out of 2 runs skipped: flaky-test-failure2 (class)"
+    },
+    {
+      "path": "class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "flaky-results.xml [took 0s]",
+      "title": "1 out of 2 runs skipped: flaky-test-error (class)",
+      "raw_details": "stdout"
+    },
+    {
+      "path": "class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "flaky-results.xml [took 0s]",
+      "title": "1 out of 2 runs skipped: flaky-test-error2 (class)",
+      "raw_details": "stdout"
+    },
+    {
+      "path": "class",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "flaky-results.xml [took 0s]",
+      "title": "1 out of 2 runs skipped: flaky-test (class)",
+      "raw_details": "stdout"
+    },
+    {
+      "path": ".github",
+      "start_line": 0,
+      "end_line": 0,
+      "annotation_level": "notice",
+      "message": "There are 5 tests, see \"Raw output\" for the full list of tests.",
+      "title": "5 tests found",
+      "raw_details": "class ‑ flaky-test\nclass ‑ flaky-test-error\nclass ‑ flaky-test-error2\nclass ‑ flaky-test-failure\nclass ‑ flaky-test-failure2"
+    }
+  ],
+  "check_url": "html",
+  "formatted": {
+    "stats": {
+      "files": "1",
+      "errors": [],
+      "suites": "1",
+      "duration": "0",
+      "tests": "5",
+      "tests_succ": "5",
+      "tests_skip": "0",
+      "tests_fail": "0",
+      "tests_error": "0",
+      "tests_flaky": "5",
+      "runs": "5",
+      "runs_succ": "5",
+      "runs_skip": "0",
+      "runs_fail": "0",
+      "runs_error": "0",
+      "runs_flaky": "5",
+      "runs_rerun": "0",
+      "commit": "commit sha"
+    }
+  }
+}

@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=3,
   suite_failures=2,
   suite_errors=1,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=1,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=3,
       failures=2,
       errors=1,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test class',
       test_name='test that errors',
       result='error',
+      is_flaky=False,
+      is_rerun=False,
       message='test teardown failure',
       content='stdout',
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test class',
       test_name='test that fails',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='test failure',
       content='Assertion failed',
       stdout=None,
@@ -52,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test class',
       test_name='test that is skipped',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -65,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='test class',
       test_name='test that succeeds',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

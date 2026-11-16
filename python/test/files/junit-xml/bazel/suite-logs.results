@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=0,
   suite_failures=0,
   suite_errors=1,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=0,
       failures=0,
       errors=1,
+      flaky=0,
+      rerun=0,
       stdout='Generated test.log (if the file is not UTF-8, then this may be '
         'unreadable):\nexec ${PAGER:-/usr/bin/less} "$0" || exit 1\nExecuting '
         'tests from //bazel:failing_absl_test\n'
@@ -32,6 +36,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='bazel/failing_absl_test',
       result='error',
+      is_flaky=False,
+      is_rerun=False,
       message='exited with error code 1',
       content=None,
       stdout=None,

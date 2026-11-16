@@ -12,11 +12,14 @@
     "tests_skip": 2,
     "tests_fail": 2,
     "tests_error": 2,
+    "tests_flaky": 0,
     "runs": 7,
     "runs_succ": 1,
     "runs_skip": 2,
     "runs_fail": 2,
     "runs_error": 2,
+    "runs_flaky": 0,
+    "runs_rerun": 0,
     "commit": "commit sha"
   },
   "annotations": [
@@ -87,11 +90,14 @@
       "tests_skip": "2",
       "tests_fail": "2",
       "tests_error": "2",
+      "tests_flaky": "0",
       "runs": "7",
       "runs_succ": "1",
       "runs_skip": "2",
       "runs_fail": "2",
       "runs_error": "2",
+      "runs_flaky": "0",
+      "runs_rerun": "0",
       "commit": "commit sha"
     }
   }

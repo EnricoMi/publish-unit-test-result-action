@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=1,
   suite_failures=1,
   suite_errors=1,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=0,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=1,
       failures=1,
       errors=1,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='ClassName',
       test_name='test_name',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='ClassName',
       test_name='skipped_test',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -52,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='ClassName',
       test_name='failed_test',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -65,6 +75,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name='ClassName',
       test_name='error_test',
       result='error',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,

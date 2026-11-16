@@ -1,0 +1,76 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'success',
+    'output': {
+      'title': 'All 5 tests pass in 0s',
+      'summary':
+        '5 tests\u2002\u2003\u20035 ✅\u2003\u20030s ⏱️\n1 suites\u2003\u20030 '
+        '💤\u2003\u20035 ❄\n1 files\u2004\u2002\u2003\u20030 ❌\n\nResults for '
+        'commit commit s.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NMQ6DMAxFr'
+        'xJlZmgHFi4TRSGoFoEgOxkqxN1xIYDTyf/ZX8+rHiB40p16N0pThnRDn9EmiDPji5EP6X'
+        'dqr2woO1cvRlhk2wwWQrXwiBHrSrDjt1gwzySifHDy4z9Y6A+W9rPwJzfoeZSGi9MEiaE'
+        'kRR+rtx2gIKSaEQEAAA==\n',
+      'annotations': [
+        {
+          'path': 'class',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'flaky-results.xml\u2003[took 0s]',
+          'title': '1 out of 2 runs skipped: flaky-test-failure (class)'
+        },
+        {
+          'path': 'class',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'flaky-results.xml\u2003[took 0s]',
+          'title': '1 out of 2 runs skipped: flaky-test-failure2 (class)'
+        },
+        {
+          'path': 'class',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'flaky-results.xml\u2003[took 0s]',
+          'title': '1 out of 2 runs skipped: flaky-test-error (class)',
+          'raw_details': 'stdout'
+        },
+        {
+          'path': 'class',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'flaky-results.xml\u2003[took 0s]',
+          'title': '1 out of 2 runs skipped: flaky-test-error2 (class)',
+          'raw_details': 'stdout'
+        },
+        {
+          'path': 'class',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'flaky-results.xml\u2003[took 0s]',
+          'title': '1 out of 2 runs skipped: flaky-test (class)',
+          'raw_details': 'stdout'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 5 tests, see "Raw output" for the full list of tests.',
+          'title': '5 tests found',
+          'raw_details':
+            'class ‑ flaky-test\nclass ‑ flaky-test-error\nclass ‑ '
+            'flaky-test-error2\nclass ‑ flaky-test-failure\nclass ‑ '
+            'flaky-test-failure2'
+        }
+      ]
+    }
+  }
+]

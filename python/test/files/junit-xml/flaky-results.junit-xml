@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite>
+    <testcase name="flaky-test-failure" classname="class" time="0.1">
+      <flakyFailure message="message" type="assertion exception">
+        <stackTrace>flaky failure stack trace</stackTrace>
+        <system-out>flaky failure System.out log message</system-out>
+      </flakyFailure>
+    </testcase>
+    <testcase name="flaky-test-failure2" classname="class" time="0.1">
+      <flakyFailure message="message1" type="assertion exception">
+        <stackTrace>flaky failure stack trace1</stackTrace>
+        <system-out>flaky failure System.out log message1</system-out>
+      </flakyFailure>
+      <flakyFailure message="message2" type="assertion exception">
+        <stackTrace>flaky failure stack trace2</stackTrace>
+        <system-out>flaky failure System.out log message2</system-out>
+      </flakyFailure>
+    </testcase>
+    <testcase name="flaky-test-error" classname="class" time="0.1">
+      <flakyError message="error message" type="error">
+        <stackTrace>rerun error stack trace</stackTrace>
+        <system-out>rerun error</system-out>
+      </flakyError>
+      <system-out>stdout</system-out>
+    </testcase>
+    <testcase name="flaky-test-error2" classname="class" time="0.1">
+      <flakyError message="error message1" type="error">
+        <stackTrace>rerun error stack trace1</stackTrace>
+        <system-out>rerun error1</system-out>
+      </flakyError>
+      <flakyError message="error message2" type="error">
+        <stackTrace>rerun error stack trace2</stackTrace>
+        <system-out>rerun error2</system-out>
+      </flakyError>
+      <system-out>stdout</system-out>
+    </testcase>
+    <testcase name="flaky-test" classname="class" time="0.1">
+      <flakyFailure message="message" type="assertion exception">
+        <stackTrace>flaky failure stack trace</stackTrace>
+        <system-out>flaky failure System.out log message</system-out>
+      </flakyFailure>
+      <flakyError message="error message" type="error">
+        <stackTrace>rerun error stack trace</stackTrace>
+        <system-out>rerun error</system-out>
+      </flakyError>
+      <system-out>stdout</system-out>
+    </testcase>
+  </testsuite>
+</testsuites>

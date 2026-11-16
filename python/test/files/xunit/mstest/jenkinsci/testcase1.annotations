@@ -10,9 +10,10 @@
         '3 tests\u2002\u2003\u20031 ✅\u2003\u20030s ⏱️\n1 suites\u2003\u20031 '
         '💤\n1 files\u2004\u2002\u2003\u20031 ❌\n\nResults for commit commit '
         's.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMOw6AIBBEr'
-        '0KoLTR2XsYQhLiRj1mgMt5dQFDo5s1M3kUlKOHoQqaBUBfAf7AFZB6siThGjINP01zz6g'
-        'Ln5VuKA86ukAxUVwhEi0WIwVRfiq3u5d+WuZFlbl3cag0+QknE7YzeD2gV0DndAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NQQ6EIAxFr'
+        '0JYu9C48zKEIMRGlEmBxWTi3a1SFWfV/36b15904G2Ug+gaIWOGdMOYUScIK2FLSIt0rP'
+        'orq5iN4VsuZvi8CqfBvwqLGLAWKuf1/OUG83p9OGL9oPDjP7nSn1zby8GfXKGlwYUJywK'
+        'JgJOIk5bbDj1nLwMRAQAA\n',
       'annotations': [
         {
           'path': 'MyProject.Tests.SampleFact',

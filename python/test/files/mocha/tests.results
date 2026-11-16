@@ -6,6 +6,8 @@ publish.unittestresults.ParsedUnitTestResults(
   suite_skipped=1,
   suite_failures=1,
   suite_errors=1,
+  suite_flaky=0,
+  suite_rerun=0,
   suite_time=12,
   suite_details=[
     publish.unittestresults.UnitTestSuite(
@@ -14,6 +16,8 @@ publish.unittestresults.ParsedUnitTestResults(
       skipped=1,
       failures=1,
       errors=1,
+      flaky=0,
+      rerun=0,
       stdout=None,
       stderr=None
     )
@@ -26,6 +30,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Context nested should work',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -39,6 +45,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Context Siblings sequestered sibling should work',
       result='success',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -52,6 +60,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Mocha instance method run() should initialize the stats collector',
       result='skipped',
+      is_flaky=False,
+      is_rerun=False,
       message=None,
       content=None,
       stdout=None,
@@ -66,6 +76,8 @@ publish.unittestresults.ParsedUnitTestResults(
       test_name='Runner instance method grep() should update the runner.total with '
         'number of matched tests',
       result='failure',
+      is_flaky=False,
+      is_rerun=False,
       message='Required',
       content='Required\nError: Required    at Context.<anonymous> '
         '(test/unit/runner.spec.js:43:15)    at callFn '
@@ -88,6 +100,8 @@ publish.unittestresults.ParsedUnitTestResults(
       class_name=None,
       test_name='Test .clone() should copy the title',
       result='error',
+      is_flaky=False,
+      is_rerun=False,
       message="[31m[1mexpected[22m[39m [36m'To be cloned'[39m [31m[1mto be[22m[39m "
         "[36m'Not to be cloned'[39m[41m[30mTo[39m[49m[31m be "
         "cloned[39m[42m[30mNot[39m[49m[32m [39m[42m[30mto [39m[49m[32mbe "

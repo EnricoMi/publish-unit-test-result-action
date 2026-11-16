@@ -10,9 +10,10 @@
         '0 tests\u2002\u2003\u20030 ✅\u2003\u20030s ⏱️\n0 suites\u2003\u20030 '
         '💤\n1 files\u2004\u2002\u2003\u20030 ❌\n1 errors\n\nResults for '
         'commit commit s.\n\n'
-        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMywqAIBBFf'
-        '0Vm3aK2/UyIKQ35iBldRf+emNC4u+dcODc49JZhVcukgAvmBnOFvZDOmGLHemSWe+NizC'
-        'hOvAbhNPpBWKJE3VCJLKbMffzXGotYY9kyKQTMFfpSfGh4XnRU87HdAAAA\n',
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/12NSw6AIAwFr'
+        '0JYu9CtlzEEITbyMS0sjPHuEiSxuOqbafN6SQvOkJzFNAhJGVKFscCaUSWIoWFZJOJ5oa'
+        'x1L3Y4OmEVuE4YxIj9iVP72QzmQCzyBy9//ZVZfWXe/h78yhc0ZTSho/eQCrQkaFPyfgC'
+        'AoFY0EQEAAA==\n',
       'annotations': [
         {
           'path': 'non-junit.xml',
