@@ -1,0 +1,41 @@
+[
+  {
+    'name': 'Test Results',
+    'head_sha': 'commit sha',
+    'status': 'completed',
+    'conclusion': 'failure',
+    'output': {
+      'title': '1 fail, 1 pass in 2s',
+      'summary':
+        '2 tests\u2002\u2003\u20031 ✅\u2003\u20032s ⏱️\n1 suites\u2003\u20030 '
+        '💤\n1 files\u2004\u2002\u2003\u20031 ❌\n\nResults for commit commit '
+        's.\n\n'
+        '[test-results]:data:application/gzip;base64,H4sIAAAAAAAC/1WMwQ5AMBBEf'
+        '6Xp2QFHPyNNaWxoK7vtSfy7RbFu82Ymb9MOlpF0p5pKacqQXhgymgQxMLaMPCSSuadsbf'
+        'mWYoaVi/otnIHl9xgRI5YL5vD4zih1N3+2i4XsYumy0XtIDCUpmozeD3boDbjdAAAA\n',
+      'annotations': [
+        {
+          'path': '/home/runner/work/project/project/test/hooks.spec.js',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'warning',
+          'message': 'hook-failure.json',
+          'title': 'db "before all" hook for "reads rows" failed',
+          'raw_details':
+            'cannot connect to db\nError: cannot connect to db    at '
+            'Context.<anonymous> (test/hooks.spec.js:3:30)    at '
+            'process.processImmediate (node:internal/timers:574:21)'
+        },
+        {
+          'path': '.github',
+          'start_line': 0,
+          'end_line': 0,
+          'annotation_level': 'notice',
+          'message': 'There are 2 tests, see "Raw output" for the full list of tests.',
+          'title': '2 tests found',
+          'raw_details': 'db "before all" hook for "reads rows"\nmath adds'
+        }
+      ]
+    }
+  }
+]

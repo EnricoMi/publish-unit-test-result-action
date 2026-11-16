@@ -1,0 +1,48 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 1,
+    "start": "2026-11-15T16:45:17.298Z",
+    "end": "2026-11-15T16:45:17.300Z",
+    "duration": 2
+  },
+  "tests": [
+    {
+      "title": "adds",
+      "fullTitle": "math adds",
+      "file": "/home/runner/work/project/project/test/hooks.spec.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ],
+  "pending": [],
+  "failures": [
+    {
+      "title": "\"before all\" hook for \"reads rows\"",
+      "fullTitle": "db \"before all\" hook for \"reads rows\"",
+      "file": "/home/runner/work/project/project/test/hooks.spec.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "err": {
+        "stack": "Error: cannot connect to db\n    at Context.<anonymous> (test/hooks.spec.js:3:30)\n    at process.processImmediate (node:internal/timers:574:21)",
+        "message": "cannot connect to db"
+      }
+    }
+  ],
+  "passes": [
+    {
+      "title": "adds",
+      "fullTitle": "math adds",
+      "file": "/home/runner/work/project/project/test/hooks.spec.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ]
+}
