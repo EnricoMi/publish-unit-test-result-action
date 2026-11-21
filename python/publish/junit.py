@@ -6,8 +6,9 @@ from typing import Optional, Iterable, Union, List, Dict, Callable, Tuple
 import junitparser
 from junitparser import Element, JUnitXml, JUnitXmlError, TestCase, TestSuite, Skipped
 from junitparser.junitparser import etree
+from junitparser.xunit2 import TestCase as XUnit2TestCase, FlakyFailure, FlakyError, RerunFailure, RerunError
 
-from publish.unittestresults import ParsedUnitTestResults, UnitTestSuite, UnitTestCase, ParseError
+from publish.unittestresults import ParsedUnitTestResults, UnitTestSuite, UnitTestCase, UnitTestCaseRetry, ParseError
 
 try:
     import lxml.etree
@@ -95,6 +96,23 @@ def get_content(results: Union[Element, List[Element]]) -> str:
     else:
         content = results.text if results else None
     return content
+
+
+def get_flaky_results(case: TestCase, result: str) -> Optional[List[UnitTestCaseRetry]]:
+    # Keep the base JUnit tree and final-result extraction. The xunit2 view only
+    # reads Surefire's interim metadata; it does not replace terminal outcomes.
+    if result != 'success':
+        return None
+    interim = XUnit2TestCase.fromelem(case._elem).interim_result
+    if any(isinstance(retry, (RerunFailure, RerunError)) for retry in interim):
+        return None
+    return [UnitTestCaseRetry(
+                result='failure' if isinstance(retry, FlakyFailure) else 'error',
+                message=retry.message,
+                content=retry.stack_trace or retry.text,
+                stdout=retry.system_out,
+                stderr=retry.system_err)
+            for retry in interim if isinstance(retry, (FlakyFailure, FlakyError))] or None
 
 
 class DropTestCaseBuilder(etree.TreeBuilder):
@@ -291,7 +309,8 @@ def process_junit_xml_elems(trees: Iterable[ParsedJUnitFile],
             content=get_content(results),
             stdout=case.system_out,
             stderr=case.system_err,
-            time=case.time * time_factor if case.time is not None else case.time
+            time=case.time * time_factor if case.time is not None else case.time,
+            flaky_results=get_flaky_results(case, get_result(results))
         )
         for result_file, suite in suites
         for case in get_cases(suite)

@@ -401,6 +401,7 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
     failure = get_magnitude(stats.tests_fail)
     error = get_magnitude(stats.tests_error)
     duration = get_magnitude(stats.duration)
+    flaky = get_magnitude(stats.tests_flaky)
 
     def get_test_summary():
         if tests == 0:
@@ -431,10 +432,13 @@ def get_short_summary(stats: UnitTestRunResults) -> str:
                 return f'{as_stat_number(tests, 0, 0, "tests")} found'
             return summary
 
+    summary = get_test_summary()
+    if flaky:
+        summary += f', {as_stat_number(flaky, 0, 0, "flaky")}'
     if tests is None or tests == 0 or duration is None:
-        return get_test_summary()
+        return summary
 
-    return f'{get_test_summary()} in {as_stat_duration(duration)}'
+    return f'{summary} in {as_stat_duration(duration)}'
 
 
 def get_link_and_tooltip_label_md(label: str, tooltip: str) -> str:
@@ -575,12 +579,18 @@ def get_long_summary_md(stats: UnitTestRunResultsOrDeltaResults,
         return get_long_summary_with_runs_md(stats, details_url, test_changes, test_list_changes_limit)
 
 
+def get_flaky_summary_md(stats: UnitTestRunResultsOrDeltaResults) -> str:
+    return f'{as_stat_number(stats.tests_flaky, 0, 0, "❄️")} flaky tests (included in passed tests).\n' \
+        if get_magnitude(stats.tests_flaky) else ''
+
+
 def get_details_line_md(stats: UnitTestRunResultsOrDeltaResults,
                         details_url: Optional[str] = None) -> str:
     errors = len(stats.errors)
     details_on = (['parsing errors'] if errors > 0 else []) + \
                  (['failures'] if get_magnitude(stats.tests_fail) > 0 else []) + \
-                 (['errors'] if get_magnitude(stats.tests_error) > 0 else [])
+                 (['errors'] if get_magnitude(stats.tests_error) > 0 else []) + \
+                 (['flaky tests'] if get_magnitude(stats.tests_flaky) else [])
     details_on = details_on[0:-2] + [' and '.join(details_on[-2:])] if details_on else []
 
     return 'For more details on these {details_on}, see [this check]({url}).'.format(
@@ -648,10 +658,11 @@ def get_long_summary_with_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     commit_line = get_commit_line_md(stats)
     test_changes_details = get_test_changes_summary_md(test_changes, test_list_changes_limit)
 
-    return '{misc}{tests}{runs}{details}{commit}{test_changes_details}'.format(
+    return '{misc}{tests}{runs}{flaky}{details}{commit}{test_changes_details}'.format(
         misc=misc_line,
         tests=tests_line,
         runs=runs_line,
+        flaky=get_flaky_summary_md(stats),
         details=new_lines(details_line),
         commit=new_lines(commit_line),
         test_changes_details=new_line(test_changes_details)
@@ -698,7 +709,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
     return '{tests}{sep}{passs}{sep}{duration}\n' \
            '{suites}{sep}{skips}\n' \
            '{files}{sep}{fails}{errors}\n' \
-           '{parse_errors}{details}{commit}{test_changes_details}'.format(
+           '{parse_errors}{flaky}{details}{commit}{test_changes_details}'.format(
                 sep=sep,
                 tests=tests,
                 passs=passs,
@@ -709,6 +720,7 @@ def get_long_summary_without_runs_md(stats: UnitTestRunResultsOrDeltaResults,
                 fails=fails,
                 errors=errors,
                 parse_errors=new_line(parse_errors, before=False),
+                flaky=get_flaky_summary_md(stats),
                 details=new_lines(details_line),
                 commit=new_lines(commit_line),
                 test_changes_details=new_line(test_changes_details)
@@ -858,7 +870,43 @@ def get_case_annotations(case_results: UnitTestCaseResults,
         for state in messages[key] if state not in ['success', 'skipped']
         for message in (messages[key][state] if report_individual_runs else
                         [list(messages[key][state].keys())[0]])
-    ]
+    ] + get_flaky_case_annotations(case_results, report_individual_runs)
+
+
+def get_flaky_case_annotations(case_results: UnitTestCaseResults,
+                               report_individual_runs: bool) -> List[Annotation]:
+    annotations = []
+    for states in case_results.values():
+        # A failure in another report still wins for this identity.
+        if 'success' not in states or 'failure' in states or 'error' in states:
+            continue
+        cases = [case for case in states['success'] if case.flaky_results]
+        for group in ([[case] for case in cases] if report_individual_runs else [cases] if cases else []):
+            case = group[0]
+            name = case.test_name or 'Unknown test'
+            title = name if not case.class_name else f'{name} ({case.class_name})'
+            details = []
+            for run in group:
+                details.append(run.result_file)
+                for number, retry in enumerate(run.flaky_results, 1):
+                    details.append(f'Failed attempt {number} ({retry.result}):')
+                    maybe_message = [retry.message] if not message_is_contained_in_content(retry.message, retry.content) else []
+                    details.extend(detail.rstrip() for detail in maybe_message + [retry.content, retry.stdout, retry.stderr]
+                                   if detail and detail.rstrip())
+            annotations.append(Annotation(
+                path=case.test_file or case.class_name or '/',
+                start_line=case.line or 0,
+                end_line=case.line or 0,
+                start_column=None,
+                end_column=None,
+                annotation_level='notice',
+                message='Test passed after retries.\n' + '\n'.join(
+                    run.result_file if run.time is None else f'{run.result_file} [took {as_stat_duration(run.time)}]'
+                    for run in group),
+                title=f'❄️ {title} passed after retries',
+                raw_details='\n'.join(details)
+            ))
+    return annotations
 
 
 def get_error_annotation(error: ParseError) -> Annotation:
