@@ -900,7 +900,7 @@ def get_suite_annotations_for_suite(suite: UnitTestSuite, with_suite_out_logs: b
 
 def get_suite_annotations(suites: List[UnitTestSuite], with_suite_out_logs: bool, with_suite_err_logs: bool) -> List[Annotation]:
     return [annotation
-            for suite in suites
+            for suite in suites or []
             for annotation in get_suite_annotations_for_suite(suite, with_suite_out_logs, with_suite_err_logs)]
 
 
