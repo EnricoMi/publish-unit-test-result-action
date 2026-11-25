@@ -407,6 +407,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
     check_run = get_bool_var('CHECK_RUN', options, default=True)
     job_summary = get_bool_var('JOB_SUMMARY', options, default=True)
     comment_mode = get_var('COMMENT_MODE', options) or comment_mode_always
+    comment_edit = get_bool_var('COMMENT_EDIT', options, default=True)
 
     # we cannot create a check run or pull request comment when running on pull_request event from a fork
     # when event_file is given we assume proper setup as in README.md#support-fork-repositories-and-dependabot-branches
@@ -488,6 +489,7 @@ def get_settings(options: dict, gha: GithubAction) -> Settings:
         check_name=check_name,
         comment_title=get_var('COMMENT_TITLE', options) or check_name,
         comment_mode=comment_mode,
+        comment_edit=comment_edit,
         check_run=check_run,
         job_summary=job_summary,
         compare_earlier=get_bool_var('COMPARE_TO_EARLIER_COMMIT', options, default=True),

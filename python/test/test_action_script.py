@@ -186,6 +186,7 @@ class Test(unittest.TestCase):
                      check_name='check name',
                      comment_title='title',
                      comment_mode=comment_mode_always,
+                     comment_edit=True,
                      check_run=True,
                      job_summary=True,
                      compare_earlier=True,
@@ -236,6 +237,7 @@ class Test(unittest.TestCase):
             check_name=check_name,
             comment_title=comment_title,
             comment_mode=comment_mode,
+            comment_edit=comment_edit,
             check_run=check_run,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
@@ -456,6 +458,15 @@ class Test(unittest.TestCase):
         with self.assertRaises(RuntimeError) as re:
             self.do_test_get_settings(COMMENT_MODE='mode')
         self.assertEqual("Value 'mode' is not supported for variable COMMENT_MODE, expected: off, always, changes, changes in failures, changes in errors, failures, errors", str(re.exception))
+
+    def test_get_settings_comment_edit(self):
+        warning = 'Option comment_edit has to be boolean, so either "true" or "false": foo'
+        self.do_test_get_settings(COMMENT_EDIT='false', expected=self.get_settings(comment_edit=False))
+        self.do_test_get_settings(COMMENT_EDIT='False', expected=self.get_settings(comment_edit=False))
+        self.do_test_get_settings(COMMENT_EDIT='true', expected=self.get_settings(comment_edit=True))
+        self.do_test_get_settings(COMMENT_EDIT='True', expected=self.get_settings(comment_edit=True))
+        self.do_test_get_settings(COMMENT_EDIT='foo', expected=self.get_settings(comment_edit=True), warning=warning, exception=RuntimeError)
+        self.do_test_get_settings(COMMENT_EDIT=None, expected=self.get_settings(comment_edit=True))
 
     def test_get_settings_compare_to_earlier_commit(self):
         warning = 'Option compare_to_earlier_commit has to be boolean, so either "true" or "false": foo'

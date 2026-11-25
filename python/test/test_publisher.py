@@ -79,6 +79,7 @@ class TestPublisher(unittest.TestCase):
 
     @staticmethod
     def create_settings(comment_mode=comment_mode_always,
+                        comment_edit=True,
                         check_run=True,
                         job_summary=True,
                         compare_earlier=True,
@@ -125,6 +126,7 @@ class TestPublisher(unittest.TestCase):
             check_name='Check Name',
             comment_title='Comment Title',
             comment_mode=comment_mode,
+            comment_edit=comment_edit,
             check_run=check_run,
             job_summary=job_summary,
             compare_earlier=compare_earlier,
@@ -1004,6 +1006,73 @@ class TestPublisher(unittest.TestCase):
 
     def test_publish_comment_with_reuse_comment_one_existing(self):
         self.do_test_publish_comment_with_reuse_comment(one_exists=True)
+
+    def test_publish_comment_without_comment_edit_always(self):
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
+        lc = mock.MagicMock(body='latest comment')
+        stats = self.stats
+        cases = create_unit_test_case_results(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_always, comment_edit=False, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=lc)
+        publisher.reuse_comment = mock.Mock()
+        publisher.require_comment = mock.Mock(return_value=True)
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, 'url', cases)
+
+        self.assertEqual(
+            ['get_test_lists_from_check_run', 'require_comment'],
+            [mock_call[0] for mock_call in publisher.mock_calls]
+        )
+        publisher.get_latest_comment.assert_not_called()
+        publisher.reuse_comment.assert_not_called()
+        pr.create_issue_comment.assert_called_once_with('## title\nbody')
+
+    def test_publish_comment_without_comment_edit_changes_required(self):
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
+        lc = mock.MagicMock(body='latest comment')
+        stats = self.stats
+        cases = create_unit_test_case_results(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_changes, comment_edit=False, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=lc)
+        publisher.reuse_comment = mock.Mock()
+        publisher.require_comment = mock.Mock(return_value=True)
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, 'url', cases)
+
+        self.assertEqual(
+            ['get_test_lists_from_check_run', 'get_latest_comment', 'get_stats_from_summary_md', 'require_comment'],
+            [mock_call[0] for mock_call in publisher.mock_calls]
+        )
+        publisher.reuse_comment.assert_not_called()
+        pr.create_issue_comment.assert_called_once_with('## title\nbody')
+
+    def test_publish_comment_without_comment_edit_changes_not_required(self):
+        pr = mock.MagicMock(number="1234", create_issue_comment=mock.Mock(return_value=mock.MagicMock()))
+        lc = mock.MagicMock(body='latest comment')
+        stats = self.stats
+        cases = create_unit_test_case_results(self.cases)
+        settings = self.create_settings(comment_mode=comment_mode_changes, comment_edit=False, compare_earlier=False)
+        publisher = mock.MagicMock(Publisher)
+        publisher._settings = settings
+        publisher.get_test_lists_from_check_run = mock.Mock(return_value=(None, None))
+        publisher.get_latest_comment = mock.Mock(return_value=lc)
+        publisher.reuse_comment = mock.Mock()
+        publisher.require_comment = mock.Mock(return_value=False)
+        with mock.patch('publish.publisher.get_long_summary_with_digest_md', return_value='body'):
+            Publisher.publish_comment(publisher, 'title', stats, pr, 'url', cases)
+
+        self.assertEqual(
+            ['get_test_lists_from_check_run', 'get_latest_comment', 'get_stats_from_summary_md', 'require_comment'],
+            [mock_call[0] for mock_call in publisher.mock_calls]
+        )
+        publisher.reuse_comment.assert_not_called()
+        pr.create_issue_comment.assert_not_called()
 
     def do_test_reuse_comment(self, earlier_body: str, expected_body: str):
         comment = mock.MagicMock()

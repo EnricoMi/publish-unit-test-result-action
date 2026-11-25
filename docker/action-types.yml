@@ -32,6 +32,9 @@ inputs:
       - errors
       - off
 
+  comment_edit:
+    type: boolean
+
   fail_on:
     type: enum
     allowed-values:
