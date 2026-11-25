@@ -33,6 +33,10 @@ inputs:
     description: 'The action posts comments to pull requests that are associated with the commit. Set to "always" - always comment, "changes" - comment when changes w.r.t. the target branch exist, "changes in failures" - when changes in the number of failures and errors exist, "changes in errors" - when changes in the number of (only) errors exist, "failures" - when failures or errors exist, "errors" - when (only) errors exist, "off" - to not create pull request comments.'
     default: 'always'
     required: false
+  comment_edit:
+    description: 'Set to "true" to edit the previous pull request comment if one exists, or "false" to always create a new comment when a comment is posted (orthogonal to comment_mode).'
+    default: 'true'
+    required: false
   fail_on:
     description: 'The created test result check run has failure state if any test fails or test errors occur. Never fails when set to "nothing", fails only on errors when set to "errors". Default is "test failures".'
     default: 'test failures'

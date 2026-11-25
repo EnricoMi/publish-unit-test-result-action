@@ -61,6 +61,7 @@ class Settings:
     check_name: str
     comment_title: str
     comment_mode: str
+    comment_edit: bool
     check_run: bool
     job_summary: bool
     compare_earlier: bool
@@ -582,7 +583,9 @@ class Publisher:
         all_tests, skipped_tests = restrict_unicode_list(all_tests), restrict_unicode_list(skipped_tests)
         test_changes = SomeTestChanges(before_all_tests, all_tests, before_skipped_tests, skipped_tests)
 
-        latest_comment = self.get_latest_comment(pull_request)
+        latest_comment = self.get_latest_comment(pull_request) \
+            if self._settings.comment_edit or self._settings.comment_mode != comment_mode_always \
+            else None
         latest_comment_body = latest_comment.body if latest_comment else None
 
         # are we required to create a comment on this PR?
@@ -594,8 +597,8 @@ class Publisher:
         summary = get_long_summary_with_digest_md(stats_with_delta, stats, details_url, test_changes, self._settings.test_changes_limit)
         body = f'## {title}\n{summary}'
 
-        # only create new comment none exists already
-        if latest_comment is None:
+        # only create new comment if none exists already or comment editing is disabled
+        if latest_comment is None or not self._settings.comment_edit:
             comment = pull_request.create_issue_comment(body)
             logger.info(f'Created comment for pull request #{pull_request.number}: {comment.html_url}')
         else:
